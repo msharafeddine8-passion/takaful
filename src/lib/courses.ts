@@ -34,7 +34,7 @@ export const COURSES: Course[] = [
   {
     slug: 'communication-skills',
     level: 1,
-    status: 'soon',
+    status: 'draft',
     minutes: 75,
     title: { ar: 'مهارات التواصل', en: 'Communication Skills' },
     summary: {
@@ -56,7 +56,7 @@ export const COURSES: Course[] = [
   {
     slug: 'working-with-children',
     level: 1,
-    status: 'soon',
+    status: 'draft',
     minutes: 90,
     title: { ar: 'التعامل مع الأطفال', en: 'Working with Children' },
     summary: {
