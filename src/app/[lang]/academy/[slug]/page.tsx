@@ -6,6 +6,7 @@ import { alternatesFor } from '@/lib/seo';
 import { Container, Section } from '@/components/ui';
 import { Quiz } from '@/components/Quiz';
 import { COURSE_CONTENT } from '@/lib/course-content';
+import { COURSES } from '@/lib/courses';
 import type { Block } from '@/lib/course-content/types';
 
 export function generateStaticParams() {
@@ -144,6 +145,7 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
   const course = COURSE_CONTENT[slug];
   if (!course) notFound();
   const dict = getDictionary(lang);
+  const isApproved = COURSES.find((c) => c.slug === slug)?.status === 'available';
 
   const t = {
     ar: {
@@ -168,9 +170,11 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
 
   return (
     <>
-      <p className="bg-brand-orange px-4 py-2.5 text-center text-[0.83rem] font-extrabold text-[#241503]">
-        {t.draft}
-      </p>
+      {!isApproved && (
+        <p className="bg-brand-orange px-4 py-2.5 text-center text-[0.83rem] font-extrabold text-[#241503]">
+          {t.draft}
+        </p>
+      )}
 
       <div className="bg-brand-blue-deep text-white">
         <Container className="py-12">

@@ -17,7 +17,6 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
   const { lang } = await props.params;
   if (!isLocale(lang)) notFound();
   const dict = getDictionary(lang);
-  const pending = lang === 'ar' ? 'بانتظار التأكيد من الجمعية' : 'Pending confirmation';
 
   return (
     <Section>
@@ -61,6 +60,19 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
 
           <div className="rounded-xl border border-line bg-surface p-6">
             <h2 className="mb-2 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
+              {dict.contact.email}
+            </h2>
+            <a
+              href={ORG.emailHref}
+              dir="ltr"
+              className="block text-[0.98rem] font-extrabold break-all hover:text-brand-orange-dark dark:hover:text-brand-orange"
+            >
+              {ORG.email}
+            </a>
+          </div>
+
+          <div className="rounded-xl border border-line bg-surface p-6">
+            <h2 className="mb-2 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
               {dict.contact.social}
             </h2>
             <a
@@ -88,8 +100,10 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
               {dict.contact.registration}
             </h2>
             <p className="text-[0.98rem] font-extrabold">{dict.contact.registrationValue}</p>
-            {/* No number is shown until the association confirms it. */}
-            <p className="mt-1 text-[0.83rem] text-ink-3">{pending}</p>
+            <p className="tabular mt-1 text-[0.95rem] font-extrabold text-brand-blue dark:text-sky-300">
+              {lang === 'ar' ? 'رقم ' : 'No. '}
+              {ORG.registrationNumber}
+            </p>
           </div>
         </div>
 

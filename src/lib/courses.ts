@@ -20,7 +20,7 @@ export const COURSES: Course[] = [
   {
     slug: 'volunteering-foundations',
     level: 1,
-    status: 'draft',
+    status: 'available',
     minutes: 90,
     title: {
       ar: 'أساسيات العمل التطوعي',
@@ -45,7 +45,7 @@ export const COURSES: Course[] = [
   {
     slug: 'teamwork',
     level: 1,
-    status: 'soon',
+    status: 'draft',
     minutes: 70,
     title: { ar: 'العمل ضمن فريق', en: 'Teamwork' },
     summary: {
@@ -67,7 +67,7 @@ export const COURSES: Course[] = [
   {
     slug: 'digital-basics',
     level: 1,
-    status: 'soon',
+    status: 'draft',
     minutes: 60,
     title: { ar: 'مهارات الحاسوب الأساسية', en: 'Basic Computer Skills' },
     summary: {

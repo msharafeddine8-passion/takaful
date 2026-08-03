@@ -197,6 +197,7 @@ export const en: Dictionary = {
     title: 'Start your journey with Takaful',
     lede: 'Whether you want to volunteer, partner with us, or ask about our programmes — we are here.',
     phone: 'Phone',
+    email: 'Email',
     address: 'Address',
     addressValue: 'Tripoli — Azmi junction, Center El Helou, above DHL, 3rd floor',
     social: 'Social',
