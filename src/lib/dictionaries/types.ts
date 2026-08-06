@@ -189,6 +189,36 @@ export type Account = {
     dbUnavailable: string;
     generic: string;
   };
+  hours: {
+    kicker: string;
+    title: string;
+    lede: string;
+    verifiedLabel: string;
+    pendingLabel: string;
+    stageLabel: string;
+    notStarted: string;
+    stageOf: string;
+    logTitle: string;
+    dateLabel: string;
+    durationLabel: string;
+    durationHint: string;
+    activityLabel: string;
+    activityNone: string;
+    noteLabel: string;
+    submit: string;
+    historyTitle: string;
+    empty: string;
+    colDate: string;
+    colActivity: string;
+    colDuration: string;
+    colStatus: string;
+    statusPending: string;
+    statusVerified: string;
+    statusRejected: string;
+    statusCorrected: string;
+    correctionOf: string;
+    backToAccount: string;
+  };
   statuses: StatusLabels;
   /** What the person should do next, keyed by status. */
   nextSteps: StatusLabels;

@@ -7,6 +7,7 @@ import { isDbConfigured, execute, queryOne, transaction } from '@/lib/db';
 import { audit, currentUser } from '@/lib/auth';
 import { requireCapability, Forbidden } from '@/lib/authz';
 import { isLocale, type Locale } from '@/lib/i18n';
+import { parseDuration } from '@/lib/duration';
 import type { FormState } from './types';
 
 const MAX_MINUTES_PER_ENTRY = 1440; // one day
@@ -19,27 +20,6 @@ function localeOf(formData: FormData): Locale {
 
 function text(formData: FormData, name: string): string {
   return String(formData.get(name) ?? '').trim();
-}
-
-/** Accepts "2:30", "2.5", "150m" or plain minutes, because people type all four. */
-export function parseDuration(raw: string): number | null {
-  const value = raw.trim().replace(/\s+/g, '');
-  if (!value) return null;
-
-  const colon = /^(\d{1,2}):([0-5]\d)$/.exec(value);
-  if (colon) return Number(colon[1]) * 60 + Number(colon[2]);
-
-  const minutes = /^(\d{1,4})m$/i.exec(value);
-  if (minutes) return Number(minutes[1]);
-
-  const decimal = /^(\d{1,2})([.,](\d{1,2}))?h?$/i.exec(value);
-  if (decimal) {
-    const whole = Number(decimal[1]);
-    const frac = decimal[3] ? Number(`0.${decimal[3]}`) : 0;
-    return Math.round((whole + frac) * 60);
-  }
-
-  return null;
 }
 
 // ------------------------------------------------------------- logging hours
