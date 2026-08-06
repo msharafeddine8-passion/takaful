@@ -15,7 +15,37 @@ import { isDbConfigured } from './db';
 
 const MIGRATIONS_DIR = 'migrations';
 const LOCK_NAME = 'takaful_migrations';
-const LOCK_TIMEOUT_SECONDS = 30;
+const LOCK_TIMEOUT_SECONDS = 10;
+
+/** Refuse to sit on a TCP connect that will never answer. */
+const CONNECT_TIMEOUT_MS = 8_000;
+
+/**
+ * The whole run is bounded. Next.js awaits register() before the server
+ * accepts requests, so anything unbounded here is an outage waiting to
+ * happen — which is exactly what took the site down on 5 August 2026.
+ */
+export const MIGRATION_BUDGET_MS = 25_000;
+
+/** Reject if `promise` has not settled within `ms`. */
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error(`${label} exceeded ${ms}ms`)),
+      ms,
+    );
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
 
 /** Files are applied in filename order, so they must be numbered. */
 async function pendingFiles(applied: Set<string>): Promise<string[]> {
@@ -42,15 +72,32 @@ async function migrationConnection(): Promise<mysql.Connection> {
     database: process.env.DB_NAME,
     charset: 'utf8mb4',
     multipleStatements: true,
+    // A host that accepts the connection but never completes the handshake
+    // would otherwise hang here forever.
+    connectTimeout: CONNECT_TIMEOUT_MS,
   });
 }
 
+/**
+ * Applies pending migrations, bounded in total. Never rejects: a database
+ * that is unreachable, slow, or broken must not stop the site from serving
+ * the pages that do not need it — which is most of them.
+ */
 export async function runMigrations(): Promise<void> {
   if (!isDbConfigured()) {
     console.warn('[migrate] Database not configured — skipping migrations.');
     return;
   }
 
+  try {
+    await withTimeout(applyMigrations(), MIGRATION_BUDGET_MS, '[migrate] run');
+  } catch (error) {
+    console.error('[migrate] Migrations did not complete:', error);
+    console.error('[migrate] Serving anyway; the next start will try again.');
+  }
+}
+
+async function applyMigrations(): Promise<void> {
   let conn: mysql.Connection | undefined;
 
   try {
@@ -93,14 +140,14 @@ export async function runMigrations(): Promise<void> {
         console.log(`[migrate] Applied ${filename}.`);
       }
     } finally {
-      await conn.query('SELECT RELEASE_LOCK(?)', [LOCK_NAME]);
+      // Releasing is best effort: the lock is tied to this connection and
+      // MySQL drops it when the connection goes away regardless.
+      await conn.query('SELECT RELEASE_LOCK(?)', [LOCK_NAME]).catch(() => {});
     }
-  } catch (error) {
-    // A failed migration must not take the public site down with it. The
-    // pages that need the database already degrade on their own; the rest
-    // of the site — which is most of it — has no reason to stop serving.
-    console.error('[migrate] Migration failed:', error);
   } finally {
-    await conn?.end().catch(() => {});
+    // destroy(), not end(): end() waits for a graceful close, and a socket
+    // that is already hung would hang here too — after the budget has run
+    // out and this function is no longer being awaited by anyone.
+    conn?.destroy();
   }
 }
