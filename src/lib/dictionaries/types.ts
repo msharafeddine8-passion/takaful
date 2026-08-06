@@ -182,6 +182,10 @@ export type Account = {
     tooYoung: string;
     guardianRequired: string;
     commitmentsRequired: string;
+    durationInvalid: string;
+    durationRange: string;
+    dateFuture: string;
+    reasonRequired: string;
     dbUnavailable: string;
     generic: string;
   };
