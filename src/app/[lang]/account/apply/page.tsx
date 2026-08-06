@@ -48,7 +48,7 @@ export default async function ApplyPage(props: PageProps<'/[lang]/account/apply'
   // Someone with a live application should be reading its status, not filing another.
   const open = await queryOne<{ id: string }>(
     `SELECT id FROM volunteer_applications
-      WHERE user_id = ?
+      WHERE user_id = $1
         AND status IN ('submitted','under_review','interview_required','interview_scheduled')
       LIMIT 1`,
     [user.id],

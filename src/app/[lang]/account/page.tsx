@@ -48,7 +48,7 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
 
   const application = await queryOne<{ id: string; status: string; submitted_at: Date | null }>(
     `SELECT id, status, submitted_at FROM volunteer_applications
-      WHERE user_id = ? ORDER BY created_at DESC LIMIT 1`,
+      WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1`,
     [user.id],
   );
 

@@ -1,59 +1,54 @@
 import 'server-only';
-import mysql from 'mysql2/promise';
+import { Pool, type PoolClient } from 'pg';
 
 /**
  * One shared pool per process. Next.js hot-reloads modules in development,
  * so the pool is cached on globalThis to avoid exhausting connections.
+ *
+ * Connection details come from a single DATABASE_URL, which is what every
+ * managed Postgres provider hands you and what Vercel injects automatically.
  */
-const globalForDb = globalThis as unknown as { __takafulPool?: mysql.Pool };
+const globalForDb = globalThis as unknown as { __takafulPool?: Pool };
 
-function createPool(): mysql.Pool {
-  const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
+function createPool(): Pool {
+  const connectionString = process.env.DATABASE_URL;
 
-  if (!DB_HOST || !DB_USER || !DB_PASSWORD || !DB_NAME) {
-    throw new Error(
-      'Database is not configured. Set DB_HOST, DB_USER, DB_PASSWORD and DB_NAME.',
-    );
+  if (!connectionString) {
+    throw new Error('Database is not configured. Set DATABASE_URL.');
   }
 
-  return mysql.createPool({
-    host: DB_HOST,
-    port: Number(DB_PORT ?? 3306),
-    user: DB_USER,
-    password: DB_PASSWORD,
-    database: DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 8,
-    charset: 'utf8mb4',
-    timezone: 'Z',
-    // Never interpolate values into SQL — everything goes through placeholders.
-    namedPlaceholders: false,
+  return new Pool({
+    connectionString,
+    max: 8,
+    // Serverless platforms recycle instances; idle sockets should not outlive
+    // the instance holding them.
+    idleTimeoutMillis: 30_000,
+    // Never sit on a connection that will not answer.
+    connectionTimeoutMillis: 8_000,
   });
 }
 
-export function pool(): mysql.Pool {
+export function pool(): Pool {
   if (!globalForDb.__takafulPool) {
     globalForDb.__takafulPool = createPool();
   }
   return globalForDb.__takafulPool;
 }
 
-/** True when the database credentials are present, so pages can degrade gracefully. */
+/** True when the database is configured, so pages can degrade gracefully. */
 export function isDbConfigured(): boolean {
-  return Boolean(
-    process.env.DB_HOST && process.env.DB_USER && process.env.DB_PASSWORD && process.env.DB_NAME,
-  );
+  return Boolean(process.env.DATABASE_URL);
 }
 
-/** Anything MySQL can bind to a `?` placeholder. */
-export type Param = string | number | boolean | Date | Buffer | null;
+/** Anything Postgres can bind to a `$n` placeholder. */
+export type Param = string | number | boolean | Date | Buffer | null | string[];
 
 export async function query<T = Record<string, unknown>>(
   sql: string,
   params: Param[] = [],
 ): Promise<T[]> {
-  const [rows] = await pool().execute(sql, params);
-  return rows as T[];
+  const result = await pool().query(sql, params);
+  return result.rows as T[];
 }
 
 export async function queryOne<T = Record<string, unknown>>(
@@ -65,7 +60,7 @@ export async function queryOne<T = Record<string, unknown>>(
 }
 
 export async function execute(sql: string, params: Param[] = []): Promise<void> {
-  await pool().execute(sql, params);
+  await pool().query(sql, params);
 }
 
 /**
@@ -73,18 +68,18 @@ export async function execute(sql: string, params: Param[] = []): Promise<void> 
  * half-applied — a status change plus its history row, for instance.
  */
 export async function transaction<T>(
-  fn: (conn: mysql.PoolConnection) => Promise<T>,
+  fn: (client: PoolClient) => Promise<T>,
 ): Promise<T> {
-  const conn = await pool().getConnection();
+  const client = await pool().connect();
   try {
-    await conn.beginTransaction();
-    const result = await fn(conn);
-    await conn.commit();
+    await client.query('BEGIN');
+    const result = await fn(client);
+    await client.query('COMMIT');
     return result;
   } catch (error) {
-    await conn.rollback();
+    await client.query('ROLLBACK').catch(() => {});
     throw error;
   } finally {
-    conn.release();
+    client.release();
   }
 }

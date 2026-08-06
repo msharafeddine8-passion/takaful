@@ -68,7 +68,7 @@ export async function createSession(userId: string, userAgent?: string): Promise
 
   await execute(
     `INSERT INTO sessions (id, user_id, token_hash, expires_at, user_agent)
-     VALUES (?, ?, ?, ?, ?)`,
+     VALUES ($1, $2, $3, $4, $5)`,
     [randomUUID(), userId, hashToken(token), expires, userAgent?.slice(0, 255) ?? null],
   );
 
@@ -88,7 +88,7 @@ export async function destroySession(): Promise<void> {
   const store = await cookies();
   const token = store.get(SESSION_COOKIE)?.value;
   if (token) {
-    await execute('DELETE FROM sessions WHERE token_hash = ?', [hashToken(token)]);
+    await execute('DELETE FROM sessions WHERE token_hash = $1', [hashToken(token)]);
   }
   store.delete(SESSION_COOKIE);
 }
@@ -113,7 +113,7 @@ export async function currentUser(): Promise<SessionUser | null> {
        FROM sessions s
        JOIN users u    ON u.id = s.user_id
        JOIN profiles p ON p.user_id = u.id
-      WHERE s.token_hash = ? AND s.expires_at > NOW()
+      WHERE s.token_hash = $1 AND s.expires_at > now()
       LIMIT 1`,
     [hashToken(token)],
   );
@@ -122,9 +122,9 @@ export async function currentUser(): Promise<SessionUser | null> {
 
   const roleRows = await query<{ role: Role }>(
     `SELECT role FROM user_roles
-      WHERE user_id = ?
-        AND valid_from <= NOW()
-        AND (valid_until IS NULL OR valid_until > NOW())`,
+      WHERE user_id = $1
+        AND valid_from <= now()
+        AND (valid_until IS NULL OR valid_until > now())`,
     [row.id],
   );
 
@@ -145,7 +145,7 @@ export async function currentUser(): Promise<SessionUser | null> {
 export async function membershipStatus(userId: string): Promise<MembershipStatus> {
   const row = await queryOne<{ new_status: MembershipStatus }>(
     `SELECT new_status FROM membership_status_history
-      WHERE user_id = ? ORDER BY changed_at DESC, id DESC LIMIT 1`,
+      WHERE user_id = $1 ORDER BY changed_at DESC, id DESC LIMIT 1`,
     [userId],
   );
   return row?.new_status ?? 'registered_user';
@@ -172,7 +172,7 @@ export async function setMembershipStatus(opts: {
   await execute(
     `INSERT INTO membership_status_history
        (user_id, previous_status, new_status, changed_by, actor_role, reason)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+     VALUES ($1, $2, $3, $4, $5, $6)`,
     [
       opts.userId,
       previous,
@@ -199,7 +199,7 @@ export async function audit(entry: {
   await execute(
     `INSERT INTO audit_logs
        (actor_id, actor_role, action, target_type, target_id, previous_value, new_value, reason)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
     [
       entry.actorId ?? null,
       entry.actorRole ?? null,
@@ -227,32 +227,39 @@ export async function registerUser(input: {
 }): Promise<RegisterResult> {
   const email = input.email.trim().toLowerCase();
 
-  const existing = await queryOne<{ id: string }>('SELECT id FROM users WHERE email = ?', [email]);
-  if (existing) return { ok: false, error: 'email_taken' };
-
   const userId = randomUUID();
   const passwordHash = await hashPassword(input.password);
 
   // The account, its profile and its first status row are one atomic fact.
-  await transaction(async (conn) => {
-    await conn.execute(
-      'INSERT INTO users (id, email, password_hash, locale) VALUES (?, ?, ?, ?)',
-      [userId, email, passwordHash, input.locale],
-    );
-    await conn.execute('INSERT INTO profiles (user_id, full_name) VALUES (?, ?)', [
-      userId,
-      input.fullName.trim(),
-    ]);
-    await conn.execute(
-      `INSERT INTO membership_status_history (user_id, previous_status, new_status)
-       VALUES (?, NULL, 'registered_user')`,
-      [userId],
-    );
-    await conn.execute(
-      `INSERT INTO user_roles (user_id, role, scope_type) VALUES (?, 'registered_user', 'self')`,
-      [userId],
-    );
-  });
+  try {
+    await transaction(async (client) => {
+      // No read-then-write check for a taken address: two concurrent
+      // registrations would both pass it. The unique index decides.
+      await client.query(
+        'INSERT INTO users (id, email, password_hash, locale) VALUES ($1, $2, $3, $4)',
+        [userId, email, passwordHash, input.locale],
+      );
+      await client.query('INSERT INTO profiles (user_id, full_name) VALUES ($1, $2)', [
+        userId,
+        input.fullName.trim(),
+      ]);
+      await client.query(
+        `INSERT INTO membership_status_history (user_id, previous_status, new_status)
+         VALUES ($1, NULL, 'registered_user')`,
+        [userId],
+      );
+      await client.query(
+        `INSERT INTO user_roles (user_id, role, scope_type) VALUES ($1, 'registered_user', 'self')`,
+        [userId],
+      );
+    });
+  } catch (error) {
+    // 23505 is unique_violation — on this table that can only be the address.
+    if (typeof error === 'object' && error !== null && 'code' in error && error.code === '23505') {
+      return { ok: false, error: 'email_taken' };
+    }
+    throw error;
+  }
 
   await audit({ action: 'user.registered', targetType: 'user', targetId: userId });
   return { ok: true, userId };
@@ -266,7 +273,7 @@ export type LoginResult =
 
 export async function authenticate(email: string, password: string): Promise<LoginResult> {
   const row = await queryOne<{ id: string; password_hash: string; status: string }>(
-    'SELECT id, password_hash, status FROM users WHERE email = ? LIMIT 1',
+    'SELECT id, password_hash, status FROM users WHERE email = $1 LIMIT 1',
     [email.trim().toLowerCase()],
   );
 
@@ -284,7 +291,7 @@ export async function authenticate(email: string, password: string): Promise<Log
   if (!valid) return { ok: false, error: 'invalid_credentials' };
   if (row.status !== 'active') return { ok: false, error: 'suspended' };
 
-  await execute('UPDATE users SET last_login_at = NOW() WHERE id = ?', [row.id]);
+  await execute('UPDATE users SET last_login_at = now() WHERE id = $1', [row.id]);
   return { ok: true, userId: row.id };
 }
 

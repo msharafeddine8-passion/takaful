@@ -194,10 +194,12 @@ export async function applyAction(_prev: FormState, formData: FormData): Promise
   if (Object.keys(fields).length > 0) return { fields };
   if (!commitmentsAgreed) return { error: 'commitmentsRequired' };
 
-  // One open application at a time.
+  // One open application at a time. This check exists so the person gets a
+  // sensible redirect rather than an error; the partial unique index
+  // uq_va_one_open_per_user is what actually guarantees it under a race.
   const open = await queryOne<{ id: string }>(
     `SELECT id FROM volunteer_applications
-      WHERE user_id = ?
+      WHERE user_id = $1
         AND status IN ('submitted','under_review','interview_required','interview_scheduled')
       LIMIT 1`,
     [user.id],
@@ -217,34 +219,34 @@ export async function applyAction(_prev: FormState, formData: FormData): Promise
   };
 
   try {
-    await transaction(async (conn) => {
-      await conn.execute(
+    await transaction(async (client) => {
+      await client.query(
         `INSERT INTO profiles_sensitive
            (user_id, date_of_birth, phone, city, emergency_contact_name, emergency_contact_phone)
-         VALUES (?, ?, ?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE
-           date_of_birth = VALUES(date_of_birth),
-           phone = VALUES(phone),
-           city = VALUES(city),
-           emergency_contact_name = VALUES(emergency_contact_name),
-           emergency_contact_phone = VALUES(emergency_contact_phone)`,
+         VALUES ($1, $2, $3, $4, $5, $6)
+         ON CONFLICT (user_id) DO UPDATE SET
+           date_of_birth = EXCLUDED.date_of_birth,
+           phone = EXCLUDED.phone,
+           city = EXCLUDED.city,
+           emergency_contact_name = EXCLUDED.emergency_contact_name,
+           emergency_contact_phone = EXCLUDED.emergency_contact_phone`,
         [user.id, dobRaw, phone, city, emergencyName, emergencyPhone],
       );
 
       if (isMinor) {
-        await conn.execute(
+        await client.query(
           `INSERT INTO guardian_consents
              (id, minor_user_id, guardian_name, guardian_relation, guardian_phone, consent_scope)
-           VALUES (?, ?, ?, ?, ?, 'participation')`,
+           VALUES ($1, $2, $3, $4, $5, ARRAY['participation'])`,
           [randomUUID(), user.id, guardianName, guardianRelation, guardianPhone],
         );
       }
 
-      await conn.execute(
+      await client.query(
         `INSERT INTO volunteer_applications
            (id, user_id, status, motivation, availability, interests, experience,
             answers_snapshot, submitted_at)
-         VALUES (?, ?, 'submitted', ?, ?, ?, ?, ?, NOW())`,
+         VALUES ($1, $2, 'submitted', $3, $4, $5, $6, $7, now())`,
         [
           applicationId,
           user.id,
@@ -280,7 +282,7 @@ export async function markCourseStarted(courseSlug: string): Promise<void> {
   await setMembershipStatus({ userId: user.id, next: 'course_participant' });
   await execute(
     `INSERT INTO audit_logs (actor_id, action, target_type, target_id)
-     VALUES (?, 'course.started', 'course', ?)`,
+     VALUES ($1, 'course.started', 'course', $2)`,
     [user.id, courseSlug],
   );
 }
