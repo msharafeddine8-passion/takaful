@@ -60,16 +60,8 @@ export function Header({ lang, dict }: Props) {
           >
             {dict.common.switchTo}
           </Link>
-          {/* The header stays static, so it cannot know who is signed in.
-              /join redirects an already-signed-in visitor to their dashboard. */}
           <Link
-            href={`/${lang}/account`}
-            className="hidden rounded-lg px-3 py-2 text-[0.9rem] font-bold text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink sm:inline-flex"
-          >
-            {dict.account.dashboard.kicker}
-          </Link>
-          <Link
-            href={`/${lang}/join`}
+            href={`/${lang}/contact`}
             className="hidden rounded-full bg-brand-orange px-5 py-2.5 text-[0.92rem] font-extrabold text-[#241503] transition-colors hover:bg-brand-orange-dark sm:inline-flex"
           >
             {dict.nav.volunteer}
@@ -98,13 +90,6 @@ export function Header({ lang, dict }: Props) {
               {l.label}
             </Link>
           ))}
-          <Link
-            href={`/${lang}/account`}
-            onClick={() => setOpen(false)}
-            className="block border-b border-line px-5 py-3.5 font-bold text-brand-blue dark:text-brand-orange"
-          >
-            {dict.account.dashboard.kicker}
-          </Link>
         </nav>
       )}
     </header>

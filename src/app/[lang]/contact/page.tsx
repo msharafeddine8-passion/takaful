@@ -108,7 +108,7 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
         </div>
 
         <div className="mt-9 flex flex-wrap gap-3">
-          <Button href={`/${lang}/join`}>{dict.contact.ctaVolunteer}</Button>
+          <Button href={ORG.whatsappHref}>{dict.contact.ctaVolunteer}</Button>
           <Button href={ORG.phoneHref} variant="blue">
             {dict.contact.ctaPartner}
           </Button>
