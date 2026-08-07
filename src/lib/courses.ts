@@ -34,7 +34,7 @@ export const COURSES: Course[] = [
   {
     slug: 'communication-skills',
     level: 1,
-    status: 'draft',
+    status: 'available',
     minutes: 75,
     title: { ar: 'مهارات التواصل', en: 'Communication Skills' },
     summary: {
@@ -45,7 +45,7 @@ export const COURSES: Course[] = [
   {
     slug: 'teamwork',
     level: 1,
-    status: 'draft',
+    status: 'available',
     minutes: 70,
     title: { ar: 'العمل ضمن فريق', en: 'Teamwork' },
     summary: {
@@ -56,6 +56,12 @@ export const COURSES: Course[] = [
   {
     slug: 'working-with-children',
     level: 1,
+    // Approved by the association along with the rest, but held back until
+    // ORG.safeguardingFocalPoint is filled in. The course tells trainees four
+    // times to report a disclosure to "your organisation's safeguarding focal
+    // point", and its own text says it is incomplete without that name and a
+    // direct number. Publishing it unnamed would teach a fifteen-year-old to
+    // report child abuse to nobody. Set the focal point, then flip this line.
     status: 'draft',
     minutes: 90,
     title: { ar: 'التعامل مع الأطفال', en: 'Working with Children' },
@@ -67,7 +73,7 @@ export const COURSES: Course[] = [
   {
     slug: 'digital-basics',
     level: 1,
-    status: 'draft',
+    status: 'available',
     minutes: 60,
     title: { ar: 'مهارات الحاسوب الأساسية', en: 'Basic Computer Skills' },
     summary: {
