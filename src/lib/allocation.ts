@@ -78,9 +78,12 @@ export async function reallocate(userId: string): Promise<AllocationResult> {
       needed: Math.max(0, Number.parseInt(r.target, 10) - Number.parseInt(r.allocated, 10)),
     }));
 
+    // Parsed rather than trusted. The view casts to integer so this is already
+    // a number, but a total that ends up on someone's certificate should not
+    // depend on remembering which driver returns which SQL type as a string.
     const supply = entries.map((e) => ({
       id: e.hour_entry_id,
-      left: e.remaining_minutes,
+      left: Number(e.remaining_minutes),
     }));
 
     for (const requirement of pending) {

@@ -1,0 +1,115 @@
+import 'server-only';
+import { query } from './db';
+
+/**
+ * Reading activities.
+ *
+ * Places taken come from the activity_places view rather than being counted
+ * here, so the listing, the registration check and the roster can never
+ * disagree about whether an activity is full.
+ */
+
+export type OpportunityRow = {
+  id: string;
+  title_ar: string;
+  title_en: string;
+  description_ar: string | null;
+  description_en: string | null;
+  location: string | null;
+  starts_at: Date | null;
+  ends_at: Date | null;
+  capacity: number | null;
+  min_stage: number | null;
+  taken: number;
+  waiting: number;
+  /** This viewer's live registration, if any. */
+  my_status: 'registered' | 'waitlisted' | null;
+};
+
+/** Upcoming, open activities, soonest first. */
+export async function opportunities(viewerId: string | null): Promise<OpportunityRow[]> {
+  return query<OpportunityRow>(
+    `SELECT a.id, a.title_ar, a.title_en, a.description_ar, a.description_en,
+            a.location, a.starts_at, a.ends_at, a.capacity, a.min_stage,
+            p.taken, p.waiting,
+            r.status AS my_status
+       FROM activities a
+       JOIN activity_places p ON p.activity_id = a.id
+       LEFT JOIN activity_registrations r
+         ON r.activity_id = a.id AND r.user_id = $1 AND r.status <> 'cancelled'
+      WHERE a.is_open
+        AND NOT a.is_archived
+        AND (a.ends_at IS NULL OR a.ends_at > now())
+      ORDER BY a.starts_at ASC NULLS LAST, a.title_ar ASC`,
+    [viewerId],
+  );
+}
+
+export type MyActivityRow = OpportunityRow & {
+  registration_status: string;
+  attended: boolean | null;
+  attended_minutes: number | null;
+};
+
+export async function myActivities(userId: string): Promise<MyActivityRow[]> {
+  return query<MyActivityRow>(
+    `SELECT a.id, a.title_ar, a.title_en, a.description_ar, a.description_en,
+            a.location, a.starts_at, a.ends_at, a.capacity, a.min_stage,
+            p.taken, p.waiting,
+            r.status AS registration_status,
+            r.status AS my_status,
+            att.attended,
+            att.minutes AS attended_minutes
+       FROM activity_registrations r
+       JOIN activities a ON a.id = r.activity_id
+       JOIN activity_places p ON p.activity_id = a.id
+       LEFT JOIN activity_attendance att
+         ON att.activity_id = a.id AND att.user_id = r.user_id
+      WHERE r.user_id = $1
+      ORDER BY a.starts_at DESC NULLS LAST`,
+    [userId],
+  );
+}
+
+export type RosterRow = {
+  user_id: string;
+  full_name: string;
+  registration_status: string;
+  attended: boolean | null;
+  attended_minutes: number | null;
+};
+
+/** Everyone signed up for one activity, with whatever the supervisor recorded. */
+export async function roster(activityId: string): Promise<RosterRow[]> {
+  return query<RosterRow>(
+    `SELECT r.user_id, pr.full_name, r.status AS registration_status,
+            att.attended, att.minutes AS attended_minutes
+       FROM activity_registrations r
+       JOIN profiles pr ON pr.user_id = r.user_id
+       LEFT JOIN activity_attendance att
+         ON att.activity_id = r.activity_id AND att.user_id = r.user_id
+      WHERE r.activity_id = $1 AND r.status <> 'cancelled'
+      ORDER BY r.status, pr.full_name`,
+    [activityId],
+  );
+}
+
+export type ManagedActivity = OpportunityRow & { is_archived: boolean };
+
+export async function allActivities(): Promise<ManagedActivity[]> {
+  return query<ManagedActivity>(
+    `SELECT a.id, a.title_ar, a.title_en, a.description_ar, a.description_en,
+            a.location, a.starts_at, a.ends_at, a.capacity, a.min_stage,
+            a.is_archived, p.taken, p.waiting, NULL::TEXT AS my_status
+       FROM activities a
+       JOIN activity_places p ON p.activity_id = a.id
+      ORDER BY a.starts_at DESC NULLS LAST`,
+  );
+}
+
+/** Minutes an activity is worth, from its own start and end. */
+export function scheduledMinutes(a: { starts_at: Date | null; ends_at: Date | null }): number | null {
+  if (!a.starts_at || !a.ends_at) return null;
+  const ms = new Date(a.ends_at).getTime() - new Date(a.starts_at).getTime();
+  return ms > 0 ? Math.round(ms / 60_000) : null;
+}

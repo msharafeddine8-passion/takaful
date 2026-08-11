@@ -19,6 +19,7 @@ export function Header({ lang, dict }: Props) {
     { href: `/${lang}/about`, label: dict.nav.about },
     { href: `/${lang}/areas`, label: dict.nav.areas },
     { href: `/${lang}/academy`, label: dict.nav.academy },
+    { href: `/${lang}/opportunities`, label: dict.account.activities.kicker },
     { href: `/${lang}/journey`, label: dict.nav.journey },
     { href: `/${lang}/projects`, label: dict.nav.projects },
     { href: `/${lang}/gallery`, label: dict.nav.gallery },

@@ -110,6 +110,25 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
           )}
         </div>
 
+        {/* Everything the portal can do, in one place. A volunteer should not
+            have to remember a URL to reach their own hours. */}
+        <nav className="mt-8 flex flex-wrap gap-3">
+          {[
+            { href: `/${lang}/account/journey`, label: dict.account.journey.title },
+            { href: `/${lang}/account/hours`, label: dict.account.hours.title },
+            { href: `/${lang}/account/activities`, label: dict.account.activities.mineTitle },
+            { href: `/${lang}/opportunities`, label: dict.account.activities.title },
+          ].map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="rounded-full border border-line px-5 py-2.5 text-[0.92rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {l.label}
+            </Link>
+          ))}
+        </nav>
+
         <form action={logoutAction} className="mt-8">
           <input type="hidden" name="lang" value={lang} />
           <button
