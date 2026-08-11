@@ -23,13 +23,37 @@ function check(label: string, ok: boolean, detail = '') {
 const MARK = `loop-${Date.now()}`;
 const req = randomUUID();
 const act = randomUUID();
-let vol = '', sup = '';
+let vol = '', sup = '', version = '';
 
 try {
-  const stage1 = (await c.query<{ id: string }>(
-    `SELECT s.id FROM journey_stages s
+  /*
+   * A journey this probe owns, copied from the live one.
+   *
+   * Writing the requirement onto the default journey - which is what this did
+   * - leaves the association's programme carrying a rule nobody decided on,
+   * and the assertions below then depend on whatever else previous runs left
+   * behind. Isolation makes the result mean something.
+   */
+  const liveStages = (await c.query<{ number: number; title_ar: string; title_en: string }>(
+    `SELECT s.number, s.title_ar, s.title_en FROM journey_stages s
        JOIN journey_versions v ON v.id = s.version_id AND v.is_default
-      WHERE s.number = 1`)).rows[0].id;
+      ORDER BY s.number`)).rows;
+
+  version = randomUUID();
+  await c.query(
+    `INSERT INTO journey_versions (id, name, description, is_default)
+     VALUES ($1, $2, 'Created by probe-loop. Safe to delete.', false)`,
+    [version, `probe ${MARK}`]);
+
+  let stage1 = '';
+  for (const s of liveStages) {
+    const id = randomUUID();
+    await c.query(
+      `INSERT INTO journey_stages (id, version_id, number, title_ar, title_en)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [id, version, s.number, s.title_ar, s.title_en]);
+    if (s.number === 1) stage1 = id;
+  }
 
   // An admin sets Stage 1 to need 4 hours.
   await c.query(
@@ -51,6 +75,13 @@ try {
     `INSERT INTO membership_status_history (user_id, previous_status, new_status, changed_by, actor_role, reason)
      VALUES ($1, 'volunteer_applicant', 'accepted_volunteer', $2, 'applications.review', 'probe')`,
     [vol, sup]);
+
+  // Acceptance puts them on the default journey; move them onto the probe's.
+  await c.query(
+    // id is a generated identity, not a uuid, so it is left to the database.
+    `INSERT INTO user_journey_assignments (user_id, version_id, assigned_by, reason)
+     VALUES ($1, $2, $3, 'probe: moved onto an isolated journey')`,
+    [vol, version, sup]);
 
   console.log('\n--- an activity is published ---');
   await c.query(
@@ -134,16 +165,44 @@ try {
     `DELETE FROM membership_status_history WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM audit_logs WHERE actor_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM profiles WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
-  ]) await c.query(sql, [`${MARK}-%`]);
-  await c.query('DELETE FROM activities WHERE id = $1', [act]);
-  await c.query('DELETE FROM stage_requirements WHERE id = $1', [req]);
-  await c.query('DELETE FROM users WHERE email LIKE $1', [`${MARK}-%`]);
+    // Every statement runs even if one fails, so a single broken DELETE
+    // cannot silently skip everything after it.
+  ]) await c.query(sql, [`${MARK}-%`]).catch((e) =>
+    console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${(e as Error).message}`));
+
+  await c.query('DELETE FROM activities WHERE id = $1', [act]).catch(() => {});
+  await c.query('DELETE FROM users WHERE email LIKE $1', [`${MARK}-%`]).catch(() => {});
+
+  if (version) {
+    // Postgres rejects a statement given more parameters than it uses, so
+    // each one carries exactly its own. Getting this wrong is silent when the
+    // errors are caught, which is how the leftover versions went unnoticed.
+    for (const [sql, params] of [
+      ['DELETE FROM hour_allocations WHERE requirement_id = $1', [req]],
+      ['DELETE FROM stage_requirement_progress WHERE requirement_id = $1', [req]],
+      ['DELETE FROM stage_requirements WHERE stage_id IN (SELECT id FROM journey_stages WHERE version_id = $1)', [version]],
+      ['DELETE FROM user_journey_assignments WHERE version_id = $1', [version]],
+      ['DELETE FROM journey_stages WHERE version_id = $1', [version]],
+      ['DELETE FROM journey_versions WHERE id = $1', [version]],
+    ] as [string, unknown[]][]) {
+      await c.query(sql, params).catch((e) =>
+        console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${(e as Error).message}`));
+    }
+  }
 
   const u = (await c.query<{ n: string }>(
     'SELECT count(*)::TEXT AS n FROM users WHERE email LIKE $1', [`${MARK}-%`])).rows[0].n;
-  const r = (await c.query<{ n: string }>('SELECT count(*)::TEXT AS n FROM stage_requirements')).rows[0].n;
+  const onLive = (await c.query<{ n: string }>(`
+    SELECT count(*)::TEXT AS n FROM stage_requirements r
+      JOIN journey_stages s ON s.id = r.stage_id
+      JOIN journey_versions v ON v.id = s.version_id AND v.is_default`)).rows[0].n;
+  const spareVersions = (await c.query<{ n: string }>(
+    `SELECT count(*)::TEXT AS n FROM journey_versions WHERE name LIKE 'probe %'`)).rows[0].n;
   const a = (await c.query<{ n: string }>('SELECT count(*)::TEXT AS n FROM activities')).rows[0].n;
-  console.log(`\ncleanup: ${u} users, ${r} requirements, ${a} activities remaining (expected 0, 0, 0)`);
+  console.log(
+    `\ncleanup: ${u} users, ${spareVersions} probe journeys, ${onLive} requirements on the live ` +
+      `journey, ${a} activities remaining (expected 0, 0, 0, 0)`,
+  );
   await c.end();
 }
 

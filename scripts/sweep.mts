@@ -20,6 +20,40 @@ const SUFFIX = '%@example.test';
 const c = new Client({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 15_000 });
 await c.connect();
 
+/*
+ * Journey versions a probe created and did not remove.
+ *
+ * These matter more than the stray accounts. A leftover version is
+ * configuration sitting in the association's own programme data, and the one
+ * time it went unnoticed the default journey ended up carrying six
+ * requirements nobody had decided on. Named 'probe %' by convention, and
+ * never the default one — that guard is not negotiable.
+ */
+const versions = (
+  await c.query<{ id: string; name: string }>(
+    `SELECT id, name FROM journey_versions WHERE name LIKE 'probe %' AND NOT is_default`,
+  )
+).rows;
+
+for (const v of versions) {
+  for (const sql of [
+    `DELETE FROM hour_allocations WHERE requirement_id IN (
+       SELECT r.id FROM stage_requirements r JOIN journey_stages s ON s.id = r.stage_id
+        WHERE s.version_id = $1)`,
+    `DELETE FROM stage_requirement_progress WHERE requirement_id IN (
+       SELECT r.id FROM stage_requirements r JOIN journey_stages s ON s.id = r.stage_id
+        WHERE s.version_id = $1)`,
+    `DELETE FROM stage_requirements WHERE stage_id IN (
+       SELECT id FROM journey_stages WHERE version_id = $1)`,
+    'DELETE FROM user_journey_assignments WHERE version_id = $1',
+    'DELETE FROM journey_stages WHERE version_id = $1',
+    'DELETE FROM journey_versions WHERE id = $1',
+  ]) {
+    await c.query(sql, [v.id]).catch((e) => console.error(`  ${v.name}: ${(e as Error).message}`));
+  }
+  console.log(`removed probe journey: ${v.name}`);
+}
+
 const stale = (
   await c.query<{ id: string; email: string }>(
     'SELECT id, email FROM users WHERE email LIKE $1 ORDER BY email',
@@ -27,7 +61,7 @@ const stale = (
   )
 ).rows;
 
-if (stale.length === 0) {
+if (stale.length === 0 && versions.length === 0) {
   console.log('Nothing to sweep.');
   await c.end();
   process.exit(0);

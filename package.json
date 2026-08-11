@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "migrate": "tsx --env-file=.env.local scripts/migrate.mts",
+    "probe": "tsx --env-file=.env.local scripts/probe-all.mts",
+    "sweep": "tsx --env-file=.env.local scripts/sweep.mts",
+    "check": "tsc --noEmit && tsc -p scripts --noEmit && next build"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",
@@ -28,6 +32,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
     "tailwindcss": "^4",
+    "tsx": "^4.23.12",
     "typescript": "^5"
   }
 }

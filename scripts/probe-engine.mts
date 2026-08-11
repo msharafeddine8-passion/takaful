@@ -88,8 +88,10 @@ try {
 
   console.log('\n--- passing the course satisfies one requirement ---');
   await c.query(
-    `INSERT INTO course_progress (user_id, course_slug, score, passed, completed_at)
-     VALUES ($1, 'teamwork', 90, true, now())`, [volunteer]);
+    // course_progress became a view over course_attempts in migration 012, so
+    // a pass is recorded by recording the attempt that earned it.
+    `INSERT INTO course_attempts (id, user_id, course_slug, question_ids, pass_mark, submitted_at, score, passed)
+     VALUES (gen_random_uuid(), $1, 'teamwork', ARRAY['q'], 70, now(), 90, true)`, [volunteer]);
   j = await journeyFor(volunteer);
   check('course requirement satisfied', j?.stages[0].requirements[0].satisfied === true);
   check('stage 1 now 50%', j?.stages[0].percent === 50, `${j?.stages[0].percent}%`);
@@ -166,12 +168,18 @@ try {
     j?.stages[0].status === 'completed', j?.stages[0].status);
 
 } finally {
-  // Clean up everything this probe created.
+  /*
+   * Every statement runs even if one fails. This block used to stop at the
+   * first error, and when course_progress became a view the DELETE against it
+   * started throwing - so the journey version this probe creates was never
+   * removed, and two of them accumulated in the live database before anything
+   * noticed.
+   */
   for (const sql of [
     `DELETE FROM hour_allocations WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM hour_entries WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM stage_progress WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
-    `DELETE FROM course_progress WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
+    `DELETE FROM course_attempts WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM stage_requirement_progress WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM user_journey_assignments WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM membership_status_history WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
@@ -179,14 +187,31 @@ try {
     `DELETE FROM user_roles WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM profiles WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM users WHERE email LIKE $1`,
-  ]) await c.query(sql, [`${MARK}-%`]);
-  await c.query('DELETE FROM stage_requirements WHERE stage_id = ANY($1)', [stageIds]);
-  await c.query('DELETE FROM journey_stages WHERE version_id = $1', [version]);
-  await c.query('DELETE FROM journey_versions WHERE id = $1', [version]);
+  ]) {
+    await c
+      .query(sql, [`${MARK}-%`])
+      .catch((e) => console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${(e as Error).message}`));
+  }
+  for (const [sql, params] of [
+    ['DELETE FROM hour_allocations WHERE requirement_id IN (SELECT id FROM stage_requirements WHERE stage_id = ANY($1))', [stageIds]],
+    ['DELETE FROM stage_requirement_progress WHERE requirement_id IN (SELECT id FROM stage_requirements WHERE stage_id = ANY($1))', [stageIds]],
+    ['DELETE FROM stage_requirements WHERE stage_id = ANY($1)', [stageIds]],
+    ['DELETE FROM user_journey_assignments WHERE version_id = $1', [version]],
+    ['DELETE FROM journey_stages WHERE version_id = $1', [version]],
+    ['DELETE FROM journey_versions WHERE id = $1', [version]],
+  ] as [string, unknown[]][]) {
+    await c
+      .query(sql, params)
+      .catch((e) => console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${(e as Error).message}`));
+  }
 
   const left = await c.query<{ n: string }>(
     'SELECT count(*)::TEXT AS n FROM users WHERE email LIKE $1', [`${MARK}-%`]);
-  console.log(`\ncleanup: ${left.rows[0].n} probe users remaining (expected 0)`);
+  const spare = await c.query<{ n: string }>(
+    `SELECT count(*)::TEXT AS n FROM journey_versions WHERE name LIKE 'probe %'`);
+  console.log(
+    `\ncleanup: ${left.rows[0].n} probe users, ${spare.rows[0].n} probe journeys remaining (expected 0, 0)`,
+  );
   await c.end();
 }
 

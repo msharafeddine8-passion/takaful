@@ -214,13 +214,43 @@ const seeded = stages.rows[0].n === '6';
 console.log(`  ${seeded ? 'ok       ' : 'BROKEN   '} default version has 6 stages`);
 seeded ? (confirmed += 1) : (holes += 1);
 
-const unassigned = await client.query<{ n: string }>(
-  `SELECT count(*) AS n FROM users u
-    WHERE NOT EXISTS (SELECT 1 FROM current_journey_assignment a WHERE a.user_id = u.id)`,
+/*
+ * This used to assert that every user was on a journey. Migration 006 changed
+ * that deliberately: a journey is assigned when someone is accepted as a
+ * volunteer, not when they register. Somebody taking a course without joining
+ * the association has no volunteer journey, and that is the normal state
+ * rather than a gap. The assertion now checks the rule that replaced it, in
+ * both directions.
+ */
+// The probe's own Alice and Bob are excluded: it assigned them journeys a few
+// lines up to test the assignment rules, and they were never accepted as
+// volunteers. Counting them here would be the probe reading its own fixtures.
+const wrongWay = await client.query<{ missing: string; extra: string }>(`
+  SELECT
+    (SELECT count(*) FROM users u
+      WHERE is_volunteer(u.id)
+        AND u.email NOT LIKE 'jprobe-%'
+        AND NOT EXISTS (SELECT 1 FROM current_journey_assignment a WHERE a.user_id = u.id))::TEXT
+      AS missing,
+    (SELECT count(*) FROM current_journey_assignment a
+      JOIN users u ON u.id = a.user_id
+     WHERE NOT is_volunteer(a.user_id) AND u.email NOT LIKE 'jprobe-%')::TEXT AS extra
+`);
+const { missing, extra } = wrongWay.rows[0];
+
+const volunteersAssigned = missing === '0';
+console.log(
+  `  ${volunteersAssigned ? 'ok       ' : 'BROKEN   '} every accepted volunteer is on a journey` +
+    (volunteersAssigned ? '' : `  — ${missing} without one`),
 );
-const allAssigned = unassigned.rows[0].n === '0';
-console.log(`  ${allAssigned ? 'ok       ' : 'BROKEN   '} every existing user is on a journey`);
-allAssigned ? (confirmed += 1) : (holes += 1);
+volunteersAssigned ? (confirmed += 1) : (holes += 1);
+
+const learnersFree = extra === '0';
+console.log(
+  `  ${learnersFree ? 'ok       ' : 'BROKEN   '} and nobody else is — a learner has no volunteer journey` +
+    (learnersFree ? '' : `  — ${extra} who should not have one`),
+);
+learnersFree ? (confirmed += 1) : (holes += 1);
 
 await client.query('ROLLBACK');
 await client.end();

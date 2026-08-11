@@ -18,14 +18,41 @@ function check(label: string, ok: boolean, detail = '') {
 
 const MARK = `bld-${Date.now()}`;
 const added: string[] = [];
-let vol = '', staff = '';
+let vol = '', staff = '', version = '';
 
 try {
-  const stages = (await c.query<{ id: string; number: number }>(
-    `SELECT s.id, s.number FROM journey_stages s
+  /*
+   * A journey of its own, copied from the live one.
+   *
+   * This used to configure the default journey directly, which meant a probe
+   * run left the association's actual programme carrying requirements nobody
+   * had decided on. The Journey Builder is exercised just as well against a
+   * version this probe owns and deletes, and there is then no run in which the
+   * real configuration can be touched at all.
+   */
+  const liveStages = (await c.query<{ id: string; number: number; title_ar: string; title_en: string }>(
+    `SELECT s.id, s.number, s.title_ar, s.title_en FROM journey_stages s
        JOIN journey_versions v ON v.id = s.version_id AND v.is_default
       ORDER BY s.number`)).rows;
-  check('the live journey has stages to configure', stages.length === 6, `${stages.length}`);
+  check('the live journey has stages to copy', liveStages.length === 6, `${liveStages.length}`);
+
+  version = randomUUID();
+  await c.query(
+    `INSERT INTO journey_versions (id, name, description, is_default)
+     VALUES ($1, $2, 'Created by probe-builder. Safe to delete.', false)`,
+    [version, `probe ${MARK}`],
+  );
+  const stages: { id: string; number: number }[] = [];
+  for (const s of liveStages) {
+    const id = randomUUID();
+    await c.query(
+      `INSERT INTO journey_stages (id, version_id, number, title_ar, title_en)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [id, version, s.number, s.title_ar, s.title_en],
+    );
+    stages.push({ id, number: s.number });
+  }
+  check('the probe has its own six-stage journey', stages.length === 6, `${stages.length}`);
 
   // What the Journey Builder writes for "Stage 1: pass Teamwork, then 10 hours".
   const r1 = randomUUID(), r2 = randomUUID();
@@ -54,8 +81,18 @@ try {
      VALUES ($1, 'volunteer_applicant', 'accepted_volunteer', $2, 'applications.review', 'probe')`,
     [vol, staff]);
 
+  // Acceptance puts them on the default journey; move them onto the probe's.
+  await c.query(
+    // id is a generated identity, not a uuid, so it is left to the database.
+    `INSERT INTO user_journey_assignments (user_id, version_id, assigned_by, reason)
+     VALUES ($1, $2, $3, 'probe: moved onto an isolated journey')`,
+    [vol, version, staff],
+  );
+
   let j = await journeyFor(vol);
-  check('the volunteer is placed on the live journey', j !== null, j?.versionName);
+  check('the volunteer is placed on a journey', j !== null, j?.versionName);
+  check('and it is the probe\'s own, not the association\'s', j?.versionName === `probe ${MARK}`,
+    j?.versionName);
   check('stage 1 shows the two configured requirements',
     j?.stages[0].requirements.length === 2, `${j?.stages[0].requirements.length}`);
   check('next step is the course, in the volunteer\'s language',
@@ -66,8 +103,10 @@ try {
 
   console.log('\n--- the volunteer does the work ---');
   await c.query(
-    `INSERT INTO course_progress (user_id, course_slug, score, passed, completed_at)
-     VALUES ($1, 'teamwork', 85, true, now())`, [vol]);
+    // course_progress became a view over course_attempts in migration 012, so
+    // a pass is recorded by recording the attempt that earned it.
+    `INSERT INTO course_attempts (id, user_id, course_slug, question_ids, pass_mark, submitted_at, score, passed)
+     VALUES (gen_random_uuid(), $1, 'teamwork', ARRAY['q'], 70, now(), 85, true)`, [vol]);
   const e = randomUUID();
   await c.query(
     `INSERT INTO hour_entries (id, user_id, worked_on, minutes, status, verified_by, verified_at)
@@ -103,23 +142,67 @@ try {
   check('but the row survives, so the record stays readable', stillThere === '1');
 
 } finally {
+  /*
+   * Every statement runs even if an earlier one fails.
+   *
+   * This block used to stop at the first error, and that is exactly how the
+   * association's journey ended up configured with six requirements nobody
+   * asked for: a DELETE against course_progress started throwing the day it
+   * became a view, and everything after it - including the requirement
+   * cleanup - silently never ran.
+   */
   for (const sql of [
     `DELETE FROM hour_allocations WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM hour_entries WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
-    `DELETE FROM course_progress WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
+    `DELETE FROM course_attempts WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM stage_requirement_progress WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM user_journey_assignments WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM membership_status_history WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM profiles WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM users WHERE email LIKE $1`,
-  ]) await c.query(sql, [`${MARK}-%`]);
-  if (added.length) await c.query('DELETE FROM stage_requirements WHERE id = ANY($1)', [added]);
+  ]) {
+    await c
+      .query(sql, [`${MARK}-%`])
+      .catch((e) => console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${(e as Error).message}`));
+  }
+
+  // The whole version goes, and the requirements go with it. Nothing this
+  // probe wrote ever touched the journey real volunteers are on.
+  if (version) {
+    for (const sql of [
+      `DELETE FROM stage_requirement_progress WHERE requirement_id = ANY($1)`,
+      `DELETE FROM hour_allocations WHERE requirement_id = ANY($1)`,
+    ]) {
+      // Logged, never swallowed. A cleanup failure that says nothing is how
+      // residue builds up in a database that also holds real people.
+      await c
+        .query(sql, [added])
+        .catch((e) => console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${(e as Error).message}`));
+    }
+    for (const sql of [
+      `DELETE FROM stage_requirements WHERE stage_id IN (SELECT id FROM journey_stages WHERE version_id = $1)`,
+      `DELETE FROM user_journey_assignments WHERE version_id = $1`,
+      `DELETE FROM journey_stages WHERE version_id = $1`,
+      `DELETE FROM journey_versions WHERE id = $1`,
+    ]) {
+      await c
+        .query(sql, [version])
+        .catch((e) => console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${(e as Error).message}`));
+    }
+  }
 
   const leftUsers = (await c.query<{ n: string }>(
     'SELECT count(*)::TEXT AS n FROM users WHERE email LIKE $1', [`${MARK}-%`])).rows[0].n;
-  const leftReqs = (await c.query<{ n: string }>(
-    'SELECT count(*)::TEXT AS n FROM stage_requirements')).rows[0].n;
-  console.log(`\ncleanup: ${leftUsers} probe users, ${leftReqs} requirements left on the live journey (expected 0, 0)`);
+  const onLive = (await c.query<{ n: string }>(`
+    SELECT count(*)::TEXT AS n FROM stage_requirements r
+      JOIN journey_stages s ON s.id = r.stage_id
+      JOIN journey_versions v ON v.id = s.version_id AND v.is_default`)).rows[0].n;
+  const spareVersions = (await c.query<{ n: string }>(
+    `SELECT count(*)::TEXT AS n FROM journey_versions WHERE name LIKE 'probe %'`)).rows[0].n;
+  console.log(
+    `\ncleanup: ${leftUsers} probe users, ${spareVersions} probe journey versions, ` +
+      `${onLive} requirements on the live journey (expected 0, 0, 0)`,
+  );
   await c.end();
 }
 
