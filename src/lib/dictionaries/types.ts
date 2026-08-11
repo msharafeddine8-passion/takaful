@@ -249,6 +249,67 @@ export type Account = {
     rejectHours: string;
     open: string;
     none: string;
+    dashboard: {
+      title: string;
+      lede: string;
+      members: string;
+      volunteers: string;
+      applicationsOpen: string;
+      hoursPending: string;
+      verifiedHours: string;
+      certificates: string;
+      coursesPassed: string;
+      newThisMonth: string;
+      goApplications: string;
+      goHours: string;
+      goMembers: string;
+      goAudit: string;
+      nothingWaiting: string;
+      waitingOn: string;
+    };
+    membersPage: {
+      title: string;
+      lede: string;
+      search: string;
+      searchGo: string;
+      colName: string;
+      colStatus: string;
+      colRoles: string;
+      colHours: string;
+      colStage: string;
+      colJoined: string;
+      noResults: string;
+      showing: string;
+      noRoles: string;
+    };
+    member: {
+      back: string;
+      roles: string;
+      grantRole: string;
+      grant: string;
+      revokeRole: string;
+      stages: string;
+      awardStage: string;
+      award: string;
+      hoursTitle: string;
+      certificatesTitle: string;
+      issueHoursCert: string;
+      noCertificates: string;
+      revoked: string;
+      selfNote: string;
+    };
+    audit: {
+      title: string;
+      lede: string;
+      filterAll: string;
+      colWhen: string;
+      colWho: string;
+      colAction: string;
+      colTarget: string;
+      colReason: string;
+      system: string;
+      empty: string;
+    };
   };
   verify: {
     title: string;
