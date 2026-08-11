@@ -219,6 +219,23 @@ export type Account = {
     correctionOf: string;
     backToAccount: string;
   };
+  certificate: {
+    awardedTo: string;
+    issuedOn: string;
+    codeLabel: string;
+    verifyAt: string;
+    scanToVerify: string;
+    print: string;
+    copyLink: string;
+    backToAccount: string;
+    revokedBanner: string;
+    notFound: string;
+    registration: string;
+    myCertificates: string;
+    myCertificatesLede: string;
+    none: string;
+    view: string;
+  };
   portal: {
     greeting: string;
     youAreIn: string;

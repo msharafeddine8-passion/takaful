@@ -188,8 +188,8 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
               {summary.latestCertificateCode}
             </p>
             <Arrow
-              href={`/${lang}/verify?code=${summary.latestCertificateCode}`}
-              label={dict.account.verify.check}
+              href={`/${lang}/certificates/${summary.latestCertificateCode}`}
+              label={dict.account.certificate.view}
             />
           </Panel>
         )}
@@ -200,6 +200,7 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
             { href: `/${lang}/account/hours`, label: dict.account.hours.title },
             { href: `/${lang}/account/activities`, label: dict.account.activities.mineTitle },
             { href: `/${lang}/opportunities`, label: dict.account.activities.title },
+            { href: `/${lang}/account/certificates`, label: dict.account.certificate.myCertificates },
             {
               href: `/${lang}/account/notifications`,
               // The count sits in the label rather than a floating badge: it
