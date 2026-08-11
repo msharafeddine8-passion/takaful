@@ -219,6 +219,25 @@ export type Account = {
     correctionOf: string;
     backToAccount: string;
   };
+  portal: {
+    greeting: string;
+    youAreIn: string;
+    stage: string;
+    nextStepTitle: string;
+    nothingNext: string;
+    summaryHours: string;
+    summaryCourses: string;
+    summaryActivities: string;
+    summaryCertificates: string;
+    pendingNote: string;
+    upcomingTitle: string;
+    continueLearningTitle: string;
+    continueCta: string;
+    latestCertificate: string;
+    exploreTitle: string;
+    exploreLede: string;
+    learnerNote: string;
+  };
   notifications: {
     title: string;
     lede: string;

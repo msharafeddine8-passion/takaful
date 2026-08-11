@@ -2,13 +2,16 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { connection } from 'next/server';
-import { isLocale } from '@/lib/i18n';
-import { getDictionary } from '@/lib/dictionaries';
+import { isLocale, type Locale } from '@/lib/i18n';
+import { getDictionary, type Dictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured, queryOne } from '@/lib/db';
-import { unreadCount } from '@/lib/notify';
+import { isStaff } from '@/lib/authz';
+import { portalSummary } from '@/lib/portal';
+import { formatDuration } from '@/lib/hours';
+import { COURSES } from '@/lib/courses';
 import { logoutAction } from '@/lib/actions/account';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account'>): Promise<Metadata> {
@@ -31,6 +34,7 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
   if (!isLocale(lang)) notFound();
   const dict = getDictionary(lang);
   const t = dict.account.dashboard;
+  const p = dict.account.portal;
 
   if (!isDbConfigured()) {
     return (
@@ -47,77 +51,152 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
 
-  const unread = await unreadCount(user.id);
-
-  const application = await queryOne<{ id: string; status: string; submitted_at: Date | null }>(
-    `SELECT id, status, submitted_at FROM volunteer_applications
-      WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1`,
-    [user.id],
-  );
+  const [summary, application] = await Promise.all([
+    portalSummary(user.id),
+    queryOne<{ id: string; status: string; submitted_at: Date | null }>(
+      `SELECT id, status, submitted_at FROM volunteer_applications
+        WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1`,
+      [user.id],
+    ),
+  ]);
 
   const hasOpenApplication = application ? APPLICATION_OPEN.includes(application.status) : false;
+  const journey = summary.journey;
+  const stage = journey?.currentStage ?? null;
+  const next = journey?.nextAction ?? null;
 
   return (
     <Section>
       <Container className="max-w-3xl">
         <Kicker>{t.kicker}</Kicker>
         <h1 className="mt-2.5 text-[clamp(1.7rem,1.3rem+1.6vw,2.4rem)] font-extrabold tracking-tight">
-          {t.greeting} {user.fullName}
+          {p.greeting} {user.fullName} 👋
         </h1>
 
-        {/* Status is the one thing a volunteer always wants to see first. */}
-        <div className="mt-8 rounded-2xl border border-line bg-surface p-6">
-          <h2 className="text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">{t.statusLabel}</h2>
-          <p className="mt-2 text-[1.35rem] font-extrabold text-brand-blue dark:text-brand-orange">
-            {dict.account.statuses[user.membershipStatus]}
-          </p>
-          <h3 className="mt-5 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">{t.nextStep}</h3>
-          <p className="mt-2 text-[1rem] leading-relaxed text-ink-2">
-            {dict.account.nextSteps[user.membershipStatus]}
-          </p>
-
-          {!hasOpenApplication && (
-            <Link
-              href={`/${lang}/account/apply`}
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-brand-orange px-6 py-3 text-[0.95rem] font-extrabold text-[#241503] transition-colors hover:bg-brand-orange-dark"
+        {/* Where they stand, in one line, before anything else. */}
+        {stage ? (
+          <div className="mt-6 rounded-2xl border border-line bg-surface p-6">
+            <p className="text-[0.95rem] text-ink-2">
+              {p.youAreIn}{' '}
+              <span className="font-extrabold text-ink">
+                {p.stage} {stage.number} — {lang === 'ar' ? stage.titleAr : stage.titleEn}
+              </span>
+            </p>
+            <div
+              className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-surface-2"
+              role="progressbar"
+              aria-valuenow={stage.percent}
+              aria-valuemin={0}
+              aria-valuemax={100}
             >
-              {t.applyCta}
-            </Link>
-          )}
-        </div>
-
-        <div className="mt-5 grid gap-5 sm:grid-cols-2">
-          <div className="rounded-2xl border border-line bg-surface p-6">
-            <h2 className="text-[1.05rem] font-extrabold">{t.coursesTitle}</h2>
-            <p className="mt-2 text-[0.95rem] leading-relaxed text-ink-2">{t.coursesLede}</p>
-            <Link
-              href={`/${lang}/academy`}
-              className="mt-4 inline-block font-bold text-brand-blue hover:underline dark:text-brand-orange"
-            >
-              {t.coursesCta} →
-            </Link>
-          </div>
-
-          {application && (
-            <div className="rounded-2xl border border-line bg-surface p-6">
-              <h2 className="text-[1.05rem] font-extrabold">{t.applicationTitle}</h2>
-              <p className="mt-2 text-[0.95rem] leading-relaxed text-ink-2">
-                {hasOpenApplication ? t.applyPending : dict.account.apply.alreadyTitle}
-              </p>
-              {application.submitted_at && (
-                <p className="mt-2 text-[0.88rem] text-ink-3" dir="ltr">
-                  {new Date(application.submitted_at).toISOString().slice(0, 10)}
-                </p>
-              )}
+              <div
+                className="h-full rounded-full bg-brand-orange"
+                style={{ width: `${stage.percent}%` }}
+              />
             </div>
+            <p className="mt-2 text-[0.88rem] font-bold text-ink-2">{stage.percent}%</p>
+          </div>
+        ) : (
+          <p className="mt-6 rounded-2xl border border-line bg-surface p-6 text-[1rem] leading-relaxed text-ink-2">
+            {p.learnerNote}
+          </p>
+        )}
+
+        {/* One next step. Not fifteen cards someone has to triage. */}
+        <div className="mt-5 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-6">
+          <p className="text-[0.78rem] font-extrabold tracking-[0.13em] text-brand-orange-dark dark:text-brand-orange">
+            {p.nextStepTitle}
+          </p>
+          {next ? (
+            <>
+              <p className="mt-2 text-[1.15rem] font-extrabold">
+                {lang === 'ar' ? next.requirement.labelAr : next.requirement.labelEn}
+              </p>
+              <NextLink lang={lang} dict={dict} req={next.requirement} />
+            </>
+          ) : hasOpenApplication ? (
+            <p className="mt-2 text-[1.02rem] leading-relaxed">{t.applyPending}</p>
+          ) : !journey ? (
+            <>
+              <p className="mt-2 text-[1.02rem] leading-relaxed">{t.nextStep}</p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Link
+                  href={`/${lang}/academy`}
+                  className="rounded-full bg-brand-orange px-6 py-3 text-[0.95rem] font-extrabold text-[#241503] hover:bg-brand-orange-dark"
+                >
+                  {t.coursesCta} →
+                </Link>
+                <Link
+                  href={`/${lang}/account/apply`}
+                  className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold hover:bg-surface-2"
+                >
+                  {t.applyCta}
+                </Link>
+              </div>
+            </>
+          ) : (
+            <p className="mt-2 text-[1.02rem] leading-relaxed">{p.nothingNext}</p>
           )}
         </div>
 
-        {/* Everything the portal can do, in one place. A volunteer should not
-            have to remember a URL to reach their own hours. */}
+        {/* Four figures. Enough to feel progress, few enough to read at a glance. */}
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Stat
+            label={p.summaryHours}
+            value={formatDuration(summary.verifiedMinutes, lang)}
+            note={
+              summary.pendingMinutes > 0
+                ? p.pendingNote.replace('{n}', formatDuration(summary.pendingMinutes, lang))
+                : undefined
+            }
+          />
+          <Stat label={p.summaryCourses} value={`${summary.coursesPassed} / ${summary.coursesTotal}`} />
+          <Stat label={p.summaryActivities} value={String(summary.activitiesAttended)} />
+          <Stat label={p.summaryCertificates} value={String(summary.certificates)} />
+        </div>
+
+        {summary.nextActivity && (
+          <Panel title={p.upcomingTitle}>
+            <p className="text-[1.05rem] font-extrabold">
+              {lang === 'ar' ? summary.nextActivity.title_ar : summary.nextActivity.title_en}
+            </p>
+            <p className="mt-1.5 text-[0.92rem] text-ink-2" dir="ltr">
+              {summary.nextActivity.starts_at &&
+                new Date(summary.nextActivity.starts_at).toISOString().slice(0, 16).replace('T', ' ')}
+              {summary.nextActivity.location ? ` · ${summary.nextActivity.location}` : ''}
+            </p>
+            <Arrow href={`/${lang}/account/activities`} label={dict.account.activities.mineTitle} />
+          </Panel>
+        )}
+
+        {summary.coursesInProgress && (
+          <Panel title={p.continueLearningTitle}>
+            <p className="text-[1.05rem] font-extrabold">
+              {COURSES.find((c) => c.slug === summary.coursesInProgress!.slug)?.title[lang] ??
+                summary.coursesInProgress.slug}
+            </p>
+            <Arrow
+              href={`/${lang}/academy/${summary.coursesInProgress.slug}`}
+              label={p.continueCta}
+            />
+          </Panel>
+        )}
+
+        {summary.latestCertificateCode && (
+          <Panel title={p.latestCertificate}>
+            <p className="font-mono text-[1.05rem] font-bold tracking-wider" dir="ltr">
+              {summary.latestCertificateCode}
+            </p>
+            <Arrow
+              href={`/${lang}/verify?code=${summary.latestCertificateCode}`}
+              label={dict.account.verify.check}
+            />
+          </Panel>
+        )}
+
         <nav className="mt-8 flex flex-wrap gap-3">
           {[
-            { href: `/${lang}/account/journey`, label: dict.account.journey.title },
+            journey ? { href: `/${lang}/account/journey`, label: dict.account.journey.title } : null,
             { href: `/${lang}/account/hours`, label: dict.account.hours.title },
             { href: `/${lang}/account/activities`, label: dict.account.activities.mineTitle },
             { href: `/${lang}/opportunities`, label: dict.account.activities.title },
@@ -126,19 +205,22 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
               // The count sits in the label rather than a floating badge: it
               // survives text zoom and reads correctly to a screen reader.
               label:
-                unread > 0
-                  ? `${dict.account.notifications.title} (${unread})`
+                summary.unreadNotifications > 0
+                  ? `${dict.account.notifications.title} (${summary.unreadNotifications})`
                   : dict.account.notifications.title,
             },
-          ].map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="rounded-full border border-line px-5 py-2.5 text-[0.92rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {l.label}
-            </Link>
-          ))}
+            isStaff(user) ? { href: `/${lang}/staff`, label: dict.account.staff.dashboard.title } : null,
+          ]
+            .filter((l) => l !== null)
+            .map((l) => (
+              <Link
+                key={l.href}
+                href={l.href as Parameters<typeof Link>[0]['href']}
+                className="rounded-full border border-line px-5 py-2.5 text-[0.92rem] font-bold transition-colors hover:bg-surface-2"
+              >
+                {l.label}
+              </Link>
+            ))}
         </nav>
 
         <form action={logoutAction} className="mt-8">
@@ -152,5 +234,60 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
         </form>
       </Container>
     </Section>
+  );
+}
+
+function Stat({ label, value, note }: { label: string; value: string; note?: string }) {
+  return (
+    <div className="rounded-2xl border border-line bg-surface p-5">
+      <p className="text-[0.75rem] font-bold tracking-[0.11em] text-ink-3">{label}</p>
+      <p className="mt-1.5 text-[1.35rem] font-extrabold">{value}</p>
+      {note && <p className="mt-1 text-[0.8rem] text-ink-3">{note}</p>}
+    </div>
+  );
+}
+
+function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="mt-5 rounded-2xl border border-line bg-surface p-6">
+      <h2 className="text-[0.78rem] font-bold tracking-[0.12em] text-ink-3">{title}</h2>
+      <div className="mt-2.5">{children}</div>
+    </section>
+  );
+}
+
+function Arrow({ href, label }: { href: string; label: string }) {
+  return (
+    <Link
+      href={href as Parameters<typeof Link>[0]['href']}
+      className="mt-3 inline-block font-bold text-brand-blue hover:underline dark:text-brand-orange"
+    >
+      {label} →
+    </Link>
+  );
+}
+
+function NextLink({
+  lang, dict, req,
+}: {
+  lang: Locale;
+  dict: Dictionary;
+  req: { kind: string; courseSlug: string | null };
+}) {
+  const j = dict.account.journey;
+  const href = req.courseSlug
+    ? `/${lang}/academy/${req.courseSlug}`
+    : req.kind === 'hours'
+      ? `/${lang}/opportunities`
+      : null;
+  if (!href) return null;
+
+  return (
+    <Link
+      href={href as Parameters<typeof Link>[0]['href']}
+      className="mt-4 inline-block rounded-full bg-brand-orange px-6 py-3 text-[0.95rem] font-extrabold text-[#241503] hover:bg-brand-orange-dark"
+    >
+      {req.courseSlug ? j.goToCourse : dict.account.activities.title} →
+    </Link>
   );
 }
