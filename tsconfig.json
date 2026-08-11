@@ -30,5 +30,9 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  // scripts/ is developer tooling run directly by Node, not part of the app.
+  // Those files import with explicit .ts extensions because Node requires it,
+  // which this config rightly rejects for application code. They are checked
+  // by scripts/tsconfig.json instead.
+  "exclude": ["node_modules", "scripts"]
 }

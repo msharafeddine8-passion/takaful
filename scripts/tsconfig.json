@@ -1,0 +1,31 @@
+{
+  // These scripts are run directly by Node, which requires the .ts extension
+  // in import paths. The application tsconfig rightly forbids that, so the
+  // scripts are excluded there and checked here instead - excluded is not the
+  // same as unchecked.
+  //
+  //   npx tsc -p scripts --noEmit
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "baseUrl": "..",
+    "paths": {
+      "@/*": ["./src/*"],
+      "server-only": ["./scripts/server-only.d.ts"]
+    }
+  },
+  // Only the scripts are listed: TypeScript follows their imports into src/
+  // on its own, so listing src/ as well would drag in React components that
+  // this Node-only config is not set up to check.
+  "include": ["**/*.mts", "**/*.ts"],
+  "exclude": ["node_modules"]
+}
