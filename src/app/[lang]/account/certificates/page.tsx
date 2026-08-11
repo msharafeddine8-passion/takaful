@@ -9,6 +9,7 @@ import { Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
 import { certificatesFor } from '@/lib/certificates';
+import { unissuedCourseCertificates, ensureCourseCertificate } from '@/lib/academy';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account/certificates'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -40,6 +41,19 @@ export default async function MyCertificatesPage(props: PageProps<'/[lang]/accou
 
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
+
+  /*
+   * Issue anything that is owed but missing before listing.
+   *
+   * A certificate is normally minted the moment someone passes. If that write
+   * fails — a dropped connection, a deploy mid-request — the pass is still in
+   * the ledger, and nobody should have to retake a ninety-minute course to
+   * get the paper for it. Almost always this finds nothing and costs one
+   * indexed query.
+   */
+  for (const slug of await unissuedCourseCertificates(user.id)) {
+    await ensureCourseCertificate(user.id, slug, user.fullName).catch(() => {});
+  }
 
   const certificates = await certificatesFor(user.id);
 

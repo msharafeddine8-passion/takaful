@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCourseProgress } from './CourseProgress';
 import { completeCourseAction, type CompleteResult } from '@/lib/actions/courses';
 import type { Locale } from '@/lib/i18n';
@@ -21,6 +22,8 @@ const UI = {
     signIn: 'سجّل الدخول لحفظ نتيجتك والحصول على شهادة.',
     signInCta: 'تسجيل الدخول',
     error: 'تعذّر الحفظ. حاول مرة أخرى.',
+    noAttempt: 'لم نجد محاولة مفتوحة. أعد تحميل الصفحة لتبدأ محاولة جديدة.',
+    retake: 'ابدأ محاولة جديدة',
     viewAccount: 'حسابي',
   },
   en: {
@@ -37,6 +40,8 @@ const UI = {
     signIn: 'Sign in to save your result and receive a certificate.',
     signInCta: 'Sign in',
     error: 'Could not save. Please try again.',
+    noAttempt: 'No attempt is open. Reload the page to start a new one.',
+    retake: 'Start a new attempt',
     viewAccount: 'My account',
   },
 } as const;
@@ -51,18 +56,21 @@ export function CourseFinish({
   passMark: number;
 }) {
   const progress = useCourseProgress();
+  const router = useRouter();
   const [result, setResult] = useState<CompleteResult | null>(null);
   const [pending, startTransition] = useTransition();
   const t = UI[lang];
 
   if (!progress) return null;
 
-  const done = Object.keys(progress.picks).length;
+  const done = progress.answered.size;
   const complete = done >= progress.total && progress.total > 0;
 
   function submit() {
     startTransition(async () => {
-      setResult(await completeCourseAction(slug, progress!.picks, lang));
+      // No answers are sent: they are already recorded, and the score is
+      // computed from those. The browser only says "I am finished".
+      setResult(await completeCourseAction(slug, lang));
     });
   }
 
@@ -97,11 +105,31 @@ export function CourseFinish({
         </div>
       )}
 
-      {result?.ok === false && result.reason !== 'unauthenticated' && (
-        <p role="alert" className="mt-4 text-[0.96rem] font-semibold text-red-600 dark:text-red-400">
-          {t.error}
-        </p>
+      {result?.ok === false && result.reason === 'no_attempt' && (
+        <div className="mt-4">
+          <p role="alert" className="text-[0.96rem] text-ink-2">
+            {t.noAttempt}
+          </p>
+          <button
+            type="button"
+            onClick={() => router.refresh()}
+            className="mt-3 rounded-full border border-line px-5 py-2.5 text-[0.92rem] font-bold hover:bg-surface-2"
+          >
+            {t.retake}
+          </button>
+        </div>
       )}
+
+      {result?.ok === false &&
+        result.reason !== 'unauthenticated' &&
+        result.reason !== 'no_attempt' && (
+          <p
+            role="alert"
+            className="mt-4 text-[0.96rem] font-semibold text-red-600 dark:text-red-400"
+          >
+            {t.error}
+          </p>
+        )}
 
       {result?.ok && (
         <div className="mt-4">
@@ -124,12 +152,25 @@ export function CourseFinish({
             </p>
           )}
 
-          <Link
-            href={`/${lang}/account`}
-            className="mt-4 inline-block font-bold text-brand-blue hover:underline dark:text-brand-orange"
-          >
-            {t.viewAccount} →
-          </Link>
+          <div className="mt-4 flex flex-wrap items-center gap-4">
+            <Link
+              href={`/${lang}/account`}
+              className="font-bold text-brand-blue hover:underline dark:text-brand-orange"
+            >
+              {t.viewAccount} →
+            </Link>
+            {!result.passed && (
+              // Reloading opens a fresh attempt, with the questions and the
+              // options in a new order.
+              <button
+                type="button"
+                onClick={() => router.refresh()}
+                className="rounded-full border border-line px-5 py-2.5 text-[0.92rem] font-bold hover:bg-surface-2"
+              >
+                {t.retake}
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>

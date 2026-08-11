@@ -1,21 +1,28 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { isLocale, locales, type Locale } from '@/lib/i18n';
+import { connection } from 'next/server';
+import { isLocale, type Locale } from '@/lib/i18n';
 import { getDictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section } from '@/components/ui';
 import { Quiz } from '@/components/Quiz';
 import { CourseProgressProvider } from '@/components/CourseProgress';
 import { CourseFinish } from '@/components/CourseFinish';
+import { ModuleRead } from '@/components/ModuleRead';
 import { COURSE_CONTENT } from '@/lib/course-content';
 import { COURSES } from '@/lib/courses';
-import type { Block } from '@/lib/course-content/types';
+import { isDbConfigured } from '@/lib/db';
+import { currentUser } from '@/lib/auth';
+import { startOrResumeAttempt, questionsIn, completedModules, type Attempt } from '@/lib/academy';
+import type { Block, CourseContent } from '@/lib/course-content/types';
 
-export function generateStaticParams() {
-  return locales.flatMap((lang) =>
-    Object.keys(COURSE_CONTENT).map((slug) => ({ lang, slug })),
-  );
-}
+/*
+ * This page used to be prerendered for both languages. It no longer can be:
+ * the order the quiz options appear in belongs to the reader's attempt, and
+ * the answers they have already given have to come back with the page. The
+ * catalogue at /academy is still static, which is where the search engines
+ * and the newcomers land.
+ */
 
 export async function generateMetadata(
   props: PageProps<'/[lang]/academy/[slug]'>,
@@ -43,7 +50,16 @@ const CALLOUT_TITLE = {
   stop: 'text-danger',
 } as const;
 
-function renderBlock(block: Block, lang: Locale, key: number) {
+/** Everything the quiz blocks need that the content itself cannot supply. */
+type QuizContext = {
+  slug: string;
+  /** Display order of the options, per question id. */
+  order: Record<string, number[]>;
+  /** What the server has already recorded, keyed by question id. */
+  previous: Record<string, { displayedIndex: number; correct: boolean; feedback: string }>;
+};
+
+function renderBlock(block: Block, lang: Locale, key: number, quiz: QuizContext) {
   switch (block.type) {
     case 'text':
       return (
@@ -125,35 +141,73 @@ function renderBlock(block: Block, lang: Locale, key: number) {
         </div>
       );
 
-    case 'quiz':
+    case 'quiz': {
+      // Fall back to the authored order for a visitor with no attempt open.
+      const order = quiz.order[block.id] ?? block.options.map((_, i) => i);
       return (
         <Quiz
           key={key}
           lang={lang}
+          slug={quiz.slug}
           id={block.id}
           label={block.label[lang]}
           question={block.question[lang]}
           scenario={block.scenario?.[lang]}
-          options={block.options.map((o) => o[lang])}
-          correct={block.correct}
-          feedback={block.feedback[lang]}
+          options={order.map((original) => block.options[original][lang])}
+          previous={quiz.previous[block.id]}
         />
       );
+    }
   }
 }
 
 export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug]'>) {
+  await connection();
   const { lang, slug } = await props.params;
   if (!isLocale(lang)) notFound();
   const course = COURSE_CONTENT[slug];
   if (!course) notFound();
   const dict = getDictionary(lang);
   const isApproved = COURSES.find((c) => c.slug === slug)?.status === 'available';
+  const questions = questionsIn(slug);
   // The finish bar needs to know how many answers make a complete attempt.
-  const questionCount = course.modules.reduce(
-    (n, mod) => n + mod.blocks.filter((b) => b.type === 'quiz').length,
-    0,
-  );
+  const questionCount = questions.length;
+
+  const user = isDbConfigured() ? await currentUser() : null;
+
+  /*
+   * Opening the page opens the attempt. It has to happen here rather than on
+   * the first tap, because the option order shown must be the order the
+   * server grades against. startOrResumeAttempt returns the attempt already
+   * in progress if there is one, and a unique index makes a double render
+   * harmless, so this stays safe to repeat.
+   */
+  let attempt: Attempt | null = null;
+  let readModules: string[] = [];
+  if (user && isApproved && questionCount > 0) {
+    [attempt, readModules] = await Promise.all([
+      startOrResumeAttempt(user.id, slug),
+      completedModules(user.id, slug),
+    ]);
+  } else if (user) {
+    readModules = await completedModules(user.id, slug);
+  }
+
+  const quizContext: QuizContext = { slug, order: {}, previous: {} };
+  if (attempt) {
+    quizContext.order = attempt.option_order;
+    for (const q of questions) {
+      const original = attempt.answers[q.id];
+      if (original === undefined) continue;
+      const order = attempt.option_order[q.id] ?? q.options.map((_, i) => i);
+      quizContext.previous[q.id] = {
+        displayedIndex: Math.max(0, order.indexOf(original)),
+        correct: original === q.correct,
+        feedback: q.feedback[lang],
+      };
+    }
+  }
+  const answeredIds = Object.keys(quizContext.previous);
 
   const t = {
     ar: {
@@ -228,7 +282,13 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
 
           {/* Quizzes report their answers up to this provider so the finish
               bar below can send them all at once for server-side scoring. */}
-          <CourseProgressProvider totalQuestions={questionCount}>
+          {/* Where they stopped last time, so a ninety-minute course read on a
+              phone does not start from the top every evening. */}
+          {user && readModules.length > 0 && readModules.length < course.modules.length && (
+            <ResumeBar lang={lang} course={course} read={readModules} />
+          )}
+
+          <CourseProgressProvider totalQuestions={questionCount} initiallyAnswered={answeredIds}>
           {course.modules.map((mod) => (
             <section key={mod.id} className="mb-14 scroll-mt-24" id={mod.id}>
               <p className="text-[0.76rem] font-extrabold tracking-[0.14em] text-brand-orange-dark dark:text-brand-orange">
@@ -240,7 +300,15 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
               <p className="mb-7 mt-3 max-w-[64ch] text-[1.05rem] leading-relaxed text-ink-2">
                 {mod.lede[lang]}
               </p>
-              {mod.blocks.map((b, i) => renderBlock(b, lang, i))}
+              {mod.blocks.map((b, i) => renderBlock(b, lang, i, quizContext))}
+              {user && (
+                <ModuleRead
+                  lang={lang}
+                  slug={slug}
+                  moduleId={mod.id}
+                  done={readModules.includes(mod.id)}
+                />
+              )}
             </section>
           ))}
 
@@ -264,5 +332,42 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
         </Container>
       </Section>
     </>
+  );
+}
+
+function ResumeBar({
+  lang,
+  course,
+  read,
+}: {
+  lang: Locale;
+  course: CourseContent;
+  read: string[];
+}) {
+  const next = course.modules.find((m) => !read.includes(m.id));
+  if (!next) return null;
+
+  const t = {
+    ar: {
+      title: 'أكملت',
+      of: 'من',
+      unit: 'وحدات',
+      cta: 'تابع من',
+    },
+    en: { title: 'You finished', of: 'of', unit: 'modules', cta: 'Continue from' },
+  }[lang];
+
+  return (
+    <div className="mb-10 rounded-2xl border-2 border-brand-blue/30 bg-brand-blue/[0.06] p-5">
+      <p className="text-[0.94rem] font-bold text-ink-2">
+        {t.title} {read.length} {t.of} {course.modules.length} {t.unit}
+      </p>
+      <a
+        href={`#${next.id}`}
+        className="mt-2 inline-block text-[1.02rem] font-extrabold text-brand-blue hover:underline dark:text-sky-300"
+      >
+        {t.cta}: {next.title[lang]} →
+      </a>
+    </div>
   );
 }
