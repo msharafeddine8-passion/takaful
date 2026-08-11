@@ -250,6 +250,23 @@ export type Account = {
     open: string;
     none: string;
   };
+  verify: {
+    title: string;
+    lede: string;
+    codeLabel: string;
+    codePlaceholder: string;
+    check: string;
+    validTitle: string;
+    holder: string;
+    issued: string;
+    codeLabelShort: string;
+    notFoundTitle: string;
+    notFound: string;
+    revokedTitle: string;
+    revoked: string;
+    revokedOn: string;
+    disclaimer: string;
+  };
   statuses: StatusLabels;
   /** What the person should do next, keyed by status. */
   nextSteps: StatusLabels;
