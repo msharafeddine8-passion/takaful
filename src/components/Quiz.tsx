@@ -2,9 +2,12 @@
 
 import { useState } from 'react';
 import type { Locale } from '@/lib/i18n';
+import { useCourseProgress } from './CourseProgress';
 
 type Props = {
   lang: Locale;
+  /** Stable question id, used to report the answer for server-side scoring. */
+  id?: string;
   label: string;
   question: string;
   scenario?: string;
@@ -18,11 +21,17 @@ const UI = {
   en: { right: '✓ Correct', wrong: '✗ Not the best answer' },
 } as const;
 
-export function Quiz({ lang, label, question, scenario, options, correct, feedback }: Props) {
+export function Quiz({ lang, id, label, question, scenario, options, correct, feedback }: Props) {
   const [picked, setPicked] = useState<number | null>(null);
+  const progress = useCourseProgress();
   const answered = picked !== null;
   const isRight = picked === correct;
   const letters = lang === 'ar' ? ['أ', 'ب', 'ج', 'د'] : ['A', 'B', 'C', 'D'];
+
+  function choose(index: number) {
+    setPicked(index);
+    if (id && progress) progress.pick(id, index);
+  }
 
   return (
     <div className="my-7 rounded-2xl border border-line bg-surface p-6">
@@ -44,7 +53,7 @@ export function Quiz({ lang, label, question, scenario, options, correct, feedba
               key={i}
               type="button"
               disabled={answered}
-              onClick={() => setPicked(i)}
+              onClick={() => choose(i)}
               aria-pressed={picked === i}
               className={`flex items-start gap-3 rounded-xl border-[1.5px] p-3.5 text-start text-[0.96rem] transition-colors ${
                 showCorrect
