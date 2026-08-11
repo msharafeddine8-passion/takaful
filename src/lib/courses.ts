@@ -56,13 +56,11 @@ export const COURSES: Course[] = [
   {
     slug: 'working-with-children',
     level: 1,
-    // Approved by the association along with the rest, but held back until
-    // ORG.safeguardingFocalPoint is filled in. The course tells trainees four
-    // times to report a disclosure to "your organisation's safeguarding focal
-    // point", and its own text says it is incomplete without that name and a
-    // direct number. Publishing it unnamed would teach a fifteen-year-old to
-    // report child abuse to nobody. Set the focal point, then flip this line.
-    status: 'draft',
+    // Publishable now that ORG.safeguardingFocalPoint names someone: the course
+    // tells trainees four times to report a disclosure, and it can finally say
+    // to whom. The number is the association's main line rather than a direct
+    // one, which is a compromise worth revisiting.
+    status: 'available',
     minutes: 90,
     title: { ar: 'التعامل مع الأطفال', en: 'Working with Children' },
     summary: {
