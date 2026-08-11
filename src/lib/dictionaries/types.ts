@@ -309,6 +309,11 @@ export type Account = {
     quietLede: string;
     quietDays: string;
     empty: string;
+    exportTitle: string;
+    exportLede: string;
+    exportMembers: string;
+    exportHours: string;
+    exportActivities: string;
   };
   recovery: {
     forgotLink: string;

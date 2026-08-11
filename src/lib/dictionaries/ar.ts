@@ -434,6 +434,12 @@ export const ar: Dictionary = {
       quietLede: 'متطوّعون فاعلون لم تُوثّق لهم ساعة منذ هذه المدة. هذا الرقم يقول إن كان أحد قد ضاع منّا.',
       quietDays: 'منذ {n} يومًا',
       empty: 'لا بيانات بعد.',
+      exportTitle: 'تصدير',
+      exportLede:
+        'ملفات CSV للتقارير. تُسجَّل كل عملية تصدير في سجل التدقيق باسمك — ملف فيه أسماء أعضاء يغادر النظام حدثٌ يُسأل عنه لاحقًا.',
+      exportMembers: 'الأعضاء',
+      exportHours: 'الساعات',
+      exportActivities: 'الأنشطة',
     },
     recovery: {
       forgotLink: 'نسيت كلمة المرور؟',

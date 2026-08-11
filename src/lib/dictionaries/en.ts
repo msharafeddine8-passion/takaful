@@ -435,6 +435,12 @@ export const en: Dictionary = {
         'Active volunteers with no verified hours in this long. This is the number that says whether anyone has been lost track of.',
       quietDays: 'In {n} days',
       empty: 'No data yet.',
+      exportTitle: 'Export',
+      exportLede:
+        'CSV files for reporting. Every export is written to the audit log against your name — a file of members’ names leaving the system is an event worth being able to ask about later.',
+      exportMembers: 'Members',
+      exportHours: 'Hours',
+      exportActivities: 'Activities',
     },
     recovery: {
       forgotLink: 'Forgot your password?',

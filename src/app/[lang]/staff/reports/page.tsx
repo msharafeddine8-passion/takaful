@@ -182,6 +182,28 @@ export default async function ReportsPage(props: PageProps<'/[lang]/staff/report
           </div>
         </Panel>
 
+        <Panel title={t.exportTitle} lede={t.exportLede}>
+          {/* Plain anchors, not Link: these are file downloads, and a client
+              navigation would try to render a CSV as a page. */}
+          <div className="flex flex-wrap gap-3">
+            {can(user, 'members.manage') && (
+              <a href="/api/export/members" className={DOWNLOAD}>
+                {t.exportMembers} · CSV
+              </a>
+            )}
+            {can(user, 'hours.verify') && (
+              <a href="/api/export/hours" className={DOWNLOAD}>
+                {t.exportHours} · CSV
+              </a>
+            )}
+            {can(user, 'activities.manage') && (
+              <a href="/api/export/activities" className={DOWNLOAD}>
+                {t.exportActivities} · CSV
+              </a>
+            )}
+          </div>
+        </Panel>
+
         <Panel title={t.quietTitle} lede={t.quietLede}>
           <div className="grid gap-4 sm:grid-cols-3">
             {quiet.map((q) => (
@@ -198,6 +220,9 @@ export default async function ReportsPage(props: PageProps<'/[lang]/staff/report
     </Section>
   );
 }
+
+const DOWNLOAD =
+  'rounded-full border border-line bg-ground px-5 py-2.5 text-[0.92rem] font-bold transition-colors hover:bg-surface-2';
 
 function Panel({
   title,
