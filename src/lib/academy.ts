@@ -332,6 +332,54 @@ export async function unissuedCourseCertificates(userId: string): Promise<string
   return rows.map((r) => r.course_slug);
 }
 
+export type CourseStanding = {
+  course_slug: string;
+  attempts: number;
+  best_score: number | null;
+  passed: boolean;
+  last_attempt_at: Date | null;
+  open_answered: number | null;
+  modules_read: number;
+};
+
+/**
+ * Where someone stands in every course they have touched.
+ *
+ * One query rather than one per course: the account page shows the whole
+ * catalogue, and a request that grows with the catalogue is a request that
+ * gets slower every time content is added.
+ */
+export async function learningStanding(userId: string): Promise<Map<string, CourseStanding>> {
+  const rows = await query<CourseStanding>(
+    `WITH attempts AS (
+       SELECT course_slug,
+              (count(*) FILTER (WHERE submitted_at IS NOT NULL))::INTEGER AS attempts,
+              MAX(score) FILTER (WHERE submitted_at IS NOT NULL)          AS best_score,
+              COALESCE(bool_or(passed), false)                            AS passed,
+              MAX(submitted_at)                                           AS last_attempt_at,
+              -- Parenthesised so the cast applies to the aggregate and not to
+              -- the FILTER clause, and because MAX over count(*) is a bigint,
+              -- which the driver would otherwise hand back as a string.
+              (MAX((SELECT count(*) FROM jsonb_object_keys(answers)))
+                 FILTER (WHERE submitted_at IS NULL))::INTEGER            AS open_answered
+         FROM course_attempts WHERE user_id = $1 GROUP BY course_slug
+     ), modules AS (
+       SELECT course_slug, count(*)::INTEGER AS modules_read
+         FROM course_module_progress WHERE user_id = $1 GROUP BY course_slug
+     )
+     SELECT COALESCE(a.course_slug, m.course_slug)   AS course_slug,
+            COALESCE(a.attempts, 0)                  AS attempts,
+            a.best_score,
+            COALESCE(a.passed, false)                AS passed,
+            a.last_attempt_at,
+            a.open_answered,
+            COALESCE(m.modules_read, 0)              AS modules_read
+       FROM attempts a FULL OUTER JOIN modules m ON m.course_slug = a.course_slug`,
+    [userId],
+  );
+  return new Map(rows.map((r) => [r.course_slug, r]));
+}
+
 export type AttemptSummary = {
   started_at: Date;
   submitted_at: Date | null;

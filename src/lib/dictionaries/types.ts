@@ -270,6 +270,29 @@ export type Account = {
     none: string;
     view: string;
   };
+  learning: {
+    title: string;
+    lede: string;
+    notStarted: string;
+    inProgress: string;
+    passed: string;
+    failed: string;
+    draft: string;
+    bestScore: string;
+    passMark: string;
+    attempts: string;
+    modulesRead: string;
+    lastAttempt: string;
+    start: string;
+    resume: string;
+    retake: string;
+    review: string;
+    certificate: string;
+    historyTitle: string;
+    ongoing: string;
+    answeredOf: string;
+    empty: string;
+  };
   portal: {
     greeting: string;
     youAreIn: string;

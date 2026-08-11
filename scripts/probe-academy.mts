@@ -19,6 +19,7 @@ import {
   attemptHistory,
   ensureCourseCertificate,
   unissuedCourseCertificates,
+  learningStanding,
 } from '../src/lib/academy.ts';
 
 const c = new Client({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 15_000 });
@@ -222,6 +223,41 @@ try {
   await markModuleRead(learner, SLUG, realModule);
   const read = await completedModules(learner, SLUG);
   check('a real one is, once', read.length === 1 && read[0] === realModule, read.join(','));
+
+  console.log('\n--- the account page view of all this ---');
+  const standing = await learningStanding(learner);
+  const s = standing.get(SLUG);
+  check('the course they worked on is there', s !== undefined);
+  check('with both attempts counted', s?.attempts === 2, s?.attempts);
+  check('attempts is a number', typeof s?.attempts === 'number', typeof s?.attempts);
+  check('best score is the best, not the last', s?.best_score === 100, s?.best_score);
+  check('and it knows they passed', s?.passed === true);
+  check('modules read is a number, not a string', typeof s?.modules_read === 'number', typeof s?.modules_read);
+  check('and counts the one they finished', s?.modules_read === 1, s?.modules_read);
+  check('no open attempt is reported once both are submitted', s?.open_answered === null, String(s?.open_answered));
+  check('a course never touched is absent, not zeroed', standing.get('teamwork') === undefined);
+
+  // A course read but never attempted must still appear, which is what the
+  // full outer join is for — an inner join would hide it.
+  await markModuleRead(learner, 'teamwork', questionsIn('teamwork')[0].moduleId);
+  const standing2 = await learningStanding(learner);
+  const readOnly = standing2.get('teamwork');
+  check('a course read but not attempted still shows up', readOnly !== undefined);
+  check('with no attempts', readOnly?.attempts === 0, readOnly?.attempts);
+  check('and not marked passed', readOnly?.passed === false);
+  check('and its module counted', readOnly?.modules_read === 1, readOnly?.modules_read);
+
+  // And an attempt still open must report how far in they are.
+  await startOrResumeAttempt(learner, 'teamwork');
+  const tq = questionsIn('teamwork')[0];
+  const tOrder = (await openAttemptFor(learner, 'teamwork'))!.option_order[tq.id];
+  await recordAnswer(learner, 'teamwork', tq.id, tOrder.indexOf(tq.correct), 'ar');
+  const standing3 = await learningStanding(learner);
+  check(
+    'an open attempt reports how many questions are answered so far',
+    standing3.get('teamwork')?.open_answered === 1,
+    standing3.get('teamwork')?.open_answered,
+  );
 } finally {
   console.log('\n--- cleanup ---');
   await c.query('DELETE FROM certificates WHERE user_id = $1', [learner]);
