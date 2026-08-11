@@ -219,6 +219,37 @@ export type Account = {
     correctionOf: string;
     backToAccount: string;
   };
+  staff: {
+    kicker: string;
+    title: string;
+    lede: string;
+    forbidden: string;
+    applicationsTitle: string;
+    applicationsLede: string;
+    hoursTitle: string;
+    hoursLede: string;
+    queueEmpty: string;
+    applicant: string;
+    submitted: string;
+    age: string;
+    city: string;
+    motivation: string;
+    availability: string;
+    interests: string;
+    experience: string;
+    guardian: string;
+    claim: string;
+    accept: string;
+    waitlist: string;
+    reject: string;
+    reasonLabel: string;
+    reasonHint: string;
+    decide: string;
+    verify: string;
+    rejectHours: string;
+    open: string;
+    none: string;
+  };
   statuses: StatusLabels;
   /** What the person should do next, keyed by status. */
   nextSteps: StatusLabels;
