@@ -670,6 +670,19 @@ export const en: Dictionary = {
         noCertificates: 'No certificates yet.',
         revoked: 'Revoked',
         selfNote: 'You cannot grant yourself a role or a stage — the database refuses it, not just this screen.',
+        accessTitle: 'Account access',
+        accessActive: 'Account is active',
+        accessSuspended: 'Account is suspended',
+        accessDeactivated: 'Account is closed',
+        suspend: 'Suspend the account',
+        suspendNote:
+          'Access ends immediately and every open session is signed out, on every device. It does not wait for their next sign-in.',
+        reactivate: 'Reactivate the account',
+        reactivateNote:
+          'Access returns, and the membership status is recorded as inactive volunteer — someone coming back after a suspension is returning, not carrying on.',
+        reasonLabel: 'Reason',
+        reasonPlaceholder: 'Recorded against your name.',
+        lastAdminNote: 'The last super administrator cannot be suspended — nobody would be left to undo it.',
       },
       journeyBuilder: {
         title: 'Journey Builder',

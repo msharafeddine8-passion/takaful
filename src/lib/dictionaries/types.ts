@@ -540,6 +540,17 @@ export type Account = {
       noCertificates: string;
       revoked: string;
       selfNote: string;
+      accessTitle: string;
+      accessActive: string;
+      accessSuspended: string;
+      accessDeactivated: string;
+      suspend: string;
+      suspendNote: string;
+      reactivate: string;
+      reactivateNote: string;
+      reasonLabel: string;
+      reasonPlaceholder: string;
+      lastAdminNote: string;
     };
     journeyBuilder: {
       title: string;

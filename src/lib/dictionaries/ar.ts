@@ -668,6 +668,19 @@ export const ar: Dictionary = {
         noCertificates: 'لا شهادات بعد.',
         revoked: 'ملغاة',
         selfNote: 'لا يمكنك منح نفسك دورًا أو مرحلة — القاعدة ترفض ذلك، لا الواجهة فقط.',
+        accessTitle: 'الوصول إلى الحساب',
+        accessActive: 'الحساب فعّال',
+        accessSuspended: 'الحساب موقوف',
+        accessDeactivated: 'الحساب مغلق',
+        suspend: 'أوقف الحساب',
+        suspendNote:
+          'يُقفل الحساب فورًا وتُنهى كل جلساته المفتوحة على أي جهاز. لا ينتظر تسجيل الدخول التالي.',
+        reactivate: 'أعد تفعيل الحساب',
+        reactivateNote:
+          'يعود الوصول، وتُسجَّل الحالة كـ«متطوّع غير نشط» — العائد بعد إيقاف عائد، لا مكمّل.',
+        reasonLabel: 'السبب',
+        reasonPlaceholder: 'يُحفظ في السجل باسمك.',
+        lastAdminNote: 'لا يمكن إيقاف آخر مدير عام — لن يبقى من يعيد تفعيله.',
       },
       journeyBuilder: {
         title: 'بنّاء المسار',

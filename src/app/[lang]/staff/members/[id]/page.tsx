@@ -10,7 +10,13 @@ import { can } from '@/lib/authz';
 import { isDbConfigured, query, queryOne } from '@/lib/db';
 import { entriesFor, verifiedMinutes, formatDuration } from '@/lib/hours';
 import { certificatesFor } from '@/lib/certificates';
-import { grantRoleAction, revokeRoleAction, awardStageAction } from '@/lib/actions/members';
+import {
+  grantRoleAction,
+  revokeRoleAction,
+  awardStageAction,
+  suspendMemberAction,
+  reactivateMemberAction,
+} from '@/lib/actions/members';
 import { issueHoursCertificateAction } from '@/lib/actions/certificates';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -48,8 +54,13 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
     );
   }
 
-  const person = await queryOne<{ full_name: string; email: string; created_at: Date }>(
-    `SELECT p.full_name, u.email, u.created_at
+  const person = await queryOne<{
+    full_name: string;
+    email: string;
+    created_at: Date;
+    status: string;
+  }>(
+    `SELECT p.full_name, u.email, u.created_at, u.status
        FROM users u JOIN profiles p ON p.user_id = u.id WHERE u.id = $1`,
     [id],
   );
@@ -94,6 +105,84 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
             {mm.selfNote}
           </p>
         )}
+
+        <section className="mt-8 rounded-2xl border border-line bg-surface p-6">
+          <h2 className="text-[1.1rem] font-extrabold">{mm.accessTitle}</h2>
+          <p
+            className={`mt-2 inline-block rounded-full px-3.5 py-1.5 text-[0.85rem] font-extrabold ${
+              person.status === 'active'
+                ? 'bg-ok/15 text-ok'
+                : person.status === 'suspended'
+                  ? 'bg-danger/12 text-danger'
+                  : 'bg-surface-2 text-ink-3'
+            }`}
+          >
+            {person.status === 'active'
+              ? mm.accessActive
+              : person.status === 'suspended'
+                ? mm.accessSuspended
+                : mm.accessDeactivated}
+          </p>
+
+          {/* Not offered for a closed account. Someone who left is a
+              conversation, not a button. */}
+          {!isSelf && person.status === 'active' && (
+            <form action={suspendMemberAction} className="mt-4">
+              <input type="hidden" name="lang" value={lang} />
+              <input type="hidden" name="userId" value={id} />
+              <p className="mb-3 max-w-[58ch] text-[0.9rem] leading-relaxed text-ink-2">
+                {mm.suspendNote}
+              </p>
+              <label htmlFor="suspend-reason" className="mb-1.5 block text-[0.88rem] font-bold">
+                {mm.reasonLabel}
+              </label>
+              <input
+                id="suspend-reason"
+                name="reason"
+                type="text"
+                required
+                minLength={3}
+                placeholder={mm.reasonPlaceholder}
+                className="w-full max-w-[34rem] rounded-xl border border-line bg-ground px-4 py-2.5 text-[0.95rem] outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/25"
+              />
+              <button
+                type="submit"
+                className="mt-3 block rounded-full bg-danger px-6 py-2.5 text-[0.92rem] font-extrabold text-white hover:opacity-90"
+              >
+                {mm.suspend}
+              </button>
+              <p className="mt-2.5 text-[0.82rem] text-ink-3">{mm.lastAdminNote}</p>
+            </form>
+          )}
+
+          {person.status === 'suspended' && (
+            <form action={reactivateMemberAction} className="mt-4">
+              <input type="hidden" name="lang" value={lang} />
+              <input type="hidden" name="userId" value={id} />
+              <p className="mb-3 max-w-[58ch] text-[0.9rem] leading-relaxed text-ink-2">
+                {mm.reactivateNote}
+              </p>
+              <label htmlFor="reactivate-reason" className="mb-1.5 block text-[0.88rem] font-bold">
+                {mm.reasonLabel}
+              </label>
+              <input
+                id="reactivate-reason"
+                name="reason"
+                type="text"
+                required
+                minLength={3}
+                placeholder={mm.reasonPlaceholder}
+                className="w-full max-w-[34rem] rounded-xl border border-line bg-ground px-4 py-2.5 text-[0.95rem] outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/25"
+              />
+              <button
+                type="submit"
+                className="mt-3 block rounded-full bg-brand-orange px-6 py-2.5 text-[0.92rem] font-extrabold text-[#241503] hover:bg-brand-orange-dark"
+              >
+                {mm.reactivate}
+              </button>
+            </form>
+          )}
+        </section>
 
         <h2 className="mt-9 text-[1.1rem] font-extrabold">{mm.roles}</h2>
         <div className="mt-3 flex flex-wrap gap-2">
