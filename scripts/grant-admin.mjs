@@ -61,7 +61,12 @@ await c.query(
   [
     u.id,
     JSON.stringify({ role: ROLE }),
-    'Bootstrap: the first administrator, inserted directly because the schema forbids a self-grant and no other admin existed.',
+    // In Arabic, like every other reason in this table. Reasons are free text
+    // written by whoever acted, and the people reading the audit page are the
+    // association's staff — an English sentence sitting among Arabic ones is
+    // not a translation problem to solve in the UI, it is a row that was
+    // written in the wrong language.
+    'تأسيس: أول مدير للنظام، أُدخل مباشرةً لأن قاعدة البيانات ترفض أن يمنح أحد الصلاحية لنفسه ولم يكن هناك مدير آخر ليمنحها.',
   ],
 );
 
