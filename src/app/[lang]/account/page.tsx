@@ -201,6 +201,8 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
             { href: `/${lang}/account/activities`, label: dict.account.activities.mineTitle },
             { href: `/${lang}/opportunities`, label: dict.account.activities.title },
             { href: `/${lang}/account/certificates`, label: dict.account.certificate.myCertificates },
+            { href: `/${lang}/account/profile`, label: dict.account.profile.title },
+            journey ? { href: `/${lang}/account/card`, label: dict.account.card.title } : null,
             {
               href: `/${lang}/account/notifications`,
               // The count sits in the label rather than a floating badge: it

@@ -6,7 +6,7 @@ import { getDictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section, Kicker } from '@/components/ui';
 import { isDbConfigured } from '@/lib/db';
-import { findByCode, normaliseCode } from '@/lib/certificates';
+import { findByCode, findMember, normaliseCode } from '@/lib/certificates';
 
 export async function generateMetadata(props: PageProps<'/[lang]/verify'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -30,13 +30,21 @@ export default async function VerifyPage(props: PageProps<'/[lang]/verify'>) {
   await connection();
   const { lang } = await props.params;
   if (!isLocale(lang)) notFound();
-  const { code: rawCode } = await props.searchParams;
+  const { code: rawCode, member: rawMember } = await props.searchParams;
   const dict = getDictionary(lang);
   const t = dict.account.verify;
 
   const submitted = typeof rawCode === 'string' ? rawCode.trim() : '';
   const certificate =
     submitted && isDbConfigured() ? await findByCode(submitted) : null;
+
+  // The membership card's QR arrives here with ?member=NNNN.
+  const memberNumber =
+    typeof rawMember === 'string' && /^\d{1,9}$/.test(rawMember.trim())
+      ? Number.parseInt(rawMember.trim(), 10)
+      : null;
+  const member =
+    memberNumber !== null && isDbConfigured() ? await findMember(memberNumber) : null;
 
   return (
     <Section>
@@ -72,6 +80,39 @@ export default async function VerifyPage(props: PageProps<'/[lang]/verify'>) {
             </button>
           </div>
         </form>
+
+        {/* A scanned membership card. Confirms the card is genuine and who it
+            belongs to, and stops there — a stranger with a number should not
+            learn anything else about a volunteer. */}
+        {memberNumber !== null && (
+          <div
+            className={`mt-8 rounded-2xl border p-6 ${
+              member && member.status === 'active'
+                ? 'border-emerald-400 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30'
+                : 'border-line bg-surface-2'
+            }`}
+          >
+            <h2 className="text-[1.15rem] font-extrabold">
+              {member && member.status === 'active' ? t.validTitle : t.notFoundTitle}
+            </h2>
+            {member && member.status === 'active' ? (
+              <dl className="mt-4 space-y-1.5 text-[0.96rem]">
+                <Row label={t.holder} value={member.full_name} />
+                <Row
+                  label={dict.account.card.memberNumber}
+                  value={String(member.member_number)}
+                  ltr
+                  mono
+                />
+                {member.stage !== null && (
+                  <Row label={dict.account.card.stage} value={String(member.stage)} ltr />
+                )}
+              </dl>
+            ) : (
+              <p className="mt-2 leading-relaxed text-ink-2">{t.notFound}</p>
+            )}
+          </div>
+        )}
 
         {submitted && !certificate && (
           <div className="mt-8 rounded-2xl border border-line bg-surface-2 p-6">

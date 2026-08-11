@@ -219,6 +219,40 @@ export type Account = {
     correctionOf: string;
     backToAccount: string;
   };
+  profile: {
+    title: string;
+    lede: string;
+    photo: string;
+    photoAdd: string;
+    photoChange: string;
+    photoSaving: string;
+    photoHint: string;
+    photoTooLarge: string;
+    photoBadType: string;
+    photoRemove: string;
+    fullName: string;
+    displayName: string;
+    bio: string;
+    interests: string;
+    skills: string;
+    languages: string;
+    save: string;
+    saved: string;
+    memberNumber: string;
+    noMemberNumber: string;
+    cardCta: string;
+  };
+  card: {
+    title: string;
+    lede: string;
+    memberSince: string;
+    memberNumber: string;
+    stage: string;
+    notMember: string;
+    notMemberCta: string;
+    print: string;
+    validNote: string;
+  };
   certificate: {
     awardedTo: string;
     issuedOn: string;
