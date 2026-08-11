@@ -219,6 +219,17 @@ export type Account = {
     correctionOf: string;
     backToAccount: string;
   };
+  notifications: {
+    title: string;
+    lede: string;
+    empty: string;
+    markAllRead: string;
+    unread: string;
+    justNow: string;
+    minutesAgo: string;
+    hoursAgo: string;
+    daysAgo: string;
+  };
   activities: {
     kicker: string;
     title: string;

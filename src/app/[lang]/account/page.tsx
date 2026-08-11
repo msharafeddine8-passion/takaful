@@ -8,6 +8,7 @@ import { alternatesFor } from '@/lib/seo';
 import { Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured, queryOne } from '@/lib/db';
+import { unreadCount } from '@/lib/notify';
 import { logoutAction } from '@/lib/actions/account';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account'>): Promise<Metadata> {
@@ -45,6 +46,8 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
 
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
+
+  const unread = await unreadCount(user.id);
 
   const application = await queryOne<{ id: string; status: string; submitted_at: Date | null }>(
     `SELECT id, status, submitted_at FROM volunteer_applications
@@ -118,6 +121,15 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
             { href: `/${lang}/account/hours`, label: dict.account.hours.title },
             { href: `/${lang}/account/activities`, label: dict.account.activities.mineTitle },
             { href: `/${lang}/opportunities`, label: dict.account.activities.title },
+            {
+              href: `/${lang}/account/notifications`,
+              // The count sits in the label rather than a floating badge: it
+              // survives text zoom and reads correctly to a screen reader.
+              label:
+                unread > 0
+                  ? `${dict.account.notifications.title} (${unread})`
+                  : dict.account.notifications.title,
+            },
           ].map((l) => (
             <Link
               key={l.href}

@@ -340,6 +340,17 @@ export const en: Dictionary = {
       correctionOf: 'correction',
       backToAccount: 'Back to my account',
     },
+    notifications: {
+      title: 'Notifications',
+      lede: 'Everything that happened on your account.',
+      empty: 'Nothing yet.',
+      markAllRead: 'Mark all as read',
+      unread: 'New',
+      justNow: 'just now',
+      minutesAgo: '{n} minutes ago',
+      hoursAgo: '{n} hours ago',
+      daysAgo: '{n} days ago',
+    },
     activities: {
       kicker: 'Opportunities',
       title: 'Volunteering opportunities',

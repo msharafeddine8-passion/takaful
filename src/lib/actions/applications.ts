@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { isDbConfigured, execute, queryOne, transaction } from '@/lib/db';
 import { audit, setMembershipStatus, type MembershipStatus } from '@/lib/auth';
 import { requireCapability } from '@/lib/authz';
+import { notifyIn, type NotificationKind } from '@/lib/notify';
 import { isLocale, type Locale } from '@/lib/i18n';
 
 function localeOf(formData: FormData): Locale {
@@ -23,6 +24,25 @@ const NEXT_STATUS: Record<string, MembershipStatus> = {
 };
 
 const OPEN = ['submitted', 'under_review', 'interview_required', 'interview_scheduled'];
+
+/**
+ * What the applicant reads. Written plainly and in both languages, because a
+ * rejection delivered badly is worse than a rejection.
+ */
+const DECISION_MESSAGES: Record<string, { titleAr: string; titleEn: string }> = {
+  accepted: {
+    titleAr: 'تهانينا — قُبل طلب تطوّعك 🎉',
+    titleEn: 'Congratulations — your volunteering application was accepted 🎉',
+  },
+  waitlisted: {
+    titleAr: 'طلبك على قائمة الانتظار',
+    titleEn: 'Your application is on the waiting list',
+  },
+  rejected: {
+    titleAr: 'قرار بشأن طلب تطوّعك',
+    titleEn: 'A decision on your volunteering application',
+  },
+};
 
 /**
  * Records a decision on a volunteer application.
@@ -58,6 +78,20 @@ export async function decideApplicationAction(formData: FormData): Promise<void>
         WHERE id = $4 AND status = ANY($5)`,
       [decision, reviewer.id, reason, applicationId, OPEN],
     );
+
+    // Told in the same transaction as decided. A decision recorded without
+    // the person being told is how someone waits three weeks for an answer
+    // that was given on day one.
+    await notifyIn(client, {
+      userId: application.user_id,
+      kind: `application.${decision}` as NotificationKind,
+      ...DECISION_MESSAGES[decision],
+      // The reason is shown to them: they are entitled to know why, and it
+      // was written knowing they would see it.
+      bodyAr: reason,
+      bodyEn: reason,
+      link: '/account',
+    });
   });
 
   await setMembershipStatus({

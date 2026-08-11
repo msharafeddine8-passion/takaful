@@ -340,6 +340,17 @@ export const ar: Dictionary = {
       correctionOf: 'تصحيح',
       backToAccount: 'رجوع إلى حسابي',
     },
+    notifications: {
+      title: 'الإشعارات',
+      lede: 'كل ما حدث في حسابك.',
+      empty: 'لا إشعارات بعد.',
+      markAllRead: 'تعليم الكل كمقروء',
+      unread: 'جديد',
+      justNow: 'الآن',
+      minutesAgo: 'منذ {n} دقيقة',
+      hoursAgo: 'منذ {n} ساعة',
+      daysAgo: 'منذ {n} يوم',
+    },
     activities: {
       kicker: 'فرص التطوّع',
       title: 'الفرص المتاحة',

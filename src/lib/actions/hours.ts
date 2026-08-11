@@ -9,6 +9,8 @@ import { requireCapability, Forbidden } from '@/lib/authz';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { parseDuration } from '@/lib/duration';
 import { reallocate, rebuildAllocations } from '@/lib/allocation';
+import { notify } from '@/lib/notify';
+import { formatDuration } from '@/lib/hours';
 import type { FormState } from './types';
 
 const MAX_MINUTES_PER_ENTRY = 1440; // one day
@@ -123,6 +125,17 @@ export async function verifyHoursAction(formData: FormData): Promise<void> {
       targetId: entryId,
       reason,
     });
+    // A rejection with no explanation is the kind of thing that makes a
+    // volunteer stop logging hours altogether.
+    await notify({
+      userId: entry.user_id,
+      kind: 'hours.rejected',
+      titleAr: 'لم تُعتمد ساعاتك المسجّلة',
+      titleEn: 'Your logged hours were not verified',
+      bodyAr: reason,
+      bodyEn: reason,
+      link: '/account/hours',
+    });
   } else {
     await execute(
       `UPDATE hour_entries
@@ -136,6 +149,14 @@ export async function verifyHoursAction(formData: FormData): Promise<void> {
       targetType: 'hour_entry',
       targetId: entryId,
       newValue: { minutes: entry.minutes },
+    });
+
+    await notify({
+      userId: entry.user_id,
+      kind: 'hours.verified',
+      titleAr: `اعتُمدت ${formatDuration(entry.minutes, 'ar')} من ساعات تطوّعك ✅`,
+      titleEn: `${formatDuration(entry.minutes, 'en')} of your volunteering hours were verified ✅`,
+      link: '/account/hours',
     });
 
     // Newly verified minutes become stage progress here, not on some later
