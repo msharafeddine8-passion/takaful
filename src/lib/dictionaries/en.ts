@@ -299,6 +299,8 @@ export const en: Dictionary = {
       passwordMismatch: 'The two passwords do not match.',
       emailTaken: 'That address is already registered. Try signing in.',
       invalidCredentials: 'Email or password is incorrect.',
+      tooManyAttempts:
+        'Too many attempts in a short time. Wait fifteen minutes and try again, or use "Forgot your password".',
       suspended: 'This account is suspended. Please contact us.',
       tooYoung: 'We accept volunteers aged 15 and above.',
       guardianRequired: 'Guardian consent is required for anyone under 18.',
@@ -390,6 +392,40 @@ export const en: Dictionary = {
       myCertificatesLede: 'Everything you have earned. Each one has a verification link anyone can open.',
       none: 'No certificates yet. Finish a course to earn your first.',
       view: 'View',
+    },
+    recovery: {
+      forgotLink: 'Forgot your password?',
+      forgotTitle: 'Reset your password',
+      forgotLede: 'Enter your email and we will send you a link to choose a new password.',
+      emailLabel: 'Email',
+      sendLink: 'Send the link',
+      sending: 'Sending…',
+      sentTitle: 'Check your email',
+      sentBody:
+        'If that address is registered with us, a reset link is on its way. It works for one hour.',
+      resetTitle: 'Choose a new password',
+      resetLede: 'At least 10 characters.',
+      newPassword: 'New password',
+      confirmPassword: 'Type it again',
+      setPassword: 'Save the password',
+      resetDoneTitle: 'Your password has been changed',
+      resetDoneBody:
+        'Every session on your account has been signed out, on every device. Sign in with the new password.',
+      resetInvalidTitle: 'This link no longer works',
+      resetInvalidBody: 'Links expire after an hour and can be used once. Request a new one.',
+      signIn: 'Sign in',
+      verifyTitle: 'Confirm your email',
+      verifiedBody: 'Your email is confirmed. Thank you.',
+      verifyInvalidBody:
+        'This link has expired or has already been used. Request a new one from your account page.',
+      verifyChangedBody:
+        'This link was sent to a different address than the one on the account now. Request a new one from your account page.',
+      verifyAlreadyBody: 'Your email is already confirmed. Nothing to do.',
+      unverifiedBanner:
+        'Your email is not confirmed yet. Without it we cannot help you if you forget your password.',
+      resend: 'Send the confirmation link again',
+      resent: 'Link sent. Check your email.',
+      noProvider: 'Email sending is not switched on for this site yet, so the link will not arrive.',
     },
     learning: {
       title: 'My learning',

@@ -13,6 +13,8 @@ import {
   currentUser,
   audit,
 } from '@/lib/auth';
+import { callerIp, checkLoginAllowed, recordLoginAttempt } from '@/lib/throttle';
+import { requestPasswordReset, resetPassword, requestEmailVerification } from '@/lib/recovery';
 import { isLocale, type Locale } from '@/lib/i18n';
 import type { FormState } from './types';
 
@@ -97,6 +99,11 @@ export async function registerAction(prev: FormState, formData: FormData): Promi
     return { ...kept, error: 'dbUnavailable' };
   }
 
+  // Not awaited for its outcome: an email provider having a bad minute must
+  // not stop someone finishing sign-up. The account works unverified, and the
+  // link can be sent again from their account page.
+  await requestEmailVerification(userId, lang).catch(() => {});
+
   // redirect() signals by throwing, so it must sit outside the try block above.
   redirect(`/${lang}/account`);
 }
@@ -111,17 +118,98 @@ export async function loginAction(_prev: FormState, formData: FormData): Promise
   if (!email || !password) return { error: 'invalidCredentials' };
   if (!isDbConfigured()) return { error: 'dbUnavailable' };
 
+  let userId: string;
   try {
+    const ip = await callerIp();
+
+    // Checked before the password is verified, so a throttled attempt costs
+    // one indexed count instead of a tenth of a second of Argon2 — otherwise
+    // the defence would itself be the way to exhaust the server.
+    const allowed = await checkLoginAllowed(email, ip);
+    if (!allowed.allowed) return { error: 'tooManyAttempts' };
+
     const result = await authenticate(email, password);
+    await recordLoginAttempt(email, ip, result.ok);
+
     if (!result.ok) {
       return { error: result.error === 'suspended' ? 'suspended' : 'invalidCredentials' };
     }
-    await createSession(result.userId, await userAgent());
+    userId = result.userId;
+    await createSession(userId, await userAgent());
   } catch {
     return { error: 'dbUnavailable' };
   }
 
   redirect(`/${lang}/account`);
+}
+
+// ----------------------------------------------------------- password reset
+
+/**
+ * Both of these answer the same way whether or not the address is registered.
+ * A different message for a known address would turn this form into a way of
+ * checking who volunteers here.
+ */
+export type ResetRequestState = { done?: boolean; error?: 'invalidEmail' | 'dbUnavailable' };
+
+export async function requestResetAction(
+  _prev: ResetRequestState,
+  formData: FormData,
+): Promise<ResetRequestState> {
+  const lang = localeOf(formData);
+  const email = text(formData, 'email');
+
+  if (!looksLikeEmail(email)) return { error: 'invalidEmail' };
+  if (!isDbConfigured()) return { error: 'dbUnavailable' };
+
+  try {
+    const ip = await callerIp();
+    // Asking for reset links is itself a way to flood someone's inbox, so it
+    // rides the same limiter as signing in.
+    const allowed = await checkLoginAllowed(email, ip);
+    if (allowed.allowed) {
+      await requestPasswordReset(email, lang);
+      await recordLoginAttempt(email, ip, false);
+    }
+  } catch {
+    // Even a failure answers the same way. Telling someone the send failed for
+    // their address, and nothing for another, is the leak this avoids.
+  }
+
+  return { done: true };
+}
+
+export type ResetState = { done?: boolean; error?: 'passwordTooShort' | 'passwordMismatch' | 'generic' };
+
+export async function resetPasswordAction(
+  _prev: ResetState,
+  formData: FormData,
+): Promise<ResetState> {
+  const token = text(formData, 'token');
+  const password = String(formData.get('password') ?? '');
+  const confirm = String(formData.get('confirm') ?? '');
+
+  if (password.length < MIN_PASSWORD) return { error: 'passwordTooShort' };
+  if (password !== confirm) return { error: 'passwordMismatch' };
+  if (!isDbConfigured() || !token) return { error: 'generic' };
+
+  try {
+    const outcome = await resetPassword(token, password);
+    if (outcome !== 'ok') return { error: 'generic' };
+  } catch {
+    return { error: 'generic' };
+  }
+
+  return { done: true };
+}
+
+/** Sends the confirmation link again, for someone who never got the first. */
+export async function resendVerificationAction(formData: FormData): Promise<void> {
+  const lang = localeOf(formData);
+  if (!isDbConfigured()) return;
+  const user = await currentUser();
+  if (!user) return;
+  await requestEmailVerification(user.id, lang).catch(() => {});
 }
 
 // -------------------------------------------------------------------- logout

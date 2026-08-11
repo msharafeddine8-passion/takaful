@@ -178,6 +178,7 @@ export type Account = {
     passwordMismatch: string;
     emailTaken: string;
     invalidCredentials: string;
+    tooManyAttempts: string;
     suspended: string;
     tooYoung: string;
     guardianRequired: string;
@@ -269,6 +270,36 @@ export type Account = {
     myCertificatesLede: string;
     none: string;
     view: string;
+  };
+  recovery: {
+    forgotLink: string;
+    forgotTitle: string;
+    forgotLede: string;
+    emailLabel: string;
+    sendLink: string;
+    sending: string;
+    /** Shown whether or not the address has an account. */
+    sentTitle: string;
+    sentBody: string;
+    resetTitle: string;
+    resetLede: string;
+    newPassword: string;
+    confirmPassword: string;
+    setPassword: string;
+    resetDoneTitle: string;
+    resetDoneBody: string;
+    resetInvalidTitle: string;
+    resetInvalidBody: string;
+    signIn: string;
+    verifyTitle: string;
+    verifiedBody: string;
+    verifyInvalidBody: string;
+    verifyChangedBody: string;
+    verifyAlreadyBody: string;
+    unverifiedBanner: string;
+    resend: string;
+    resent: string;
+    noProvider: string;
   };
   learning: {
     title: string;

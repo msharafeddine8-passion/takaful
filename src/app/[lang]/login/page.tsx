@@ -43,7 +43,16 @@ export default async function LoginPage(props: PageProps<'/[lang]/login'>) {
 
         <LoginForm lang={lang} dict={dict} />
 
-        <p className="mt-6 text-center text-[0.94rem] text-ink-2">
+        <p className="mt-5 text-center text-[0.94rem]">
+          <Link
+            href={`/${lang}/forgot`}
+            className="font-bold text-brand-blue hover:underline dark:text-brand-orange"
+          >
+            {dict.account.recovery.forgotLink}
+          </Link>
+        </p>
+
+        <p className="mt-4 text-center text-[0.94rem] text-ink-2">
           {t.noAccount}{' '}
           <Link href={`/${lang}/join`} className="font-bold text-brand-blue hover:underline dark:text-brand-orange">
             {t.joinLink}

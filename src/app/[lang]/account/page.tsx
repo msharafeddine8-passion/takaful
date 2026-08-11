@@ -13,6 +13,8 @@ import { portalSummary } from '@/lib/portal';
 import { formatDuration } from '@/lib/hours';
 import { COURSES } from '@/lib/courses';
 import { logoutAction } from '@/lib/actions/account';
+import { VerifyBanner } from '@/components/account/VerifyBanner';
+import { isEmailConfigured } from '@/lib/email';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -51,11 +53,15 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
 
-  const [summary, application] = await Promise.all([
+  const [summary, application, account] = await Promise.all([
     portalSummary(user.id),
     queryOne<{ id: string; status: string; submitted_at: Date | null }>(
       `SELECT id, status, submitted_at FROM volunteer_applications
         WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1`,
+      [user.id],
+    ),
+    queryOne<{ verified: Date | null }>(
+      'SELECT email_verified_at AS verified FROM users WHERE id = $1',
       [user.id],
     ),
   ]);
@@ -72,6 +78,10 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
         <h1 className="mt-2.5 text-[clamp(1.7rem,1.3rem+1.6vw,2.4rem)] font-extrabold tracking-tight">
           {p.greeting} {user.fullName} 👋
         </h1>
+
+        {account && !account.verified && (
+          <VerifyBanner lang={lang} dict={dict} emailConfigured={isEmailConfigured()} />
+        )}
 
         {/* Where they stand, in one line, before anything else. */}
         {stage ? (
