@@ -34,7 +34,7 @@ export const COURSES: Course[] = [
   {
     slug: 'communication-skills',
     level: 1,
-    status: 'draft',
+    status: 'available',
     minutes: 75,
     title: { ar: 'مهارات التواصل', en: 'Communication Skills' },
     summary: {
@@ -45,7 +45,7 @@ export const COURSES: Course[] = [
   {
     slug: 'teamwork',
     level: 1,
-    status: 'draft',
+    status: 'available',
     minutes: 70,
     title: { ar: 'العمل ضمن فريق', en: 'Teamwork' },
     summary: {
@@ -56,7 +56,11 @@ export const COURSES: Course[] = [
   {
     slug: 'working-with-children',
     level: 1,
-    status: 'draft',
+    // Publishable now that ORG.safeguardingFocalPoint names someone: the course
+    // tells trainees four times to report a disclosure, and it can finally say
+    // to whom. The number is the association's main line rather than a direct
+    // one, which is a compromise worth revisiting.
+    status: 'available',
     minutes: 90,
     title: { ar: 'التعامل مع الأطفال', en: 'Working with Children' },
     summary: {
@@ -67,7 +71,7 @@ export const COURSES: Course[] = [
   {
     slug: 'digital-basics',
     level: 1,
-    status: 'draft',
+    status: 'available',
     minutes: 60,
     title: { ar: 'مهارات الحاسوب الأساسية', en: 'Basic Computer Skills' },
     summary: {

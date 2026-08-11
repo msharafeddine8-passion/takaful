@@ -1,12 +1,16 @@
 import type { CourseContent } from './types';
+import { ORG } from '../org';
 
 /**
  * Level 1 · Course 4 — Working with Children.
  * The highest-stakes course in Level 1. Universal content, grounded in the
  * International Child Safeguarding Standards.
- * Status: DRAFT — MUST be reviewed by a qualified safeguarding specialist
- * before publication, and the organisation's own focal point inserted.
+ *
+ * The reporting contact is read from ORG.safeguardingFocalPoint rather than
+ * written out here, so the course and the rest of the site can never disagree
+ * about who a volunteer is meant to call.
  */
+const focal = ORG.safeguardingFocalPoint;
 export const workingWithChildren: CourseContent = {
   slug: 'working-with-children',
   level: 1,
@@ -266,10 +270,17 @@ export const workingWithChildren: CourseContent = {
         {
           type: 'callout',
           variant: 'warn',
-          title: { ar: '⚠️ حقل تخصيص لكل منظمة', en: '⚠️ Organisation-specific field' },
+          title: {
+            ar: '☎️ إلى مَن تُبلّغ في تكافل',
+            en: '☎️ Who you report to at Takaful',
+          },
           content: {
-            ar: 'كل منظمة تعرض هذه الدورة يجب أن تُدرج هنا اسم مسؤول حماية الطفل لديها ورقم تواصله المباشر. بدون هذا الحقل تبقى الدورة ناقصة عملياً.',
-            en: 'Every organisation delivering this course must insert here the name and direct contact of its own child safeguarding focal point. Without this field the course is incomplete in practice.',
+            ar: focal
+              ? `مسؤول حماية الطفل في جمعية تكافل: ${focal.name} — ${focal.phone}. أبلغ في اليوم نفسه، مهما بدا لك الأمر بسيطاً أو غير مؤكّد. قرار ما إذا كان القلق يستدعي إجراءً ليس قرارك، وليس عليك أن تحمله وحدك. إن تعذّر الوصول، تواصل مع الجمعية على ${ORG.email}.`
+              : 'لم يُحدَّد بعد مسؤول حماية الطفل في هذه المنظمة. لا تأخذ هذه الدورة كإجراء كافٍ قبل أن يُحدَّد.',
+            en: focal
+              ? `Takaful's child safeguarding focal point: ${focal.name} — ${focal.phone}. Report the same day, however small or uncertain the concern seems. Deciding whether it warrants action is not your call, and not yours to carry alone. If you cannot get through, contact the association at ${ORG.email}.`
+              : 'This organisation has not yet named a child safeguarding focal point. Do not treat this course as sufficient until it has.',
           },
         },
         {

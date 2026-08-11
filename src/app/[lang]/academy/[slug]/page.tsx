@@ -5,6 +5,8 @@ import { getDictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section } from '@/components/ui';
 import { Quiz } from '@/components/Quiz';
+import { CourseProgressProvider } from '@/components/CourseProgress';
+import { CourseFinish } from '@/components/CourseFinish';
 import { COURSE_CONTENT } from '@/lib/course-content';
 import { COURSES } from '@/lib/courses';
 import type { Block } from '@/lib/course-content/types';
@@ -128,6 +130,7 @@ function renderBlock(block: Block, lang: Locale, key: number) {
         <Quiz
           key={key}
           lang={lang}
+          id={block.id}
           label={block.label[lang]}
           question={block.question[lang]}
           scenario={block.scenario?.[lang]}
@@ -146,6 +149,11 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
   if (!course) notFound();
   const dict = getDictionary(lang);
   const isApproved = COURSES.find((c) => c.slug === slug)?.status === 'available';
+  // The finish bar needs to know how many answers make a complete attempt.
+  const questionCount = course.modules.reduce(
+    (n, mod) => n + mod.blocks.filter((b) => b.type === 'quiz').length,
+    0,
+  );
 
   const t = {
     ar: {
@@ -218,6 +226,9 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
             ))}
           </div>
 
+          {/* Quizzes report their answers up to this provider so the finish
+              bar below can send them all at once for server-side scoring. */}
+          <CourseProgressProvider totalQuestions={questionCount}>
           {course.modules.map((mod) => (
             <section key={mod.id} className="mb-14 scroll-mt-24" id={mod.id}>
               <p className="text-[0.76rem] font-extrabold tracking-[0.14em] text-brand-orange-dark dark:text-brand-orange">
@@ -232,6 +243,11 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
               {mod.blocks.map((b, i) => renderBlock(b, lang, i))}
             </section>
           ))}
+
+          {isApproved && questionCount > 0 && (
+            <CourseFinish lang={lang} slug={slug} passMark={course.passMark} />
+          )}
+          </CourseProgressProvider>
 
           <div className="rounded-2xl border border-line bg-surface p-6">
             <h2 className="mb-3 text-[0.86rem] font-extrabold tracking-[0.1em] text-ink-3">
