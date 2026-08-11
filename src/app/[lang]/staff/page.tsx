@@ -130,6 +130,14 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
               {t.journeyBuilder.title}
             </Link>
           )}
+          {can(user, 'reports.read') && (
+            <Link
+              href={`/${lang}/staff/reports`}
+              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {dict.account.reports.title}
+            </Link>
+          )}
           {can(user, 'audit.read') && (
             <Link
               href={`/${lang}/staff/audit`}

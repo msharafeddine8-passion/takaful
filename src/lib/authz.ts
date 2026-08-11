@@ -23,6 +23,7 @@ export type Capability =
   | 'certificates.issue'
   | 'certificates.revoke'
   | 'members.manage'
+  | 'reports.read'
   | 'audit.read';
 
 const GRANTS: Record<Capability, readonly Role[]> = {
@@ -57,6 +58,18 @@ const GRANTS: Record<Capability, readonly Role[]> = {
   'certificates.revoke': ['super_admin'],
 
   'members.manage': ['program_admin', 'super_admin'],
+
+  // Reading totals is not the same as reading people. A coordinator planning
+  // next season needs to know where volunteers stall; that does not require
+  // the ability to open anyone's record, and these figures name nobody.
+  'reports.read': [
+    'project_coordinator',
+    'field_supervisor',
+    'content_manager',
+    'program_admin',
+    'super_admin',
+  ],
+
   'audit.read': ['super_admin'],
 };
 
