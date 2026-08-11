@@ -219,6 +219,29 @@ export type Account = {
     correctionOf: string;
     backToAccount: string;
   };
+  journey: {
+    kicker: string;
+    title: string;
+    lede: string;
+    notVolunteer: string;
+    notVolunteerCta: string;
+    noStages: string;
+    currentlyHere: string;
+    statusLocked: string;
+    statusAvailable: string;
+    statusInProgress: string;
+    statusRequirementsCompleted: string;
+    statusAwaitingApproval: string;
+    statusCompleted: string;
+    requirements: string;
+    toUnlock: string;
+    nextStep: string;
+    remaining: string;
+    completedOn: string;
+    optional: string;
+    goToCourse: string;
+    logHours: string;
+  };
   staff: {
     kicker: string;
     title: string;
@@ -297,6 +320,34 @@ export type Account = {
       noCertificates: string;
       revoked: string;
       selfNote: string;
+    };
+    journeyBuilder: {
+      title: string;
+      lede: string;
+      version: string;
+      stage: string;
+      noRequirements: string;
+      addRequirement: string;
+      kind: string;
+      labelAr: string;
+      labelEn: string;
+      required: string;
+      add: string;
+      archive: string;
+      hoursField: string;
+      courseField: string;
+      minScoreField: string;
+      passMarkField: string;
+      documentField: string;
+      kindCourse: string;
+      kindHours: string;
+      kindAssessment: string;
+      kindActivity: string;
+      kindEvaluation: string;
+      kindDocument: string;
+      kindApproval: string;
+      affects: string;
+      hint: string;
     };
     audit: {
       title: string;
