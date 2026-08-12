@@ -14,6 +14,16 @@ export async function register() {
   if (process.env.NEXT_PHASE === 'phase-production-build') return;
 
   try {
+    // Before anything else, and cheap: says out loud which variables are
+    // missing and what stops working without each. A missing one used to
+    // produce a quiet wrong answer at runtime instead of a line in the log.
+    const { reportEnvironment } = await import('./lib/env');
+    reportEnvironment();
+  } catch {
+    // A reporting step must never be the reason a server fails to start.
+  }
+
+  try {
     const { runMigrations } = await import('./lib/migrate');
     await runMigrations();
   } catch (error) {

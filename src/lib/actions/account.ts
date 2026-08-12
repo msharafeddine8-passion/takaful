@@ -13,7 +13,13 @@ import {
   currentUser,
   audit,
 } from '@/lib/auth';
-import { callerIp, checkLoginAllowed, recordLoginAttempt } from '@/lib/throttle';
+import {
+  callerIp,
+  checkLoginAllowed,
+  recordLoginAttempt,
+  checkSignupAllowed,
+  recordSignup,
+} from '@/lib/throttle';
 import { requestPasswordReset, resetPassword, requestEmailVerification } from '@/lib/recovery';
 import { isLocale, type Locale } from '@/lib/i18n';
 import type { FormState } from './types';
@@ -91,9 +97,23 @@ export async function registerAction(prev: FormState, formData: FormData): Promi
 
   let userId: string;
   try {
+    /*
+     * Signing in was throttled and creating an account was not, which left the
+     * cheaper attack open: a script does not need to guess a password to fill
+     * the members table, corrupt the funnel figures and — once email is
+     * switched on — turn the site into a way of sending mail to strangers.
+     *
+     * Checked before the account is written, and recorded only after it is, so
+     * a failed attempt does not spend somebody's allowance.
+     */
+    const ip = await callerIp();
+    const allowed = await checkSignupAllowed(ip);
+    if (!allowed.allowed) return { ...kept, error: 'tooManyAttempts' };
+
     const result = await registerUser({ email, password, fullName, locale: lang });
     if (!result.ok) return { ...kept, fields: { email: 'emailTaken' } };
     userId = result.userId;
+    await recordSignup(ip);
     await createSession(userId, await userAgent());
   } catch {
     return { ...kept, error: 'dbUnavailable' };
@@ -361,16 +381,15 @@ export async function applyAction(_prev: FormState, formData: FormData): Promise
   redirect(`/${lang}/account`);
 }
 
-/** Records that someone finished a course, and promotes them out of `registered_user`. */
-export async function markCourseStarted(courseSlug: string): Promise<void> {
-  if (!isDbConfigured()) return;
-  const user = await currentUser();
-  if (!user || user.membershipStatus !== 'registered_user') return;
-
-  await setMembershipStatus({ userId: user.id, next: 'course_participant' });
-  await execute(
-    `INSERT INTO audit_logs (actor_id, action, target_type, target_id)
-     VALUES ($1, 'course.started', 'course', $2)`,
-    [user.id, courseSlug],
-  );
-}
+/*
+ * Removed: markCourseStarted().
+ *
+ * It had no callers, which is why it survived a rewrite of the academy — but
+ * an unused function in a 'use server' file is not dead code. Every export
+ * here is a network endpoint, callable by anyone with a session whether or not
+ * a component references it. This one promoted the caller from registered_user
+ * to course_participant without their having opened a course, writing a
+ * membership-history row and an audit entry that both said otherwise.
+ *
+ * Promotion now happens only in completeCourseAction, after a graded pass.
+ */

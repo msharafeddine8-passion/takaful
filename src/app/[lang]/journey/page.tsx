@@ -74,7 +74,9 @@ export default async function JourneyPage(props: PageProps<'/[lang]/journey'>) {
 
         <div className="mt-10 flex flex-wrap gap-3">
           <Button href={`/${lang}/academy`}>{dict.home.academyCta}</Button>
-          <Button href={`/${lang}/contact`} variant="ghost">
+          {/* dict.contact.ctaVolunteer reads "join as a volunteer", so it goes
+              to the account, not to the contact form. */}
+          <Button href={`/${lang}/join`} variant="ghost">
             {dict.contact.ctaVolunteer}
           </Button>
         </div>

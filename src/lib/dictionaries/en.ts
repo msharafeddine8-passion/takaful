@@ -299,6 +299,7 @@ export const en: Dictionary = {
       invalidEmail: 'Enter a valid email address.',
       passwordTooShort: 'That password is too short — at least ten characters.',
       passwordMismatch: 'The two passwords do not match.',
+      passwordUnchanged: 'That is your current password. Choose a different one.',
       emailTaken: 'That address is already registered. Try signing in.',
       invalidCredentials: 'Email or password is incorrect.',
       tooManyAttempts:
@@ -366,6 +367,17 @@ export const en: Dictionary = {
       memberNumber: 'Membership number',
       noMemberNumber: 'A membership number is issued once your volunteering application is accepted.',
       cardCta: 'Membership card',
+    },
+    password: {
+      title: 'Password',
+      lede: 'Change it the moment you suspect someone has seen it. Do not wait for proof.',
+      current: 'Current password',
+      next: 'New password',
+      confirm: 'Type the new one again',
+      submit: 'Change password',
+      saving: 'Saving…',
+      done: 'Your password has been changed',
+      doneNote: 'Your sessions on other devices have been signed out. This one is still open.',
     },
     card: {
       title: 'Membership card',
@@ -706,6 +718,8 @@ export const en: Dictionary = {
         reasonLabel: 'Reason',
         reasonPlaceholder: 'Recorded against your name.',
         lastAdminNote: 'The last super administrator cannot be suspended — nobody would be left to undo it.',
+        confirmSuspend:
+          '{name} will be locked out immediately and signed out on every device. Continue?',
         journeyTitle: 'Journey and blockers',
         journeyLede: 'Exactly what stands between this volunteer and their next stage.',
         noJourney: 'This person is a learner and has not been accepted as a volunteer, so they have no journey.',

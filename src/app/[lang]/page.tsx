@@ -33,8 +33,13 @@ export default async function HomePage(props: PageProps<'/[lang]'>) {
           <p className="mt-4 max-w-[46ch] text-[1.08rem] leading-relaxed text-[#d3e2ee]">
             {dict.home.lede}
           </p>
+          {/* Straight to the account, not to a contact form. This button was
+              pointed at /contact from before there was anywhere else to send
+              anyone, and it stayed there after the whole registration →
+              application → review pipeline was built — so every prospective
+              volunteer was being routed into somebody's inbox instead. */}
           <div className="mt-7 flex flex-wrap gap-3">
-            <Button href={`/${lang}/contact`}>{dict.home.ctaPrimary}</Button>
+            <Button href={`/${lang}/join`}>{dict.home.ctaPrimary}</Button>
             <Button href={`/${lang}/projects`} variant="onDark">
               {dict.home.ctaSecondary}
             </Button>
@@ -159,7 +164,7 @@ export default async function HomePage(props: PageProps<'/[lang]'>) {
             {dict.home.joinLede}
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Button href={`/${lang}/contact`}>{dict.home.joinCta}</Button>
+            <Button href={`/${lang}/join`}>{dict.home.joinCta}</Button>
             <Button href={`/${lang}/journey`} variant="onDark">
               {dict.home.joinCtaAlt}
             </Button>

@@ -15,6 +15,8 @@ export type FormState = {
   values?: Record<string, string>;
   /** Increments on every run; used as a remount key so `values` actually apply. */
   attempt?: number;
+  /** Set when the action succeeded and the form should say so rather than reset. */
+  done?: boolean;
 };
 
 export const emptyState: FormState = { attempt: 0 };

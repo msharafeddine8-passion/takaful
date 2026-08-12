@@ -98,6 +98,64 @@ export async function recordLoginAttempt(
   }
 }
 
+/*
+ * Creating accounts is throttled separately, and by machine only.
+ *
+ * The sign-in limiter keys on the address, which is useless here: every
+ * automated sign-up uses a fresh one. What repeats is the machine. The window
+ * is an hour rather than fifteen minutes because a flood of accounts is a
+ * slower, cheaper attack than guessing a password, and the ceiling is low
+ * because a household sharing one connection does not need six accounts in an
+ * hour — while a script wants thousands.
+ *
+ * Successes are counted, not failures: the thing being limited is the account
+ * that got created, not the attempt that failed.
+ */
+const SIGNUP_WINDOW_MINUTES = 60;
+const MAX_SIGNUPS_PER_IP = 5;
+
+export async function checkSignupAllowed(ip: string | null): Promise<ThrottleVerdict> {
+  // No usable address means no evidence to refuse on. A limiter that blocks
+  // everyone it cannot identify would lock out anyone behind a proxy that
+  // strips the header.
+  if (!ip) return { allowed: true };
+
+  const rows = await query<{ n: number }>(
+    `SELECT count(*)::INTEGER AS n FROM auth_attempts
+      WHERE succeeded AND email_hash IS NULL AND ip_hash = $1
+        AND at > now() - ($2 || ' minutes')::INTERVAL`,
+    [fingerprint(ip), String(SIGNUP_WINDOW_MINUTES)],
+  );
+  const used = rows[0]?.n ?? 0;
+  return used >= MAX_SIGNUPS_PER_IP
+    ? { allowed: false, retryAfterMinutes: SIGNUP_WINDOW_MINUTES }
+    : { allowed: true };
+}
+
+/**
+ * Records a created account. email_hash is left null on purpose: this row
+ * counts a machine's sign-ups and has no reason to carry the address, and the
+ * null is what distinguishes it from a sign-in attempt.
+ */
+export async function recordSignup(ip: string | null): Promise<void> {
+  if (!ip) return;
+  await execute(
+    'INSERT INTO auth_attempts (email_hash, ip_hash, succeeded) VALUES (NULL, $1, true)',
+    [fingerprint(ip)],
+  );
+}
+
+/** Sign-ups counted against a machine right now, for tests and diagnostics. */
+export async function recentSignups(ip: string): Promise<number> {
+  const rows = await query<{ n: number }>(
+    `SELECT count(*)::INTEGER AS n FROM auth_attempts
+      WHERE succeeded AND email_hash IS NULL AND ip_hash = $1
+        AND at > now() - ($2 || ' minutes')::INTERVAL`,
+    [fingerprint(ip), String(SIGNUP_WINDOW_MINUTES)],
+  );
+  return rows[0]?.n ?? 0;
+}
+
 /** Failures counted against an address right now, for tests and diagnostics. */
 export async function recentFailures(email: string): Promise<number> {
   const rows = await query<{ n: number }>(
@@ -113,4 +171,6 @@ export const THROTTLE_LIMITS = {
   windowMinutes: WINDOW_MINUTES,
   perEmail: MAX_FAILURES_PER_EMAIL,
   perIp: MAX_FAILURES_PER_IP,
+  signupWindowMinutes: SIGNUP_WINDOW_MINUTES,
+  signupsPerIp: MAX_SIGNUPS_PER_IP,
 } as const;
