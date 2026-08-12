@@ -10,9 +10,12 @@ name: check
 # If a second database is ever provisioned (Neon can branch one), add a job
 # here that points DATABASE_URL at the branch and runs `npm run probe` there.
 
+# A branch with an open pull request would otherwise run this twice for the
+# same commit, once as a push and once as a pull_request, and show two
+# separate failures for one problem.
 on:
   push:
-    branches: ['**']
+    branches: [main]
   pull_request:
 
 jobs:
@@ -28,16 +31,22 @@ jobs:
 
       - run: npm ci
 
+      # The build has to come first.
+      #
+      # next build generates the typed-route definitions - PageProps and the
+      # route union - that every page file references. On a fresh checkout
+      # there is no .next, so a typecheck run before the build fails with
+      # "Cannot find name 'PageProps'" in every page. It passes on a developer
+      # machine only because .next is already lying around from last time,
+      # which is exactly the difference CI exists to catch. It caught it.
+      - name: Build
+        run: npm run build
+
       - name: Types (application)
         run: npx tsc --noEmit
 
       - name: Types (scripts)
         run: npx tsc -p scripts --noEmit
-
-      # The build generates the typed-route definitions the application's own
-      # typecheck depends on, so it runs after them and not instead of them.
-      - name: Build
-        run: npm run build
 
       # Arabic mangled by a careless find-and-replace has reached a commit
       # twice. It is cheap to refuse a third time.
