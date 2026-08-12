@@ -93,7 +93,7 @@ export default async function HomePage(props: PageProps<'/[lang]'>) {
                   />
                 </div>
                 <div className="flex flex-col gap-2 p-5">
-                  <span className="text-[0.72rem] font-extrabold tracking-[0.13em] text-brand-orange-text dark:text-brand-orange">
+                  <span className="text-[0.82rem] font-extrabold tracking-[0.13em] text-brand-orange-text dark:text-brand-orange">
                     {area.tag}
                   </span>
                   <h3 className="text-[1.15rem] font-extrabold">{area.title}</h3>

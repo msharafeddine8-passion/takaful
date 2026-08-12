@@ -103,7 +103,7 @@ export default async function StaffMembersPage(props: PageProps<'/[lang]/staff/m
           <div className="mt-4 overflow-x-auto rounded-2xl border border-line">
             <table className="w-full min-w-[52rem] border-collapse bg-surface">
               <thead>
-                <tr className="border-b border-line text-[0.78rem] font-bold tracking-[0.08em] text-ink-3">
+                <tr className="border-b border-line text-[0.82rem] font-bold tracking-[0.08em] text-ink-3">
                   <th className="px-4 py-3 text-start">{m.colName}</th>
                   <th className="px-4 py-3 text-start">{m.colStatus}</th>
                   <th className="px-4 py-3 text-start">{m.colRoles}</th>

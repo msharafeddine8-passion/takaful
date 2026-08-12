@@ -1,8 +1,15 @@
+/* eslint-disable @next/next/no-html-link-for-pages --
+ * The only anchors in this file point at /api/export/*, which stream a CSV.
+ * The rule reads the leading path segment and assumes a page route; using
+ * <Link> here would have the router try to render a CSV response as a page.
+ * Scoped to this file rather than the line, because every anchor here is a
+ * download and any future one will be too.
+ */
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { connection } from 'next/server';
-import { isLocale, type Locale } from '@/lib/i18n';
-import { getDictionary, type Dictionary } from '@/lib/dictionaries';
+import { isLocale } from '@/lib/i18n';
+import { getDictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
@@ -249,7 +256,7 @@ function Stat({ label, value, tone }: { label: string; value: string; tone?: 'wa
         tone === 'warn' ? 'border-brand-orange/40 bg-brand-orange/[0.08]' : 'border-line bg-ground'
       }`}
     >
-      <p className="text-[0.74rem] font-bold tracking-[0.1em] text-ink-3">{label}</p>
+      <p className="text-[0.82rem] font-bold tracking-[0.1em] text-ink-3">{label}</p>
       <p className="mt-1 text-[1.4rem] font-extrabold" dir="ltr">
         {value}
       </p>
@@ -276,7 +283,7 @@ function Table({
             {head.map((h, i) => (
               <th
                 key={i}
-                className={`px-3 py-2 text-[0.74rem] font-bold tracking-[0.09em] text-ink-3 ${
+                className={`px-3 py-2 text-[0.82rem] font-bold tracking-[0.09em] text-ink-3 ${
                   i === 0 ? 'text-start' : 'text-end'
                 }`}
               >

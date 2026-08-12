@@ -264,7 +264,7 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
                     {/* No percentage for a stage nobody has configured. Nought
                         of nought required items is arithmetically 100% and
                         reads as "finished", which it is not. */}
-                    <span className={`rounded-full px-3 py-1 text-[0.76rem] font-extrabold ${state.tone}`}>
+                    <span className={`rounded-full px-3 py-1 text-[0.82rem] font-extrabold ${state.tone}`}>
                       {s.isConfigured ? `${state.label} · ${s.percent}%` : state.label}
                     </span>
                   </div>

@@ -30,13 +30,19 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
             {/* h2: the footer's groups are top-level sections of the page, not
                 children of whatever heading happened to come last above them.
                 As h4 they left a gap on every page in the site. */}
-            <h2 className="mb-3 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
+            <h2 className="mb-3 text-[0.82rem] font-bold tracking-[0.13em] text-ink-3">
               {dict.footer.orgTitle}
             </h2>
-            <ul className="flex flex-col gap-2">
+            {/* No gap between the items: the spacing lives inside the link as
+                min-h-11, so the whole 44px row is tappable rather than 20px of
+                text with dead space around it. */}
+            <ul className="flex flex-col">
               {org.map((l) => (
                 <li key={l.label}>
-                  <Link href={l.href} className="text-[0.94rem] text-ink-2 hover:text-ink">
+                  <Link
+                    href={l.href}
+                    className="inline-flex min-h-11 items-center text-[0.95rem] text-ink-2 hover:text-ink"
+                  >
                     {l.label}
                   </Link>
                 </li>
@@ -48,13 +54,16 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
             {/* h2: the footer's groups are top-level sections of the page, not
                 children of whatever heading happened to come last above them.
                 As h4 they left a gap on every page in the site. */}
-            <h2 className="mb-3 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
+            <h2 className="mb-3 text-[0.82rem] font-bold tracking-[0.13em] text-ink-3">
               {dict.footer.volunteersTitle}
             </h2>
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col">
               {vol.map((l) => (
                 <li key={l.label}>
-                  <Link href={l.href} className="text-[0.94rem] text-ink-2 hover:text-ink">
+                  <Link
+                    href={l.href}
+                    className="inline-flex min-h-11 items-center text-[0.95rem] text-ink-2 hover:text-ink"
+                  >
                     {l.label}
                   </Link>
                 </li>

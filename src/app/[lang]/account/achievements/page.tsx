@@ -113,7 +113,7 @@ export default async function AchievementsPage(
                       <p className="mt-1.5 text-[0.92rem] leading-relaxed text-ink-2">
                         {def.description[lang]}
                       </p>
-                      <p className="mt-2.5 text-[0.78rem] text-ink-3">
+                      <p className="mt-2.5 text-[0.82rem] text-ink-3">
                         {t.earnedOn}{' '}
                         <span dir="ltr">
                           {new Date(a.earned_at).toISOString().slice(0, 10)}

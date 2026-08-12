@@ -132,7 +132,7 @@ function CourseRow({
     <li className="rounded-2xl border border-line bg-surface p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <h2 className="text-[1.12rem] font-extrabold">{title}</h2>
-        <span className={`rounded-full px-3 py-1 text-[0.78rem] font-extrabold ${state.tone}`}>
+        <span className={`rounded-full px-3 py-1 text-[0.82rem] font-extrabold ${state.tone}`}>
           {state.label}
         </span>
       </div>
@@ -187,7 +187,7 @@ function CourseRow({
 function Fact({ label, value, ltr }: { label: string; value: string; ltr?: boolean }) {
   return (
     <div>
-      <dt className="text-[0.72rem] font-bold tracking-[0.1em] text-ink-3">{label}</dt>
+      <dt className="text-[0.82rem] font-bold tracking-[0.1em] text-ink-3">{label}</dt>
       <dd className="mt-0.5 font-extrabold" dir={ltr ? 'ltr' : undefined}>
         {value}
       </dd>

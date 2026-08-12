@@ -44,6 +44,11 @@ export default async function MyActivitiesPage(props: PageProps<'/[lang]/account
   if (!user) redirect(`/${lang}/login`);
 
   const rows = await myActivities(user.id);
+  // Reading the clock in a component body is impure, and the rule is right to
+  // flag it — except here. This is an async server component that has already
+  // called connection(), so it renders once per request and "now" is the
+  // request time. Splitting past from upcoming activities needs exactly that.
+  // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
 
   const cancelled = rows.filter((r) => r.registration_status === 'cancelled');

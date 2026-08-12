@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { connection } from 'next/server';
-import { isLocale, type Locale } from '@/lib/i18n';
+import { isLocale } from '@/lib/i18n';
 import { getDictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section, Kicker } from '@/components/ui';
@@ -187,7 +187,7 @@ function QueueCard({
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-line bg-surface p-5">
-      <p className="text-[0.78rem] font-bold tracking-[0.12em] text-ink-3">{label}</p>
+      <p className="text-[0.82rem] font-bold tracking-[0.12em] text-ink-3">{label}</p>
       <p className="mt-1.5 text-[1.5rem] font-extrabold">{value}</p>
     </div>
   );

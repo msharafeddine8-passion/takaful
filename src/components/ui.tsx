@@ -23,7 +23,7 @@ export function Section({
 
 export function Kicker({ children }: { children: ReactNode }) {
   return (
-    <p className="text-[0.78rem] font-extrabold tracking-[0.14em] text-brand-orange-text dark:text-brand-orange">
+    <p className="text-[0.82rem] font-extrabold tracking-[0.14em] text-brand-orange-text dark:text-brand-orange">
       {children}
     </p>
   );
