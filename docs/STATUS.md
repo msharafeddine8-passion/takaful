@@ -186,6 +186,23 @@ and `next.config.ts` now carries the reason so the next attempt starts from
 it. `script-src` is still unrestricted — a real outstanding weakness, written
 down as one rather than quietly closed.
 
+**A green local build can hide a red deploy for a day.** The commit that put
+monitoring back imported `@vercel/analytics` and `@vercel/speed-insights`
+without adding either to `package.json`. Both were already in `node_modules`
+from an install that never wrote them down, so every local build passed.
+Vercel runs `npm ci`, which installs strictly from the lockfile, and failed —
+that commit and everything merged on top of it. The live site kept serving an
+older commit and said nothing; the failure was visible only in the commit
+status on GitHub. What made it a day instead of a minute was that the check
+workflow ran only on `main` and pull requests, and the commit went to the
+working branch. It now runs on every branch, and `npm run imports`
+(`scripts/undeclared-imports.mjs`) names an undeclared package directly
+rather than leaving it to surface as a module-resolution error mid-build.
+
+The rule that follows: **after merging, confirm the live site actually
+changed** — not that the push succeeded. A deploy that never ran looks
+exactly like a deploy that has not finished yet.
+
 ---
 
 ## Running it
