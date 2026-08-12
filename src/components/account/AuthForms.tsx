@@ -7,11 +7,20 @@ import type { Dictionary } from '@/lib/dictionaries';
 import type { Locale } from '@/lib/i18n';
 import { TextField, FormError, SubmitButton } from './fields';
 
-type Props = { lang: Locale; dict: Dictionary };
+/*
+ * These take the two slices they read rather than the whole Dictionary.
+ *
+ * A client component's props are serialised into the page, so `dict:
+ * Dictionary` on a form put every string in the application — staff labels,
+ * report headings, hour statuses — into the sign-in page of a site whose
+ * volunteers are on phones. Sign-in and registration are the first thing a
+ * stranger loads, so they are the worst place to pay for it.
+ */
+type Errors = Dictionary['account']['errors'];
+type RegisterProps = { lang: Locale; t: Dictionary['account']['join']; errors: Errors };
+type LoginProps = { lang: Locale; t: Dictionary['account']['login']; errors: Errors };
 
-export function RegisterForm({ lang, dict }: Props) {
-  const t = dict.account.join;
-  const errors = dict.account.errors;
+export function RegisterForm({ lang, t, errors }: RegisterProps) {
   const [state, formAction, pending] = useActionState(registerAction, emptyState);
 
   return (
@@ -57,9 +66,7 @@ export function RegisterForm({ lang, dict }: Props) {
   );
 }
 
-export function LoginForm({ lang, dict }: Props) {
-  const t = dict.account.login;
-  const errors = dict.account.errors;
+export function LoginForm({ lang, t, errors }: LoginProps) {
   const [state, formAction, pending] = useActionState(loginAction, emptyState);
 
   return (

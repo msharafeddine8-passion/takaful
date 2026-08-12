@@ -41,7 +41,7 @@ export default async function LoginPage(props: PageProps<'/[lang]/login'>) {
         </h1>
         <p className="mb-8 mt-3 text-[1.02rem] leading-relaxed text-ink-2">{t.lede}</p>
 
-        <LoginForm lang={lang} dict={dict} />
+        <LoginForm lang={lang} t={dict.account.login} errors={dict.account.errors} />
 
         <p className="mt-5 text-center text-[0.94rem]">
           <Link

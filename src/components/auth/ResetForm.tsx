@@ -6,17 +6,20 @@ import { resetPasswordAction, type ResetState } from '@/lib/actions/account';
 import type { Dictionary } from '@/lib/dictionaries';
 import type { Locale } from '@/lib/i18n';
 
+// The two slices this form reads. Passing the whole Dictionary would put every
+// string in the application into a page someone reaches from an email link.
 export function ResetForm({
   lang,
-  dict,
+  t,
+  errors,
   token,
 }: {
   lang: Locale;
-  dict: Dictionary;
+  t: Dictionary['account']['recovery'];
+  errors: Dictionary['account']['errors'];
   token: string;
 }) {
   const [state, action, pending] = useActionState<ResetState, FormData>(resetPasswordAction, {});
-  const t = dict.account.recovery;
 
   if (state.done) {
     return (
@@ -69,7 +72,7 @@ export function ResetForm({
           <p className="text-[0.92rem] font-semibold text-danger">
             {state.error === 'generic'
               ? t.resetInvalidBody
-              : dict.account.errors[state.error]}
+              : errors[state.error]}
           </p>
           {state.error === 'generic' && (
             <Link

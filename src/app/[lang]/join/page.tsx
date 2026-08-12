@@ -41,7 +41,7 @@ export default async function JoinPage(props: PageProps<'/[lang]/join'>) {
         </h1>
         <p className="mb-8 mt-3 text-[1.02rem] leading-relaxed text-ink-2">{t.lede}</p>
 
-        <RegisterForm lang={lang} dict={dict} />
+        <RegisterForm lang={lang} t={dict.account.join} errors={dict.account.errors} />
 
         <p className="mt-6 text-center text-[0.94rem] text-ink-2">
           {t.haveAccount}{' '}

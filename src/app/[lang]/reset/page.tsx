@@ -44,7 +44,7 @@ export default async function ResetPage(props: PageProps<'/[lang]/reset'>) {
         {token ? (
           <>
             <p className="mt-3 text-[1.02rem] leading-relaxed text-ink-2">{t.resetLede}</p>
-            <ResetForm lang={lang} dict={dict} token={token} />
+            <ResetForm lang={lang} t={t} errors={dict.account.errors} token={token} />
           </>
         ) : (
           <div className="mt-6 rounded-2xl border border-line bg-surface p-6">

@@ -6,12 +6,21 @@ import { requestResetAction, type ResetRequestState } from '@/lib/actions/accoun
 import type { Dictionary } from '@/lib/dictionaries';
 import type { Locale } from '@/lib/i18n';
 
-export function ForgotForm({ lang, dict }: { lang: Locale; dict: Dictionary }) {
+// The two slices this form reads. Passing the whole Dictionary would put every
+// string in the application into a page a locked-out volunteer is loading.
+export function ForgotForm({
+  lang,
+  t,
+  errors,
+}: {
+  lang: Locale;
+  t: Dictionary['account']['recovery'];
+  errors: Dictionary['account']['errors'];
+}) {
   const [state, action, pending] = useActionState<ResetRequestState, FormData>(
     requestResetAction,
     {},
   );
-  const t = dict.account.recovery;
 
   // The same confirmation whether or not the address is registered. Anything
   // else turns this form into a way of checking who has an account here.
@@ -48,7 +57,7 @@ export function ForgotForm({ lang, dict }: { lang: Locale; dict: Dictionary }) {
 
       {state.error && (
         <p role="alert" className="mt-3 text-[0.92rem] font-semibold text-danger">
-          {dict.account.errors[state.error]}
+          {errors[state.error]}
         </p>
       )}
 
