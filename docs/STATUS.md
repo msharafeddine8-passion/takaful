@@ -21,10 +21,12 @@ at Hostinger. **Database** is PostgreSQL 17 on Neon.
 
 ## What works
 
-**Accounts.** Register, sign in, reset a forgotten password, confirm an email
-address. Sessions are cut the moment an account is suspended. Sign-in
-attempts are throttled by address and by machine, so a password cannot be
-guessed at indefinitely.
+**Accounts.** Register, sign in, change a password while signed in, reset a
+forgotten one, confirm an email address. Changing a password signs out every
+other device and keeps the current one. Sessions are cut the moment an
+account is suspended. Sign-in attempts are throttled by address and by
+machine, and account creation by machine, so neither a password nor the
+members table can be worked at indefinitely.
 
 **Two kinds of member.** Someone can take courses and earn certificates
 without ever joining the association. A volunteer journey is assigned when
@@ -91,18 +93,7 @@ that remains the honest gap.
 
 These are yours to decide. Nothing here can be done from the code.
 
-### 1. The branch is not deployed
-
-**Everything above is committed locally and none of it is live.** Pushing
-needs a GitHub sign-in that cannot happen from an automated session.
-
-```bash
-git push origin platform-restore
-```
-
-Then merge `platform-restore` into `main` on GitHub, and Vercel deploys it.
-
-### 2. Email cannot be sent
+### 1. Email cannot be sent
 
 Password reset links and confirmation emails are written, queued and
 recorded — and nothing sends them, because no provider is configured. The
@@ -119,23 +110,23 @@ Resend needs a DNS record on takafullb.com to prove the domain is yours.
 Optionally `AUTH_PEPPER` — any long random string. It means a copy of the
 database cannot be tested against a list of guessed email addresses.
 
-### 3. The Hostinger plan expires 21 August 2026
+### 2. The Hostinger plan expires 21 August 2026
 
 `info@takafullb.com` is hosted there, and so is the domain. The site itself
 no longer needs Hostinger. This is a decision about money and about where
 the association's mail lives.
 
-### 4. Multi-tenancy has not been decided
+### 3. Multi-tenancy has not been decided
 
 The platform is built for one organisation. If Takaful ever wants to run it
 for a second, the cheap insurance is an `organisations` table now — days of
 work today against weeks later. Answer: yes, maybe, or no.
 
-### 5. Two pages have no content
+### 4. Two pages have no content
 
 News and Partners. They need the association's words, not invented ones.
 
-### 6. Stage requirements are empty
+### 5. Stage requirements are empty
 
 The six stages exist; none of them require anything yet. That was
 deliberate — inventing thresholds would hard-code exactly what the engine was
@@ -162,7 +153,7 @@ npm run probe
 npm run check
 ```
 
-`npm run probe` runs the whole test suite: seventeen probes, 452 behaviours,
+`npm run probe` runs the whole test suite: eighteen probes, 468 behaviours,
 against the real database. Each writes real rows, tries to break the rules
 the schema is supposed to enforce, and removes what it made. The runner
 checks that the association's configuration is exactly as the run found it —
@@ -194,6 +185,14 @@ answerable question a year later.
 **Capabilities, not roles.** Permission is named after the act — `hours.verify`,
 `members.manage`, `reports.read` — so the question "who may do this?" has one
 answer in one file.
+
+**Nothing is claimed that was not checked.** A full audit on 12 August found
+seven real defects and one that turned out not to be one. The withdrawn one
+is worth remembering: nine tables were reported as unknown strays in the
+production database and recommended for deletion. They belong to Neon Auth
+and sit in their own schema — the count had been taken by table name without
+looking at which schema each was in. Nothing was wrong. A finding is only
+worth as much as the query behind it.
 
 **Nothing invented.** Where a number is not known, the code says so rather
 than guessing. A stage nobody has finished reports no median rather than
