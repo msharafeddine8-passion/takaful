@@ -81,6 +81,7 @@ const references = [
   'DELETE FROM sessions WHERE user_id = $1',
   'DELETE FROM auth_tokens WHERE user_id = $1',
   'DELETE FROM email_deliveries WHERE user_id = $1',
+  'DELETE FROM achievements WHERE user_id = $1',
   'DELETE FROM certificates WHERE user_id = $1',
   'DELETE FROM course_module_progress WHERE user_id = $1',
   'DELETE FROM course_attempts WHERE user_id = $1',
