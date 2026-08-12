@@ -11,6 +11,7 @@ import { isDbConfigured, queryOne } from '@/lib/db';
 import { isVolunteer } from '@/lib/journey';
 import { PhotoUpload } from '@/components/account/PhotoUpload';
 import { ProfileForm } from '@/components/account/ProfileForm';
+import { PasswordForm } from '@/components/account/PasswordForm';
 import { removePhotoAction } from '@/lib/actions/profile';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account/profile'>): Promise<Metadata> {
@@ -88,6 +89,16 @@ export default async function ProfilePage(props: PageProps<'/[lang]/account/prof
               </button>
             </form>
           )}
+        </section>
+
+        <section className="mt-5 rounded-2xl border border-line bg-surface p-6">
+          <h2 className="text-[0.8rem] font-bold tracking-[0.12em] text-ink-3">
+            {dict.account.password.title}
+          </h2>
+          <p className="mt-2 max-w-[52ch] text-[0.94rem] leading-relaxed text-ink-2">
+            {dict.account.password.lede}
+          </p>
+          <PasswordForm lang={lang} t={dict.account.password} errors={dict.account.errors} />
         </section>
 
         <section className="mt-5 rounded-2xl border border-line bg-surface p-6">

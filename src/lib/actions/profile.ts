@@ -1,20 +1,111 @@
 'use server';
 
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
-import { isDbConfigured, execute } from '@/lib/db';
-import { audit, currentUser } from '@/lib/auth';
+import { cookies } from 'next/headers';
+import { isDbConfigured, execute, queryOne, transaction } from '@/lib/db';
+import {
+  audit,
+  currentUser,
+  hashPassword,
+  verifyPassword,
+  SESSION_COOKIE,
+} from '@/lib/auth';
 import { isLocale, type Locale } from '@/lib/i18n';
 import type { FormState } from './types';
 
 const MAX_PHOTO_BYTES = 300 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+/** Matches the minimum enforced at registration and at reset. */
+const MIN_PASSWORD = 10;
 
 function localeOf(f: FormData): Locale {
   const v = String(f.get('lang') ?? 'ar');
   return isLocale(v) ? v : 'ar';
 }
 const text = (f: FormData, n: string) => String(f.get(n) ?? '').trim();
+
+/**
+ * Changing a password while signed in.
+ *
+ * There was no way to do this at all. The only route to a new password ran
+ * through the forgotten-password email, and email is not configured — so
+ * somebody who thought their password had been seen had no action available
+ * to them whatsoever.
+ *
+ * Three things this does that a naive version would not:
+ *
+ *   It asks for the current password. Otherwise anyone who finds an unlocked
+ *   laptop owns the account permanently rather than until it locks.
+ *
+ *   It ends every other session. A password change is usually a response to
+ *   suspicion, and the intruder's session is the one thing a new password
+ *   alone would leave working.
+ *
+ *   It leaves the current session alive, so the person is not thrown out of
+ *   the page they are standing on for having done the right thing.
+ */
+export async function changePasswordAction(
+  prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const lang = localeOf(formData);
+  if (!isDbConfigured()) return { error: 'dbUnavailable' };
+
+  const user = await currentUser();
+  if (!user) return { error: 'generic' };
+
+  const current = String(formData.get('currentPassword') ?? '');
+  const next = String(formData.get('newPassword') ?? '');
+  const confirm = String(formData.get('confirmPassword') ?? '');
+
+  const fields: FormState['fields'] = {};
+  if (!current) fields.currentPassword = 'required';
+  if (next.length < MIN_PASSWORD) fields.newPassword = 'passwordTooShort';
+  else if (next !== confirm) fields.confirmPassword = 'passwordMismatch';
+  if (Object.keys(fields).length > 0) return { fields, attempt: (prev.attempt ?? 0) + 1 };
+
+  const row = await queryOne<{ password_hash: string }>(
+    'SELECT password_hash FROM users WHERE id = $1',
+    [user.id],
+  );
+  if (!row) return { error: 'generic' };
+
+  if (!(await verifyPassword(row.password_hash, current))) {
+    return { fields: { currentPassword: 'invalidCredentials' }, attempt: (prev.attempt ?? 0) + 1 };
+  }
+
+  // Refusing a no-op is not pedantry: someone who believes they have changed
+  // their password and has not is worse off than someone told to pick another.
+  if (await verifyPassword(row.password_hash, next)) {
+    return { fields: { newPassword: 'passwordUnchanged' }, attempt: (prev.attempt ?? 0) + 1 };
+  }
+
+  const hashed = await hashPassword(next);
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+
+  await transaction(async (client) => {
+    await client.query('UPDATE users SET password_hash = $2 WHERE id = $1', [user.id, hashed]);
+    if (token) {
+      await client.query(
+        'DELETE FROM sessions WHERE user_id = $1 AND token_hash <> $2',
+        [user.id, createHash('sha256').update(token).digest('hex')],
+      );
+    } else {
+      await client.query('DELETE FROM sessions WHERE user_id = $1', [user.id]);
+    }
+  });
+
+  await audit({
+    actorId: user.id,
+    action: 'account.password_changed',
+    targetType: 'user',
+    targetId: user.id,
+  });
+
+  revalidatePath(`/${lang}/account/profile`);
+  return { done: true };
+}
 
 export async function updateProfileAction(prev: FormState, formData: FormData): Promise<FormState> {
   const lang = localeOf(formData);

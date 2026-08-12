@@ -299,6 +299,7 @@ export const ar: Dictionary = {
       invalidEmail: 'أدخل بريدًا إلكترونيًا صحيحًا.',
       passwordTooShort: 'كلمة المرور قصيرة — عشرة أحرف على الأقل.',
       passwordMismatch: 'كلمتا المرور غير متطابقتين.',
+      passwordUnchanged: 'هذه كلمة مرورك الحالية. اختر كلمة مختلفة.',
       emailTaken: 'هذا البريد مسجَّل لدينا. جرّب تسجيل الدخول.',
       invalidCredentials: 'البريد أو كلمة المرور غير صحيحة.',
       tooManyAttempts:
@@ -366,6 +367,18 @@ export const ar: Dictionary = {
       memberNumber: 'رقم العضوية',
       noMemberNumber: 'يُمنح رقم العضوية بعد قبول طلب التطوّع.',
       cardCta: 'بطاقة الانتساب',
+    },
+    password: {
+      title: 'كلمة المرور',
+      lede: 'غيّرها متى شككت أن أحداً رآها. لا تنتظر دليلاً.',
+      current: 'كلمة المرور الحالية',
+      next: 'كلمة المرور الجديدة',
+      confirm: 'أعد كتابة الجديدة',
+      submit: 'غيّر كلمة المرور',
+      saving: 'جارٍ الحفظ…',
+      done: 'تم تغيير كلمة المرور',
+      doneNote:
+        'أُغلقت جلساتك على الأجهزة الأخرى. جهازك هذا ما زال مفتوحاً.',
     },
     card: {
       title: 'بطاقة الانتساب',

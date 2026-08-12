@@ -13,7 +13,13 @@ import {
   currentUser,
   audit,
 } from '@/lib/auth';
-import { callerIp, checkLoginAllowed, recordLoginAttempt } from '@/lib/throttle';
+import {
+  callerIp,
+  checkLoginAllowed,
+  recordLoginAttempt,
+  checkSignupAllowed,
+  recordSignup,
+} from '@/lib/throttle';
 import { requestPasswordReset, resetPassword, requestEmailVerification } from '@/lib/recovery';
 import { isLocale, type Locale } from '@/lib/i18n';
 import type { FormState } from './types';
@@ -91,9 +97,23 @@ export async function registerAction(prev: FormState, formData: FormData): Promi
 
   let userId: string;
   try {
+    /*
+     * Signing in was throttled and creating an account was not, which left the
+     * cheaper attack open: a script does not need to guess a password to fill
+     * the members table, corrupt the funnel figures and — once email is
+     * switched on — turn the site into a way of sending mail to strangers.
+     *
+     * Checked before the account is written, and recorded only after it is, so
+     * a failed attempt does not spend somebody's allowance.
+     */
+    const ip = await callerIp();
+    const allowed = await checkSignupAllowed(ip);
+    if (!allowed.allowed) return { ...kept, error: 'tooManyAttempts' };
+
     const result = await registerUser({ email, password, fullName, locale: lang });
     if (!result.ok) return { ...kept, fields: { email: 'emailTaken' } };
     userId = result.userId;
+    await recordSignup(ip);
     await createSession(userId, await userAgent());
   } catch {
     return { ...kept, error: 'dbUnavailable' };

@@ -176,6 +176,7 @@ export type Account = {
     invalidEmail: string;
     passwordTooShort: string;
     passwordMismatch: string;
+    passwordUnchanged: string;
     emailTaken: string;
     invalidCredentials: string;
     tooManyAttempts: string;
@@ -242,6 +243,17 @@ export type Account = {
     memberNumber: string;
     noMemberNumber: string;
     cardCta: string;
+  };
+  password: {
+    title: string;
+    lede: string;
+    current: string;
+    next: string;
+    confirm: string;
+    submit: string;
+    saving: string;
+    done: string;
+    doneNote: string;
   };
   card: {
     title: string;
