@@ -247,7 +247,7 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
               const state = s.completedAt
                 ? { label: mm.stageDone, tone: 'bg-ok/15 text-ok' }
                 : journey.currentStage?.number === s.number
-                  ? { label: mm.stageCurrent, tone: 'bg-brand-orange/15 text-brand-orange-dark dark:text-brand-orange' }
+                  ? { label: mm.stageCurrent, tone: 'bg-brand-orange/15 text-brand-orange-text dark:text-brand-orange' }
                   : { label: mm.stageLocked, tone: 'bg-surface-2 text-ink-3' };
               const unmet = s.requirements.filter((r) => r.isRequired && !r.satisfied);
 

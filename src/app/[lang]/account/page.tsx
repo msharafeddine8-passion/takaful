@@ -123,7 +123,7 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
 
         {/* One next step. Not fifteen cards someone has to triage. */}
         <div className="mt-5 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-6">
-          <p className="text-[0.78rem] font-extrabold tracking-[0.13em] text-brand-orange-dark dark:text-brand-orange">
+          <p className="text-[0.78rem] font-extrabold tracking-[0.13em] text-brand-orange-text dark:text-brand-orange">
             {p.nextStepTitle}
           </p>
           {next ? (

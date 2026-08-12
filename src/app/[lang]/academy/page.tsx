@@ -89,7 +89,7 @@ export default async function AcademyPage(props: PageProps<'/[lang]/academy'>) {
                 </p>
 
                 {hasContent && (
-                  <span className="mt-auto pt-2 text-[0.88rem] font-extrabold text-brand-orange-dark dark:text-brand-orange">
+                  <span className="mt-auto pt-2 text-[0.88rem] font-extrabold text-brand-orange-text dark:text-brand-orange">
                     {openLabel}
                   </span>
                 )}

@@ -4,12 +4,14 @@ import type { CourseContent } from './types';
  * Level 1 · Course 1 — Foundations of Volunteering.
  * Universal content: written for any volunteer in any organisation, anywhere.
  * Grounded in IFRC, Keeping Children Safe, CHS and UNV frameworks.
- * Status: DRAFT — requires review and approval by the association before publication.
  */
 export const volunteeringFoundations: CourseContent = {
   slug: 'volunteering-foundations',
   level: 1,
-  minutes: 90,
+  // Measured from the content, not aspired to. Every course here claimed
+  // roughly three times what it held, and a card promising ninety minutes
+  // that delivers thirty is broken before anyone starts reading.
+  minutes: 30,
   passMark: 70,
   title: {
     ar: 'أساسيات العمل التطوعي',

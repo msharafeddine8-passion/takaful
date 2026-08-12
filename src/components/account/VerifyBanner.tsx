@@ -31,7 +31,7 @@ export function VerifyBanner({
       <p className="text-[0.96rem] leading-relaxed text-ink-2">{t.unverifiedBanner}</p>
 
       {!emailConfigured ? (
-        <p className="mt-2 text-[0.88rem] font-bold text-brand-orange-dark dark:text-brand-orange">
+        <p className="mt-2 text-[0.88rem] font-bold text-brand-orange-text dark:text-brand-orange">
           {t.noProvider}
         </p>
       ) : sent ? (

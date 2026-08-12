@@ -1,7 +1,7 @@
 # Where the platform stands
 
-Written 11 August 2026. This is the honest state, including what does not
-work yet and what it is waiting on.
+Written 11 August 2026, updated 12 August. This is the honest state,
+including what does not work yet and what it is waiting on.
 
 ---
 
@@ -32,10 +32,23 @@ somebody is *accepted* as a volunteer, not when they register — a learner
 having no journey is the normal state, not a gap.
 
 **The academy.** Five courses, written for any volunteer in any organisation.
-Reading progress is saved per module, so a ninety-minute course read on a
-phone does not start from the top every evening. Questions and their options
-are shuffled per attempt, and the correct answer never leaves the server.
-Every attempt is kept, so a pass does not erase the road to it.
+Each carries six modules and six or seven scenario questions. Reading
+progress is saved per module, so a course read on a phone does not start
+from the top every evening. Questions and their options are shuffled per
+attempt, and the correct answer never leaves the server. Every attempt is
+kept, so a pass does not erase the road to it.
+
+The stated durations — 25 to 30 minutes — are measured from the Arabic text
+rather than aspired to. They used to say 60 to 90, which was three times
+what the courses held. Whether these should *become* 90-minute courses is a
+decision about the programme; the software will report whatever is actually
+there, and `npm run probe` fails if a card and its course disagree.
+
+**Achievements.** Nine badges across hours, courses, activities and stages,
+computed from the ledgers rather than awarded by hand. If the figures behind
+one fall — an hour corrected downward — the badge is marked withdrawn with a
+reason and kept visible, because a badge that silently disappears makes
+every other number on the page suspect.
 
 **The journey engine.** Stages and their requirements are configuration, not
 code. Staff set them in the Journey Builder; the engine reads them and works
@@ -62,7 +75,15 @@ genuine at a door, and nothing more.
 awards, suspension and reactivation, the Journey Builder, an audit log, and
 reports: the funnel from account to active volunteer, where people stall,
 per-course completion, hours by month, attendance, and who has gone quiet.
-CSV exports for the board and the ministry.
+CSV exports for the board and the ministry. A member's record shows, stage
+by stage, exactly which requirements are met and which are not — the only
+part a coordinator can act on.
+
+**Accessibility.** Checked in a browser rather than assumed: heading levels,
+contrast against real backgrounds, labels, alternative text, landmarks,
+language and direction, and the keyboard focus outline. Three failures were
+found and fixed. It has not been tested with an actual screen reader, and
+that remains the honest gap.
 
 ---
 
@@ -141,7 +162,7 @@ npm run probe
 npm run check
 ```
 
-`npm run probe` runs the whole test suite: fifteen probes, 326 behaviours,
+`npm run probe` runs the whole test suite: seventeen probes, 452 behaviours,
 against the real database. Each writes real rows, tries to break the rules
 the schema is supposed to enforce, and removes what it made. The runner
 checks that the association's configuration is exactly as the run found it —

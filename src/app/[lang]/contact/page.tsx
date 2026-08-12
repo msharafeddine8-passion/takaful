@@ -35,7 +35,7 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
             <a
               href={ORG.phoneHref}
               dir="ltr"
-              className="block text-[1.05rem] font-extrabold hover:text-brand-orange-dark dark:hover:text-brand-orange"
+              className="block text-[1.05rem] font-extrabold hover:text-brand-orange-text dark:hover:text-brand-orange"
             >
               {ORG.phone}
             </a>
@@ -65,7 +65,7 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
             <a
               href={ORG.emailHref}
               dir="ltr"
-              className="block text-[0.98rem] font-extrabold break-all hover:text-brand-orange-dark dark:hover:text-brand-orange"
+              className="block text-[0.98rem] font-extrabold break-all hover:text-brand-orange-text dark:hover:text-brand-orange"
             >
               {ORG.email}
             </a>
@@ -80,7 +80,7 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
               target="_blank"
               rel="noopener noreferrer"
               dir="ltr"
-              className="block text-[0.98rem] font-extrabold hover:text-brand-orange-dark dark:hover:text-brand-orange"
+              className="block text-[0.98rem] font-extrabold hover:text-brand-orange-text dark:hover:text-brand-orange"
             >
               Instagram
             </a>
@@ -89,7 +89,7 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
               target="_blank"
               rel="noopener noreferrer"
               dir="ltr"
-              className="mt-1 block text-[0.98rem] font-extrabold hover:text-brand-orange-dark dark:hover:text-brand-orange"
+              className="mt-1 block text-[0.98rem] font-extrabold hover:text-brand-orange-text dark:hover:text-brand-orange"
             >
               Facebook
             </a>

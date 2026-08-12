@@ -85,7 +85,7 @@ export default async function CertificatePage(props: PageProps<'/[lang]/certific
           )}
 
           <article className="certificate rounded-3xl border-4 border-brand-blue bg-surface p-10 text-center sm:p-14">
-            <p className="text-[0.8rem] font-extrabold tracking-[0.2em] text-brand-orange-dark dark:text-brand-orange">
+            <p className="text-[0.8rem] font-extrabold tracking-[0.2em] text-brand-orange-text dark:text-brand-orange">
               {dict.meta.siteName}
             </p>
             <p className="mt-1.5 text-[0.75rem] text-ink-3">
