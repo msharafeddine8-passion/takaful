@@ -10,13 +10,26 @@ name: check
 # If a second database is ever provisioned (Neon can branch one), add a job
 # here that points DATABASE_URL at the branch and runs `npm run probe` there.
 
-# A branch with an open pull request would otherwise run this twice for the
-# same commit, once as a push and once as a pull_request, and show two
-# separate failures for one problem.
+# Every branch, not just main.
+#
+# This was restricted to main to stop a branch with an open pull request
+# running the same commit twice. It worked, and it also meant nothing checked
+# the branch where the work actually happens. A commit that imported two
+# packages without adding them to package.json sat on the working branch for a
+# day: it built locally, because the packages were sitting in node_modules, and
+# `npm ci` on a clean machine could not resolve them. Vercel failed every
+# deploy that whole time and the live site quietly stayed on an old commit.
+#
+# The duplicate run is the real problem but the cheap one. The concurrency
+# group below cancels the older run for a ref, so a push and its pull_request
+# collapse into one, and a second push cancels the first.
 on:
   push:
-    branches: [main]
   pull_request:
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check:
@@ -30,6 +43,11 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      # Before the build, because it names the mistake in a second where the
+      # build takes two minutes to report it as a module-resolution error.
+      - name: Every import is declared
+        run: node scripts/undeclared-imports.mjs
 
       # The build has to come first.
       #
