@@ -7,6 +7,8 @@ import { getDictionary } from '@/lib/dictionaries';
 import { Header } from '@/components/Header';
 import { headerStrings } from '@/components/header-strings';
 import { Footer } from '@/components/Footer';
+import { OrganizationLd } from '@/components/StructuredData';
+import { HERO_PHOTO } from '@/lib/photos';
 import { alternatesFor, SITE_URL } from '@/lib/seo';
 
 /**
@@ -39,6 +41,34 @@ export async function generateMetadata(props: LayoutProps<'/[lang]'>): Promise<M
       description: dict.meta.description,
       locale: lang === 'ar' ? 'ar_LB' : 'en_US',
       type: 'website',
+      /*
+       * There was no image at all, so every link shared to WhatsApp or
+       * Facebook — the two channels this association actually recruits
+       * through — arrived as a bare grey rectangle.
+       *
+       * A real photograph of the association's volunteers rather than a
+       * generated card. A generated one was built first and abandoned:
+       * next/og renders through Satori, which could not parse the site's own
+       * Arabic face ("lookupType: 5 - substFormat: 3 is not yet supported"),
+       * and with a font it could parse, sharp then refused the result
+       * ("Input buffer contains unsupported image format"). The route
+       * answered 500 every time, and a 500 on a URL that crawlers and social
+       * platforms fetch is worse than no image. A static file cannot fail.
+       */
+      images: [
+        {
+          url: HERO_PHOTO,
+          width: 1200,
+          height: 630,
+          alt: dict.meta.siteName,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: dict.meta.siteName,
+      description: dict.meta.description,
+      images: [HERO_PHOTO],
     },
     alternates: alternatesFor(lang),
   };
@@ -65,6 +95,7 @@ export default async function LangLayout(props: LayoutProps<'/[lang]'>) {
         <Header lang={lang} strings={headerStrings(dict)} />
         <main id="main">{props.children}</main>
         <Footer lang={lang} dict={dict} />
+        <OrganizationLd lang={lang} dict={dict} />
       </body>
     </html>
   );

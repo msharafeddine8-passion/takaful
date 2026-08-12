@@ -9,6 +9,7 @@ import { Quiz } from '@/components/Quiz';
 import { CourseProgressProvider } from '@/components/CourseProgress';
 import { CourseFinish } from '@/components/CourseFinish';
 import { ModuleRead } from '@/components/ModuleRead';
+import { CourseLd } from '@/components/StructuredData';
 import { COURSE_CONTENT } from '@/lib/course-content';
 import { COURSES } from '@/lib/courses';
 import { isDbConfigured } from '@/lib/db';
@@ -235,6 +236,8 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
 
   return (
     <>
+      <CourseLd lang={lang} course={course} slug={slug} />
+
       {!isApproved && (
         <p className="bg-brand-orange px-4 py-2.5 text-center text-[0.83rem] font-extrabold text-[#241503]">
           {t.draft}
