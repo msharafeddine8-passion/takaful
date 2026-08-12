@@ -12,6 +12,7 @@ import {
   markModuleRead,
   ensureCourseCertificate,
 } from '@/lib/academy';
+import { recomputeAchievements } from '@/lib/achievements';
 import { isLocale, type Locale } from '@/lib/i18n';
 
 /**
@@ -120,6 +121,11 @@ export async function completeCourseAction(
     if (user.membershipStatus === 'registered_user') {
       await setMembershipStatus({ userId: user.id, next: 'course_participant' });
     }
+
+    // A badge should be waiting when they get to the page, not computed only
+    // when they happen to open it. Failing here costs nothing: the page
+    // recomputes too.
+    await recomputeAchievements(user.id).catch(() => {});
   }
 
   await audit({

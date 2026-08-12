@@ -10,6 +10,7 @@ import { isLocale, type Locale } from '@/lib/i18n';
 import { parseDuration } from '@/lib/duration';
 import { reallocate, rebuildAllocations } from '@/lib/allocation';
 import { notify } from '@/lib/notify';
+import { recomputeAchievements } from '@/lib/achievements';
 import { formatDuration } from '@/lib/hours';
 import type { FormState } from './types';
 
@@ -172,6 +173,16 @@ export async function verifyHoursAction(formData: FormData): Promise<void> {
       console.error('[hours] verified but allocation failed:', error);
     }
   }
+
+  /*
+   * Badges follow the hours in both directions: verifying can earn one, and
+   * rejecting can take one back. Run for either decision, and outside the
+   * decision's failure surface — the hours are recorded either way, and the
+   * achievements page recomputes on its own.
+   */
+  await recomputeAchievements(entry.user_id, 'ساعات صُحّحت').catch((error) =>
+    console.error('[hours] achievements not recomputed:', error),
+  );
 
   revalidatePath(`/${lang}/staff/hours`);
   revalidatePath(`/${lang}/account/hours`);

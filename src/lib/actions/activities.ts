@@ -6,6 +6,7 @@ import { isDbConfigured, execute, queryOne, transaction } from '@/lib/db';
 import { audit, currentUser } from '@/lib/auth';
 import { requireCapability } from '@/lib/authz';
 import { reallocate } from '@/lib/allocation';
+import { recomputeAchievements } from '@/lib/achievements';
 import { isLocale, type Locale } from '@/lib/i18n';
 
 function localeOf(f: FormData): Locale {
@@ -212,6 +213,12 @@ export async function confirmAttendanceAction(formData: FormData): Promise<void>
       console.error('[activities] attendance recorded but allocation failed:', error);
     }
   }
+
+  // Attendance itself earns badges, whether or not the hours needed a second
+  // pair of eyes: turning up is the thing being marked.
+  await recomputeAchievements(userId).catch((error) =>
+    console.error('[activities] achievements not recomputed:', error),
+  );
 
   revalidatePath(`/${lang}/staff/activities/${activityId}`);
   revalidatePath(`/${lang}/staff/hours`);

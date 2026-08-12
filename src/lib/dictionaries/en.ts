@@ -478,6 +478,21 @@ export const en: Dictionary = {
       resent: 'Link sent. Check your email.',
       noProvider: 'Email sending is not switched on for this site yet, so the link will not arrive.',
     },
+    achievements: {
+      title: 'My achievements',
+      lede: 'Marks of what you have done. Nobody awards these — they are counted from your hours, courses and attendance.',
+      empty: 'No achievements yet. A first verified hour of volunteering is enough to start.',
+      emptyCta: 'Browse opportunities',
+      earnedOn: 'Earned on',
+      nextTitle: 'Next',
+      remainingHours: '{n} to go',
+      remainingCourses: '{n} more courses',
+      remainingActivities: '{n} more activities',
+      remainingStages: '{n} more stages',
+      revokedNote:
+        'This was withdrawn because the figures behind it changed. The record stays — we do not erase what happened.',
+      showRevoked: 'Withdrawn',
+    },
     learning: {
       title: 'My learning',
       lede: 'Every course you have opened, and how far you got.',

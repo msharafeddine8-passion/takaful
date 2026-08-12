@@ -208,6 +208,7 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
           {[
             journey ? { href: `/${lang}/account/journey`, label: dict.account.journey.title } : null,
             { href: `/${lang}/account/learning`, label: dict.account.learning.title },
+            { href: `/${lang}/account/achievements`, label: dict.account.achievements.title },
             { href: `/${lang}/account/hours`, label: dict.account.hours.title },
             { href: `/${lang}/account/activities`, label: dict.account.activities.mineTitle },
             { href: `/${lang}/opportunities`, label: dict.account.activities.title },

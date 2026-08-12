@@ -345,6 +345,21 @@ export type Account = {
     resent: string;
     noProvider: string;
   };
+  achievements: {
+    title: string;
+    lede: string;
+    empty: string;
+    emptyCta: string;
+    earnedOn: string;
+    nextTitle: string;
+    /** One per kind: a bare number leaves "4 to go" meaning nothing. */
+    remainingHours: string;
+    remainingCourses: string;
+    remainingActivities: string;
+    remainingStages: string;
+    revokedNote: string;
+    showRevoked: string;
+  };
   learning: {
     title: string;
     lede: string;
