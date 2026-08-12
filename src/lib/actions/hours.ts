@@ -8,6 +8,9 @@ import { audit, currentUser } from '@/lib/auth';
 import { requireCapability, Forbidden } from '@/lib/authz';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { parseDuration } from '@/lib/duration';
+import { reallocate, rebuildAllocations } from '@/lib/allocation';
+import { notify } from '@/lib/notify';
+import { formatDuration } from '@/lib/hours';
 import type { FormState } from './types';
 
 const MAX_MINUTES_PER_ENTRY = 1440; // one day
@@ -122,6 +125,17 @@ export async function verifyHoursAction(formData: FormData): Promise<void> {
       targetId: entryId,
       reason,
     });
+    // A rejection with no explanation is the kind of thing that makes a
+    // volunteer stop logging hours altogether.
+    await notify({
+      userId: entry.user_id,
+      kind: 'hours.rejected',
+      titleAr: 'لم تُعتمد ساعاتك المسجّلة',
+      titleEn: 'Your logged hours were not verified',
+      bodyAr: reason,
+      bodyEn: reason,
+      link: '/account/hours',
+    });
   } else {
     await execute(
       `UPDATE hour_entries
@@ -136,9 +150,32 @@ export async function verifyHoursAction(formData: FormData): Promise<void> {
       targetId: entryId,
       newValue: { minutes: entry.minutes },
     });
+
+    await notify({
+      userId: entry.user_id,
+      kind: 'hours.verified',
+      titleAr: `اعتُمدت ${formatDuration(entry.minutes, 'ar')} من ساعات تطوّعك ✅`,
+      titleEn: `${formatDuration(entry.minutes, 'en')} of your volunteering hours were verified ✅`,
+      link: '/account/hours',
+    });
+
+    // Newly verified minutes become stage progress here, not on some later
+    // page load. A volunteer who refreshes straight after a supervisor
+    // approves should see the bar move.
+    //
+    // Deliberately outside the verification path's failure surface: if
+    // allocation breaks, the hours are still verified, and reallocate() is
+    // idempotent so the next run repairs it.
+    try {
+      await reallocate(entry.user_id);
+    } catch (error) {
+      console.error('[hours] verified but allocation failed:', error);
+    }
   }
 
   revalidatePath(`/${lang}/staff/hours`);
+  revalidatePath(`/${lang}/account/hours`);
+  revalidatePath(`/${lang}/account/journey`);
 }
 
 /**
@@ -180,5 +217,16 @@ export async function correctHoursAction(formData: FormData): Promise<void> {
     reason,
   });
 
+  // A rebuild, not a top-up: releasing one entry can leave a later entry
+  // allocated to a requirement an earlier one should have filled, and only
+  // starting again puts the ledger back in the order the work happened.
+  try {
+    await rebuildAllocations(entry.user_id);
+  } catch (error) {
+    console.error('[hours] corrected but reallocation failed:', error);
+  }
+
   revalidatePath(`/${lang}/staff/hours`);
+  revalidatePath(`/${lang}/account/hours`);
+  revalidatePath(`/${lang}/account/journey`);
 }

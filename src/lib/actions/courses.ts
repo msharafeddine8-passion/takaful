@@ -1,47 +1,89 @@
 'use server';
 
-import { randomUUID } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
-import { isDbConfigured, execute, transaction } from '@/lib/db';
+import { isDbConfigured } from '@/lib/db';
 import { audit, currentUser, setMembershipStatus } from '@/lib/auth';
-import { COURSE_CONTENT } from '@/lib/course-content';
-import { COURSES } from '@/lib/courses';
-import { generateCode, type CertificateSnapshot } from '@/lib/certificates';
+import {
+  questionsIn,
+  passMarkFor,
+  isCoursePublished,
+  recordAnswer,
+  submitAttempt,
+  markModuleRead,
+  ensureCourseCertificate,
+} from '@/lib/academy';
 import { isLocale, type Locale } from '@/lib/i18n';
 
 /**
- * Recording a finished course.
+ * Taking a course.
  *
- * The browser sends which option was picked for each question. It does NOT
- * send a score, and the score it computed for its own feedback is ignored:
- * this decides whether a certificate is issued, so it is recomputed here
- * against the course content.
+ * Two things the browser is never trusted with: the answer key, and the
+ * score. It sends which option was tapped; everything else happens here.
  */
+
+// ------------------------------------------------------------------ answering
+
+export type AnswerResult =
+  | { ok: true; correct: boolean; feedback: string; recorded: boolean }
+  | { ok: false; reason: 'unknown_question' | 'bad_choice' | 'no_attempt' | 'db' };
+
+/**
+ * Checks one answer.
+ *
+ * A signed-in learner's first answer is recorded and stands. A visitor with
+ * no account still gets to try the questions and read the explanation —
+ * nothing is being scored, so there is nothing to protect — but the correct
+ * option is still never sent to their browser.
+ */
+export async function answerQuestionAction(
+  slug: string,
+  questionId: string,
+  displayedIndex: number,
+  lang: Locale,
+): Promise<AnswerResult> {
+  const locale: Locale = isLocale(lang) ? lang : 'ar';
+  const question = questionsIn(slug).find((q) => q.id === questionId);
+  if (!question) return { ok: false, reason: 'unknown_question' };
+
+  const user = isDbConfigured() ? await currentUser() : null;
+
+  if (!user) {
+    // No attempt, so no shuffle: what was shown is the authored order.
+    if (
+      !Number.isInteger(displayedIndex) ||
+      displayedIndex < 0 ||
+      displayedIndex >= question.options.length
+    ) {
+      return { ok: false, reason: 'bad_choice' };
+    }
+    return {
+      ok: true,
+      correct: displayedIndex === question.correct,
+      feedback: question.feedback[locale],
+      recorded: false,
+    };
+  }
+
+  try {
+    const verdict = await recordAnswer(user.id, slug, questionId, displayedIndex, locale);
+    if (!verdict.ok) return verdict;
+    return { ok: true, correct: verdict.correct, feedback: verdict.feedback, recorded: true };
+  } catch {
+    return { ok: false, reason: 'db' };
+  }
+}
+
+// ------------------------------------------------------------------ finishing
 
 export type CompleteResult =
   | { ok: true; score: number; passed: boolean; certificateCode: string | null }
-  | { ok: false; reason: 'unauthenticated' | 'unknown_course' | 'no_questions' | 'db' };
-
-type QuizBlock = { type: 'quiz'; id: string; correct: number };
-
-function quizzesIn(slug: string): QuizBlock[] {
-  const course = COURSE_CONTENT[slug];
-  if (!course) return [];
-
-  const found: QuizBlock[] = [];
-  for (const mod of course.modules) {
-    for (const block of mod.blocks) {
-      if (block.type === 'quiz' && typeof block.id === 'string') {
-        found.push({ type: 'quiz', id: block.id, correct: block.correct });
-      }
-    }
-  }
-  return found;
-}
+  | {
+      ok: false;
+      reason: 'unauthenticated' | 'unknown_course' | 'no_questions' | 'no_attempt' | 'db';
+    };
 
 export async function completeCourseAction(
   slug: string,
-  picks: Record<string, number>,
   lang: Locale,
 ): Promise<CompleteResult> {
   const locale: Locale = isLocale(lang) ? lang : 'ar';
@@ -50,86 +92,55 @@ export async function completeCourseAction(
   const user = await currentUser();
   if (!user) return { ok: false, reason: 'unauthenticated' };
 
-  const meta = COURSES.find((c) => c.slug === slug);
-  const content = COURSE_CONTENT[slug];
-  const quizzes = quizzesIn(slug);
-  if (!meta || !content || meta.status !== 'available') {
-    return { ok: false, reason: 'unknown_course' };
-  }
-  if (quizzes.length === 0) return { ok: false, reason: 'no_questions' };
+  // A draft course can be read but not completed: no score, no certificate.
+  if (!isCoursePublished(slug)) return { ok: false, reason: 'unknown_course' };
+  if (questionsIn(slug).length === 0) return { ok: false, reason: 'no_questions' };
 
-  // Unanswered counts as wrong. Skipping a question is not a way to raise a score.
-  const right = quizzes.filter((q) => picks[q.id] === q.correct).length;
-  const score = Math.round((right / quizzes.length) * 100);
-  const passed = score >= content.passMark;
-
-  let certificateCode: string | null = null;
-
+  let graded: Awaited<ReturnType<typeof submitAttempt>>;
   try {
-    await transaction(async (client) => {
-      await client.query(
-        `INSERT INTO course_progress (user_id, course_slug, score, passed, completed_at)
-         VALUES ($1, $2, $3, $4, now())
-         ON CONFLICT (user_id, course_slug) DO UPDATE SET
-           -- Keep the best attempt: a later worse run should not take away
-           -- a pass someone already earned.
-           score = GREATEST(course_progress.score, EXCLUDED.score),
-           passed = course_progress.passed OR EXCLUDED.passed,
-           completed_at = COALESCE(course_progress.completed_at, EXCLUDED.completed_at)`,
-        [user.id, slug, score, passed],
-      );
-
-      if (!passed) return;
-
-      const title = meta.title;
-      const snapshot: CertificateSnapshot = {
-        fullName: user.fullName,
-        titleAr: `شهادة إتمام — ${title.ar}`,
-        titleEn: `Certificate of completion — ${title.en}`,
-      };
-
-      const code = generateCode();
-      // uq_cert_course_once means a second pass simply does not issue again.
-      const inserted = await client.query(
-        `INSERT INTO certificates (id, code, user_id, kind, course_slug, snapshot)
-         VALUES ($1, $2, $3, 'course', $4, $5)
-         ON CONFLICT (user_id, course_slug) WHERE kind = 'course' DO NOTHING
-         RETURNING code`,
-        [randomUUID(), code, user.id, slug, JSON.stringify(snapshot)],
-      );
-      if (inserted.rows.length > 0) certificateCode = code;
-    });
+    graded = await submitAttempt(user.id, slug);
   } catch {
     return { ok: false, reason: 'db' };
   }
+  if (!graded) return { ok: false, reason: 'no_attempt' };
 
-  // Finishing a course moves someone off the bare registered_user status.
-  if (user.membershipStatus === 'registered_user') {
-    await setMembershipStatus({ userId: user.id, next: 'course_participant' });
+  let certificateCode: string | null = null;
+
+  if (graded.passed) {
+    try {
+      certificateCode = await ensureCourseCertificate(user.id, slug, user.fullName);
+    } catch {
+      // The pass is already in the ledger. Failing to mint the paper here must
+      // not cost the learner their result — the certificates page calls the
+      // same function and will issue it on their next visit.
+      certificateCode = null;
+    }
+
+    // Finishing a course moves someone off the bare registered_user status.
+    if (user.membershipStatus === 'registered_user') {
+      await setMembershipStatus({ userId: user.id, next: 'course_participant' });
+    }
   }
 
   await audit({
     actorId: user.id,
-    action: passed ? 'course.passed' : 'course.attempted',
+    action: graded.passed ? 'course.passed' : 'course.attempted',
     targetType: 'course',
     targetId: slug,
-    newValue: { score },
+    newValue: { score: graded.score, passMark: passMarkFor(slug), answered: graded.answered },
   });
 
   revalidatePath(`/${locale}/account`);
-  return { ok: true, score, passed, certificateCode };
+  revalidatePath(`/${locale}/academy/${slug}`);
+  return { ok: true, score: graded.score, passed: graded.passed, certificateCode };
 }
 
-/** Records that someone opened a course, without waiting for a result. */
-export async function markCourseStartedAction(slug: string): Promise<void> {
+// ------------------------------------------------------------------- reading
+
+/** Marks a module read, so returning to the course lands where they stopped. */
+export async function markModuleReadAction(slug: string, moduleId: string): Promise<void> {
   if (!isDbConfigured()) return;
   const user = await currentUser();
   if (!user) return;
-
-  await execute(
-    `INSERT INTO course_progress (user_id, course_slug)
-     VALUES ($1, $2)
-     ON CONFLICT (user_id, course_slug) DO NOTHING`,
-    [user.id, slug],
-  );
+  await markModuleRead(user.id, slug, moduleId);
 }

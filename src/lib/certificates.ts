@@ -84,6 +84,31 @@ export async function findByCode(code: string): Promise<Certificate | null> {
   );
 }
 
+export type MemberCheck = {
+  member_number: number;
+  full_name: string;
+  status: string;
+  stage: number | null;
+};
+
+/**
+ * Confirms a membership number, for the QR on a membership card.
+ *
+ * Returns the holder's name and standing and nothing else — enough for
+ * someone at a door to confirm the card is genuine, not enough to learn
+ * anything about the person from a number they guessed.
+ */
+export async function findMember(memberNumber: number): Promise<MemberCheck | null> {
+  return queryOne<MemberCheck>(
+    `SELECT p.member_number, p.full_name, u.status,
+            (SELECT MAX(s.stage) FROM stage_progress s WHERE s.user_id = u.id) AS stage
+       FROM profiles p
+       JOIN users u ON u.id = p.user_id
+      WHERE p.member_number = $1`,
+    [memberNumber],
+  );
+}
+
 export async function certificatesFor(userId: string): Promise<Certificate[]> {
   return query<Certificate>(
     `SELECT id, code, user_id, kind, course_slug, hours_at_issue,

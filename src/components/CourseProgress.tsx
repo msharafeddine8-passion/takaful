@@ -3,24 +3,25 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
 /**
- * Collects quiz answers across a whole course page.
+ * Tracks how far through a course's questions someone is.
  *
  * Each Quiz is rendered deep inside the content blocks and knows nothing
- * about the others, so they report into this context and the finish bar at
- * the bottom reads the total.
+ * about the others, so they report in here and the finish bar at the bottom
+ * reads the total.
  *
- * What is stored is which option the person picked, not whether it was right.
- * The client marks answers only to show feedback; the server recomputes the
- * score from the course content before recording anything, because a score
- * that decides whether a certificate is issued cannot be taken on the
- * browser's word.
+ * It holds which questions have been answered — not what was answered, and
+ * not whether it was right. Both of those live on the server: the answer key
+ * is never sent to the browser, and the score that decides a certificate is
+ * computed from what the database recorded, never from anything this
+ * component says.
+ *
+ * `answered` starts from what the server already knows, so someone who closed
+ * the tab halfway comes back to a page that remembers.
  */
 
-export type Picks = Record<string, number>;
-
 type Ctx = {
-  pick: (questionId: string, optionIndex: number) => void;
-  picks: Picks;
+  markAnswered: (questionId: string) => void;
+  answered: Set<string>;
   total: number;
 };
 
@@ -29,19 +30,27 @@ const CourseCtx = createContext<Ctx | null>(null);
 export function CourseProgressProvider({
   children,
   totalQuestions,
+  initiallyAnswered = [],
 }: {
   children: ReactNode;
   totalQuestions: number;
+  initiallyAnswered?: string[];
 }) {
-  const [picks, setPicks] = useState<Picks>({});
+  const [answered, setAnswered] = useState<Set<string>>(() => new Set(initiallyAnswered));
 
-  const pick = useCallback((questionId: string, optionIndex: number) => {
-    // The first answer stands. Answering again after seeing the feedback
-    // would make the score meaningless.
-    setPicks((prev) => (questionId in prev ? prev : { ...prev, [questionId]: optionIndex }));
+  const markAnswered = useCallback((questionId: string) => {
+    setAnswered((prev) => {
+      if (prev.has(questionId)) return prev;
+      const next = new Set(prev);
+      next.add(questionId);
+      return next;
+    });
   }, []);
 
-  const value = useMemo<Ctx>(() => ({ pick, picks, total: totalQuestions }), [pick, picks, totalQuestions]);
+  const value = useMemo<Ctx>(
+    () => ({ markAnswered, answered, total: totalQuestions }),
+    [markAnswered, answered, totalQuestions],
+  );
 
   return <CourseCtx.Provider value={value}>{children}</CourseCtx.Provider>;
 }

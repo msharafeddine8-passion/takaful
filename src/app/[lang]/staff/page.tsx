@@ -114,6 +114,30 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
               {d.goMembers}
             </Link>
           )}
+          {can(user, 'activities.manage') && (
+            <Link
+              href={`/${lang}/staff/activities`}
+              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {dict.account.activities.manageTitle}
+            </Link>
+          )}
+          {can(user, 'members.manage') && (
+            <Link
+              href={`/${lang}/staff/journey`}
+              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {t.journeyBuilder.title}
+            </Link>
+          )}
+          {can(user, 'reports.read') && (
+            <Link
+              href={`/${lang}/staff/reports`}
+              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {dict.account.reports.title}
+            </Link>
+          )}
           {can(user, 'audit.read') && (
             <Link
               href={`/${lang}/staff/audit`}
