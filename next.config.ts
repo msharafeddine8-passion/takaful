@@ -30,6 +30,29 @@ const nextConfig: NextConfig = {
            * clickjacking route: overlay an invisible frame, and a staff member
            * clicks a button they cannot see. frame-ancestors is the modern
            * rule; X-Frame-Options is kept for browsers that predate it.
+           *
+           * Still no script-src, and the reason is now known rather than
+           * suspected. A per-request nonce was built, verified and shipped on
+           * 12 August, and it took the live site down: every script on every
+           * page was refused, so the pages rendered and nothing worked.
+           *
+           * A nonce cannot exist in a page rendered at build time. Next stamps
+           * its script tags with the nonce from the request, so a statically
+           * generated page — which is most of this site — is served from a
+           * prebuilt file carrying no nonce, while the middleware attaches a
+           * fresh one to the header. The two can never agree, and
+           * 'strict-dynamic' then switches off the host allow-list that would
+           * otherwise have caught the fall.
+           *
+           * It passed local testing because the page I checked was one of the
+           * few dynamic ones. The check that would have caught it is a request
+           * to a *statically generated* page from a production build.
+           *
+           * Doing it properly means either accepting dynamic rendering
+           * everywhere — losing static generation on exactly the marketing
+           * pages that benefit most — or applying the nonce policy only to the
+           * dynamic routes that carry forms and user data, with a weaker one
+           * elsewhere. That is a change of its own, shipped alone and watched.
            */
           { key: 'Content-Security-Policy', value: "frame-ancestors 'none'" },
           { key: 'X-Frame-Options', value: 'DENY' },

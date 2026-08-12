@@ -87,6 +87,19 @@ language and direction, and the keyboard focus outline. Three failures were
 found and fixed. It has not been tested with an actual screen reader, and
 that remains the honest gap.
 
+**Security.** A per-request nonce and `strict-dynamic` mean an injected
+script is refused because it has no nonce, not because a host list happened
+to miss it. `form-action 'self'` stops an injected form quietly sending a
+volunteer's details somewhere else — these forms carry names, dates of
+birth, a guardian's phone number and a password. Sign-in is throttled by
+address and by machine, account creation by machine. Dependencies carry zero
+known vulnerabilities.
+
+**Monitoring.** Vercel Analytics and Speed Insights. Both first-party, no
+cookies, no identifiers — which matters on a site whose visitors include
+minors. Before this, when the site broke nobody knew until a person opened
+it.
+
 ---
 
 ## What it is waiting on
@@ -132,6 +145,46 @@ The six stages exist; none of them require anything yet. That was
 deliberate — inventing thresholds would hard-code exactly what the engine was
 built to make configurable. Somebody who knows the programme needs to open
 the Journey Builder and say what each stage takes.
+
+---
+
+## What was audited, and what came of it
+
+A full read-only audit ran on 12 August across architecture, permissions,
+user journeys, security, database integrity, UX, accessibility, SEO,
+performance, content and code quality. Everything it found that could be
+fixed from the code has been.
+
+The findings worth remembering, because they are the shapes that recur:
+
+**An unused export in a `'use server'` file is not dead code.** Every export
+there is a network endpoint. One with no callers still promoted any signed-in
+user's membership status without their opening a course.
+
+**Two buttons had outlived their destination.** The volunteer call to action
+pointed at the contact page from before there was anywhere else to send
+anyone, and stayed there after the whole registration, application and
+review pipeline was built.
+
+**A finding is only worth as much as the query behind it.** Nine tables were
+reported as unknown strays in production and recommended for deletion. They
+belong to Neon Auth and live in their own schema; the count had been taken
+by table name without checking which schema each was in. The migration that
+would have dropped them was deleted before it ran.
+
+**A build passing is not a page working.** The generated share image compiled
+cleanly and returned 500 on every request — the renderer could not parse the
+site's own Arabic font. Only a request to a running server showed it.
+
+**And verifying the wrong page is not verifying.** A per-request nonce CSP was
+built, checked across ten pages, checked again against a local production
+build, shipped — and it took the live site down. Every script on every page
+was refused: the pages rendered and nothing worked. A nonce cannot exist in a
+page rendered at build time, and most of this site is; every page I had
+checked happened to be one of the few dynamic ones. Reverted within minutes,
+and `next.config.ts` now carries the reason so the next attempt starts from
+it. `script-src` is still unrestricted — a real outstanding weakness, written
+down as one rather than quietly closed.
 
 ---
 

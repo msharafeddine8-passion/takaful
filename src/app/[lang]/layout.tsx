@@ -7,6 +7,8 @@ import { getDictionary } from '@/lib/dictionaries';
 import { Header } from '@/components/Header';
 import { headerStrings } from '@/components/header-strings';
 import { Footer } from '@/components/Footer';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { OrganizationLd } from '@/components/StructuredData';
 import { HERO_PHOTO } from '@/lib/photos';
 import { alternatesFor, SITE_URL } from '@/lib/seo';
@@ -96,6 +98,12 @@ export default async function LangLayout(props: LayoutProps<'/[lang]'>) {
         <main id="main">{props.children}</main>
         <Footer lang={lang} dict={dict} />
         <OrganizationLd lang={lang} dict={dict} />
+        {/* Nothing was measuring the live site. When it broke in August nobody
+            knew until a person opened it. Both are first-party, set no cookies
+            and carry no identifiers, which matters on a site whose visitors
+            include minors. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
