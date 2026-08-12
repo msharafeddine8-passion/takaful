@@ -247,7 +247,9 @@ export const ar: Dictionary = {
       title: 'لوحتي',
       greeting: 'أهلًا',
       statusLabel: 'وضعك الحالي',
-      nextStep: 'الخطوة التالية',
+      // Sits under a panel already headed "خطوتك التالية", so it has to say
+      // what to do rather than repeat the heading.
+      nextStep: 'اختر من أين تبدأ: دورة من الأكاديمية، أو طلب تطوّع.',
       applyCta: 'قدّم طلب التطوّع',
       applyPending: 'طلبك قيد المراجعة',
       coursesTitle: 'الأكاديمية',

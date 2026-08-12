@@ -1,29 +1,34 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Logo } from './Logo';
 import { switchLocalePath, type Locale } from '@/lib/i18n';
-import type { Dictionary } from '@/lib/dictionaries';
+import type { HeaderStrings } from './header-strings';
 
-type Props = { lang: Locale; dict: Dictionary };
+/**
+ * Takes only the strings it shows. It used to take the whole Dictionary, and
+ * because this is a client component on every page, that put the entire
+ * dictionary in every response — see header-strings.ts for why that mattered.
+ */
+type Props = { lang: Locale; strings: HeaderStrings };
 
-export function Header({ lang, dict }: Props) {
+export function Header({ lang, strings }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const other: Locale = lang === 'ar' ? 'en' : 'ar';
 
   const links = [
-    { href: `/${lang}`, label: dict.nav.home },
-    { href: `/${lang}/about`, label: dict.nav.about },
-    { href: `/${lang}/areas`, label: dict.nav.areas },
-    { href: `/${lang}/academy`, label: dict.nav.academy },
-    { href: `/${lang}/opportunities`, label: dict.account.activities.kicker },
-    { href: `/${lang}/journey`, label: dict.nav.journey },
-    { href: `/${lang}/projects`, label: dict.nav.projects },
-    { href: `/${lang}/gallery`, label: dict.nav.gallery },
-    { href: `/${lang}/contact`, label: dict.nav.contact },
+    { href: `/${lang}`, label: strings.home },
+    { href: `/${lang}/about`, label: strings.about },
+    { href: `/${lang}/areas`, label: strings.areas },
+    { href: `/${lang}/academy`, label: strings.academy },
+    { href: `/${lang}/opportunities`, label: strings.opportunities },
+    { href: `/${lang}/journey`, label: strings.journey },
+    { href: `/${lang}/projects`, label: strings.projects },
+    { href: `/${lang}/gallery`, label: strings.gallery },
+    { href: `/${lang}/contact`, label: strings.contact },
   ];
 
   const isActive = (href: string) =>
@@ -32,8 +37,8 @@ export function Header({ lang, dict }: Props) {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-ground/90 backdrop-blur-md">
       <div className="mx-auto flex h-[72px] max-w-6xl items-center gap-6 px-5">
-        <Link href={`/${lang}`} aria-label={dict.meta.siteName}>
-          <Logo siteName={dict.meta.siteName} />
+        <Link href={`/${lang}`} aria-label={strings.siteName}>
+          <Logo siteName={strings.siteName} />
         </Link>
 
         <nav className="ms-auto hidden items-center gap-1 lg:flex">
@@ -59,7 +64,7 @@ export function Header({ lang, dict }: Props) {
             hrefLang={other}
             className="rounded-full border border-line px-3 py-2 text-[0.82rem] font-bold text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
           >
-            {dict.common.switchTo}
+            {strings.switchTo}
           </Link>
           {/* The header stays static, so it cannot know who is signed in.
               /join redirects an already-signed-in visitor to their dashboard. */}
@@ -67,19 +72,19 @@ export function Header({ lang, dict }: Props) {
             href={`/${lang}/account`}
             className="hidden rounded-lg px-3 py-2 text-[0.9rem] font-bold text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink sm:inline-flex"
           >
-            {dict.account.dashboard.kicker}
+            {strings.account}
           </Link>
           <Link
             href={`/${lang}/join`}
             className="hidden rounded-full bg-brand-orange px-5 py-2.5 text-[0.92rem] font-extrabold text-[#241503] transition-colors hover:bg-brand-orange-dark sm:inline-flex"
           >
-            {dict.nav.volunteer}
+            {strings.volunteer}
           </Link>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
-            aria-label={dict.nav.menu}
+            aria-label={strings.menu}
             className="rounded-lg border border-line px-3 py-2 text-ink lg:hidden"
           >
             {open ? '✕' : '☰'}
@@ -104,10 +109,11 @@ export function Header({ lang, dict }: Props) {
             onClick={() => setOpen(false)}
             className="block border-b border-line px-5 py-3.5 font-bold text-brand-blue dark:text-brand-orange"
           >
-            {dict.account.dashboard.kicker}
+            {strings.account}
           </Link>
         </nav>
       )}
     </header>
   );
 }
+

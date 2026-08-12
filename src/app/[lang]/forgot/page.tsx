@@ -41,7 +41,7 @@ export default async function ForgotPage(props: PageProps<'/[lang]/forgot'>) {
           </p>
         )}
 
-        <ForgotForm lang={lang} dict={dict} />
+        <ForgotForm lang={lang} t={t} errors={dict.account.errors} />
       </Container>
     </Section>
   );

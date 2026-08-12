@@ -247,7 +247,9 @@ export const en: Dictionary = {
       title: 'My dashboard',
       greeting: 'Hello',
       statusLabel: 'Your current status',
-      nextStep: 'Next step',
+      // Sits under a panel already headed "Your next step", so it has to say
+      // what to do rather than repeat the heading.
+      nextStep: 'Choose where to start: a course from the academy, or an application to volunteer.',
       applyCta: 'Apply to volunteer',
       applyPending: 'Your application is under review',
       coursesTitle: 'The Academy',
