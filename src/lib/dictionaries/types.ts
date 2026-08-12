@@ -583,6 +583,7 @@ export type Account = {
       reasonLabel: string;
       reasonPlaceholder: string;
       lastAdminNote: string;
+      confirmSuspend: string;
       journeyTitle: string;
       journeyLede: string;
       noJourney: string;

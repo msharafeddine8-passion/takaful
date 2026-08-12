@@ -718,6 +718,8 @@ export const en: Dictionary = {
         reasonLabel: 'Reason',
         reasonPlaceholder: 'Recorded against your name.',
         lastAdminNote: 'The last super administrator cannot be suspended — nobody would be left to undo it.',
+        confirmSuspend:
+          '{name} will be locked out immediately and signed out on every device. Continue?',
         journeyTitle: 'Journey and blockers',
         journeyLede: 'Exactly what stands between this volunteer and their next stage.',
         noJourney: 'This person is a learner and has not been accepted as a volunteer, so they have no journey.',

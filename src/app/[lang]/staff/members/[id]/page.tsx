@@ -19,6 +19,7 @@ import {
   reactivateMemberAction,
 } from '@/lib/actions/members';
 import { issueHoursCertificateAction } from '@/lib/actions/certificates';
+import { ConfirmSubmit } from '@/components/staff/ConfirmSubmit';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -148,12 +149,15 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
                 placeholder={mm.reasonPlaceholder}
                 className="w-full max-w-[34rem] rounded-xl border border-line bg-ground px-4 py-2.5 text-[0.95rem] outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/25"
               />
-              <button
-                type="submit"
+              {/* The one action here that takes effect against a person the
+                  instant it is clicked. Reversible, but the volunteer has
+                  already been signed out of whatever they were doing. */}
+              <ConfirmSubmit
+                message={mm.confirmSuspend.replace('{name}', person.full_name)}
                 className="mt-3 block rounded-full bg-danger px-6 py-2.5 text-[0.92rem] font-extrabold text-white hover:opacity-90"
               >
                 {mm.suspend}
-              </button>
+              </ConfirmSubmit>
               <p className="mt-2.5 text-[0.82rem] text-ink-3">{mm.lastAdminNote}</p>
             </form>
           )}
