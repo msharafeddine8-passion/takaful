@@ -28,8 +28,14 @@ const nextConfig: NextConfig = {
            * The site could be framed by any other page. On a site whose
            * authenticated screens suspend members and verify hours, that is a
            * clickjacking route: overlay an invisible frame, and a staff member
-           * clicks a button they cannot see. frame-ancestors is the modern
-           * rule; X-Frame-Options is kept for browsers that predate it.
+           * clicks a button they cannot see.
+           *
+           * The full policy — script-src with a per-request nonce and the
+           * rest — is set in src/proxy.ts, which is the only place a nonce can
+           * be minted. This header covers what the proxy never sees: /api,
+           * /_next, and anything with a file extension. Two Content-Security-
+           * Policy headers are both enforced, so this stays deliberately
+           * narrow; widening it would silently tighten the pages as well.
            */
           { key: 'Content-Security-Policy', value: "frame-ancestors 'none'" },
           { key: 'X-Frame-Options', value: 'DENY' },
@@ -52,14 +58,5 @@ const nextConfig: NextConfig = {
     ];
   },
 };
-
-/*
- * Not set, deliberately: a full Content-Security-Policy covering script-src.
- * Next.js inlines bootstrap scripts, so a strict policy needs per-request
- * nonces threaded through the middleware, and getting it wrong takes the
- * whole site down rather than degrading. frame-ancestors above is the part
- * that carries real risk today and cannot break rendering. The rest is worth
- * doing carefully, on its own, with the site watched afterwards.
- */
 
 export default nextConfig;
