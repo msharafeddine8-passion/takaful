@@ -14,7 +14,7 @@ const focal = ORG.safeguardingFocalPoint;
 export const workingWithChildren: CourseContent = {
   slug: 'working-with-children',
   level: 1,
-  minutes: 90,
+  minutes: 25, // Measured from the content. See volunteering-foundations.
   passMark: 80,
   title: { ar: 'التعامل مع الأطفال', en: 'Working with Children' },
   lede: {
@@ -29,6 +29,8 @@ export const workingWithChildren: CourseContent = {
       'تتعرّف على مؤشرات القلق دون أن تشخّص أو تحقّق',
       'تتصرّف بشكل صحيح إن أفصح لك طفل عن أذى',
       'تعرف قواعد التصوير والنشر ومتى تكون ممنوعة',
+      'تدير مجموعة أطفال بحدود واضحة دون عقاب أو إهانة',
+      'تتصرّف حين يكون مصدر القلق زميلاً متطوّعاً',
     ],
     en: [
       'Follow the golden rule: never alone with a child out of sight',
@@ -37,6 +39,8 @@ export const workingWithChildren: CourseContent = {
       'Recognise indicators of concern without diagnosing or investigating',
       'Act correctly if a child discloses harm to you',
       'Know the rules on photography and publication, and when they forbid it',
+      'Manage a group of children with clear boundaries, without punishment or humiliation',
+      'Act when the concern is about a fellow volunteer',
     ],
   },
   sources: [
@@ -374,6 +378,197 @@ export const workingWithChildren: CourseContent = {
           feedback: {
             ar: 'الإذن الشفهي غير كافٍ، ولا يغطّي إلا طفلاً واحداً بينما الصورة فيها عدة أطفال. التشويش لا يمنع التعرّف عبر السياق. والحساب الشخصي ممنوع دائماً. القاعدة: الصورة ملك المنظمة، والنشر يحتاج إذناً خطّياً عن كل طفل ظاهر.',
             en: 'Verbal permission is not sufficient, and covers only one child while the photo shows several. Blurring does not prevent identification through context. A personal account is always prohibited. The rule: the image belongs to the organisation, and publication requires written permission for every child shown.',
+          },
+        },
+      ],
+    },
+
+    {
+      id: 'behaviour',
+      tag: { ar: 'الوحدة الخامسة', en: 'Module 5' },
+      title: { ar: 'ضبط المجموعة دون إهانة', en: 'Managing a group without humiliation' },
+      lede: {
+        ar: 'الطفل الذي «يزعج» غالباً يقول شيئاً لا يعرف كيف يقوله. والعقاب يُسكت الصوت ولا يعالج سببه.',
+        en: 'A child who “acts up” is usually saying something they cannot say another way. Punishment silences the sound and leaves the cause.',
+      },
+      blocks: [
+        {
+          type: 'text',
+          content: {
+            ar: 'ضبط مجموعة أطفال ليس فرض هيبة. هو بناء إطار يعرف فيه الطفل ما هو متوقّع منه وما يحدث إن تجاوزه، بحيث لا يحتاج أحد أن يرفع صوته. والأطفال الذين مرّوا بنزوح أو عنف يستجيبون للصراخ بالانسحاب أو بمزيد من التصعيد — لا بالانضباط.',
+            en: 'Managing a group of children is not asserting authority. It is building a frame in which a child knows what is expected and what follows if they step past it, so that nobody needs to raise their voice. Children who have been through displacement or violence answer shouting with withdrawal or with more escalation — never with compliance.',
+          },
+        },
+        {
+          type: 'compare',
+          yesTitle: { ar: '✔ ما يصنع مجموعة هادئة', en: '✔ What makes a calm group' },
+          noTitle: { ar: '✘ ممنوع دائماً', en: '✘ Always prohibited' },
+          yes: {
+            ar: [
+              'قواعد قليلة وواضحة تُقال في البداية',
+              'تنبيه الطفل باسمه وبهدوء، على انفراد إن أمكن',
+              'إعطاؤه خياراً بدل أمر: «بتحبّ تساعدني هون ولا تكمّل هونيك؟»',
+              'ملاحظة السلوك الجيّد بصوت عالٍ — المدح أقوى من التوبيخ',
+              'إخراجه من الموقف دقيقة ليهدأ، مع بقائه في مجال النظر',
+            ],
+            en: [
+              'A few clear rules, said at the start',
+              'Speaking to the child by name and calmly, one to one where possible',
+              'Offering a choice rather than an order: “would you rather help me here, or carry on there?”',
+              'Naming good behaviour out loud — praise works harder than reprimand',
+              'Stepping them out of the moment to settle, while staying in sight',
+            ],
+          },
+          no: {
+            ar: [
+              'أي عقاب جسدي مهما بدا خفيفاً',
+              'الصراخ أو الإهانة أو السخرية أمام المجموعة',
+              'الحرمان من طعام أو ماء أو استخدام الحمّام',
+              'العزل في غرفة مغلقة أو بعيداً عن الأنظار',
+              'التهديد بإبلاغ الأهل كوسيلة ضغط',
+              'المقارنة بطفل آخر أو وصفه بصفة: «الشقي»، «الكسول»',
+            ],
+            en: [
+              'Any physical punishment, however light it seems',
+              'Shouting, insulting, or mocking in front of the group',
+              'Withholding food, water, or use of the toilet',
+              'Isolating a child in a closed room or out of sight',
+              'Threatening to tell their parents as leverage',
+              'Comparing them to another child, or labelling them: “the difficult one”, “lazy”',
+            ],
+          },
+        },
+        {
+          type: 'callout',
+          variant: 'warn',
+          title: { ar: '⚠️ السلوك الصعب قد يكون مؤشّراً', en: '⚠️ Difficult behaviour can be an indicator' },
+          content: {
+            ar: 'تغيّر مفاجئ في سلوك طفل — عدوانية جديدة، انسحاب، خوف من شخص بعينه، رفض العودة إلى البيت — ليس مسألة انضباط. سجّله وأبلغ المسؤول عن الحماية. أنت لا تحقّق ولا تستنتج، لكنك ترى ما قد لا يراه غيرك.',
+            en: 'A sudden change in a child’s behaviour — new aggression, withdrawal, fear of one particular person, refusing to go home — is not a discipline matter. Record it and tell the safeguarding focal point. You do not investigate and you do not conclude, but you see what others may not.',
+          },
+        },
+        {
+          type: 'quiz',
+          id: 'c4q5',
+          label: { ar: 'سيناريو ميداني', en: 'Field scenario' },
+          question: { ar: 'ما التصرّف الصحيح؟', en: 'What is the right action?' },
+          scenario: {
+            ar: 'طفل في العاشرة يقاطع النشاط باستمرار ويدفع الأطفال الآخرين. حاولت تنبيهه مرّتين ولم يتغيّر شيء، والمجموعة بدأت تنزعج.',
+            en: 'A ten-year-old keeps interrupting the activity and pushing the other children. You have spoken to him twice and nothing has changed, and the group is getting restless.',
+          },
+          options: [
+            {
+              ar: 'تُخرجه من القاعة ويجلس وحده في الممرّ حتى ينتهي النشاط',
+              en: 'Send him out of the hall to sit alone in the corridor until the activity ends',
+            },
+            {
+              ar: 'تتجاهله تماماً حتى يملّ',
+              en: 'Ignore him completely until he gets bored',
+            },
+            {
+              ar: 'تطلب من زميل متابعة المجموعة، وتجلس معه جانباً ضمن مجال النظر، وتسأله ما الذي يزعجه، وتسجّل ما لاحظته لاحقاً',
+              en: 'Ask a colleague to hold the group, sit with him aside but within sight, ask what is bothering him, and record what you noticed afterwards',
+            },
+            {
+              ar: 'تخبره أنك ستتصل بوالده إن لم يتوقّف',
+              en: 'Tell him you will call his father if he does not stop',
+            },
+          ],
+          correct: 2,
+          feedback: {
+            ar: 'الإخراج إلى الممرّ يعزله بعيداً عن الأنظار — وهذا يخالف القاعدة الذهبية ويحرمه من الحماية معاً. التجاهل يترك الأطفال الآخرين يُدفعون. والتهديد بالأهل قد يكون أخطر ما تقوله إن كان البيت نفسه مصدر المشكلة. الجلوس جانباً ضمن النظر يحفظ القاعدة، ويعطيه اهتماماً قد يكون هو ما يطلبه، ويعطيك معلومة تُسجَّل.',
+            en: 'Sending him to the corridor isolates him out of sight — breaking the golden rule and removing his protection at the same time. Ignoring it leaves the other children being pushed. Threatening to call his father may be the most dangerous thing you could say if home is the problem. Sitting aside within sight keeps the rule, gives him the attention he may be asking for, and gives you something worth recording.',
+          },
+        },
+      ],
+    },
+
+    {
+      id: 'colleagues',
+      tag: { ar: 'الوحدة السادسة · إلزامية', en: 'Module 6 · Mandatory' },
+      title: { ar: 'حين يكون القلق من زميل', en: 'When the concern is a colleague' },
+      lede: {
+        ar: 'أصعب بلاغ هو البلاغ عن شخص تعرفه وتحبّه. وهو البلاغ الذي بُنيت هذه القواعد كلّها لأجله.',
+        en: 'The hardest report to make is about someone you know and like. It is also the report all of these rules exist for.',
+      },
+      blocks: [
+        {
+          type: 'text',
+          content: {
+            ar: 'معظم الإساءة للأطفال في المؤسسات لا تأتي من غريب، بل من شخص موثوق داخلها. ولهذا فإن الصمت «حفاظاً على سمعة الجمعية» هو بالضبط ما يسمح باستمرارها. الجمعية التي تُبلغ عن حالة داخلها أكثر أماناً من التي لم يُبلَّغ فيها عن شيء أبداً.',
+            en: 'Most abuse of children in institutions does not come from a stranger — it comes from a trusted person inside. Which is why staying silent “to protect the association’s reputation” is precisely what allows it to continue. An organisation that reports a case inside itself is safer than one where nothing was ever reported.',
+          },
+        },
+        {
+          type: 'list',
+          items: {
+            ar: [
+              'أبلغ عن السلوك الذي رأيته، لا عن استنتاجك عن الشخص',
+              'أبلغ ولو كنت غير متأكّد — تقدير الموقف ليس دورك',
+              'لا تواجه الزميل بنفسك ولا تحذّره أنك ستبلغ',
+              'لا تناقش الأمر مع بقيّة المتطوّعين — هذا يفسد أي إجراء لاحق',
+              'اكتب ما رأيته بالتاريخ والوقت والمكان في اليوم نفسه',
+              'إن كان القلق من المسؤول عن الحماية نفسه، أبلغ من هو أعلى منه',
+              'الإبلاغ بحسن نيّة محميّ، حتى لو تبيّن لاحقاً أن لا شيء في الأمر',
+            ],
+            en: [
+              'Report the behaviour you saw, not your conclusion about the person',
+              'Report even if you are unsure — weighing it up is not your role',
+              'Do not confront the colleague yourself, and do not warn them you are reporting',
+              'Do not discuss it with the other volunteers — that compromises any process that follows',
+              'Write down what you saw, with date, time and place, the same day',
+              'If the concern is about the safeguarding focal point themselves, report to whoever is above them',
+              'A report made in good faith is protected, even if it turns out there was nothing in it',
+            ],
+          },
+        },
+        {
+          type: 'callout',
+          variant: 'stop',
+          title: { ar: '🛑 إلى من تبلّغ', en: '🛑 Who you report to' },
+          content: {
+            // Same guard as module 3: a course that tells a volunteer four
+            // times to report has to name someone, and if nobody is named it
+            // must say so rather than print an empty line.
+            ar: focal
+              ? `المسؤول عن حماية الطفل في الجمعية: <b>${focal.name}</b> — ${focal.phone}. أبلغ في اليوم نفسه، ولا تنتظر «حتى تتأكّد». إن تعذّر الوصول، أبلغ أي عضو من الإدارة فوراً. وإن كان الطفل في خطر مباشر، فالاتصال بالطوارئ يسبق كل شيء.`
+              : 'لم تُسمِّ الجمعية بعد مسؤولاً عن حماية الطفل. لا تعتبر هذه الدورة كافية قبل أن تفعل.',
+            en: focal
+              ? `The association’s child safeguarding focal point: <b>${focal.name}</b> — ${focal.phone}. Report the same day, and do not wait until you are sure. If you cannot reach them, tell any member of management at once. And if a child is in immediate danger, calling emergency services comes before anything else.`
+              : 'This organisation has not yet named a child safeguarding focal point. Do not treat this course as sufficient until it has.',
+          },
+        },
+        {
+          type: 'quiz',
+          id: 'c4q6',
+          label: { ar: 'سيناريو ميداني', en: 'Field scenario' },
+          question: { ar: 'ما التصرّف الصحيح؟', en: 'What is the right action?' },
+          scenario: {
+            ar: 'لاحظت أن متطوّعاً زميلاً — شخص محبوب وقديم في الجمعية — يصطحب طفلاً بمفرده إلى غرفة المخزن أكثر من مرّة، ويعطيه هدايا صغيرة لا يعطيها لغيره.',
+            en: 'You notice a fellow volunteer — well-liked, long-standing in the association — taking one child alone to the store room more than once, and giving him small gifts he gives to no one else.',
+          },
+          options: [
+            {
+              ar: 'تراقب أكثر قبل أن تبلّغ، حتى تتأكّد أن هناك شيئاً فعلاً',
+              en: 'Watch a while longer before reporting, until you are sure there is really something',
+            },
+            {
+              ar: 'تتحدّث معه على انفراد وتسأله عن سبب ذلك',
+              en: 'Speak to him privately and ask why he is doing it',
+            },
+            {
+              ar: 'تُبلغ المسؤول عن الحماية اليوم نفسه بما رأيته بالتحديد، وتكتبه، ولا تناقشه مع أحد آخر',
+              en: 'Tell the safeguarding focal point the same day exactly what you saw, write it down, and discuss it with nobody else',
+            },
+            {
+              ar: 'تسأل متطوّعين آخرين إن لاحظوا الشيء نفسه',
+              en: 'Ask other volunteers whether they noticed the same thing',
+            },
+          ],
+          correct: 2,
+          feedback: {
+            ar: 'ما رأيته يخالف القاعدة الذهبية ويحمل ثلاثة مؤشّرات معروفة معاً: الانفراد، والمكان بعيداً عن الأنظار، والتفضيل بالهدايا. «أراقب أكثر» تعني أسابيع إضافية من الخطر إن كان القلق في محلّه. ومواجهته تحذّره وتتيح له تغيير سلوكه أو الضغط على الطفل. وسؤال الزملاء يحوّل الأمر إلى شائعة تفسد أي تحقيق. أنت لا تتّهم أحداً — أنت تنقل ما رأيت لمن دوره أن يقرّر.',
+            en: 'What you saw breaks the golden rule and carries three recognised indicators at once: being alone, a place out of sight, and singling one child out with gifts. “Watching longer” means additional weeks of risk if the concern is well founded. Confronting him warns him, letting him change his behaviour or lean on the child. Asking colleagues turns it into a rumour that wrecks any process. You are not accusing anyone — you are passing what you saw to the person whose job it is to decide.',
           },
         },
       ],

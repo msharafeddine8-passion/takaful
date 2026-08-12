@@ -3,12 +3,14 @@ import type { CourseContent } from './types';
 /**
  * Level 1 · Course 2 — Communication Skills.
  * Universal content for any volunteer in any organisation.
- * Status: DRAFT — requires review and approval before publication.
+ *
+ * Six modules, matching the length this course claims. It ran for a while at
+ * three, which made "75 minutes" a promise the content did not keep.
  */
 export const communicationSkills: CourseContent = {
   slug: 'communication-skills',
   level: 1,
-  minutes: 75,
+  minutes: 25, // Measured from the content. See volunteering-foundations.
   passMark: 70,
   title: { ar: 'مهارات التواصل', en: 'Communication Skills' },
   lede: {
@@ -23,6 +25,9 @@ export const communicationSkills: CourseContent = {
       'تتواصل باحترام مع فئات مختلفة العمر والخلفية',
       'تتعامل مع الغضب والمواقف المشحونة دون تصعيد',
       'تعرف متى تصمت ومتى تُحيل الأمر لغيرك',
+      'تتواصل عبر الهاتف والرسائل بما لا يُساء فهمه',
+      'تنقل خبراً صعباً أو رفضاً دون أن تكسر من أمامك',
+      'تحمي ما يُقال لك بثقة، وتعرف حدود ما تعد به',
     ],
     en: [
       'Practise active listening and distinguish it from merely hearing',
@@ -31,6 +36,9 @@ export const communicationSkills: CourseContent = {
       'Communicate respectfully across ages and backgrounds',
       'Handle anger and charged situations without escalating',
       'Know when to stay silent and when to refer on',
+      'Communicate by phone and message without being misread',
+      'Deliver bad news or a refusal without breaking the person in front of you',
+      'Protect what is told to you in confidence, and know the limits of what you can promise',
     ],
   },
   sources: [
@@ -293,6 +301,275 @@ export const communicationSkills: CourseContent = {
           feedback: {
             ar: 'خفض الصوت يكسر التصعيد، والاعتراف بالشعور ينزع فتيل الإحساس بالتجاهل، ونقل الحديث جانباً يزيل الجمهور الذي يغذّي الموقف. أما الوعد بما لا تملكه فيخلق مشكلة أكبر غداً — وهذا مبدأ «لا ضرر» بعينه.',
             en: 'Lowering your voice breaks the escalation, acknowledging the feeling defuses the sense of being dismissed, and moving aside removes the audience feeding the situation. Promising what is not yours to give creates a bigger problem tomorrow — that is Do No Harm in practice.',
+          },
+        },
+      ],
+    },
+
+    {
+      id: 'remote',
+      tag: { ar: 'الوحدة الرابعة', en: 'Module 4' },
+      title: { ar: 'الهاتف والرسائل', en: 'Phone and messages' },
+      lede: {
+        ar: 'الرسالة المكتوبة تصل بلا نبرة. القارئ يضع النبرة من عنده — وغالباً يضع أسوأ احتمال.',
+        en: 'A written message arrives without a tone. The reader supplies one — and usually supplies the worst available.',
+      },
+      blocks: [
+        {
+          type: 'text',
+          content: {
+            ar: 'معظم عمل التنسيق اليوم يجري بالرسائل. وهذا يعني أن نصف سوء الفهم في الفرق يبدأ من جملة كُتبت على عجل. القاعدة الأولى: إن كان الموضوع حسّاساً أو طويلاً أو فيه خلاف — اتّصل، ولا تكتب.',
+            en: 'Most coordination now happens by message, which means half the misunderstandings in a team begin with a sentence written in a hurry. First rule: if the matter is sensitive, long, or contested — call, do not type.',
+          },
+        },
+        {
+          type: 'compare',
+          yesTitle: { ar: '✔ رسالة واضحة', en: '✔ A clear message' },
+          noTitle: { ar: '✘ رسالة تُنتج أسئلة', en: '✘ A message that generates questions' },
+          yes: {
+            ar: [
+              'تبدأ بالمطلوب: «بحاجة جوابك قبل الخميس»',
+              'سؤال واحد في الرسالة الواحدة',
+              'تذكر الوقت والمكان كاملَين لا «بكرا الصبح»',
+              'تُنهى بما تتوقّعه: «أكّدلي إذا بتقدر»',
+            ],
+            en: [
+              'Starting with the ask: “I need your answer before Thursday”',
+              'One question per message',
+              'Giving the full time and place, not “tomorrow morning”',
+              'Ending with what you expect: “confirm if you can make it”',
+            ],
+          },
+          no: {
+            ar: [
+              '«مرحبا» ثم انتظار الردّ قبل قول الموضوع',
+              'خمسة أسئلة في فقرة واحدة',
+              'إرسال قرار مهم في مجموعة فيها ثلاثون شخصاً',
+              'الردّ بعلامة إعجاب على سؤال يحتاج جواباً',
+            ],
+            en: [
+              '“Hello” and then waiting for a reply before saying what it is about',
+              'Five questions in one paragraph',
+              'Sending an important decision to a group of thirty',
+              'Reacting with a thumbs-up to a question that needed an answer',
+            ],
+          },
+        },
+        {
+          type: 'callout',
+          variant: 'warn',
+          title: { ar: '⚠️ ما لا يُكتب في مجموعة', en: '⚠️ What does not go in a group chat' },
+          content: {
+            ar: 'أسماء المستفيدين، صور الأطفال، تفاصيل حالة عائلة، أرقام هواتف الناس، وأي شكوى عن زميل. المجموعة تُصوَّر شاشتها وتُعاد مشاركتها، وما كُتب فيها لا يمكن سحبه. إن احتجت أن تذكر حالة، استخدم القناة الرسمية أو تحدّث مباشرةً.',
+            en: 'Beneficiaries’ names, photographs of children, details of a family’s situation, people’s phone numbers, and any complaint about a colleague. Group chats get screenshotted and forwarded, and what is written there cannot be pulled back. If you need to raise a case, use the official channel or speak directly.',
+          },
+        },
+        {
+          type: 'quiz',
+          id: 'c2q4',
+          label: { ar: 'تحقّق من فهمك', en: 'Check your understanding' },
+          question: {
+            ar: 'أرسلت رسالة لزميل تسأله عن تأخّر تقرير، فردّ بجملة قصيرة جافّة. شعرت أنه منزعج منك. ما الأنسب؟',
+            en: 'You message a teammate about a late report and get a short, blunt reply. You feel he is annoyed with you. What is most appropriate?',
+          },
+          options: [
+            {
+              ar: 'تردّ بجفاء مماثل حتى يفهم أن أسلوبه غير مقبول',
+              en: 'Reply just as bluntly so he understands his tone is unacceptable',
+            },
+            {
+              ar: 'تفترض حسن النيّة، وإن بقي الشعور تتصل به أو تسأله وجهاً لوجه',
+              en: 'Assume good intent, and if the feeling persists, call him or ask face to face',
+            },
+            {
+              ar: 'تشكو منه في مجموعة الفريق لترى إن كان يعامل غيرك هكذا',
+              en: 'Raise it in the team group to see whether he treats others this way',
+            },
+            {
+              ar: 'تتوقّف عن مراسلته وتتعامل مع القائد فقط',
+              en: 'Stop messaging him and deal only with the lead',
+            },
+          ],
+          correct: 1,
+          feedback: {
+            ar: 'الرسالة القصيرة تعني في الغالب أن كاتبها مشغول، لا أنه غاضب — لكن النصّ لا يحمل هذا. افتراض حسن النيّة يكلّفك لا شيء إن كنت مخطئاً، ويوفّر خلافاً كاملاً إن كنت مصيباً. وإن بقي الانزعاج فمكانه مكالمة لا رسالة أخرى، لأن الوسيط نفسه هو أصل المشكلة.',
+            en: 'A short message usually means the sender is busy, not angry — but text does not carry that. Assuming good intent costs you nothing if you are wrong and saves an entire quarrel if you are right. If the unease persists, its place is a call rather than another message, because the medium is the problem.',
+          },
+        },
+      ],
+    },
+
+    {
+      id: 'bad-news',
+      tag: { ar: 'الوحدة الخامسة', en: 'Module 5' },
+      title: { ar: 'الخبر الصعب والرفض', en: 'Bad news and saying no' },
+      lede: {
+        ar: 'أصعب ما يقوله متطوّع ليس «لا أعرف»، بل «لا نستطيع». وقولها بوضوح أرحم من تركها معلّقة.',
+        en: 'The hardest thing a volunteer says is not “I don’t know” — it is “we can’t”. Saying it plainly is kinder than leaving it hanging.',
+      },
+      blocks: [
+        {
+          type: 'text',
+          content: {
+            ar: 'حين لا تستطيع الجمعية تقديم خدمة، فإن أسوأ ردّ هو الغموض: «سنرى»، «إن شاء الله»، «سأحاول». هذه الجمل تُبقي الأسرة تنتظر أسبوعين قبل أن تبحث عن حلّ آخر — وأسبوعان قد يكونان كلّ الفارق. الوضوح المبكر احترام، لا قسوة.',
+            en: 'When the association cannot provide something, the worst answer is a vague one: “we’ll see”, “God willing”, “I’ll try”. Those sentences keep a family waiting a fortnight before they look elsewhere — and a fortnight can be the whole difference. Being clear early is respect, not harshness.',
+          },
+        },
+        {
+          type: 'ordered',
+          items: {
+            ar: [
+              'قل الجواب أولاً، لا بعد ثلاث جمل تمهيد',
+              'اذكر السبب باختصار وبصدق، دون تفاصيل داخلية لا تخصّهم',
+              'لا تلقِ اللوم على «الإدارة» أو «النظام» — أنت تمثّل الجمعية',
+              'اذكر ما تستطيعه فعلاً، إن كان هناك شيء',
+              'دلّهم على جهة أخرى إن كنت تعرف واحدة موثوقة',
+              'لا تعتذر خمس مرّات — الاعتذار المتكرّر يبدو كأنك تطلب منهم أن يواسوك',
+            ],
+            en: [
+              'Give the answer first, not after three sentences of preamble',
+              'State the reason briefly and honestly, without internal detail that is not theirs',
+              'Do not blame “management” or “the system” — you represent the association',
+              'Say what you genuinely can do, if there is anything',
+              'Point them to another organisation if you know a reliable one',
+              'Do not apologise five times — repeated apology reads as asking them to comfort you',
+            ],
+          },
+        },
+        {
+          type: 'callout',
+          variant: 'stop',
+          title: { ar: '🛑 لا تعد بما ليس بيدك', en: '🛑 Never promise what is not yours' },
+          content: {
+            ar: 'الوعد الذي يُخلَف يكلّف أكثر من الرفض الصريح بكثير. أسرة رُفض طلبها بوضوح تبحث عن بديل؛ أسرة وُعدت ولم يصلها شيء تفقد ثقتها بكل منظمة بعدها، ومنهم من كان سيساعدها فعلاً. هذا ضرر تسبّبنا به نحن.',
+            en: 'A broken promise costs far more than a clear refusal. A family refused clearly looks for an alternative; a family promised and left with nothing loses trust in every organisation that comes after — including one that would genuinely have helped. That is harm we caused.',
+          },
+        },
+        {
+          type: 'quiz',
+          id: 'c2q5',
+          label: { ar: 'سيناريو ميداني', en: 'Field scenario' },
+          question: { ar: 'ما التصرّف الصحيح؟', en: 'What is the right action?' },
+          scenario: {
+            ar: 'أمّ تسألك إن كانت الجمعية ستقدّم مساعدة مدرسية لابنها هذا العام. أنت تعرف أن البرنامج لم يُعتمد بعد وأن التمويل غير مؤكّد.',
+            en: 'A mother asks whether the association will provide school support for her son this year. You know the programme is not approved and the funding is uncertain.',
+          },
+          options: [
+            {
+              ar: '«أكيد، بس استنّي شوي» — لتطمئنها الآن',
+              en: '“Of course, just wait a little” — to reassure her now',
+            },
+            {
+              ar: '«ما بعرف» وتنهي الحديث',
+              en: '“I don’t know”, and end the conversation',
+            },
+            {
+              ar: 'تقول إن البرنامج غير مؤكّد هذا العام، وإنك ستسأل وتعود بجواب في موعد محدّد، وتنصحها بألّا تنتظرنا وحدنا',
+              en: 'Say the programme is not confirmed this year, that you will ask and come back with an answer by a named date, and advise her not to wait on us alone',
+            },
+            {
+              ar: 'تحيلها إلى القائد دون أن تقول شيئاً',
+              en: 'Refer her to the lead without saying anything',
+            },
+          ],
+          correct: 2,
+          feedback: {
+            ar: 'الجواب الثالث يعطيها ثلاثة أشياء تحتاجها: الحقيقة كما هي الآن، وموعداً تعرف عنده أين تقف، ونصيحة تحميها من تعليق مصير ابنها على احتمال. «أكيد» وعد لا تملكه، و«ما بعرف» صحيح لكنه يتركها بلا شيء، والإحالة الصامتة تؤجّل السؤال ولا تجيبه.',
+            en: 'The third answer gives her the three things she needs: the truth as it stands, a date by which she will know, and advice that protects her from staking her son’s year on a maybe. “Of course” is a promise that is not yours, “I don’t know” is true but leaves her with nothing, and a silent referral postpones the question rather than answering it.',
+          },
+        },
+      ],
+    },
+
+    {
+      id: 'confidence',
+      tag: { ar: 'الوحدة السادسة', en: 'Module 6' },
+      title: { ar: 'السرّ وحدوده', en: 'Confidence and its limits' },
+      lede: {
+        ar: 'حين يثق بك أحدهم بشيء، تصبح مسؤولاً عنه. والمسؤولية تعني أحياناً أن تنقله — لا أن تدفنه.',
+        en: 'When someone trusts you with something, you become responsible for it. Sometimes that responsibility means passing it on — not burying it.',
+      },
+      blocks: [
+        {
+          type: 'text',
+          content: {
+            ar: 'المتطوّع يسمع أشياء لا تُقال لغيره: ضيق مالي، خلاف عائلي، مرض، خوف. القاعدة أن ما يُقال لك في سياق عملك يبقى في حدود من يحتاج معرفته للمساعدة — لا في حدودك أنت وحدك، ولا في حدود من تعرفهم.',
+            en: 'A volunteer hears things nobody else is told: money trouble, a family rift, illness, fear. The rule is that what is said to you in the course of your work stays within those who need it to help — not with you alone, and not with whoever you happen to know.',
+          },
+        },
+        {
+          type: 'grid',
+          items: [
+            {
+              title: { ar: 'يبقى عندك', en: 'Stays with you' },
+              text: {
+                ar: 'تفاصيل شخصية لا علاقة لها بالخدمة: خلاف مع الجيران، رأي سياسي، ماضٍ عائلي.',
+                en: 'Personal detail with no bearing on the service: a quarrel with neighbours, a political view, family history.',
+              },
+            },
+            {
+              title: { ar: 'يُنقل لمن يقرّر', en: 'Goes to whoever decides' },
+              text: {
+                ar: 'ما يغيّر شكل المساعدة: عدد الأولاد، وضع صحّي يؤثّر على النشاط، حاجة عاجلة.',
+                en: 'Anything that changes the help given: number of children, a health condition affecting an activity, an urgent need.',
+              },
+            },
+            {
+              title: { ar: 'يُنقل فوراً وإلزاماً', en: 'Goes on at once, without exception' },
+              text: {
+                ar: 'أي خطر على طفل أو شخص: إساءة، عنف، تهديد، إيذاء نفس. هذا ليس سرّاً يُحفظ.',
+                en: 'Any danger to a child or an adult: abuse, violence, a threat, self-harm. This is not a secret to keep.',
+              },
+            },
+            {
+              title: { ar: 'لا يُنقل أبداً خارج الجمعية', en: 'Never leaves the association' },
+              text: {
+                ar: 'أي منه لأصدقائك أو عائلتك أو على وسائل التواصل، ولو بلا اسم — القرية تعرف من تقصد.',
+                en: 'Any of it to friends, family or social media, even unnamed — a small town knows who you mean.',
+              },
+            },
+          ],
+        },
+        {
+          type: 'callout',
+          variant: 'stop',
+          title: { ar: '🛑 لا تعد بسرّية مطلقة', en: '🛑 Never promise absolute secrecy' },
+          content: {
+            ar: 'لا تقل أبداً «احكيلي وما رح خبّر حدا». إن أخبرك أحدهم بعدها عن خطر، فأنت بين خيانة وعدك أو ترك شخص في خطر. الصيغة الصحيحة: <b>«ما بتحكيلي بيبقى بيني وبينك، إلا إذا في حدا بخطر — وقتها لازم خبّر مين بيقدر يحمي، وبخبرك قبل ما إعمل.»</b>',
+            en: 'Never say “tell me and I won’t tell anyone”. If they then disclose a danger, you are left choosing between breaking your word and leaving someone at risk. The right form is: <b>“what you tell me stays between us, unless someone is in danger — then I must tell whoever can protect them, and I will tell you before I do.”</b>',
+          },
+        },
+        {
+          type: 'quiz',
+          id: 'c2q6',
+          label: { ar: 'سيناريو ميداني', en: 'Field scenario' },
+          question: { ar: 'ما التصرّف الصحيح؟', en: 'What is the right action?' },
+          scenario: {
+            ar: 'مراهقة في نشاط أخبرتك أن والدها فقد عمله وأن الوضع في البيت صعب، وطلبت منك ألّا تخبر أحداً لأنها تخجل.',
+            en: 'A teenager at an activity tells you her father lost his job and things at home are hard, and asks you not to tell anyone because she is embarrassed.',
+          },
+          options: [
+            {
+              ar: 'تعدها بألّا تخبر أحداً إطلاقاً وتحفظ السرّ',
+              en: 'Promise never to tell anyone and keep the secret',
+            },
+            {
+              ar: 'تخبر منسّقة البرنامج فوراً باسمها لتُدرَج على قائمة المساعدة',
+              en: 'Tell the programme coordinator her name at once so she is added to the assistance list',
+            },
+            {
+              ar: 'تشكرها على ثقتها، وتشرح لها أنك ستذكر لمنسّقة البرنامج أن هناك أسرة قد تحتاج دعماً وتسألها إن كانت توافق أن تُذكر باسمها',
+              en: 'Thank her for the trust, explain you will mention to the coordinator that a family may need support, and ask whether she agrees to be named',
+            },
+            {
+              ar: 'تنصحها بالتحدّث إلى أهلها وتترك الأمر',
+              en: 'Advise her to talk to her parents and leave it there',
+            },
+          ],
+          correct: 2,
+          feedback: {
+            ar: 'ليس هنا خطر يستدعي الإبلاغ الإلزامي، لكن هناك حاجة قد تُلبّى. إشراكها في القرار يحفظ كرامتها ويبقي ثقتها بك — وهي قد تعود إليك لاحقاً بشيء أخطر. الوعد بالسرّية المطلقة يقيّدك، ونقل اسمها دون إذنها يعلّمها ألّا تثق بمتطوّع مرّة أخرى.',
+            en: 'There is no danger here requiring mandatory reporting, but there is a need that could be met. Bringing her into the decision preserves her dignity and keeps her trust — and she may come back to you later with something graver. Promising absolute secrecy ties your hands, and passing on her name without her consent teaches her never to confide in a volunteer again.',
           },
         },
       ],

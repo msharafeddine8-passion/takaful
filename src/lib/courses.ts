@@ -14,14 +14,18 @@ export type Course = {
 /**
  * Takaful Academy catalogue.
  * Content is universal — written for any volunteer in any organisation.
- * Only course 1 has drafted content so far; the rest are declared honestly.
+ *
+ * All five courses carry six modules and six or seven questions. The minutes
+ * are measured from the Arabic text rather than aspired to, and must match the
+ * figure in the course's own content file — probe-courses fails if they drift
+ * apart, because the card and the course are read by the same person.
  */
 export const COURSES: Course[] = [
   {
     slug: 'volunteering-foundations',
     level: 1,
     status: 'available',
-    minutes: 90,
+    minutes: 30,
     title: {
       ar: 'أساسيات العمل التطوعي',
       en: 'Foundations of Volunteering',
@@ -35,7 +39,7 @@ export const COURSES: Course[] = [
     slug: 'communication-skills',
     level: 1,
     status: 'available',
-    minutes: 75,
+    minutes: 25,
     title: { ar: 'مهارات التواصل', en: 'Communication Skills' },
     summary: {
       ar: 'الإصغاء الفعّال، التواصل مع الفئات المختلفة، والتعامل مع المواقف الصعبة.',
@@ -46,7 +50,7 @@ export const COURSES: Course[] = [
     slug: 'teamwork',
     level: 1,
     status: 'available',
-    minutes: 70,
+    minutes: 25,
     title: { ar: 'العمل ضمن فريق', en: 'Teamwork' },
     summary: {
       ar: 'الأدوار داخل الفريق، التنسيق، وحلّ الخلافات قبل أن تكبر.',
@@ -61,7 +65,7 @@ export const COURSES: Course[] = [
     // to whom. The number is the association's main line rather than a direct
     // one, which is a compromise worth revisiting.
     status: 'available',
-    minutes: 90,
+    minutes: 25,
     title: { ar: 'التعامل مع الأطفال', en: 'Working with Children' },
     summary: {
       ar: 'مبادئ حماية الطفل، الحدود الآمنة، والإبلاغ — وفق المعايير الدولية.',
@@ -72,8 +76,12 @@ export const COURSES: Course[] = [
     slug: 'digital-basics',
     level: 1,
     status: 'available',
-    minutes: 60,
-    title: { ar: 'مهارات الحاسوب الأساسية', en: 'Basic Computer Skills' },
+    minutes: 25,
+    // Matches the course's own title. The card used to say "computer skills"
+    // while the course called itself digital basics — a different promise.
+    // This is about documenting and protecting people's data, not about
+    // operating a computer.
+    title: { ar: 'المهارات الرقمية الأساسية', en: 'Digital Basics for Volunteers' },
     summary: {
       ar: 'الأدوات التي يحتاجها كل متطوّع للتوثيق والتنسيق والعمل المشترك.',
       en: 'The tools every volunteer needs for documentation, coordination and collaboration.',

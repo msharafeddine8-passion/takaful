@@ -3,12 +3,14 @@ import type { CourseContent } from './types';
 /**
  * Level 1 · Course 3 — Teamwork.
  * Universal content for any volunteer in any organisation.
- * Status: DRAFT — requires review and approval before publication.
+ *
+ * Six modules, matching the length this course claims. It ran for a while at
+ * three, which made "70 minutes" a promise the content did not keep.
  */
 export const teamwork: CourseContent = {
   slug: 'teamwork',
   level: 1,
-  minutes: 70,
+  minutes: 25, // Measured from the content. See volunteering-foundations.
   passMark: 70,
   title: { ar: 'العمل ضمن فريق', en: 'Teamwork' },
   lede: {
@@ -23,6 +25,9 @@ export const teamwork: CourseContent = {
       'تتعامل مع الخلاف مبكراً وبلا تصعيد',
       'تتحمّل مسؤولية خطئك وتصحّحه دون تبرير',
       'تدعم زميلاً متعثّراً بدل أن تتجاوزه',
+      'تحضر للنشاط قبل يومه لا في صباحه',
+      'تفهم لماذا يكلّف غيابك المفاجئ أكثر مما تظنّ',
+      'تستقبل متطوّعاً جديداً وتسلّم ما تعرفه قبل أن تغادر',
     ],
     en: [
       'Understand roles in a volunteer team and why every activity needs a lead',
@@ -31,6 +36,9 @@ export const teamwork: CourseContent = {
       'Address disagreement early and without escalation',
       'Own your mistake and correct it without excuses',
       'Support a struggling teammate instead of working around them',
+      'Prepare for an activity the day before, not on the morning',
+      'Understand why an unannounced absence costs more than you think',
+      'Receive a new volunteer, and hand on what you know before you leave',
     ],
   },
   sources: [
@@ -294,6 +302,261 @@ export const teamwork: CourseContent = {
           feedback: {
             ar: 'أرقام المستفيدين تدخل في تقارير المنظمة للجهات المانحة. رقم خاطئ لا يُصحَّح يصبح جزءاً من سجلّ رسمي، وقد يُكتشف لاحقاً فيضرب مصداقية المنظمة كلها. الإبلاغ الفوري يحوّل خطأً بسيطاً إلى تصحيح روتيني.',
             en: 'Beneficiary figures feed the organisation’s reports to donors. An uncorrected wrong number becomes part of an official record and, if discovered later, damages the credibility of the whole organisation. Immediate reporting turns a small error into a routine correction.',
+          },
+        },
+      ],
+    },
+
+    {
+      id: 'preparation',
+      tag: { ar: 'الوحدة الرابعة', en: 'Module 4' },
+      title: { ar: 'التحضير قبل النشاط', en: 'Preparing before the activity' },
+      lede: {
+        ar: 'النشاط الفاشل نادراً ما يفشل في يومه. يفشل في الليلة التي لم يحضّر فيها أحد.',
+        en: 'An activity that fails rarely fails on the day. It fails on the night nobody prepared.',
+      },
+      blocks: [
+        {
+          type: 'text',
+          content: {
+            ar: 'الفرق بين فريق مرتاح وفريق يركض طوال اليوم يُصنَع قبل النشاط بأربع وعشرين ساعة. التحضير ليس مهمة القائد وحده: كل متطوّع مسؤول عن جاهزية دوره هو.',
+            en: 'The difference between a calm team and one that runs all day is made twenty-four hours before the activity. Preparing is not the lead’s job alone: every volunteer is responsible for the readiness of their own part.',
+          },
+        },
+        {
+          type: 'ordered',
+          items: {
+            ar: [
+              'اقرأ رسالة التكليف كاملة، لا سطرها الأول فقط',
+              'تأكّد أنك تعرف المكان وكيف تصل إليه — لا تفترض أنك ستجده',
+              'اسأل عن أي شيء غامض قبل الليلة السابقة، لا في الصباح',
+              'جهّز ما تحتاجه بنفسك: هويّتك، ما يلزم دورك، ماء',
+              'تأكّد أن هاتفك مشحون وأن رقم القائد محفوظ عندك',
+              'اعرف موعد الوصول لا موعد البدء — بينهما عادةً نصف ساعة عمل',
+            ],
+            en: [
+              'Read the whole assignment message, not just its first line',
+              'Make sure you know the location and how to get there — do not assume you will find it',
+              'Ask about anything unclear before the night before, not on the morning',
+              'Prepare what you need yourself: your ID, whatever your role requires, water',
+              'Make sure your phone is charged and you have the lead’s number saved',
+              'Know the arrival time, not the start time — there is usually half an hour of work between them',
+            ],
+          },
+        },
+        {
+          type: 'callout',
+          variant: 'info',
+          title: { ar: '💡 السؤال الذي يوفّر النشاط كله', en: '💡 The question that saves an activity' },
+          content: {
+            ar: 'قبل أي نشاط، اسأل نفسك: <b>«لو غبتُ فجأةً، هل يعرف أحد غيري ما كنت سأفعله؟»</b> إن كان الجواب لا، فأنت نقطة انهيار في الخطة، والحلّ أن تكتب دورك لشخص آخر قبل أن تحتاجوه.',
+            en: 'Before any activity, ask yourself: <b>“if I disappeared, would anyone else know what I was going to do?”</b> If the answer is no, you are a single point of failure in the plan, and the fix is to write your part down for someone else before it is needed.',
+          },
+        },
+        {
+          type: 'quiz',
+          id: 'c3q4',
+          label: { ar: 'سيناريو ميداني', en: 'Field scenario' },
+          question: { ar: 'ما التصرّف الصحيح؟', en: 'What is the right action?' },
+          scenario: {
+            ar: 'وصلتك رسالة التكليف قبل ثلاثة أيام. قرأت العنوان وأجّلت الباقي. الليلة قبل النشاط فتحتَها فوجدت أن دورك يحتاج مواد لا تملكها، والمحال مقفلة.',
+            en: 'The assignment came three days ago. You read the subject line and left the rest. The night before, you open it and find your role needs materials you do not have, and the shops are shut.',
+          },
+          options: [
+            {
+              ar: 'تحضر في الصباح وتشرح للقائد هناك أن المواد ناقصة',
+              en: 'Turn up in the morning and explain to the lead there that the materials are missing',
+            },
+            {
+              ar: 'تتصل بالقائد الآن، تشرح الوضع، وتسأل إن كانت المواد متوفّرة عند الجمعية أو عند زميل',
+              en: 'Call the lead now, explain, and ask whether the materials are with the association or a teammate',
+            },
+            {
+              ar: 'تعتذر عن المشاركة لأنك غير جاهز',
+              en: 'Withdraw from the activity because you are not ready',
+            },
+            {
+              ar: 'تحضر وتدبّر أمرك بما تجده في المكان',
+              en: 'Turn up and improvise with whatever is on site',
+            },
+          ],
+          correct: 1,
+          feedback: {
+            ar: 'الخطأ وقع قبل ثلاثة أيام، لكن الليلة ما زالت وقتاً كافياً لإصلاحه: المواد قد تكون في مستودع الجمعية أو مع زميل يمرّ من هناك. الانتظار حتى الصباح يحوّل مشكلتك إلى مشكلة الفريق كله، والاعتذار في اللحظة الأخيرة يترك فجوة لا أحد جاهز لسدّها. أبلغ مبكراً بقدر ما تستطيع — لا بقدر ما يريحك.',
+            en: 'The mistake happened three days ago, but tonight is still enough time to fix it: the materials may be in the association’s store or with a teammate passing that way. Waiting until morning turns your problem into the whole team’s. Withdrawing at the last minute leaves a gap nobody is ready to fill. Report as early as you can, not as late as you are comfortable with.',
+          },
+        },
+      ],
+    },
+
+    {
+      id: 'commitment',
+      tag: { ar: 'الوحدة الخامسة', en: 'Module 5' },
+      title: { ar: 'الوقت والالتزام', en: 'Time and commitment' },
+      lede: {
+        ar: 'التطوّع بلا أجر، وهذا لا يجعله بلا التزام. الفرق أن الالتزام هنا اختيارك أنت.',
+        en: 'Volunteering is unpaid. That does not make it uncommitted — it makes the commitment yours by choice.',
+      },
+      blocks: [
+        {
+          type: 'text',
+          content: {
+            ar: 'حين يتأخّر موظّف، تتحمّل المؤسسة الكلفة. وحين يتأخّر متطوّع، يتحمّلها زملاؤه ومن ينتظرهم. لا يوجد بديل جاهز، ولا أحد يُدفع له ليغطّي مكانك. لهذا يُقاس الالتزام في التطوّع بمعيار أعلى لا أدنى.',
+            en: 'When an employee is late, the organisation absorbs the cost. When a volunteer is late, their teammates and the people waiting absorb it. There is no cover, and nobody is being paid to fill your place. That is why commitment in volunteering is measured by a higher standard, not a lower one.',
+          },
+        },
+        {
+          type: 'compare',
+          yesTitle: { ar: '✔ غياب محترم', en: '✔ Absence handled well' },
+          noTitle: { ar: '✘ غياب يكلّف', en: '✘ Absence that costs' },
+          yes: {
+            ar: [
+              'تُبلغ فور معرفتك، لا قبل ساعة',
+              'تقول السبب باختصار دون تفصيل غير لازم',
+              'تقترح من يمكنه أن يحلّ محلّك إن كنت تعرف أحداً',
+              'تسلّم ما بحوزتك من مفاتيح أو مواد قبل الموعد',
+            ],
+            en: [
+              'Telling them the moment you know, not an hour before',
+              'Giving the reason briefly, without unnecessary detail',
+              'Suggesting who could cover, if you know someone',
+              'Handing over any keys or materials you hold, ahead of time',
+            ],
+          },
+          no: {
+            ar: [
+              'الصمت ثم عدم الحضور',
+              'رسالة صباح النشاط: «ما رح إقدر»',
+              'الوعد بالحضور وأنت غير متأكّد أصلاً',
+              'الاعتذار المتكرّر دون تعديل ما تلتزم به',
+            ],
+            en: [
+              'Silence, then simply not appearing',
+              'A message on the morning: “I can’t make it”',
+              'Promising to come when you were never sure',
+              'Repeated apologies without adjusting what you commit to',
+            ],
+          },
+        },
+        {
+          type: 'callout',
+          variant: 'warn',
+          title: { ar: '⚠️ الالتزام الزائد أسوأ من الاعتذار', en: '⚠️ Over-committing is worse than declining' },
+          content: {
+            ar: 'قول «نعم» لكل نشاط ثم الغياب عن نصفها يضرّ الفريق أكثر من قول «لا أستطيع هذا الأسبوع». المنظمة تخطّط على أساس من قال نعم. اعتذارك المبكر يُعاد التخطيط حوله؛ غيابك المفاجئ لا.',
+            en: 'Saying yes to everything and then missing half of it harms the team more than saying “not this week”. The organisation plans around whoever said yes. An early no can be planned around; a sudden absence cannot.',
+          },
+        },
+        {
+          type: 'quiz',
+          id: 'c3q5',
+          label: { ar: 'تحقّق من فهمك', en: 'Check your understanding' },
+          question: {
+            ar: 'التزمت بنشاط يوم السبت. يوم الأربعاء عرف أنك ستضطرّ للسفر. ما الأنسب؟',
+            en: 'You committed to Saturday’s activity. On Wednesday you learn you will have to travel. What is most appropriate?',
+          },
+          options: [
+            {
+              ar: 'تنتظر حتى الجمعة مساءً لعلّ السفر يُلغى',
+              en: 'Wait until Friday evening in case the trip is cancelled',
+            },
+            {
+              ar: 'تُبلغ القائد يوم الأربعاء، وتوضّح أن السفر شبه مؤكّد',
+              en: 'Tell the lead on Wednesday, explaining the trip is near-certain',
+            },
+            {
+              ar: 'لا تُبلغ أحداً وتحاول أن تجد بديلاً بنفسك بصمت',
+              en: 'Tell nobody and quietly try to find a replacement yourself',
+            },
+            {
+              ar: 'تحضر رغم السفر لأنك وعدت',
+              en: 'Go to the activity despite the trip, because you promised',
+            },
+          ],
+          correct: 1,
+          feedback: {
+            ar: 'ثلاثة أيام تكفي لإعادة توزيع دورك؛ ليلة واحدة لا تكفي. الانتظار «لعلّ الظرف يتغيّر» يحوّل احتمالاً إلى أزمة. وإيجاد بديل بنفسك بصمت يبدو تصرّفاً مسؤولاً لكنه يترك القائد يخطّط على أساس معلومات خاطئة — أبلغ، واقترح البديل، ودع القرار عنده.',
+            en: 'Three days is enough to redistribute your part; one night is not. Waiting in case things change turns a possibility into a crisis. Quietly finding your own replacement looks responsible but leaves the lead planning on wrong information — tell them, suggest the replacement, and let the decision sit with them.',
+          },
+        },
+      ],
+    },
+
+    {
+      id: 'newcomers',
+      tag: { ar: 'الوحدة السادسة', en: 'Module 6' },
+      title: { ar: 'الجدد، والتسليم قبل المغادرة', en: 'Newcomers, and handing on before you go' },
+      lede: {
+        ar: 'كل ما تعرفه عن الميدان تعلّمته من شخص سبقك. أنت الآن ذلك الشخص لأحدهم.',
+        en: 'Everything you know about the field you learned from someone who came before you. You are now that person for somebody.',
+      },
+      blocks: [
+        {
+          type: 'text',
+          content: {
+            ar: 'المتطوّع الجديد في يومه الأول لا ينقصه الحماس، بل السياق: أين يقف، بمن يتصل، ما الذي يُقال وما الذي لا يُقال. أغلب من يترك التطوّع مبكراً لا يتركه لأن العمل صعب، بل لأنه شعر أنه زائد عن الحاجة.',
+            en: 'A new volunteer on their first day is not short of enthusiasm — they are short of context: where to stand, who to call, what is said and what is not. Most people who leave volunteering early do not leave because the work was hard, but because they felt surplus to requirements.',
+          },
+        },
+        {
+          type: 'list',
+          items: {
+            ar: [
+              'عرّفه بالأسماء لا بالأدوار فقط — الناس يتذكّرون الأسماء',
+              'أعطه مهمة حقيقية صغيرة من أول يوم، لا مشاهدة فقط',
+              'قل له صراحةً ما الذي لا يفعله وحده بعد',
+              'اسأله في نهاية اليوم عمّا لم يفهمه — لن يسأل هو أولاً',
+              'صحّح خطأه على انفراد، واذكر ما أحسنه أمام الفريق',
+            ],
+            en: [
+              'Introduce him by names, not only roles — people remember names',
+              'Give him a small real task on day one, not just watching',
+              'Tell him plainly what he should not yet do alone',
+              'At the end of the day ask what he did not understand — he will not ask first',
+              'Correct his mistake privately, and name what he did well in front of the team',
+            ],
+          },
+        },
+        {
+          type: 'callout',
+          variant: 'stop',
+          title: { ar: '🛑 ما لا يُسلَّم يُفقد', en: '🛑 What is not handed on is lost' },
+          content: {
+            ar: 'حين يغادر متطوّع دون أن يسلّم ما يعرفه — رقم المخفر، اسم مسؤول القاعة، أي عائلة تحتاج انتباهاً خاصاً — تعود الجمعية إلى نقطة الصفر في ذلك الملف. اكتب ما تعرفه وسلّمه قبل آخر يوم لك، لا فيه.',
+            en: 'When a volunteer leaves without handing on what they know — the police station number, the name of the hall keeper, which family needs particular care — the association returns to zero on that file. Write down what you know and hand it over before your last day, not on it.',
+          },
+        },
+        {
+          type: 'quiz',
+          id: 'c3q6',
+          label: { ar: 'سيناريو ميداني', en: 'Field scenario' },
+          question: { ar: 'ما التصرّف الصحيح؟', en: 'What is the right action?' },
+          scenario: {
+            ar: 'متطوّعة جديدة في يومها الأول ارتكبت خطأً أمام الأهالي: أعطت وعداً بخدمة لا تقدّمها الجمعية. الأهالي سمعوا.',
+            en: 'A new volunteer on her first day makes a mistake in front of families: she promises a service the association does not provide. The families heard it.',
+          },
+          options: [
+            {
+              ar: 'تصحّح أمام الأهالي فوراً وتوضّح للجميع أنها جديدة وأخطأت',
+              en: 'Correct it in front of the families at once, explaining she is new and got it wrong',
+            },
+            {
+              ar: 'تصحّح المعلومة للأهالي بهدوء دون لومها، ثم تشرح لها على انفراد بعد ذلك',
+              en: 'Calmly correct the information for the families without blaming her, then explain to her privately afterwards',
+            },
+            {
+              ar: 'تصمت الآن وتترك القائد يتصرّف لاحقاً',
+              en: 'Stay quiet now and let the lead deal with it later',
+            },
+            {
+              ar: 'تشرح لها على انفراد وتترك الوعد قائماً تجنّباً للإحراج',
+              en: 'Explain to her privately and let the promise stand, to avoid embarrassment',
+            },
+          ],
+          correct: 1,
+          feedback: {
+            ar: 'أمران يجب أن يحدثا، وترتيبهما مهم. المعلومة الخاطئة تُصحَّح فوراً لأن أسرة قد تبني عليها قراراً؛ لكن التصحيح يكون للمعلومة لا للشخص. أما تعليمها فمكانه على انفراد بعد انصراف الأهالي. التصحيح العلني للشخص يكسر ثقتها بنفسها في يومها الأول، وترك الوعد قائماً يجعل الجمعية هي من أخلف.',
+            en: 'Two things must happen, and their order matters. The wrong information is corrected at once, because a family may act on it — but what is corrected is the information, not the person. Teaching her belongs privately, after the families have gone. Correcting her publicly breaks her confidence on day one, and letting the promise stand makes the association the one that broke its word.',
           },
         },
       ],
