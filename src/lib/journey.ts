@@ -49,6 +49,16 @@ export type StageView = {
   status: StageStatus;
   /** 0–100 across required requirements only. */
   percent: number;
+  /**
+   * False when nobody has said what this stage takes yet.
+   *
+   * A stage with no requirements computes as 100% — nought of nought required
+   * items are met — and that is arithmetically right and completely
+   * misleading. Every stage of the association's journey is unconfigured
+   * today, so without this flag every screen would report six finished
+   * stages. Screens must say "not set yet" rather than show a figure.
+   */
+  isConfigured: boolean;
   requirements: RequirementView[];
   completedAt: Date | null;
 };
@@ -158,6 +168,7 @@ export async function journeyFor(userId: string): Promise<JourneyView | null> {
       descriptionEn: s.description_en,
       status,
       percent: completedAt ? 100 : percent,
+      isConfigured: reqs.length > 0,
       requirements: reqs,
       completedAt,
     });

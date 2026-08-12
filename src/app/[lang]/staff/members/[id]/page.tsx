@@ -10,6 +10,7 @@ import { can } from '@/lib/authz';
 import { isDbConfigured, query, queryOne } from '@/lib/db';
 import { entriesFor, verifiedMinutes, formatDuration } from '@/lib/hours';
 import { certificatesFor } from '@/lib/certificates';
+import { journeyFor } from '@/lib/journey';
 import {
   grantRoleAction,
   revokeRoleAction,
@@ -66,7 +67,7 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
   );
   if (!person) notFound();
 
-  const [roles, stages, minutes, entries, certs] = await Promise.all([
+  const [roles, stages, minutes, entries, certs, journey] = await Promise.all([
     query<{ id: string; role: string; valid_until: Date | null }>(
       `SELECT id::TEXT, role, valid_until FROM user_roles
         WHERE user_id = $1 AND (valid_until IS NULL OR valid_until > now())
@@ -80,6 +81,8 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
     verifiedMinutes(id),
     entriesFor(id, 20),
     certificatesFor(id),
+    // Null for a learner, which is a normal state rather than a gap.
+    journeyFor(id),
   ]);
 
   const held = new Set(roles.map((r) => r.role));
@@ -225,6 +228,84 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
           </form>
         )}
 
+        <h2 className="mt-10 text-[1.1rem] font-extrabold">{mm.journeyTitle}</h2>
+        <p className="mt-1.5 max-w-[58ch] text-[0.9rem] leading-relaxed text-ink-3">
+          {mm.journeyLede}
+        </p>
+
+        {/* A row of numbered circles said which stages were awarded and
+            nothing about why the person is standing still. This says what is
+            actually missing, which is the only thing a coordinator can act
+            on. */}
+        {journey === null ? (
+          <p className="mt-4 rounded-xl border border-line bg-surface-2 px-5 py-4 text-ink-2">
+            {mm.noJourney}
+          </p>
+        ) : (
+          <ol className="mt-4 space-y-3">
+            {journey.stages.map((s) => {
+              const state = s.completedAt
+                ? { label: mm.stageDone, tone: 'bg-ok/15 text-ok' }
+                : journey.currentStage?.number === s.number
+                  ? { label: mm.stageCurrent, tone: 'bg-brand-orange/15 text-brand-orange-dark dark:text-brand-orange' }
+                  : { label: mm.stageLocked, tone: 'bg-surface-2 text-ink-3' };
+              const unmet = s.requirements.filter((r) => r.isRequired && !r.satisfied);
+
+              return (
+                <li key={s.number} className="rounded-2xl border border-line bg-surface p-5">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <h3 className="font-extrabold">
+                      {s.number} — {lang === 'ar' ? s.titleAr : s.titleEn}
+                    </h3>
+                    {/* No percentage for a stage nobody has configured. Nought
+                        of nought required items is arithmetically 100% and
+                        reads as "finished", which it is not. */}
+                    <span className={`rounded-full px-3 py-1 text-[0.76rem] font-extrabold ${state.tone}`}>
+                      {s.isConfigured ? `${state.label} · ${s.percent}%` : state.label}
+                    </span>
+                  </div>
+
+                  {!s.isConfigured && (
+                    <p className="mt-2 text-[0.86rem] text-ink-3">{mm.notConfigured}</p>
+                  )}
+
+                  {s.requirements.length > 0 && (
+                    <ul className="mt-3 space-y-1.5 text-[0.9rem]">
+                      {s.requirements.map((r) => (
+                        <li key={r.id} className="flex flex-wrap items-baseline gap-2">
+                          <span
+                            className={r.satisfied ? 'font-bold text-ok' : 'font-bold text-ink-3'}
+                            aria-label={r.satisfied ? mm.requirementMet : mm.requirementUnmet}
+                          >
+                            {r.satisfied ? '✓' : '○'}
+                          </span>
+                          <span className={r.satisfied ? 'text-ink-3 line-through' : 'text-ink-2'}>
+                            {lang === 'ar' ? r.labelAr : r.labelEn}
+                          </span>
+                          {r.progress && !r.satisfied && (
+                            <span className="text-[0.82rem] font-bold text-ink-3" dir="ltr">
+                              {r.progress.unit === 'minutes'
+                                ? `${formatDuration(r.progress.current, lang)} / ${formatDuration(r.progress.target, lang)}`
+                                : `${r.progress.current} / ${r.progress.target}`}
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {unmet.length > 0 && !s.completedAt && (
+                    <p className="mt-3 text-[0.86rem] font-bold text-ink-3">
+                      {mm.blockedBy}:{' '}
+                      {unmet.map((r) => (lang === 'ar' ? r.labelAr : r.labelEn)).join('، ')}
+                    </p>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        )}
+
         <h2 className="mt-10 text-[1.1rem] font-extrabold">{mm.stages}</h2>
         <div className="mt-3 flex flex-wrap gap-2">
           {[1, 2, 3, 4, 5, 6].map((s) => (
@@ -242,7 +323,11 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
         </div>
 
         {!isSelf && can(user, 'stages.award') && heldStages.size < 6 && (
-          <form action={awardStageAction} className="mt-4 flex flex-wrap gap-3">
+          <>
+            <p className="mt-4 max-w-[58ch] text-[0.86rem] leading-relaxed text-ink-3">
+              {mm.overrideNote}
+            </p>
+            <form action={awardStageAction} className="mt-3 flex flex-wrap gap-3">
             <input type="hidden" name="lang" value={lang} />
             <input type="hidden" name="userId" value={id} />
             <select
@@ -264,7 +349,8 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
             >
               {mm.award}
             </button>
-          </form>
+            </form>
+          </>
         )}
 
         <h2 className="mt-10 text-[1.1rem] font-extrabold">{mm.certificatesTitle}</h2>

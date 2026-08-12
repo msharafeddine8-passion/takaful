@@ -704,6 +704,18 @@ export const ar: Dictionary = {
         reasonLabel: 'السبب',
         reasonPlaceholder: 'يُحفظ في السجل باسمك.',
         lastAdminNote: 'لا يمكن إيقاف آخر مدير عام — لن يبقى من يعيد تفعيله.',
+        journeyTitle: 'المسار والموانع',
+        journeyLede: 'ما الذي يقف بين هذا المتطوّع والمرحلة التالية، بالتحديد.',
+        noJourney: 'هذا الشخص متعلّم ولم يُقبل كمتطوّع بعد، فلا مسار له.',
+        blockedBy: 'ينقصه',
+        requirementMet: 'مُنجز',
+        requirementUnmet: 'غير مُنجز',
+        stageDone: 'منجزة',
+        stageCurrent: 'الحالية',
+        stageLocked: 'لاحقة',
+        notConfigured: 'لم تُحدَّد متطلباتها بعد',
+        overrideNote:
+          'منح مرحلة يدويًا يتخطّى هذه المتطلبات. يُسجَّل باسمك وبسببك، ويبقى في السجل.',
       },
       journeyBuilder: {
         title: 'بنّاء المسار',

@@ -92,19 +92,28 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
                 {p.stage} {stage.number} — {lang === 'ar' ? stage.titleAr : stage.titleEn}
               </span>
             </p>
-            <div
-              className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-surface-2"
-              role="progressbar"
-              aria-valuenow={stage.percent}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <div
-                className="h-full rounded-full bg-brand-orange"
-                style={{ width: `${stage.percent}%` }}
-              />
-            </div>
-            <p className="mt-2 text-[0.88rem] font-bold text-ink-2">{stage.percent}%</p>
+            {/* A stage nobody has configured computes as 100% — nought of
+                nought required items met — and telling a volunteer they have
+                finished a stage that was never defined is worse than telling
+                them nothing. */}
+            {stage.isConfigured && (
+              <>
+                <div
+                  className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-surface-2"
+                  role="progressbar"
+                  aria-valuenow={stage.percent}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={lang === 'ar' ? stage.titleAr : stage.titleEn}
+                >
+                  <div
+                    className="h-full rounded-full bg-brand-orange"
+                    style={{ width: `${stage.percent}%` }}
+                  />
+                </div>
+                <p className="mt-2 text-[0.88rem] font-bold text-ink-2">{stage.percent}%</p>
+              </>
+            )}
           </div>
         ) : (
           <p className="mt-6 rounded-2xl border border-line bg-surface p-6 text-[1rem] leading-relaxed text-ink-2">

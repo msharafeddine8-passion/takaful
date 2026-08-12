@@ -571,6 +571,17 @@ export type Account = {
       reasonLabel: string;
       reasonPlaceholder: string;
       lastAdminNote: string;
+      journeyTitle: string;
+      journeyLede: string;
+      noJourney: string;
+      blockedBy: string;
+      requirementMet: string;
+      requirementUnmet: string;
+      stageDone: string;
+      stageCurrent: string;
+      stageLocked: string;
+      notConfigured: string;
+      overrideNote: string;
     };
     journeyBuilder: {
       title: string;

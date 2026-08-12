@@ -706,6 +706,18 @@ export const en: Dictionary = {
         reasonLabel: 'Reason',
         reasonPlaceholder: 'Recorded against your name.',
         lastAdminNote: 'The last super administrator cannot be suspended — nobody would be left to undo it.',
+        journeyTitle: 'Journey and blockers',
+        journeyLede: 'Exactly what stands between this volunteer and their next stage.',
+        noJourney: 'This person is a learner and has not been accepted as a volunteer, so they have no journey.',
+        blockedBy: 'Still needs',
+        requirementMet: 'Met',
+        requirementUnmet: 'Not met',
+        stageDone: 'Finished',
+        stageCurrent: 'Current',
+        stageLocked: 'Later',
+        notConfigured: 'Requirements not set yet',
+        overrideNote:
+          'Awarding a stage by hand skips these requirements. It is recorded against your name with your reason, and it stays on the record.',
       },
       journeyBuilder: {
         title: 'Journey Builder',

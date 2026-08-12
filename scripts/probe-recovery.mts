@@ -277,14 +277,40 @@ try {
     ).rows[0].n === String(THROTTLE_LIMITS.perEmail + 1),
   );
 
+  /*
+   * The deletion path is tested by ageing this probe's own rows past the
+   * default 24-hour cut, not by calling prune with a short interval.
+   *
+   * prune_auth_attempts() is global — it has no way to be scoped to one
+   * address — so asking it to remove everything older than ten minutes would
+   * delete real failed sign-ins too, quietly weakening the throttle for
+   * whoever those attempts belonged to. A probe must not delete rows it did
+   * not create.
+   */
+  await c.query(
+    `UPDATE auth_attempts SET at = now() - INTERVAL '25 hours' WHERE email_hash = $1 AND at < now() - INTERVAL '20 minutes'`,
+    [fingerprint(EMAIL)],
+  );
+  const mine = async () =>
+    Number(
+      (
+        await c.query<{ n: string }>(
+          'SELECT count(*)::TEXT AS n FROM auth_attempts WHERE email_hash = $1',
+          [fingerprint(EMAIL)],
+        )
+      ).rows[0].n,
+    );
+  const before = await mine();
   const removed = (
-    await c.query<{ prune_auth_attempts: number }>(
-      `SELECT prune_auth_attempts(INTERVAL '10 minutes')`,
-    )
+    await c.query<{ prune_auth_attempts: number }>('SELECT prune_auth_attempts()')
   ).rows[0].prune_auth_attempts;
-  check('asked to go further back, it removes the older ones', removed === THROTTLE_LIMITS.perEmail, removed);
-  check('and the count it reports is a number', typeof removed === 'number');
-  check('the recent one survives', (await recentFailures(EMAIL)) === 1);
+  check('the count it reports is a number', typeof removed === 'number', removed);
+  check(
+    'rows past the cut are gone',
+    (await mine()) === before - THROTTLE_LIMITS.perEmail,
+    `${before} -> ${await mine()}`,
+  );
+  check('and the recent one survives', (await recentFailures(EMAIL)) === 1);
 } finally {
   console.log('\n--- cleanup ---');
   await c.query('DELETE FROM auth_attempts WHERE email_hash = $1', [fingerprint(EMAIL)]);

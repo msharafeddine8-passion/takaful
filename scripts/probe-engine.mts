@@ -25,7 +25,10 @@ function check(label: string, ok: boolean, detail = '') {
 // under a marker and deletes them at the end.
 const MARK = `eng-${Date.now()}`;
 const version = randomUUID();
-const stageIds = [randomUUID(), randomUUID()];
+// The third is deliberately left with no requirements: an unconfigured stage
+// is the state every stage of the association's journey is in today, and the
+// engine has to describe it honestly rather than as finished.
+const stageIds = [randomUUID(), randomUUID(), randomUUID()];
 const reqCourse = randomUUID();
 const reqHours1 = randomUUID();
 const reqHours2 = randomUUID();
@@ -40,8 +43,9 @@ try {
   );
   await c.query(
     `INSERT INTO journey_stages (id, version_id, number, title_ar, title_en)
-     VALUES ($1, $2, 1, 'الأولى', 'One'), ($3, $2, 2, 'الثانية', 'Two')`,
-    [stageIds[0], version, stageIds[1]],
+     VALUES ($1, $2, 1, 'الأولى', 'One'), ($3, $2, 2, 'الثانية', 'Two'),
+            ($4, $2, 3, 'الثالثة', 'Three')`,
+    [stageIds[0], version, stageIds[1], stageIds[2]],
   );
   await c.query(
     `INSERT INTO stage_requirements (id, stage_id, kind, label_ar, label_en, config, sort_order)
@@ -85,6 +89,19 @@ try {
   check('stage 1 starts at 0%', j?.stages[0].percent === 0, `${j?.stages[0].percent}%`);
   check('next action is the course', j?.nextAction?.requirement.kind === 'course',
     j?.nextAction?.requirement.labelEn);
+
+  console.log('\n--- a stage nobody has configured ---');
+  {
+    const j = await journeyFor(volunteer);
+    const bare = j?.stages.find((s) => s.requirements.length === 0);
+    check('a stage with no requirements is marked unconfigured', bare?.isConfigured === false,
+      String(bare?.isConfigured));
+    check(
+      'it still computes as 100%, which is why the flag has to exist',
+      bare?.percent === 100, `${bare?.percent}%`);
+    const configured = j?.stages.find((s) => s.requirements.length > 0);
+    check('and a configured one is marked configured', configured?.isConfigured === true);
+  }
 
   console.log('\n--- passing the course satisfies one requirement ---');
   await c.query(
