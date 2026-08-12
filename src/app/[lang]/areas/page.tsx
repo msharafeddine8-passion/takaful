@@ -49,7 +49,7 @@ export default async function AreasPage(props: PageProps<'/[lang]/areas'>) {
               </div>
 
               <div className="flex flex-col gap-3 p-6 md:p-8">
-                <span className="text-[0.72rem] font-extrabold tracking-[0.13em] text-brand-orange-text dark:text-brand-orange">
+                <span className="text-[0.82rem] font-extrabold tracking-[0.13em] text-brand-orange-text dark:text-brand-orange">
                   {area.tag}
                 </span>
                 <h2 className="text-[clamp(1.25rem,1.05rem+0.9vw,1.7rem)] font-extrabold tracking-tight">

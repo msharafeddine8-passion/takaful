@@ -2,7 +2,7 @@ import 'server-only';
 import { randomUUID, randomInt } from 'node:crypto';
 import { query, queryOne, execute, transaction } from './db';
 import { COURSE_CONTENT } from './course-content';
-import { COURSES } from './courses';
+import { COURSES, courseBySlug } from './courses';
 import { generateCode } from './certificates';
 import type { Locale } from './i18n';
 
@@ -330,6 +330,49 @@ export async function unissuedCourseCertificates(userId: string): Promise<string
     [userId],
   );
   return rows.map((r) => r.course_slug);
+}
+
+/**
+ * Whether somebody may start a course, and what stands in the way.
+ *
+ * A prerequisite is a locked door. The rule here is that it locks only when
+ * the catalogue says so — `requires` is empty on almost every course, and the
+ * one place it is not, the earlier course genuinely has to come first.
+ * `recommends` never locks anything; it is advice, and advice that blocks is
+ * not advice.
+ */
+export type Eligibility = {
+  allowed: boolean;
+  /** Courses that must be passed first and have not been. */
+  missing: string[];
+  /** Suggested first, not required. Shown, never enforced. */
+  suggested: string[];
+};
+
+export async function eligibilityFor(userId: string | null, slug: string): Promise<Eligibility> {
+  const course = courseBySlug(slug);
+  if (!course) return { allowed: false, missing: [], suggested: [] };
+  if (course.requires.length === 0 && course.recommends.length === 0) {
+    return { allowed: true, missing: [], suggested: [] };
+  }
+
+  // A signed-out visitor has passed nothing, so everything unmet is listed —
+  // which is the honest answer, and the page invites them to sign in.
+  const passed = userId ? await passedCourseSlugs(userId) : new Set<string>();
+
+  return {
+    allowed: course.requires.every((r) => passed.has(r)),
+    missing: course.requires.filter((r) => !passed.has(r)),
+    suggested: course.recommends.filter((r) => !passed.has(r)),
+  };
+}
+
+export async function passedCourseSlugs(userId: string): Promise<Set<string>> {
+  const rows = await query<{ course_slug: string }>(
+    'SELECT DISTINCT course_slug FROM course_attempts WHERE user_id = $1 AND passed',
+    [userId],
+  );
+  return new Set(rows.map((r) => r.course_slug));
 }
 
 export type CourseStanding = {

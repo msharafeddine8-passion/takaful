@@ -98,7 +98,7 @@ export default async function JourneyPage(props: PageProps<'/[lang]/account/jour
             this page wants to know what to do, not to read a diagram. */}
         {journey.nextAction && (
           <div className="mt-8 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-6">
-            <p className="text-[0.78rem] font-extrabold tracking-[0.13em] text-brand-orange-text dark:text-brand-orange">
+            <p className="text-[0.82rem] font-extrabold tracking-[0.13em] text-brand-orange-text dark:text-brand-orange">
               {t.nextStep}
             </p>
             <p className="mt-2 text-[1.15rem] font-extrabold">
@@ -188,7 +188,7 @@ function StageBlock({
           </h2>
           <span className="text-[0.82rem] font-bold text-ink-3">{statusLabel}</span>
           {isCurrent && (
-            <span className="rounded-full bg-brand-blue px-2.5 py-0.5 text-[0.75rem] font-bold text-white dark:bg-brand-orange dark:text-[#241503]">
+            <span className="rounded-full bg-brand-blue px-2.5 py-0.5 text-[0.82rem] font-bold text-white dark:bg-brand-orange dark:text-[#241503]">
               {t.currentlyHere}
             </span>
           )}
@@ -220,7 +220,7 @@ function StageBlock({
 
         {stage.requirements.length > 0 && (
           <>
-            <p className="mt-5 text-[0.78rem] font-bold tracking-[0.12em] text-ink-3">
+            <p className="mt-5 text-[0.82rem] font-bold tracking-[0.12em] text-ink-3">
               {locked ? t.toUnlock : t.requirements}
             </p>
             <ul className="mt-2.5 space-y-2">

@@ -123,7 +123,7 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
 
         {/* One next step. Not fifteen cards someone has to triage. */}
         <div className="mt-5 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-6">
-          <p className="text-[0.78rem] font-extrabold tracking-[0.13em] text-brand-orange-text dark:text-brand-orange">
+          <p className="text-[0.82rem] font-extrabold tracking-[0.13em] text-brand-orange-text dark:text-brand-orange">
             {p.nextStepTitle}
           </p>
           {next ? (
@@ -264,7 +264,7 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
 function Stat({ label, value, note }: { label: string; value: string; note?: string }) {
   return (
     <div className="rounded-2xl border border-line bg-surface p-5">
-      <p className="text-[0.75rem] font-bold tracking-[0.11em] text-ink-3">{label}</p>
+      <p className="text-[0.82rem] font-bold tracking-[0.11em] text-ink-3">{label}</p>
       <p className="mt-1.5 text-[1.35rem] font-extrabold">{value}</p>
       {note && <p className="mt-1 text-[0.8rem] text-ink-3">{note}</p>}
     </div>
@@ -274,7 +274,7 @@ function Stat({ label, value, note }: { label: string; value: string; note?: str
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mt-5 rounded-2xl border border-line bg-surface p-6">
-      <h2 className="text-[0.78rem] font-bold tracking-[0.12em] text-ink-3">{title}</h2>
+      <h2 className="text-[0.82rem] font-bold tracking-[0.12em] text-ink-3">{title}</h2>
       <div className="mt-2.5">{children}</div>
     </section>
   );

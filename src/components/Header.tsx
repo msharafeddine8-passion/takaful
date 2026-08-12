@@ -37,7 +37,11 @@ export function Header({ lang, strings }: Props) {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-ground/90 backdrop-blur-md">
       <div className="mx-auto flex h-[72px] max-w-6xl items-center gap-6 px-5">
-        <Link href={`/${lang}`} aria-label={strings.siteName}>
+        <Link
+          href={`/${lang}`}
+          aria-label={strings.siteName}
+          className="inline-flex min-h-11 items-center"
+        >
           <Logo siteName={strings.siteName} />
         </Link>
 
@@ -62,7 +66,7 @@ export function Header({ lang, strings }: Props) {
           <Link
             href={switchLocalePath(pathname, other)}
             hrefLang={other}
-            className="rounded-full border border-line px-3 py-2 text-[0.82rem] font-bold text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
+            className="inline-flex min-h-11 items-center rounded-full border border-line px-3.5 text-[0.85rem] font-bold text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
           >
             {strings.switchTo}
           </Link>
@@ -85,7 +89,7 @@ export function Header({ lang, strings }: Props) {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label={strings.menu}
-            className="rounded-lg border border-line px-3 py-2 text-ink lg:hidden"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-line text-[1.05rem] text-ink lg:hidden"
           >
             {open ? '✕' : '☰'}
           </button>

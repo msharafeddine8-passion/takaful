@@ -29,7 +29,7 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-line bg-surface p-6">
-            <h2 className="mb-2 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
+            <h2 className="mb-2 text-[0.82rem] font-bold tracking-[0.13em] text-ink-3">
               {dict.contact.phone}
             </h2>
             <a
@@ -50,7 +50,7 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
           </div>
 
           <div className="rounded-xl border border-line bg-surface p-6">
-            <h2 className="mb-2 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
+            <h2 className="mb-2 text-[0.82rem] font-bold tracking-[0.13em] text-ink-3">
               {dict.contact.address}
             </h2>
             <p className="text-[0.98rem] font-semibold leading-relaxed">
@@ -59,7 +59,7 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
           </div>
 
           <div className="rounded-xl border border-line bg-surface p-6">
-            <h2 className="mb-2 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
+            <h2 className="mb-2 text-[0.82rem] font-bold tracking-[0.13em] text-ink-3">
               {dict.contact.email}
             </h2>
             <a
@@ -72,7 +72,7 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
           </div>
 
           <div className="rounded-xl border border-line bg-surface p-6">
-            <h2 className="mb-2 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
+            <h2 className="mb-2 text-[0.82rem] font-bold tracking-[0.13em] text-ink-3">
               {dict.contact.social}
             </h2>
             <a
@@ -96,7 +96,7 @@ export default async function ContactPage(props: PageProps<'/[lang]/contact'>) {
           </div>
 
           <div className="rounded-xl border border-line bg-surface p-6">
-            <h2 className="mb-2 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
+            <h2 className="mb-2 text-[0.82rem] font-bold tracking-[0.13em] text-ink-3">
               {dict.contact.registration}
             </h2>
             <p className="text-[0.98rem] font-extrabold">{dict.contact.registrationValue}</p>

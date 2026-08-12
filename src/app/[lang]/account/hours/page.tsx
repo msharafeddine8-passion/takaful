@@ -88,17 +88,17 @@ export default async function HoursPage(props: PageProps<'/[lang]/account/hours'
 
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           <div className="rounded-2xl border border-line bg-surface p-5">
-            <p className="text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">{t.verifiedLabel}</p>
+            <p className="text-[0.82rem] font-bold tracking-[0.13em] text-ink-3">{t.verifiedLabel}</p>
             <p className="mt-1.5 text-[1.6rem] font-extrabold text-brand-blue dark:text-brand-orange">
               {formatDuration(verified, lang)}
             </p>
           </div>
           <div className="rounded-2xl border border-line bg-surface p-5">
-            <p className="text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">{t.pendingLabel}</p>
+            <p className="text-[0.82rem] font-bold tracking-[0.13em] text-ink-3">{t.pendingLabel}</p>
             <p className="mt-1.5 text-[1.6rem] font-extrabold">{formatDuration(pending, lang)}</p>
           </div>
           <div className="rounded-2xl border border-line bg-surface p-5">
-            <p className="text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">{t.stageLabel}</p>
+            <p className="text-[0.82rem] font-bold tracking-[0.13em] text-ink-3">{t.stageLabel}</p>
             <p className="mt-1.5 text-[1.6rem] font-extrabold">
               {stage === 0 ? (
                 <span className="text-[1.05rem] font-bold text-ink-2">{t.notStarted}</span>

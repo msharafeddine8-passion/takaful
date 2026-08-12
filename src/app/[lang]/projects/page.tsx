@@ -39,11 +39,11 @@ export default async function ProjectsPage(props: PageProps<'/[lang]/projects'>)
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
-                  <span className="text-[0.72rem] font-extrabold tracking-[0.13em] text-brand-blue dark:text-sky-300">
+                  <span className="text-[0.82rem] font-extrabold tracking-[0.13em] text-brand-blue dark:text-sky-300">
                     {p.tag}
                   </span>
                   {soon && (
-                    <span className="shrink-0 rounded-full bg-brand-orange px-3 py-1 text-[0.72rem] font-extrabold text-[#241503]">
+                    <span className="shrink-0 rounded-full bg-brand-orange px-3 py-1 text-[0.82rem] font-extrabold text-[#241503]">
                       {dict.projects.comingSoon}
                     </span>
                   )}

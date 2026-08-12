@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { isDbConfigured, execute, queryOne, transaction } from '@/lib/db';
-import { audit, currentUser } from '@/lib/auth';
+import { audit } from '@/lib/auth';
 import { requireCapability, Forbidden } from '@/lib/authz';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { parseDuration } from '@/lib/duration';

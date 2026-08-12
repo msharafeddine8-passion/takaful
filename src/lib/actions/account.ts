@@ -3,7 +3,7 @@
 import { randomUUID } from 'node:crypto';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
-import { isDbConfigured, execute, queryOne, transaction } from '@/lib/db';
+import { isDbConfigured, queryOne, transaction } from '@/lib/db';
 import {
   authenticate,
   createSession,

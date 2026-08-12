@@ -357,6 +357,65 @@ export type Account = {
     resent: string;
     noProvider: string;
   };
+  academy: {
+    /** Index page */
+    heroTitle: string;
+    heroLede: string;
+    continueTitle: string;
+    continueCta: string;
+    allCourses: string;
+    filterAll: string;
+    filterLevel: string;
+    noneInFilter: string;
+    coursesCount: string;
+    /** Course card + hero */
+    statusAvailable: string;
+    statusSoon: string;
+    statusDraft: string;
+    notStarted: string;
+    inProgress: string;
+    completed: string;
+    start: string;
+    resume: string;
+    retake: string;
+    review: string;
+    /** Course page */
+    breadcrumbAcademy: string;
+    level: string;
+    difficulty: string;
+    duration: string;
+    modulesWord: string;
+    questionsWord: string;
+    passMark: string;
+    language: string;
+    certificate: string;
+    certificateYes: string;
+    aboutTitle: string;
+    outcomesTitle: string;
+    audienceTitle: string;
+    rewardsTitle: string;
+    requirementsTitle: string;
+    noRequirements: string;
+    requiresLabel: string;
+    recommendsLabel: string;
+    lockedTitle: string;
+    lockedBody: string;
+    signInToTrack: string;
+    signInCta: string;
+    /** Module navigation */
+    contentsTitle: string;
+    moduleOf: string;
+    moduleDone: string;
+    moduleCurrent: string;
+    backToContents: string;
+    nextModule: string;
+    prevModule: string;
+    progressTitle: string;
+    modulesDone: string;
+    questionsAnswered: string;
+    soonBody: string;
+    referencesTitle: string;
+  };
   achievements: {
     title: string;
     lede: string;

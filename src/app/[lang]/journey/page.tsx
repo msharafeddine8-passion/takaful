@@ -50,7 +50,7 @@ export default async function JourneyPage(props: PageProps<'/[lang]/journey'>) {
                     {lv.n}
                   </span>
                   <div>
-                    <div className="text-[0.72rem] font-bold tracking-[0.1em] text-ink-3">
+                    <div className="text-[0.82rem] font-bold tracking-[0.1em] text-ink-3">
                       {dict.journey.levelWord} {lv.n}
                     </div>
                     <h2 className="text-[1.12rem] font-extrabold leading-tight">{lv.title}</h2>

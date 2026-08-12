@@ -77,7 +77,7 @@ export function Quiz({ lang, slug, id, label, question, scenario, options, previ
 
   return (
     <div className="my-7 rounded-2xl border border-line bg-surface p-6">
-      <p className="mb-2 text-[0.76rem] font-extrabold tracking-[0.13em] text-ink-3">{label}</p>
+      <p className="mb-2 text-[0.84rem] font-extrabold tracking-[0.1em] text-ink-3">{label}</p>
       <p className="mb-4 text-[1.06rem] font-extrabold leading-snug">{question}</p>
 
       {scenario && (
@@ -111,7 +111,7 @@ export function Quiz({ lang, slug, id, label, question, scenario, options, previ
               }`}
             >
               <span
-                className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 text-[0.78rem] font-extrabold ${
+                className={`grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 text-[0.88rem] font-extrabold ${
                   showRight
                     ? 'border-ok bg-ok text-white'
                     : showWrong

@@ -124,10 +124,10 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
           {/* Proportioned like a real card, so it prints and photographs as one. */}
           <article className="member-card mt-8 overflow-hidden rounded-2xl border border-line bg-surface">
             <div className="bg-brand-blue-deep px-7 py-5 text-white">
-              <p className="text-[0.72rem] font-extrabold tracking-[0.2em] text-[#9dbbd2]">
+              <p className="text-[0.82rem] font-extrabold tracking-[0.2em] text-[#9dbbd2]">
                 {dict.meta.siteName}
               </p>
-              <p className="mt-0.5 text-[0.68rem] text-[#9dbbd2]">
+              <p className="mt-0.5 text-[0.82rem] text-[#9dbbd2]">
                 {dict.account.certificate.registration} {ORG.registrationNumber}
               </p>
             </div>
@@ -179,11 +179,11 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
                   aria-hidden
                   dangerouslySetInnerHTML={{ __html: qr }}
                 />
-                <p className="mt-1.5 text-[0.65rem] text-ink-3">{dict.account.certificate.scanToVerify}</p>
+                <p className="mt-1.5 text-[0.82rem] text-ink-3">{dict.account.certificate.scanToVerify}</p>
               </div>
             </div>
 
-            <p className="border-t border-line px-7 py-3 text-[0.72rem] text-ink-3">
+            <p className="border-t border-line px-7 py-3 text-[0.82rem] text-ink-3">
               {t.validNote}
             </p>
           </article>

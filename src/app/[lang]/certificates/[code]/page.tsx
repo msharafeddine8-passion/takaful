@@ -88,7 +88,7 @@ export default async function CertificatePage(props: PageProps<'/[lang]/certific
             <p className="text-[0.8rem] font-extrabold tracking-[0.2em] text-brand-orange-text dark:text-brand-orange">
               {dict.meta.siteName}
             </p>
-            <p className="mt-1.5 text-[0.75rem] text-ink-3">
+            <p className="mt-1.5 text-[0.82rem] text-ink-3">
               {t.registration} {ORG.registrationNumber}
             </p>
 
@@ -126,7 +126,7 @@ export default async function CertificatePage(props: PageProps<'/[lang]/certific
               </div>
             </dl>
 
-            <p className="mt-8 text-[0.78rem] text-ink-3" dir="ltr">
+            <p className="mt-8 text-[0.82rem] text-ink-3" dir="ltr">
               {t.verifyAt}: {verifyUrl}
             </p>
           </article>

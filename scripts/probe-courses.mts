@@ -54,15 +54,84 @@ function arabicLength(value: unknown): number {
 
 console.log(`\n${COURSES.length} courses in the catalogue\n`);
 
-console.log('--- every course in the catalogue has content ---');
+/*
+ * The catalogue is deliberately longer than the written content: it also lists
+ * the courses on the roadmap, so a volunteer can see where the path leads and
+ * what a course will require of them before it exists.
+ *
+ * So the rule is not "every course has content". It is the pair below, which
+ * is the thing that actually protects a reader:
+ *   - a course the catalogue calls available MUST have content, or the card
+ *     links to a page that cannot teach anything;
+ *   - a course it calls planned must NOT have content, or written material is
+ *     sitting unreachable behind a "coming soon" label.
+ */
+console.log('--- status and content agree ---');
 for (const course of COURSES) {
-  check(`${course.slug} has a content file`, Boolean(COURSE_CONTENT[course.slug]));
+  const written = Boolean(COURSE_CONTENT[course.slug]);
+  if (course.status === 'soon') {
+    check(`${course.slug} is planned, and has no content yet`, !written);
+  } else {
+    check(`${course.slug} is ${course.status}, and has a content file`, written);
+  }
 }
 check(
   'and nothing is published that the catalogue does not list',
   Object.keys(COURSE_CONTENT).every((slug) => COURSES.some((c) => c.slug === slug)),
   Object.keys(COURSE_CONTENT).filter((s) => !COURSES.some((c) => c.slug === s)).join(',') || 'none',
 );
+
+/*
+ * A prerequisite that names a course nobody can take yet is a locked door with
+ * no key. requires[] is the locking list, so every entry has to be a course
+ * that exists and is published.
+ */
+console.log('\n--- prerequisites are reachable ---');
+for (const course of COURSES) {
+  for (const slug of course.requires) {
+    const target = COURSES.find((c) => c.slug === slug);
+    check(
+      `${course.slug} requires ${slug}, which exists and is published`,
+      target !== undefined && target.status === 'available',
+      target ? target.status : 'missing',
+    );
+  }
+  for (const slug of course.recommends) {
+    check(
+      `${course.slug} recommends ${slug}, which exists`,
+      COURSES.some((c) => c.slug === slug),
+    );
+  }
+  check(
+    `${course.slug} does not require itself`,
+    !course.requires.includes(course.slug) && !course.recommends.includes(course.slug),
+  );
+}
+
+/*
+ * A planned course has no content file, so its whole page — hero, audience,
+ * requirements — is built from the catalogue entry alone. Nothing below checks
+ * that entry, because the loop that follows skips any course without content.
+ * These eight pages are live and indexed, so check the entry itself.
+ */
+console.log('\n--- the catalogue entry is complete on its own ---');
+for (const course of COURSES) {
+  check(
+    `${course.slug} is titled and summarised in both languages`,
+    Boolean(course.title.ar && course.title.en && course.summary.ar && course.summary.en),
+  );
+  check(
+    `${course.slug} says who it is for, in both languages`,
+    course.audience.ar.length > 0 && course.audience.ar.length === course.audience.en.length,
+    `${course.audience.ar.length} ar / ${course.audience.en.length} en`,
+  );
+  check(
+    `${course.slug} says what you leave with, in both languages`,
+    course.outcomes.ar.length > 0 && course.outcomes.ar.length === course.outcomes.en.length,
+    `${course.outcomes.ar.length} ar / ${course.outcomes.en.length} en`,
+  );
+  check(`${course.slug} has an icon and a level`, Boolean(course.icon) && course.level >= 1);
+}
 
 for (const course of COURSES) {
   const content = COURSE_CONTENT[course.slug];
