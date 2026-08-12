@@ -103,9 +103,24 @@ try {
   for (const file of probes) {
     process.stdout.write(`\n${'='.repeat(64)}\n${file}\n${'='.repeat(64)}\n`);
 
+    /*
+     * --conditions=react-server, and no --tsconfig.
+     *
+     * Most of src/lib starts with `import 'server-only'`, a marker package
+     * whose exports map sends the `react-server` condition to an empty module
+     * and everything else to a file that throws. Under plain Node a probe
+     * importing any of those libraries died at the first import.
+     *
+     * This used to pass `--tsconfig tsconfig.probe.json`, a file that has
+     * never existed in this repository. tsx ignored the missing path quietly
+     * for a long time and now fails hard on it, which is how it surfaced.
+     * Naming the condition is the honest fix: it is the mechanism the package
+     * publishes, and it is exactly what Next does when it renders a server
+     * component.
+     */
     const run = spawnSync(
       process.platform === 'win32' ? 'npx.cmd' : 'npx',
-      ['tsx', '--tsconfig', 'tsconfig.probe.json', '--env-file=.env.local', `scripts/${file}`],
+      ['tsx', '--conditions=react-server', '--env-file=.env.local', `scripts/${file}`],
       { encoding: 'utf8', shell: process.platform === 'win32' },
     );
 

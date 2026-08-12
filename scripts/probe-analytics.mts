@@ -53,6 +53,7 @@ try {
     funnel: await funnel(),
     attendance: await attendanceStanding(),
     stalled: await stalledVolunteers(),
+    courses: await courseStandings(),
   };
 
   // Four people at four different depths, which is the whole point of a funnel.
@@ -130,10 +131,24 @@ try {
   const teamwork = courses.find((x) => x.course_slug === 'teamwork');
   check('the course appears', teamwork !== undefined);
   check('counts are numbers', typeof teamwork?.started === 'number', typeof teamwork?.started);
+
+  /*
+   * A delta, not an absolute.
+   *
+   * This assertion used to read `started === finished` against the global
+   * count, which held only while the database contained nothing but this
+   * probe's fixtures. One real volunteer with an attempt they never submitted
+   * made `started` one higher than `finished` and the probe reported a hole in
+   * a query that was working correctly. Every other section here already
+   * measures against `before`; this one had been missed.
+   */
+  const wasTeamwork = before.courses.find((x) => x.course_slug === 'teamwork');
+  const startedDelta = (teamwork?.started ?? 0) - (wasTeamwork?.started ?? 0);
+  const finishedDelta = (teamwork?.finished ?? 0) - (wasTeamwork?.finished ?? 0);
   check(
-    'someone who attempted twice counts once',
-    (teamwork?.started ?? 0) >= 3 && (teamwork?.started ?? 0) === (teamwork?.finished ?? 0),
-    `${teamwork?.started}/${teamwork?.finished}`,
+    'the three who opened it count as three, and the one who tried twice counts once',
+    startedDelta === 3 && finishedDelta === 3,
+    `+${startedDelta} started / +${finishedDelta} finished`,
   );
   check('passed never exceeds finished', (teamwork?.passed ?? 0) <= (teamwork?.finished ?? 0));
   check(
