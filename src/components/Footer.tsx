@@ -27,9 +27,12 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
           </div>
 
           <div>
-            <h4 className="mb-3 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
+            {/* h2: the footer's groups are top-level sections of the page, not
+                children of whatever heading happened to come last above them.
+                As h4 they left a gap on every page in the site. */}
+            <h2 className="mb-3 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
               {dict.footer.orgTitle}
-            </h4>
+            </h2>
             <ul className="flex flex-col gap-2">
               {org.map((l) => (
                 <li key={l.label}>
@@ -42,9 +45,12 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
           </div>
 
           <div>
-            <h4 className="mb-3 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
+            {/* h2: the footer's groups are top-level sections of the page, not
+                children of whatever heading happened to come last above them.
+                As h4 they left a gap on every page in the site. */}
+            <h2 className="mb-3 text-[0.78rem] font-bold tracking-[0.13em] text-ink-3">
               {dict.footer.volunteersTitle}
-            </h4>
+            </h2>
             <ul className="flex flex-col gap-2">
               {vol.map((l) => (
                 <li key={l.label}>

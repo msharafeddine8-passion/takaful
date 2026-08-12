@@ -46,7 +46,7 @@ const CALLOUT_STYLE = {
 
 const CALLOUT_TITLE = {
   info: 'text-brand-blue dark:text-sky-300',
-  warn: 'text-brand-orange-dark dark:text-brand-orange',
+  warn: 'text-brand-orange-text dark:text-brand-orange',
   stop: 'text-danger',
 } as const;
 
@@ -108,9 +108,12 @@ function renderBlock(block: Block, lang: Locale, key: number, quiz: QuizContext)
         <div key={key} className="my-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {block.items.map((item, i) => (
             <div key={i} className="rounded-xl border border-line bg-surface p-4">
-              <h4 className="mb-1.5 text-[1rem] font-extrabold text-brand-blue dark:text-sky-300">
+              {/* h3, not h4: these sit directly under the module's h2, and a
+                  skipped level tells a screen-reader user a heading is
+                  missing between them. */}
+              <h3 className="mb-1.5 text-[1rem] font-extrabold text-brand-blue dark:text-sky-300">
                 {item.title[lang]}
-              </h4>
+              </h3>
               <p className="text-[0.9rem] leading-relaxed text-ink-2">{item.text[lang]}</p>
             </div>
           ))}
@@ -121,7 +124,7 @@ function renderBlock(block: Block, lang: Locale, key: number, quiz: QuizContext)
       return (
         <div key={key} className="my-6 grid gap-3 sm:grid-cols-2">
           <div className="rounded-xl border border-ok/30 bg-ok/[0.08] p-5">
-            <h4 className="mb-2.5 text-[0.98rem] font-extrabold text-ok">{block.yesTitle[lang]}</h4>
+            <h3 className="mb-2.5 text-[0.98rem] font-extrabold text-ok">{block.yesTitle[lang]}</h3>
             <ul className="flex list-disc flex-col gap-1.5 ps-5 text-[0.92rem] text-ink-2">
               {block.yes[lang].map((t, i) => (
                 <li key={i}>{t}</li>
@@ -129,9 +132,9 @@ function renderBlock(block: Block, lang: Locale, key: number, quiz: QuizContext)
             </ul>
           </div>
           <div className="rounded-xl border border-danger/30 bg-danger/[0.07] p-5">
-            <h4 className="mb-2.5 text-[0.98rem] font-extrabold text-danger">
+            <h3 className="mb-2.5 text-[0.98rem] font-extrabold text-danger">
               {block.noTitle[lang]}
-            </h4>
+            </h3>
             <ul className="flex list-disc flex-col gap-1.5 ps-5 text-[0.92rem] text-ink-2">
               {block.no[lang].map((t, i) => (
                 <li key={i}>{t}</li>
@@ -291,7 +294,7 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
           <CourseProgressProvider totalQuestions={questionCount} initiallyAnswered={answeredIds}>
           {course.modules.map((mod) => (
             <section key={mod.id} className="mb-14 scroll-mt-24" id={mod.id}>
-              <p className="text-[0.76rem] font-extrabold tracking-[0.14em] text-brand-orange-dark dark:text-brand-orange">
+              <p className="text-[0.76rem] font-extrabold tracking-[0.14em] text-brand-orange-text dark:text-brand-orange">
                 {mod.tag[lang]}
               </p>
               <h2 className="mt-2 text-[clamp(1.4rem,1.15rem+1.2vw,2rem)] font-extrabold tracking-tight">

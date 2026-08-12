@@ -159,7 +159,7 @@ function CourseRow({
       )}
 
       {open && (
-        <p className="mt-3 rounded-lg border border-brand-orange/40 bg-brand-orange/[0.09] px-4 py-2.5 text-[0.88rem] font-bold text-brand-orange-dark dark:text-brand-orange">
+        <p className="mt-3 rounded-lg border border-brand-orange/40 bg-brand-orange/[0.09] px-4 py-2.5 text-[0.88rem] font-bold text-brand-orange-text dark:text-brand-orange">
           {t.ongoing} — {t.answeredOf.replace('{n}', String(standing!.open_answered))}
         </p>
       )}

@@ -36,7 +36,7 @@ export default async function ForgotPage(props: PageProps<'/[lang]/forgot'>) {
         {/* Said plainly rather than letting someone wait for an email that was
             never going to arrive. */}
         {!isEmailConfigured() && (
-          <p className="mt-5 rounded-xl border border-brand-orange/40 bg-brand-orange/[0.1] px-4 py-3 text-[0.9rem] font-bold text-brand-orange-dark dark:text-brand-orange">
+          <p className="mt-5 rounded-xl border border-brand-orange/40 bg-brand-orange/[0.1] px-4 py-3 text-[0.9rem] font-bold text-brand-orange-text dark:text-brand-orange">
             {t.noProvider}
           </p>
         )}

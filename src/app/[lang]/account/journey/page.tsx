@@ -98,7 +98,7 @@ export default async function JourneyPage(props: PageProps<'/[lang]/account/jour
             this page wants to know what to do, not to read a diagram. */}
         {journey.nextAction && (
           <div className="mt-8 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-6">
-            <p className="text-[0.78rem] font-extrabold tracking-[0.13em] text-brand-orange-dark dark:text-brand-orange">
+            <p className="text-[0.78rem] font-extrabold tracking-[0.13em] text-brand-orange-text dark:text-brand-orange">
               {t.nextStep}
             </p>
             <p className="mt-2 text-[1.15rem] font-extrabold">
