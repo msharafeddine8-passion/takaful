@@ -42,9 +42,9 @@ export const volunteeringFoundations: CourseContent = {
   sources: [
     'IFRC Volunteering Policy (August 2022)',
     'The seven Fundamental Principles of the International Red Cross and Red Crescent Movement',
-    'International Child Safeguarding Standards — Keeping Children Safe (2024)',
+    'International Child Safeguarding Standards — Keeping Children Safe',
     'Core Humanitarian Standard on Quality and Accountability (2024 edition)',
-    'State of the World’s Volunteerism Report — UN Volunteers (2026)',
+    'State of the World’s Volunteerism Report — UN Volunteers',
     'Do No Harm principle in humanitarian action',
     'UN Sustainable Development Goals',
   ],
@@ -193,8 +193,8 @@ export const volunteeringFoundations: CourseContent = {
           variant: 'info',
           title: { ar: '📊 حجم التطوّع في العالم', en: '📊 The scale of volunteering worldwide' },
           content: {
-            ar: 'وفق تقرير الأمم المتحدة عن حالة التطوّع في العالم (٢٠٢٦)، يشارك ما معدّله ٢٫١ مليار شخص شهرياً في عمل تطوعي — أي ٣٤٫٥٪ من السكان في سنّ العمل. واللافت أن التطوّع غير الرسمي (٢٥٪) يزيد على ضعف التطوّع المنظّم عبر المؤسسات (١١٫٧٪). أنت جزء من أكبر قوة عاملة في العالم، وأكثرها إغفالاً في الإحصاءات.',
-            en: 'According to the UN State of the World’s Volunteerism Report (2026), an average of 2.1 billion people volunteer each month — 34.5% of the global working-age population. Strikingly, informal volunteering (25%) is more than double organised, institution-based volunteering (11.7%). You are part of the largest workforce in the world, and the most overlooked in the statistics.',
+            ar: 'تُجمع تقارير الأمم المتحدة عن حالة التطوّع في العالم على أمرين: أن أغلب التطوّع في العالم يحدث خارج المؤسسات — جار يساعد جاراً، لا متطوّعاً مسجّلاً في جمعية — وأن هذا الجزء الأكبر هو الأقل ظهوراً في الإحصاءات الرسمية. أنت جزء من أوسع عمل يقوم به البشر لبعضهم، وأقلّه توثيقاً.',
+            en: 'The UN’s State of the World’s Volunteerism reports agree on two things: most volunteering in the world happens outside institutions — a neighbour helping a neighbour, not someone registered with an association — and that larger share is the least visible in official statistics. You are part of the widest thing people do for each other, and the least recorded.',
           },
         },
         {
@@ -616,8 +616,8 @@ export const volunteeringFoundations: CourseContent = {
       tag: { ar: 'الوحدة السادسة · إلزامية', en: 'Module 6 · Mandatory' },
       title: { ar: 'حماية الطفل', en: 'Child safeguarding' },
       lede: {
-        ar: 'إن كان عملك التطوعي يقترب من الأطفال بأي شكل، فهذه الوحدة غير قابلة للتفاوض، ودرجة النجاح فيها ٨٠٪.',
-        en: 'If your volunteering brings you anywhere near children, this module is non-negotiable, and the pass mark is 80%.',
+        ar: 'إن كان عملك التطوعي يقترب من الأطفال بأي شكل، فهذه الوحدة غير قابلة للتفاوض. وإن كان العمل مع الأطفال أساس دورك، فدورة «التعامل مع الأطفال» مطلوبة منك بعدها.',
+        en: 'If your volunteering brings you anywhere near children, this module is non-negotiable. And if working with children is central to your role, the “Working with Children” course is required of you after this one.',
       },
       blocks: [
         {

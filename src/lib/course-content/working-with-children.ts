@@ -44,7 +44,7 @@ export const workingWithChildren: CourseContent = {
     ],
   },
   sources: [
-    'International Child Safeguarding Standards — Keeping Children Safe (2024 edition)',
+    'International Child Safeguarding Standards — Keeping Children Safe',
     'UN Convention on the Rights of the Child',
     'IFRC Volunteering Policy (August 2022)',
     'Core Humanitarian Standard on Quality and Accountability (2024 edition)',
