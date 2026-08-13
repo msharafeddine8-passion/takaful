@@ -80,6 +80,63 @@ export const DIFFICULTY_LABEL: Record<Difficulty, Record<Locale, string>> = {
  * courses of humanitarian training is a commission, not a code change.
  */
 export const COURSES: Course[] = [
+  /*
+   * The orientation.
+   *
+   * This catalogue and src/lib/programme/definition.ts both describe the
+   * academy right now: this one drives the public pages, that one drives the
+   * programme, the gate and the learner dashboard. Adding the orientation to
+   * only one of them is what the courses probe caught — the public academy
+   * would not have listed the one course every volunteer must take first.
+   *
+   * The duplication is temporary and tracked: the public pages move onto the
+   * programme definition once the remaining courses are written, and this file
+   * goes with them. Until then, an entry added here must be added there too.
+   */
+  {
+    slug: 'code-of-conduct-and-reporting',
+    level: 1,
+    category: 'foundations',
+    status: 'available',
+    difficulty: 'beginner',
+    minutes: 30,
+    icon: '🛡️',
+    title: {
+      ar: 'مدوّنة السلوك والحماية وآلية الإبلاغ',
+      en: 'Code of Conduct, Safeguarding and Reporting',
+    },
+    summary: {
+      ar: 'الدورة التي تُفتح قبل كل شيء آخر. ما يُنتظر منك، أين تقف حدودك، كيف تحمي من تخدمهم وتحمي نفسك، ومتى وكيف تُبلّغ.',
+      en: 'The course that opens before anything else. What is expected of you, where your limits are, how to protect the people you serve and yourself, and when and how to report.',
+    },
+    requires: [],
+    recommends: [],
+    audience: {
+      ar: [
+        'كل متطوّع قبل أي نشاط ميداني',
+        'من سيعمل مع الأطفال أو الفئات المعرّضة للخطر',
+        'قادة الفرق ومنسّقو الأنشطة',
+      ],
+      en: [
+        'Every volunteer, before any field activity',
+        'Anyone who will work with children or people at risk',
+        'Team leaders and activity coordinators',
+      ],
+    },
+    outcomes: {
+      ar: [
+        'شهادة إتمام برمز تحقّق عام',
+        'فتح المستوى الأول من مسار المتطوّع',
+        'معرفة اسم ورقم من تُبلّغه فعلياً',
+      ],
+      en: [
+        'A certificate with a public verification code',
+        'Level 1 of the volunteer path unlocked',
+        'The actual name and number of the person you report to',
+      ],
+    },
+  },
+
   // ---------------------------------------------------------------- level 1
   {
     slug: 'volunteering-foundations',
