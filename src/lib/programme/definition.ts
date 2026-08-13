@@ -391,7 +391,7 @@ export const COURSES: CourseDef[] = [
       ar: 'كيف تخطّط ليوم ميداني، وكيف تعرف أنك تقترب من الإرهاق قبل أن تصل إليه، وكيف تضع حداً بين التطوّع وحياتك.',
       en: 'How to plan a field day, how to know you are approaching burnout before you arrive at it, and how to keep a line between volunteering and your own life.',
     },
-    minutes: 30,
+    minutes: 25,
     difficulty: 'intermediate',
     passMark: 70,
     icon: '⏳',

@@ -2,6 +2,7 @@ import type { CourseContent } from './types';
 import { codeOfConductAndReporting } from './code-of-conduct-and-reporting';
 import { volunteeringFoundations } from './volunteering-foundations';
 import { levelOneChallenge } from './level-1-challenge';
+import { lifeSkills } from './life-skills';
 import { communicationSkills } from './communication-skills';
 import { teamwork } from './teamwork';
 import { workingWithChildren } from './working-with-children';
@@ -18,6 +19,9 @@ export const COURSE_CONTENT: Record<string, CourseContent> = {
   [digitalBasics.slug]: digitalBasics,
   // Last in level 1: it is what opens level 2.
   [levelOneChallenge.slug]: levelOneChallenge,
+
+  // ---- level 2
+  [lifeSkills.slug]: lifeSkills,
 };
 
 export type { CourseContent, Block, Module } from './types';
