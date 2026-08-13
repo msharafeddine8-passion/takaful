@@ -173,7 +173,7 @@ function CourseRow({
         </Link>
         {certificateCode && (
           <Link
-            href={`/${lang}/certificates/${certificateCode}` as Parameters<typeof Link>[0]['href']}
+            href={`/${lang}/verify/${certificateCode}` as Parameters<typeof Link>[0]['href']}
             className="font-bold text-brand-blue hover:underline dark:text-brand-orange"
           >
             {t.certificate} →

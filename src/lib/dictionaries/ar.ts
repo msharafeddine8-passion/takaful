@@ -407,6 +407,20 @@ export const ar: Dictionary = {
       myCertificatesLede: 'كل ما حصلت عليه. كل شهادة لها رابط تحقّق يفتحه أي شخص.',
       none: 'لم تحصل على شهادات بعد. أنهِ دورة لتحصل على أولى شهاداتك.',
       view: 'عرض',
+      skills: 'المهارات المكتسبة',
+      learningTime: 'ساعات التعلّم',
+      // The exact claim the association is entitled to make. Not "معتمدة
+      // دولياً": there is no accreditation behind it, and a volunteer who put
+      // that on a CV would be the one asked to defend it.
+      completionOnly: 'شهادة إتمام صادرة عن جمعية تكافل',
+      share: 'شارك الشهادة',
+      shareText: 'حصلت على شهادة من جمعية تكافل',
+      copied: 'تم نسخ الرابط',
+      kindOrientation: 'الدورة التمهيدية',
+      kindCourse: 'دورة',
+      kindLevel: 'مستوى',
+      kindProgram: 'المسار الكامل',
+      kindHours: 'ساعات تطوّع',
     },
     reports: {
       title: 'التقارير',

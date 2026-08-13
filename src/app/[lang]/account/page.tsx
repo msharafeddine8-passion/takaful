@@ -207,7 +207,7 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
               {summary.latestCertificateCode}
             </p>
             <Arrow
-              href={`/${lang}/certificates/${summary.latestCertificateCode}`}
+              href={`/${lang}/verify/${summary.latestCertificateCode}`}
               label={dict.account.certificate.view}
             />
           </Panel>

@@ -406,6 +406,20 @@ export const en: Dictionary = {
       myCertificatesLede: 'Everything you have earned. Each one has a verification link anyone can open.',
       none: 'No certificates yet. Finish a course to earn your first.',
       view: 'View',
+      skills: 'Skills gained',
+      learningTime: 'Learning time',
+      // The exact claim the association is entitled to make. Not
+      // "internationally accredited": there is no accreditation behind it, and
+      // a volunteer who put that on a CV would be the one asked to defend it.
+      completionOnly: 'Certificate of completion issued by Takaful Association',
+      share: 'Share certificate',
+      shareText: 'I earned a certificate from Takaful Association',
+      copied: 'Link copied',
+      kindOrientation: 'Orientation course',
+      kindCourse: 'Course',
+      kindLevel: 'Level',
+      kindProgram: 'Full path',
+      kindHours: 'Volunteering hours',
     },
     reports: {
       title: 'Reports',

@@ -103,7 +103,7 @@ export default async function MyCertificatesPage(props: PageProps<'/[lang]/accou
                   </p>
                 ) : (
                   <Link
-                    href={`/${lang}/certificates/${c.code}`}
+                    href={`/${lang}/verify/${c.code}`}
                     className="mt-3 inline-block font-bold text-brand-blue hover:underline dark:text-brand-orange"
                   >
                     {t.view} →

@@ -282,6 +282,18 @@ export type Account = {
     myCertificatesLede: string;
     none: string;
     view: string;
+    skills: string;
+    learningTime: string;
+    /** The claim the association may actually make. Never "accredited". */
+    completionOnly: string;
+    share: string;
+    shareText: string;
+    copied: string;
+    kindOrientation: string;
+    kindCourse: string;
+    kindLevel: string;
+    kindProgram: string;
+    kindHours: string;
   };
   reports: {
     title: string;
