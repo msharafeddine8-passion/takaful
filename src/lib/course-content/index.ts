@@ -1,6 +1,7 @@
 import type { CourseContent } from './types';
 import { codeOfConductAndReporting } from './code-of-conduct-and-reporting';
 import { volunteeringFoundations } from './volunteering-foundations';
+import { levelOneChallenge } from './level-1-challenge';
 import { communicationSkills } from './communication-skills';
 import { teamwork } from './teamwork';
 import { workingWithChildren } from './working-with-children';
@@ -15,6 +16,8 @@ export const COURSE_CONTENT: Record<string, CourseContent> = {
   [teamwork.slug]: teamwork,
   [workingWithChildren.slug]: workingWithChildren,
   [digitalBasics.slug]: digitalBasics,
+  // Last in level 1: it is what opens level 2.
+  [levelOneChallenge.slug]: levelOneChallenge,
 };
 
 export type { CourseContent, Block, Module } from './types';

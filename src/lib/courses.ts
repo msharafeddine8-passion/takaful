@@ -166,6 +166,49 @@ export const COURSES: Course[] = [
     },
   },
   {
+    slug: 'level-1-challenge',
+    level: 1,
+    category: 'foundations',
+    status: 'available',
+    difficulty: 'beginner',
+    minutes: 25,
+    icon: '🎯',
+    title: {
+      ar: 'تحدّي المستوى الأول: يوم تطوّعي كامل',
+      en: 'Level 1 Challenge: A Full Volunteering Day',
+    },
+    summary: {
+      ar: 'يوم واحد من الوصول حتى المغادرة. كل قرار يحتاج أكثر من دورة واحدة ممّا تعلّمته، ولا يوجد دائماً خيار مريح.',
+      en: 'One day, from arrival to departure. Every decision needs more than one of the courses behind it, and there is not always a comfortable option.',
+    },
+    // The five courses of level 1. This is the door to level 2, so the
+    // prerequisite list is the whole level and not a selection from it.
+    requires: [
+      'volunteering-foundations',
+      'communication-skills',
+      'teamwork',
+      'working-with-children',
+      'digital-basics',
+    ],
+    recommends: [],
+    audience: {
+      ar: [
+        'من أنهى دورات المستوى الأول الخمس',
+        'المتطوّعون المقبلون على أول نشاط ميداني',
+        'من يريد أن يعرف ما إذا كان ما تعلّمه صار قراراً',
+      ],
+      en: [
+        'Anyone who has finished the five level 1 courses',
+        'Volunteers about to do their first field activity',
+        'Anyone wanting to know whether what they learned has become decisions',
+      ],
+    },
+    outcomes: {
+      ar: ['شهادة المستوى الأول', 'فتح المستوى الثاني', 'تقرير بما تحتاج مراجعته'],
+      en: ['The level 1 certificate', 'Level 2 unlocked', 'A report of what you need to revise'],
+    },
+  },
+  {
     slug: 'communication-skills',
     level: 1,
     category: 'people',

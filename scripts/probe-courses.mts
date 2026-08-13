@@ -190,11 +190,36 @@ for (const course of COURSES) {
     supported * TOLERANCE >= course.minutes,
     `${blocks.length} blocks ≈ ${supported} min (${Math.round(reading)} reading + ${Math.round(answering)} answering)`,
   );
-  check('it is not mostly questions', substance.length > quizzes.length,
-    `${substance.length} teaching vs ${quizzes.length} questions`);
+  /*
+   * A challenge is assessment, not teaching, so two of the course rules do not
+   * apply to it.
+   *
+   * "Not mostly questions" exists to catch a course that quizzes more than it
+   * explains — a real failure mode, and the reason the rule is here. A level
+   * challenge is *supposed* to be almost entirely questions: its job is to
+   * find out whether the five courses behind it joined up, and anything it
+   * taught would be something those courses should have.
+   *
+   * Same for the four-outcome minimum: a course promises what you will learn,
+   * a challenge promises only that it will test what you already did.
+   *
+   * Exempting by kind rather than by slug, so the next five challenges do not
+   * each need a line here.
+   */
+  const isChallenge = course.slug.endsWith('-challenge');
+
+  if (!isChallenge) {
+    check('it is not mostly questions', substance.length > quizzes.length,
+      `${substance.length} teaching vs ${quizzes.length} questions`);
+  } else {
+    check('a challenge is mostly questions, as it should be', quizzes.length >= substance.length,
+      `${substance.length} teaching vs ${quizzes.length} questions`);
+    check('and it asks enough of them to mean anything', quizzes.length >= 6, quizzes.length);
+  }
 
   check('it states what the reader will learn, in both languages',
-    content.outcomes.ar.length >= 4 && content.outcomes.en.length === content.outcomes.ar.length,
+    content.outcomes.ar.length >= (isChallenge ? 3 : 4)
+      && content.outcomes.en.length === content.outcomes.ar.length,
     `${content.outcomes.ar.length} ar / ${content.outcomes.en.length} en`);
   check('and names the standards it is built on', content.sources.length >= 2, content.sources.length);
 
