@@ -108,4 +108,104 @@ export const AUDIENCE_OF: Record<string, Record<Locale, string[]>> = {
     ar: ['كل متطوّع ميداني', 'مسؤولو السلامة في الأنشطة', 'قادة الفرق'],
     en: ['Every field volunteer', 'Activity safety focal points', 'Team leads'],
   },
+  'first-aid-basics': {
+    ar: ['كل متطوّع ميداني', 'من يُشارك في فعاليات جماعية', 'مسؤولو السلامة'],
+    en: ['Every field volunteer', 'Anyone participating in group events', 'Safety focal points'],
+  },
+  'level-2-challenge': {
+    ar: ['من أنهى دورات المستوى الثاني', 'المتطوّعون المقبلون على تنظيم يوم ميداني', 'منسّقو الأنشطة'],
+    en: ['Anyone who has finished the Level 2 courses', 'Volunteers about to organise a field day', 'Activity coordinators'],
+  },
+  'team-leadership': {
+    ar: ['من يقود فريقاً للمرة الأولى', 'المتطوّعون المُرشَّحون لأدوار قيادية', 'قادة الفرق الحاليون'],
+    en: ['Anyone leading a team for the first time', 'Volunteers nominated for leadership roles', 'Current team leads'],
+  },
+  'level-3-challenge': {
+    ar: ['من أنهى دورات المستوى الثالث', 'من يريد اختبار تصميم مبادرة كاملة', 'قادة الفرق'],
+    en: ['Anyone who has finished the Level 3 courses', 'Anyone wanting to test designing a full initiative', 'Team leads'],
+  },
+  'emotional-intelligence': {
+    ar: ['القادة وقادة الفرق', 'من يعمل مع فرق متنوّعة', 'كل متطوّع يمرّ بمواقف ضاغطة'],
+    en: ['Leaders and team leads', 'Anyone working with diverse teams', 'Every volunteer facing demanding situations'],
+  },
+  'meetings-and-facilitation': {
+    ar: ['من يُيسّر اجتماعات أو جلسات', 'قادة الفرق', 'من يُنظّم نقاشات مجتمعية'],
+    en: ['Anyone facilitating meetings or sessions', 'Team leads', 'Anyone organising community discussions'],
+  },
+  'negotiation-and-advocacy': {
+    ar: ['من يتفاوض مع جهات شريكة أو حكومية', 'المناصرون لقضايا مجتمعية', 'قادة المبادرات'],
+    en: ['Anyone negotiating with partner or government bodies', 'Advocates for community causes', 'Initiative leads'],
+  },
+  'conflict-resolution': {
+    ar: ['من يُدير فرقاً متعدّدة الشخصيات', 'الوسطاء في النزاعات', 'قادة الفرق'],
+    en: ['Anyone managing diverse-personality teams', 'Mediators in disputes', 'Team leads'],
+  },
+  'inclusion-and-accessibility': {
+    ar: ['مصمّمو الأنشطة والفعاليات', 'قادة الفرق', 'كل من يريد أن لا يُقصي أحداً'],
+    en: ['Activity and event designers', 'Team leads', 'Everyone who wants nobody excluded'],
+  },
+  'level-4-challenge': {
+    ar: ['من أنهى دورات المستوى الرابع', 'من يريد اختبار إدارة اجتماع متأزّم', 'الوسطاء والمسهّلون'],
+    en: ['Anyone who has finished the Level 4 courses', 'Anyone wanting to test running a tense meeting', 'Mediators and facilitators'],
+  },
+  'transformational-leadership': {
+    ar: ['قادة المبادرات والبرامج', 'من يريد بناء صفٍّ ثانٍ من القادة', 'المدراء التنفيذيون الجدد'],
+    en: ['Initiative and programme leads', 'Anyone wanting to build a second leadership line', 'New executive managers'],
+  },
+  'public-speaking': {
+    ar: ['من يُقدّم مشاريع للشركاء أو الجهات المانحة', 'المتطوّعون في التوعية والمناصرة', 'كل من يتحدّث أمام جمهور'],
+    en: ['Anyone pitching projects to partners or funders', 'Volunteers in awareness and advocacy', 'Everyone who speaks before an audience'],
+  },
+  'community-project-management': {
+    ar: ['مدراء المشاريع والبرامج', 'من يُدير ميزانيات ومخاطر', 'قادة المستوى الخامس وما فوق'],
+    en: ['Project and programme managers', 'Anyone managing budgets and risks', 'Level 5 and above leads'],
+  },
+  'ethical-decision-making': {
+    ar: ['من يتّخذ قرارات ذات أثر على الآخرين', 'قادة الفرق والبرامج', 'كل متطوّع في موقف القيادة'],
+    en: ['Anyone making decisions that affect others', 'Team and programme leads', 'Every volunteer in a leadership position'],
+  },
+  'monitoring-and-evaluation': {
+    ar: ['من يُعدّ تقارير الأثر', 'مدراء البرامج', 'من يُقدّم نتائج لمانحين أو شركاء'],
+    en: ['Anyone preparing impact reports', 'Programme managers', 'Anyone presenting results to funders or partners'],
+  },
+  'level-5-challenge': {
+    ar: ['من أنهى دورات المستوى الخامس', 'قادة المشاريع المعقّدة', 'من يريد اختبار إدارة مشروع كاملة'],
+    en: ['Anyone who has finished the Level 5 courses', 'Complex project leads', 'Anyone wanting to test managing a full project'],
+  },
+  'volunteer-lifecycle': {
+    ar: ['مدراء المتطوّعين', 'القادة المسؤولون عن استقطاب وإدارة فرق', 'المنظّمات التي تريد تنظيم دورة حياة متطوّعيها'],
+    en: ['Volunteer managers', 'Leaders responsible for recruiting and managing teams', 'Organisations wanting to formalise their volunteer lifecycle'],
+  },
+  'sustainability-and-resources': {
+    ar: ['مدراء البرامج والمشاريع', 'من يُخطّط لاستمرارية الأثر بعد التمويل', 'قادة المنظّمات المجتمعية'],
+    en: ['Programme and project managers', 'Anyone planning impact continuity post-funding', 'Community organisation leaders'],
+  },
+  'training-of-trainers': {
+    ar: ['من يُصمّم ويُقدّم تدريبات', 'قادة التعلّم والتطوير في الجمعية', 'المدرّبون الناشئون'],
+    en: ['Anyone designing and delivering training', 'Learning and development leads in the organisation', 'Emerging trainers'],
+  },
+  'governance-and-accountability': {
+    ar: ['مدراء البرامج والمنظّمات المجتمعية', 'أعضاء مجالس الإدارة والرقابة', 'القادة المسؤولون عن شفافية الجمعية'],
+    en: ['Programme and community organisation managers', 'Board and oversight members', 'Leaders responsible for organisational transparency'],
+  },
+  'level-6-challenge': {
+    ar: ['من أنهى دورات المستوى السادس', 'قادة المنظّمات المجتمعية', 'من يريد اختبار بناء نظام تطوّع متكامل'],
+    en: ['Anyone who has finished the Level 6 courses', 'Community organisation leaders', 'Anyone wanting to test building an integrated volunteering system'],
+  },
+  'professional-identity': {
+    ar: ['المتطوّعون الباحثون عن عمل', 'الطلاب الذين يستخدمون التطوّع لبناء سيرتهم', 'من يريد تقديم تجربته التطوّعية باحتراف'],
+    en: ['Volunteers job-hunting', 'Students using volunteering to build their CV', 'Anyone wanting to present their volunteer experience professionally'],
+  },
+  'psychological-first-aid': {
+    ar: ['المتطوّعون في المواقف الصعبة والأزمات', 'من يعمل مع فئات هشّة', 'كل متطوّع قد يواجه شخصاً في ضائقة'],
+    en: ['Volunteers in difficult situations and crises', 'Anyone working with vulnerable groups', 'Every volunteer who may encounter someone in distress'],
+  },
+  'environmental-volunteering': {
+    ar: ['المتطوّعون في المشاريع البيئية', 'من يُخطّط لأنشطة بيئية مجتمعية', 'من يريد تصميم تدخّل بيئي مؤثّر'],
+    en: ['Volunteers in environmental projects', 'Anyone planning community environmental activities', 'Anyone wanting to design an impactful environmental intervention'],
+  },
+  'ethical-fundraising': {
+    ar: ['من يُدير حملات جمع التبرّعات', 'المسؤولون عن علاقات المانحين', 'كل متطوّع يطلب دعماً باسم الجمعية'],
+    en: ['Anyone managing fundraising campaigns', 'Those responsible for donor relations', 'Every volunteer soliciting support on behalf of the organisation'],
+  },
 };
