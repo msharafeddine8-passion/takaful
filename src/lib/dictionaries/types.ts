@@ -329,6 +329,36 @@ export type Account = {
     notStarted: string;
     attemptsMade: string;
   };
+  programme: {
+    title: string;
+    lede: string;
+    courseCount: string;
+    statusDraft: string;
+    statusReview: string;
+    statusPublished: string;
+    statusArchived: string;
+    contentWritten: string;
+    contentMissing: string;
+    reviewedOn: string;
+    neverReviewed: string;
+    markReviewed: string;
+    editedByAdmin: string;
+    fromSeed: string;
+    save: string;
+    saved: string;
+    noteLabel: string;
+    cannotPublishEmpty: string;
+    bothLanguagesNeeded: string;
+    minutesLabel: string;
+    passMarkLabel: string;
+    titleArLabel: string;
+    titleEnLabel: string;
+    summaryArLabel: string;
+    summaryEnLabel: string;
+    version: string;
+    edit: string;
+    forbidden: string;
+  };
   reports: {
     title: string;
     lede: string;

@@ -24,7 +24,9 @@ export type Capability =
   | 'certificates.revoke'
   | 'members.manage'
   | 'reports.read'
-  | 'audit.read';
+  | 'audit.read'
+  | 'programme.edit'
+  | 'programme.publish';
 
 const GRANTS: Record<Capability, readonly Role[]> = {
   // Deciding who joins.
@@ -71,6 +73,23 @@ const GRANTS: Record<Capability, readonly Role[]> = {
   ],
 
   'audit.read': ['super_admin'],
+
+  /*
+   * Editing what a course says, and deciding that it may be read.
+   *
+   * Split deliberately. `content_manager` has existed as a role since the
+   * beginning with nothing to manage; this is the thing. But writing a course
+   * and publishing it are different acts with different consequences: a draft
+   * with a mistake in it is a draft, and a published safeguarding course with
+   * a mistake in it is a volunteer acting on wrong information.
+   *
+   * So a content manager may write and revise freely, and only programme
+   * leadership may move a course to published. That is also what makes the
+   * draft/review/published states mean anything — if the same person could do
+   * both in one click, review would be a formality.
+   */
+  'programme.edit': ['content_manager', 'instructor', 'program_admin', 'super_admin'],
+  'programme.publish': ['program_admin', 'super_admin'],
 };
 
 export function can(user: SessionUser | null, capability: Capability): boolean {
