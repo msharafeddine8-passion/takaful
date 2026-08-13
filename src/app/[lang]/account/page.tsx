@@ -215,6 +215,9 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
 
         <nav className="mt-8 flex flex-wrap gap-3">
           {[
+            // First: it is the page that answers what to do next, and every
+            // other tile here answers a narrower question.
+            { href: `/${lang}/account/path`, label: dict.account.path.title },
             journey ? { href: `/${lang}/account/journey`, label: dict.account.journey.title } : null,
             { href: `/${lang}/account/learning`, label: dict.account.learning.title },
             { href: `/${lang}/account/achievements`, label: dict.account.achievements.title },
