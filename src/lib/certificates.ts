@@ -21,17 +21,42 @@ import { query, queryOne } from './db';
  * and a confusable pair turns a valid certificate into a support request.
  */
 const ALPHABET = '234679ACDEFGHJKMNPQRTUVWXYZ';
-const GROUPS = 2;
+/*
+ * Three groups, not two.
+ *
+ * Two groups is eight characters from a 27-symbol alphabet — about 2.8×10^11,
+ * or 38 bits. That is thin for a value the only protection on a public
+ * verification endpoint, where an attacker can guess as fast as the network
+ * allows. Three groups is roughly 10^17, and the cost is four more characters
+ * on a printed line.
+ *
+ * Safe to change: the format is not parsed anywhere, normaliseCode handles any
+ * number of groups, and no certificate has been issued yet.
+ */
+const GROUPS = 3;
 const GROUP_LENGTH = 4;
 
-export type CertificateKind = 'course' | 'hours';
+/**
+ * The four layers of the programme, plus the hours certificate that predates
+ * it. 'course' covers both a core course and an elective — what distinguishes
+ * them is the course, not the credential.
+ */
+export type CertificateKind = 'course' | 'hours' | 'orientation' | 'level' | 'program';
 
 export type CertificateSnapshot = {
   fullName: string;
   titleAr: string;
   titleEn: string;
-  /** Verified minutes at the moment of issue, for an hours certificate. */
+  /** Verified volunteering minutes at issue, for an hours certificate. */
   minutes?: number;
+  /** Learning minutes the credential represents. */
+  learningMinutes?: number;
+  /** Named skills, frozen: the course may be edited after this is printed. */
+  skillsAr?: string[];
+  skillsEn?: string[];
+  /** For a level credential: which level, and the courses it covered. */
+  levelNumber?: number;
+  courses?: string[];
 };
 
 export type Certificate = {
@@ -41,11 +66,22 @@ export type Certificate = {
   kind: CertificateKind;
   course_slug: string | null;
   hours_at_issue: number | null;
+  level_id: string | null;
+  program_id: string | null;
+  learning_minutes: number | null;
   issued_at: Date;
   revoked_at: Date | null;
   revoke_reason: string | null;
   snapshot: CertificateSnapshot;
 };
+
+/**
+ * The columns every read of a certificate needs. One constant so a new column
+ * cannot be added to one query and forgotten in the other two.
+ */
+const COLUMNS = `id, code, user_id, kind, course_slug, hours_at_issue,
+                 level_id, program_id, learning_minutes,
+                 issued_at, revoked_at, revoke_reason, snapshot`;
 
 /** e.g. TKF-4H7K-QM29 */
 export function generateCode(): string {
@@ -76,10 +112,7 @@ export function normaliseCode(raw: string): string {
  */
 export async function findByCode(code: string): Promise<Certificate | null> {
   return queryOne<Certificate>(
-    `SELECT id, code, user_id, kind, course_slug, hours_at_issue,
-            issued_at, revoked_at, revoke_reason, snapshot
-       FROM certificates
-      WHERE code = $1`,
+    `SELECT ${COLUMNS} FROM certificates WHERE code = $1`,
     [normaliseCode(code)],
   );
 }
@@ -111,11 +144,7 @@ export async function findMember(memberNumber: number): Promise<MemberCheck | nu
 
 export async function certificatesFor(userId: string): Promise<Certificate[]> {
   return query<Certificate>(
-    `SELECT id, code, user_id, kind, course_slug, hours_at_issue,
-            issued_at, revoked_at, revoke_reason, snapshot
-       FROM certificates
-      WHERE user_id = $1
-      ORDER BY issued_at DESC`,
+    `SELECT ${COLUMNS} FROM certificates WHERE user_id = $1 ORDER BY issued_at DESC`,
     [userId],
   );
 }

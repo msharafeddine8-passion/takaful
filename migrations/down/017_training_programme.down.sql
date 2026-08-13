@@ -70,9 +70,20 @@ ALTER TABLE certificates DROP CONSTRAINT IF EXISTS certificates_level_needs_leve
 -- this deletes issued credentials.
 -- DELETE FROM certificates WHERE kind IN ('orientation', 'level', 'program');
 
+-- Restore the original narrow check under its original name, which is
+-- `chk_cert_kind` and not `certificates_kind_check`. Getting that name wrong
+-- is exactly what made 018 necessary: DROP CONSTRAINT IF EXISTS on a guessed
+-- name is a silent no-op, so 017 left the old constraint in place and added a
+-- second one beside it. Run 018's reversal first if it has been applied.
 ALTER TABLE certificates DROP CONSTRAINT IF EXISTS certificates_kind_check;
-ALTER TABLE certificates ADD CONSTRAINT certificates_kind_check
+ALTER TABLE certificates DROP CONSTRAINT IF EXISTS chk_cert_program;
+ALTER TABLE certificates DROP CONSTRAINT IF EXISTS chk_cert_kind;
+ALTER TABLE certificates ADD CONSTRAINT chk_cert_kind
   CHECK (kind IN ('course', 'hours'));
+
+ALTER TABLE certificates DROP CONSTRAINT IF EXISTS chk_cert_course;
+ALTER TABLE certificates ADD CONSTRAINT chk_cert_course
+  CHECK (kind <> 'course' OR course_slug IS NOT NULL);
 
 ALTER TABLE certificates DROP COLUMN IF EXISTS skills;
 ALTER TABLE certificates DROP COLUMN IF EXISTS learning_minutes;
