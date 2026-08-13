@@ -3,6 +3,7 @@ import { codeOfConductAndReporting } from './code-of-conduct-and-reporting';
 import { volunteeringFoundations } from './volunteering-foundations';
 import { levelOneChallenge } from './level-1-challenge';
 import { lifeSkills } from './life-skills';
+import { documentationAndReporting } from './documentation-and-reporting';
 import { communicationSkills } from './communication-skills';
 import { teamwork } from './teamwork';
 import { workingWithChildren } from './working-with-children';
@@ -22,6 +23,7 @@ export const COURSE_CONTENT: Record<string, CourseContent> = {
 
   // ---- level 2
   [lifeSkills.slug]: lifeSkills,
+  [documentationAndReporting.slug]: documentationAndReporting,
 };
 
 export type { CourseContent, Block, Module } from './types';

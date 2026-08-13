@@ -422,7 +422,7 @@ export const COURSES: CourseDef[] = [
       ar: 'ما جرى فعلاً، مكتوباً بحيث يفهمه شخص لم يحضر — والفرق بين واقعة ورأي، وكيف تُوثّق حادثاً من دون كشف بيانات أحد.',
       en: 'What actually happened, written so somebody who was not there can follow it — the difference between a fact and an opinion, and how to document an incident without exposing anyone’s data.',
     },
-    minutes: 35,
+    minutes: 25,
     difficulty: 'intermediate',
     passMark: 70,
     icon: '📝',

@@ -12,6 +12,18 @@ import type { Locale } from './i18n';
  * an empty section is more honest than an invented one.
  */
 export const AUDIENCE_OF: Record<string, Record<Locale, string[]>> = {
+  'documentation-and-reporting': {
+    ar: [
+      'من يكتب تقارير الأنشطة أو محاضر الاجتماعات',
+      'منسّقو الفرق ومن يتابعون تنفيذ المهام',
+      'كل متطوّع قد يضطرّ لكتابة تقرير حادث',
+    ],
+    en: [
+      'Anyone writing activity reports or meeting minutes',
+      'Team coordinators and whoever follows up on actions',
+      'Every volunteer who may have to write an incident report',
+    ],
+  },
   'code-of-conduct-and-reporting': {
     ar: [
       'كل متطوّع قبل أي نشاط ميداني',
