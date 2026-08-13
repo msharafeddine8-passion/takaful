@@ -453,7 +453,7 @@ export const COURSES: CourseDef[] = [
       ar: 'تقييم المخاطر قبل النشاط لا بعده، ونقطة تجمّع يعرفها الجميع، وحدود ما يجوز لمتطوّع غير مدرّب أن يتدخّل فيه.',
       en: 'Assessing risk before an activity rather than after, an assembly point everyone knows, and the limits of what an untrained volunteer may step into.',
     },
-    minutes: 35,
+    minutes: 25,
     difficulty: 'intermediate',
     passMark: 80,
     icon: '🦺',
