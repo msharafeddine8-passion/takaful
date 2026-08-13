@@ -90,11 +90,31 @@ console.log('\n--- prerequisites are reachable ---');
 for (const course of COURSES) {
   for (const slug of course.requires) {
     const target = COURSES.find((c) => c.slug === slug);
-    check(
-      `${course.slug} requires ${slug}, which exists and is published`,
-      target !== undefined && target.status === 'available',
-      target ? target.status : 'missing',
-    );
+
+    /*
+     * Two different rules, and conflating them made this fire on half the
+     * roadmap the moment the catalogue started listing every course.
+     *
+     * A prerequisite must always exist — one naming a course that is not in
+     * the catalogue is a dangling reference, and the page has nothing to link
+     * to.
+     *
+     * It must additionally be *published* only when the course requiring it is
+     * published. A published course behind an unwritten prerequisite is a
+     * locked door with no key: a volunteer can see it, is told what to finish
+     * first, and cannot finish it. Two unwritten courses pointing at each
+     * other are simply the plan.
+     */
+    check(`${course.slug} requires ${slug}, which exists`, target !== undefined,
+      target ? target.status : 'missing');
+
+    if (course.status === 'available' && target) {
+      check(
+        `  ...and since ${course.slug} is published, ${slug} is too`,
+        target.status === 'available',
+        target.status,
+      );
+    }
   }
   for (const slug of course.recommends) {
     check(
@@ -120,17 +140,38 @@ for (const course of COURSES) {
     `${course.slug} is titled and summarised in both languages`,
     Boolean(course.title.ar && course.title.en && course.summary.ar && course.summary.en),
   );
-  check(
-    `${course.slug} says who it is for, in both languages`,
-    course.audience.ar.length > 0 && course.audience.ar.length === course.audience.en.length,
-    `${course.audience.ar.length} ar / ${course.audience.en.length} en`,
-  );
+  /*
+   * A published course must say who it is for; a planned one need not yet.
+   *
+   * This was written when the catalogue was thirteen hand-written entries that
+   * all had an audience. The catalogue now derives from the programme, so it
+   * lists all forty-one — and twenty-six of them have no audience sentence
+   * because nobody has written one. That is the honest state, and an invented
+   * sentence would be worse than a missing section. But a course a volunteer
+   * can actually open has to tell them whether it is for them.
+   */
+  if (course.status === 'available') {
+    check(
+      `${course.slug} is published, so it says who it is for in both languages`,
+      course.audience.ar.length > 0 && course.audience.ar.length === course.audience.en.length,
+      `${course.audience.ar.length} ar / ${course.audience.en.length} en`,
+    );
+  } else {
+    check(
+      `${course.slug} is planned; its audience is either written in both languages or in neither`,
+      course.audience.ar.length === course.audience.en.length,
+      `${course.audience.ar.length} ar / ${course.audience.en.length} en`,
+    );
+  }
   check(
     `${course.slug} says what you leave with, in both languages`,
     course.outcomes.ar.length > 0 && course.outcomes.ar.length === course.outcomes.en.length,
     `${course.outcomes.ar.length} ar / ${course.outcomes.en.length} en`,
   );
-  check(`${course.slug} has an icon and a level`, Boolean(course.icon) && course.level >= 1);
+  // level 0 is the orientation, and it is a real level rather than a special
+  // case — which is what lets "you cannot start level N until N-1 is done" be
+  // one rule instead of two.
+  check(`${course.slug} has an icon and a level`, Boolean(course.icon) && course.level >= 0);
 }
 
 for (const course of COURSES) {

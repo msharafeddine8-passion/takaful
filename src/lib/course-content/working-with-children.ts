@@ -16,7 +16,10 @@ export const workingWithChildren: CourseContent = {
   level: 1,
   minutes: 25, // Measured from the content. See volunteering-foundations.
   passMark: 80,
-  title: { ar: 'التعامل مع الأطفال', en: 'Working with Children' },
+  title: {
+    ar: 'حماية الطفل والتعامل الآمن',
+    en: 'Child Safeguarding and Safe Conduct',
+  },
   lede: {
     ar: 'قواعد غير قابلة للتفاوض تحمي الطفل وتحميك. إن كان عملك التطوعي يقترب من الأطفال بأي شكل، فهذه الدورة شرط لا استثناء فيه.',
     en: 'Non-negotiable rules that protect the child and protect you. If your volunteering brings you anywhere near children, this course is a requirement with no exceptions.',

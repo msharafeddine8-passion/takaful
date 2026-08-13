@@ -12,7 +12,10 @@ export const communicationSkills: CourseContent = {
   level: 1,
   minutes: 25, // Measured from the content. See volunteering-foundations.
   passMark: 70,
-  title: { ar: 'مهارات التواصل', en: 'Communication Skills' },
+  title: {
+    ar: 'التواصل الفعّال',
+    en: 'Effective Communication',
+  },
   lede: {
     ar: 'كيف تُصغي، وكيف تُفهِم، وكيف تتصرّف حين يشتدّ الموقف — مهارات تخدم عملك التطوعي وحياتك معاً.',
     en: 'How to listen, how to be understood, and what to do when a situation escalates — skills that serve your volunteering and your life alike.',

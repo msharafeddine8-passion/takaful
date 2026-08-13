@@ -13,7 +13,10 @@ export const digitalBasics: CourseContent = {
   level: 1,
   minutes: 25, // Measured from the content. See volunteering-foundations.
   passMark: 70,
-  title: { ar: 'المهارات الرقمية الأساسية', en: 'Digital Basics for Volunteers' },
+  title: {
+    ar: 'المهارات الرقمية وحماية البيانات',
+    en: 'Digital Skills and Data Protection',
+  },
   lede: {
     ar: 'الأدوات التي يحتاجها كل متطوّع فعلاً: التوثيق، والتنسيق، وحماية بيانات الناس. ليست دورة حاسوب عامة.',
     en: 'The tools a volunteer actually needs: documenting, coordinating, and protecting other people’s data. This is not a generic computer course.',

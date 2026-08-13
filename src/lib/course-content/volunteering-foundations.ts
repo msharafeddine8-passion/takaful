@@ -14,8 +14,8 @@ export const volunteeringFoundations: CourseContent = {
   minutes: 30,
   passMark: 70,
   title: {
-    ar: 'أساسيات العمل التطوعي',
-    en: 'Foundations of Volunteering',
+    ar: 'أساسيات العمل التطوّعي وأخلاقياته',
+    en: 'Foundations and Ethics of Volunteering',
   },
   lede: {
     ar: 'ما هو التطوّع، ولماذا نقوم به، وما المبادئ التي تحكمه — وكيف تحمي نفسك ومَن تخدمهم منذ يومك الأول. محتوى مبنيّ على معايير دولية، صالح لأي متطوّع في أي منظمة وأي بلد.',

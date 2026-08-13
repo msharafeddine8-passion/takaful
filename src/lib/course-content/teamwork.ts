@@ -12,7 +12,10 @@ export const teamwork: CourseContent = {
   level: 1,
   minutes: 25, // Measured from the content. See volunteering-foundations.
   passMark: 70,
-  title: { ar: 'العمل ضمن فريق', en: 'Teamwork' },
+  title: {
+    ar: 'العمل ضمن فريق',
+    en: 'Working in a Team',
+  },
   lede: {
     ar: 'الأدوار، والتنسيق، وحلّ الخلاف قبل أن يكبر. معظم ما يفشل في الميدان ليس نقص نيّة — بل نقص تنظيم.',
     en: 'Roles, coordination, and resolving friction before it grows. Most field failures are not a lack of good intent — they are a lack of organisation.',
