@@ -296,6 +296,23 @@ export type Account = {
     kindLevel: string;
     kindProgram: string;
     kindHours: string;
+    /** Document titles, one per kind. Orientation uses the course title. */
+    docTitleCourse: string;
+    docTitleLevel: string;
+    docTitleProgram: string;
+    docTitleHours: string;
+    /** The recognition sentence under the course/path name. Gender-neutral by
+        construction: the system does not store gender, so no إتمامه/إتمامها. */
+    bodyCourse: string;
+    bodyLevel: string;
+    bodyProgram: string;
+    bodyHours: string;
+    /** The distinction mark only the full-path certificate carries. */
+    programBadge: string;
+    verifiedMark: string;
+    /** QR caption on the certificate document. The membership card keeps
+        `scanToVerify`; this one names the certificate specifically. */
+    scanQr: string;
   };
   path: {
     title: string;

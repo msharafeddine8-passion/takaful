@@ -3,26 +3,38 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { connection } from 'next/server';
 import QRCode from 'qrcode';
-import { isLocale } from '@/lib/i18n';
+import { isLocale, type Locale } from '@/lib/i18n';
 import { getDictionary } from '@/lib/dictionaries';
 import { Container, Section } from '@/components/ui';
 import { isDbConfigured } from '@/lib/db';
 import { findByCode, normaliseCode } from '@/lib/certificates';
 import { credentialView } from '@/lib/credential-view';
-import { ORG } from '@/lib/org';
+import { formatDate, formatDuration } from '@/lib/format';
 import { SITE_URL } from '@/lib/seo';
 import { PrintButton } from '@/components/PrintButton';
 import { ShareCredential } from '@/components/ShareCredential';
+import {
+  CertificateDocument,
+  DOC,
+  type CertificateDocumentData,
+} from '@/components/CertificateDocument';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 /**
- * A certificate someone can actually hand to an employer.
+ * A certificate someone can hand to an employer.
+ *
+ * The sheet itself is CertificateDocument; this page looks the row up,
+ * freezes the strings, renders the QR and decides what a revoked credential
+ * may still do.
  *
  * Print rather than a generated PDF: every browser prints to PDF, it works on
- * a phone, it needs no rendering service, and the page stays readable and
- * selectable rather than becoming an image of text. The print rules below
- * strip the page furniture so what comes out is the certificate.
+ * a phone, it needs no rendering service, and the text stays selectable
+ * vector type rather than an image. The print rules pin the document to a
+ * full A4 landscape sheet; `@page margin: 0` also suppresses the browser's
+ * own header/footer (URL and date), which have no business on a certificate.
+ * The sheet's safe margins are its own frame insets, well clear of any
+ * printer's unprintable edge.
  */
 export default async function CertificatePage(props: PageProps<'/[lang]/verify/[code]'>) {
   await connection();
@@ -30,6 +42,11 @@ export default async function CertificatePage(props: PageProps<'/[lang]/verify/[
   if (!isLocale(lang)) notFound();
   const dict = getDictionary(lang);
   const t = dict.account.certificate;
+  // The document is bilingual by design — an official paper carries its
+  // title in both scripts — so the page's language drives the main text and
+  // the other language supplies the small subtitle.
+  const other: Locale = lang === 'ar' ? 'en' : 'ar';
+  const tOther = getDictionary(other).account.certificate;
 
   if (!isDbConfigured()) notFound();
 
@@ -51,72 +68,91 @@ export default async function CertificatePage(props: PageProps<'/[lang]/verify/[
 
   /*
    * The QR encodes this page, not a form with the code in a query string.
-   *
-   * Someone scanning a printed certificate should land on the credential
-   * itself rather than on a lookup box they have to use. It also keeps the
-   * code out of a query parameter, which is where URLs get logged, forwarded
-   * and expanded into chat previews.
+   * Someone scanning a printed certificate lands on the credential itself.
+   * The URL carries no personal data — only the code. Generated server-side
+   * into an inline SVG: vector at any print size, no external request, scans
+   * offline. Only the host is printed on the sheet; the full URL stays in
+   * the QR, because a long URL in small type is clutter and the host is what
+   * a human would type.
    */
   const verifyUrl = `${SITE_URL}/${lang}/verify/${certificate.code}`;
-  // Generated server-side into an inline SVG: no external request, so it
-  // prints even offline and cannot leak a page view to a third party.
+  const verifyHost = new URL(SITE_URL).host;
   const qr = await QRCode.toString(verifyUrl, {
     type: 'svg',
     margin: 0,
     errorCorrectionLevel: 'M',
-    color: { dark: '#205B8B', light: '#0000' },
+    color: { dark: DOC.navy, light: '#0000' },
   });
 
   const title = lang === 'ar' ? certificate.snapshot.titleAr : certificate.snapshot.titleEn;
-  const issued = new Date(certificate.issued_at).toISOString().slice(0, 10);
 
   /*
    * One source for the word "Revoked", its date, its reason and the decision
-   * about what a withdrawn credential may still do. This page used to answer
-   * that question differently from /verify, from the achievements page and
-   * from the map — four surfaces, four answers.
+   * about what a withdrawn credential may still do.
    */
   const view = credentialView(certificate, dict.account.map, lang);
 
-  const KIND_LABEL: Record<string, string> = {
-    orientation: t.kindOrientation,
-    course: t.kindCourse,
-    level: t.kindLevel,
-    program: t.kindProgram,
-    hours: t.kindHours,
+  const learningMinutes = certificate.learning_minutes ?? certificate.snapshot.learningMinutes ?? 0;
+  const volunteerMinutes = certificate.kind === 'hours' ? (certificate.snapshot.minutes ?? 0) : 0;
+
+  const kinds: CertificateDocumentData['kind'][] = [
+    'course',
+    'orientation',
+    'level',
+    'program',
+    'hours',
+  ];
+  const data: CertificateDocumentData = {
+    code: certificate.code,
+    kind: kinds.includes(certificate.kind as CertificateDocumentData['kind'])
+      ? (certificate.kind as CertificateDocumentData['kind'])
+      : 'course',
+    // From the snapshot, never live: an issued certificate must not change
+    // when a profile is edited.
+    fullName: certificate.snapshot.fullName,
+    title,
+    // «١٤ آب ٢٠٢٦», never an ISO string: the ISO form belongs to the
+    // database, not to a document a person reads.
+    issued: formatDate(certificate.issued_at, lang),
+    learningTime: learningMinutes > 0 ? formatDuration(learningMinutes, lang) : '',
+    volunteerTime: volunteerMinutes > 0 ? formatDuration(volunteerMinutes, lang) : '',
   };
-  const kindLabel = KIND_LABEL[certificate.kind] ?? t.kindCourse;
 
   const skills =
     (lang === 'ar' ? certificate.snapshot.skillsAr : certificate.snapshot.skillsEn) ?? [];
-  const learningMinutes = certificate.learning_minutes ?? certificate.snapshot.learningMinutes ?? 0;
 
   return (
     <>
-      {/* Scoped to this page so the rest of the site keeps its own print behaviour. */}
+      {/* Scoped to this page so the rest of the site keeps its own print
+          behaviour. */}
       <style>{`
         @media print {
           header, footer, .no-print { display: none !important; }
-          @page { size: A4 landscape; margin: 12mm; }
-          body { background: #fff !important; }
+          @page { size: A4 landscape; margin: 0; }
+          html, body { background: #fff !important; }
+          .cert-section { padding: 0 !important; margin: 0 !important; }
+          .cert-container { max-width: none !important; padding: 0 !important; margin: 0 !important; }
           .certificate {
-            border-color: #205B8B !important;
+            width: 297mm !important;
+            height: 210mm !important;
+            max-width: none !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
             box-shadow: none !important;
             break-inside: avoid;
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
           }
         }
       `}</style>
 
-      <Section>
-        <Container className="max-w-3xl">
+      <Section className="cert-section">
+        <Container className="cert-container max-w-5xl">
           {view.status === 'revoked' && (
             /*
-             * The tone comes from the --color-danger token via credentialView,
-             * not from a third hand-picked red — and it is `surfaceTone`, which
-             * is border and tint only. `tone` would put the pill's text colour
-             * on the whole banner, dragging t.revokedBanner, the date and the
-             * reason down to 3.1:1 with it. The label keeps the pill; the
-             * sentences below it keep the ink they are legible in.
+             * surfaceTone, not tone: border and tint only. The pill keeps its
+             * own reading colour; the sentences below keep the ink they are
+             * legible in.
              */
             <div className={`mb-6 rounded-xl border px-5 py-4 ${view.surfaceTone}`}>
               <p>
@@ -127,9 +163,6 @@ export default async function CertificatePage(props: PageProps<'/[lang]/verify/[
                 </span>
               </p>
               <p className="mt-2 font-bold">{t.revokedBanner}</p>
-              {/* Both stored on every revoked row, and shown on no surface
-                  until now: the date it stopped standing, and why. Without
-                  them a holder cannot tell what happened or contest it. */}
               {view.revokedOn && (
                 <p className="mt-2 text-[0.92rem] text-ink-2">{view.revokedOn}</p>
               )}
@@ -137,92 +170,42 @@ export default async function CertificatePage(props: PageProps<'/[lang]/verify/[
             </div>
           )}
 
-          <article className="certificate rounded-3xl border-4 border-brand-blue bg-surface p-10 text-center sm:p-14">
-            <p className="text-[0.8rem] font-extrabold tracking-[0.2em] text-brand-orange-text dark:text-brand-orange">
-              {dict.meta.siteName}
-            </p>
-            <p className="mt-1.5 text-[0.82rem] text-ink-3">
-              {t.registration} {ORG.registrationNumber}
-            </p>
+          <CertificateDocument
+            lang={lang}
+            t={t}
+            tOther={tOther}
+            siteName={dict.meta.siteName}
+            cert={data}
+            qr={qr}
+            verifyHost={verifyHost}
+          />
 
-            <p className="mt-10 text-[0.95rem] text-ink-2">{t.awardedTo}</p>
-            {/* The name is read from the snapshot, never live: an already
-                issued certificate must not change when a profile is edited. */}
-            <p className="mt-2.5 text-[clamp(1.6rem,1.2rem+2vw,2.6rem)] font-extrabold tracking-tight">
-              {certificate.snapshot.fullName}
-            </p>
-
-            <div className="mx-auto mt-8 h-px w-24 bg-line" />
-
-            <p className="text-[0.85rem] font-bold tracking-[0.14em] text-ink-3">{kindLabel}</p>
-            <p className="mt-2 text-[clamp(1.05rem,0.95rem+0.7vw,1.4rem)] font-bold leading-relaxed text-ink">
-              {title}
-            </p>
-
-            {/* Read from the snapshot, like everything else on this document:
-                the course's outcomes may be reworded next year and this
-                certificate must keep claiming what it claimed. */}
-            {skills.length > 0 && (
-              <div className="mx-auto mt-8 max-w-xl text-start">
-                <p className="text-[0.85rem] font-bold tracking-[0.12em] text-ink-3">{t.skills}</p>
-                <ul className="mt-3 flex flex-col gap-1.5">
-                  {skills.map((skill, i) => (
-                    <li
-                      key={i}
-                      className="relative ps-5 text-[0.92rem] leading-relaxed text-ink-2 before:absolute before:top-[0.62em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-orange before:content-[''] before:start-0"
-                    >
-                      {skill}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <dl className="mt-10 flex flex-wrap items-start justify-center gap-x-12 gap-y-6 text-[0.9rem]">
-              <div>
-                <dt className="font-bold tracking-[0.1em] text-ink-3">{t.issuedOn}</dt>
-                <dd className="mt-1 font-mono" dir="ltr">{issued}</dd>
-              </div>
-              <div>
-                <dt className="font-bold tracking-[0.1em] text-ink-3">{t.codeLabel}</dt>
-                <dd className="mt-1 font-mono font-bold tracking-wider" dir="ltr">
-                  {certificate.code}
-                </dd>
-              </div>
-              {learningMinutes > 0 && (
-                <div>
-                  <dt className="font-bold tracking-[0.1em] text-ink-3">{t.learningTime}</dt>
-                  <dd className="mt-1 font-bold" dir="ltr">
-                    {Math.round((learningMinutes / 60) * 10) / 10}
-                  </dd>
-                </div>
-              )}
-              <div>
-                <dt className="font-bold tracking-[0.1em] text-ink-3">{t.scanToVerify}</dt>
-                <dd
-                  className="mt-2 inline-block h-24 w-24 [&>svg]:h-full [&>svg]:w-full"
-                  aria-hidden
-                  dangerouslySetInnerHTML={{ __html: qr }}
-                />
-              </div>
-            </dl>
-
-            {/* The claim, stated on the document itself so nobody has to infer
-                it. This association holds no accreditation, and a certificate
-                that implied otherwise would put the volunteer in the position
-                of defending it. */}
-            <p className="mt-8 text-[0.86rem] font-bold text-ink-2">{t.completionOnly}</p>
-
-            <p className="mt-3 text-[0.82rem] text-ink-3" dir="ltr">
-              {t.verifyAt}: {verifyUrl}
-            </p>
-          </article>
+          {/* Skills stay on the verify page — an employer opening the link
+              should see them — but off the printed document, which lists only
+              what an official certificate lists. Read from the snapshot, like
+              everything else: the course's outcomes may be reworded next year
+              and this certificate must keep claiming what it claimed. */}
+          {skills.length > 0 && (
+            <div className="no-print mt-8 rounded-2xl border border-line bg-surface p-6">
+              <p className="text-[0.85rem] font-bold tracking-[0.12em] text-ink-3">{t.skills}</p>
+              <ul className="mt-3 flex flex-col gap-1.5">
+                {skills.map((skill, i) => (
+                  <li
+                    key={i}
+                    className="relative ps-5 text-[0.92rem] leading-relaxed text-ink-2 before:absolute before:top-[0.62em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-orange before:content-[''] before:start-0"
+                  >
+                    {skill}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="no-print mt-8 flex flex-wrap gap-3">
             {/* Printing a withdrawn certificate is the one thing this page
                 must not offer: the print stylesheet strips the page furniture,
-                so what came out of the printer was a clean certificate with no
-                trace of the banner saying it no longer stands. */}
+                so what came out of the printer would be a clean certificate
+                with no trace of the banner saying it no longer stands. */}
             {view.shareable && <PrintButton label={t.print} />}
             <Link
               href={`/${lang}/account/certificates`}
@@ -249,4 +232,3 @@ export default async function CertificatePage(props: PageProps<'/[lang]/verify/[
     </>
   );
 }
-

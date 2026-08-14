@@ -34,6 +34,29 @@ export const ORG = {
   } as { name: string; phone: string; phoneHref: string } | null,
 
   /**
+   * The signatory printed on every certificate. Configuration, not copy:
+   * certificates must all change together when the presidency changes, so the
+   * name lives here and nowhere else.
+   *
+   * The name stays in Arabic script in both languages, same reasoning as the
+   * safeguarding focal point above: it belongs to a real person and a guessed
+   * Latin transliteration would be worse than none. Replace `nameEn` with
+   * their own preferred spelling if they provide one.
+   *
+   * `signatureImage` is null because no signature file exists in this project.
+   * Nothing may invent one: the document renders an empty signing space above
+   * the name until a real scan is added here (a path under /public), at which
+   * point the certificate picks it up with no other change.
+   */
+  president: {
+    name: 'محمد شرف الدين',
+    nameEn: 'محمد شرف الدين',
+    titleAr: 'رئيس جمعية تكافل',
+    titleEn: 'President, Takaful Association',
+    signatureImage: null as string | null,
+  },
+
+  /**
    * Who a volunteer reports to, per kind of concern.
    *
    * The orientation course is mandatory and its whole point is that a

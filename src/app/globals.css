@@ -41,8 +41,6 @@
      `bg-ok text-white` chip. Never used as small text — see --ok-text below. */
   --color-ok: #1e7a4d;
   --color-danger: #c0392b;
-
-  --font-sans: var(--font-body);
 }
 
 /* Surface and ink flip with the theme. Components read these tokens,
@@ -133,6 +131,16 @@
 }
 
 @theme inline {
+  /*
+   * INLINE IS LOAD-BEARING. next/font declares --font-body on <body>, not on
+   * :root. A plain `@theme` hoists its values onto :root, where
+   * var(--font-body) resolves to nothing — which is how the entire site
+   * silently rendered in the Segoe UI fallback instead of IBM Plex Sans
+   * Arabic. `@theme inline` makes the font-sans utility carry
+   * var(--font-body) itself, so it resolves on <body>, where the font
+   * actually lives.
+   */
+  --font-sans: var(--font-body);
   --color-ground: var(--ground);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);

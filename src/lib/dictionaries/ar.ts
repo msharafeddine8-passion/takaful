@@ -398,7 +398,7 @@ export const ar: Dictionary = {
       codeLabel: 'رمز الشهادة',
       verifyAt: 'للتحقّق من صحّة هذه الشهادة',
       scanToVerify: 'امسح الرمز للتحقّق',
-      print: 'طباعة أو حفظ PDF',
+      print: 'تحميل الشهادة PDF',
       copyLink: 'نسخ رابط التحقّق',
       backToAccount: 'رجوع إلى حسابي',
       revokedBanner: 'هذه الشهادة ملغاة ولا يصحّ الاعتماد عليها.',
@@ -414,7 +414,7 @@ export const ar: Dictionary = {
       // دولياً": there is no accreditation behind it, and a volunteer who put
       // that on a CV would be the one asked to defend it.
       completionOnly: 'شهادة إتمام صادرة عن جمعية تكافل',
-      share: 'شارك الشهادة',
+      share: 'مشاركة الشهادة',
       shareText: 'حصلت على شهادة من جمعية تكافل',
       copied: 'تم نسخ الرابط',
       kindOrientation: 'الدورة التمهيدية',
@@ -422,6 +422,22 @@ export const ar: Dictionary = {
       kindLevel: 'مستوى',
       kindProgram: 'المسار الكامل',
       kindHours: 'ساعات تطوّع',
+      docTitleCourse: 'شهادة إتمام دورة',
+      docTitleLevel: 'شهادة إتمام مستوى',
+      docTitleProgram: 'شهادة إتمام مسار التطوّع',
+      docTitleHours: 'شهادة ساعات تطوّع',
+      // Gender-neutral on purpose: the system does not store gender, so the
+      // masdar (إتمام، استيفاء، اجتياز) carries the sentence with no suffix.
+      bodyCourse:
+        'تقديراً لإتمام هذه الدورة بنجاح ضمن مسار التطوّع في أكاديمية تكافل، واستيفاء جميع متطلباتها.',
+      bodyLevel:
+        'تقديراً لإتمام جميع دورات هذا المستوى من مسار التطوّع بنجاح، واجتياز تحدّيه التطبيقي.',
+      bodyProgram:
+        'تقديراً لإتمام جميع مراحل ومتطلبات مسار التطوّع في أكاديمية تكافل بنجاح، والالتزام بالمعايير والقيم والمهارات الأساسية للعمل التطوعي.',
+      bodyHours: 'تقديراً للساعات التطوّعية المنجزة مع جمعية تكافل.',
+      programBadge: 'إتمام مسار التطوّع كاملاً',
+      verifiedMark: 'شهادة رقمية موثّقة',
+      scanQr: 'امسح رمز QR للتحقّق من صحّة الشهادة',
     },
     path: {
       title: 'مسار المتطوّع',

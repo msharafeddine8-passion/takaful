@@ -397,7 +397,7 @@ export const en: Dictionary = {
       codeLabel: 'Certificate code',
       verifyAt: 'To verify this certificate',
       scanToVerify: 'Scan to verify',
-      print: 'Print or save as PDF',
+      print: 'Download certificate PDF',
       copyLink: 'Copy verification link',
       backToAccount: 'Back to my account',
       revokedBanner: 'This certificate has been revoked and should not be relied on.',
@@ -421,6 +421,20 @@ export const en: Dictionary = {
       kindLevel: 'Level',
       kindProgram: 'Full path',
       kindHours: 'Volunteering hours',
+      docTitleCourse: 'Certificate of Completion',
+      docTitleLevel: 'Certificate of Level Completion',
+      docTitleProgram: 'Volunteering Path Certificate',
+      docTitleHours: 'Certificate of Volunteering Hours',
+      bodyCourse:
+        'in recognition of successfully completing this course within the Takaful Academy volunteering path, and fulfilling all of its requirements.',
+      bodyLevel:
+        'in recognition of successfully completing every course in this level of the volunteering path, and passing its applied challenge.',
+      bodyProgram:
+        'in recognition of successfully completing all stages and requirements of the volunteering path at Takaful Academy, and of commitment to the core standards, values and skills of volunteer work.',
+      bodyHours: 'in recognition of the volunteering hours completed with Takaful Association.',
+      programBadge: 'Full volunteering path completed',
+      verifiedMark: 'Verified digital certificate',
+      scanQr: 'Scan the QR code to verify this certificate',
     },
     path: {
       title: 'The volunteer path',
