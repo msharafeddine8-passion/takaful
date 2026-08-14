@@ -8,6 +8,7 @@ import { getDictionary } from '@/lib/dictionaries';
 import { Container, Section } from '@/components/ui';
 import { isDbConfigured } from '@/lib/db';
 import { findByCode, normaliseCode } from '@/lib/certificates';
+import { credentialView } from '@/lib/credential-view';
 import { ORG } from '@/lib/org';
 import { SITE_URL } from '@/lib/seo';
 import { PrintButton } from '@/components/PrintButton';
@@ -69,6 +70,14 @@ export default async function CertificatePage(props: PageProps<'/[lang]/verify/[
   const title = lang === 'ar' ? certificate.snapshot.titleAr : certificate.snapshot.titleEn;
   const issued = new Date(certificate.issued_at).toISOString().slice(0, 10);
 
+  /*
+   * One source for the word "Revoked", its date, its reason and the decision
+   * about what a withdrawn credential may still do. This page used to answer
+   * that question differently from /verify, from the achievements page and
+   * from the map — four surfaces, four answers.
+   */
+  const view = credentialView(certificate, dict.account.map, lang);
+
   const KIND_LABEL: Record<string, string> = {
     orientation: t.kindOrientation,
     course: t.kindCourse,
@@ -100,10 +109,32 @@ export default async function CertificatePage(props: PageProps<'/[lang]/verify/[
 
       <Section>
         <Container className="max-w-3xl">
-          {certificate.revoked_at && (
-            <p className="mb-6 rounded-xl border border-red-400 bg-red-50 px-5 py-4 font-bold text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300">
-              {t.revokedBanner}
-            </p>
+          {view.status === 'revoked' && (
+            /*
+             * The tone comes from the --color-danger token via credentialView,
+             * not from a third hand-picked red — and it is `surfaceTone`, which
+             * is border and tint only. `tone` would put the pill's text colour
+             * on the whole banner, dragging t.revokedBanner, the date and the
+             * reason down to 3.1:1 with it. The label keeps the pill; the
+             * sentences below it keep the ink they are legible in.
+             */
+            <div className={`mb-6 rounded-xl border px-5 py-4 ${view.surfaceTone}`}>
+              <p>
+                <span
+                  className={`inline-block rounded-full border px-3 py-1 text-[0.8rem] font-extrabold ${view.tone}`}
+                >
+                  {view.statusLabel}
+                </span>
+              </p>
+              <p className="mt-2 font-bold">{t.revokedBanner}</p>
+              {/* Both stored on every revoked row, and shown on no surface
+                  until now: the date it stopped standing, and why. Without
+                  them a holder cannot tell what happened or contest it. */}
+              {view.revokedOn && (
+                <p className="mt-2 text-[0.92rem] text-ink-2">{view.revokedOn}</p>
+              )}
+              {view.reason && <p className="mt-1 text-[0.92rem] text-ink-2">{view.reason}</p>}
+            </div>
           )}
 
           <article className="certificate rounded-3xl border-4 border-brand-blue bg-surface p-10 text-center sm:p-14">
@@ -188,7 +219,11 @@ export default async function CertificatePage(props: PageProps<'/[lang]/verify/[
           </article>
 
           <div className="no-print mt-8 flex flex-wrap gap-3">
-            <PrintButton label={t.print} />
+            {/* Printing a withdrawn certificate is the one thing this page
+                must not offer: the print stylesheet strips the page furniture,
+                so what came out of the printer was a clean certificate with no
+                trace of the banner saying it no longer stands. */}
+            {view.shareable && <PrintButton label={t.print} />}
             <Link
               href={`/${lang}/account/certificates`}
               className="inline-flex min-h-11 items-center rounded-full border border-line px-6 text-[0.95rem] font-bold hover:bg-surface-2"
@@ -200,7 +235,7 @@ export default async function CertificatePage(props: PageProps<'/[lang]/verify/[
           {/* Only for a credential that still stands. Offering to share a
               revoked certificate would be helping somebody make a claim that
               is no longer true. */}
-          {!certificate.revoked_at && (
+          {view.shareable && (
             <div className="no-print mt-4">
               <ShareCredential
                 url={verifyUrl}

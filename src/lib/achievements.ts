@@ -1,6 +1,7 @@
 import 'server-only';
 import { query, transaction } from './db';
 import type { Locale } from './i18n';
+import { LEVEL_BADGES } from './programme/level-badges';
 
 /**
  * Badges.
@@ -23,7 +24,7 @@ import type { Locale } from './i18n';
  * missing translation should stop a build rather than render as a blank.
  */
 
-export type AchievementKind = 'hours' | 'courses' | 'activities' | 'stages';
+export type AchievementKind = 'hours' | 'courses' | 'activities' | 'stages' | 'levels';
 
 export type AchievementDef = {
   code: string;
@@ -141,6 +142,37 @@ export const ACHIEVEMENTS: AchievementDef[] = [
       en: 'Reached the third stage of the volunteer journey.',
     },
   },
+  /*
+   * The six level badges, built from the programme catalogue rather than
+   * retyped. Code, icon, title and description all come from
+   * `src/lib/programme/level-badges.ts`, so a level renamed there cannot leave
+   * a stale copy of its wording sitting on somebody's wall.
+   *
+   * `threshold: levelNumber` against the `levels` figure in `standingFor`,
+   * which is the highest CONSECUTIVE completed level — so the engine's
+   * existing `standing[def.kind] >= def.threshold` reads as "has finished
+   * level N and everything below it". Nothing special-cases this kind.
+   *
+   * LEVEL 0 IS EXCLUDED, deliberately, and this is the choice the brief asked
+   * to be made explicitly. Its threshold would be 0, and `0 >= 0` holds for an
+   * account created one second ago that has done nothing at all — the engine
+   * would award it on sign-up, not on finishing the orientation, because it
+   * compares a figure rather than asking whether a level is complete. This
+   * file opens by saying a badge for signing up is a badge for nothing. The
+   * orientation badge is not lost: `levelBadgeStanding` still renders it on
+   * the map and the badge wall, where it is derived from the orientation
+   * actually being passed.
+   */
+  ...LEVEL_BADGES.filter((b) => b.levelNumber >= 1).map(
+    (b): AchievementDef => ({
+      code: b.code,
+      kind: 'levels',
+      threshold: b.levelNumber,
+      icon: b.icon,
+      title: b.title,
+      description: b.description,
+    }),
+  ),
 ];
 
 export function achievementByCode(code: string): AchievementDef | undefined {
@@ -179,7 +211,19 @@ export async function achievementHistory(userId: string): Promise<EarnedAchievem
 
 export type Standing = Record<AchievementKind, number>;
 
-/** The four figures every threshold is measured against. */
+/**
+ * The five figures every threshold is measured against.
+ *
+ * `levels` is the highest N such that every level from 1 to N of the default
+ * programme is complete — consecutive, not maximum, which is what a `>=`
+ * threshold can express honestly. It is derived from passed `course_attempts`,
+ * exactly as gate.ts and programme/credentials.ts derive completion, and
+ * deliberately NOT from `level_progress`: nothing in the running application
+ * writes that table until refreshLevelProgress happens to be called, so a
+ * badge read from it would arrive late or never. A level with no courses in it
+ * counts as incomplete, matching `LevelStanding.complete` in programme/standing.ts —
+ * an empty level is not an achievement.
+ */
 export async function standingFor(userId: string): Promise<Standing> {
   const rows = await query<Standing>(
     `SELECT
@@ -190,10 +234,33 @@ export async function standingFor(userId: string): Promise<Standing> {
        (SELECT count(*) FROM activity_attendance
          WHERE user_id = $1 AND attended)::INTEGER                           AS activities,
        COALESCE((SELECT MAX(stage) FROM stage_progress WHERE user_id = $1), 0)::INTEGER
-                                                                             AS stages`,
+                                                                             AS stages,
+       COALESCE((
+         SELECT MAX(l.number) FROM program_levels l
+          WHERE l.number >= 1
+            AND l.program_id = (SELECT id FROM programs WHERE is_default LIMIT 1)
+            -- No level at or below this one may be unfinished, which is what
+            -- makes the answer consecutive rather than merely the highest.
+            AND NOT EXISTS (
+              SELECT 1 FROM program_levels g
+               WHERE g.program_id = l.program_id
+                 AND g.number BETWEEN 1 AND l.number
+                 AND (
+                   NOT EXISTS (SELECT 1 FROM courses c WHERE c.level_id = g.id)
+                   OR EXISTS (
+                     SELECT 1 FROM courses c
+                      WHERE c.level_id = g.id
+                        AND NOT EXISTS (
+                          SELECT 1 FROM course_attempts a
+                           WHERE a.user_id = $1 AND a.course_slug = c.slug AND a.passed
+                        )
+                   )
+                 )
+            )
+       ), 0)::INTEGER                                                        AS levels`,
     [userId],
   );
-  return rows[0] ?? { hours: 0, courses: 0, activities: 0, stages: 0 };
+  return rows[0] ?? { hours: 0, courses: 0, activities: 0, stages: 0, levels: 0 };
 }
 
 export type Recomputed = { earned: string[]; revoked: string[] };
@@ -270,7 +337,7 @@ export type NextUp = { def: AchievementDef; current: number; remaining: number }
 
 export function nextUp(standing: Standing, held: Set<string>): NextUp[] {
   const out: NextUp[] = [];
-  for (const kind of ['hours', 'courses', 'activities', 'stages'] as AchievementKind[]) {
+  for (const kind of ['hours', 'courses', 'activities', 'stages', 'levels'] as AchievementKind[]) {
     const next = ACHIEVEMENTS.filter((a) => a.kind === kind && !held.has(a.code)).sort(
       (a, b) => a.threshold - b.threshold,
     )[0];

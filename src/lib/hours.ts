@@ -105,20 +105,18 @@ export async function openActivities(): Promise<Activity[]> {
   );
 }
 
-/** Minutes to a display string, in the reader's language. */
-export function formatDuration(minutes: number, lang: 'ar' | 'en'): string {
-  const sign = minutes < 0 ? '-' : '';
-  const total = Math.abs(minutes);
-  const h = Math.floor(total / 60);
-  const m = total % 60;
-
-  if (lang === 'ar') {
-    if (h === 0) return `${sign}${m} دقيقة`;
-    if (m === 0) return `${sign}${h} ساعة`;
-    return `${sign}${h} ساعة و${m} دقيقة`;
-  }
-
-  if (h === 0) return `${sign}${m} min`;
-  if (m === 0) return `${sign}${h} h`;
-  return `${sign}${h} h ${m} min`;
-}
+/**
+ * Minutes to a display string, in the reader's language.
+ *
+ * The implementation moved to `@/lib/format`, byte-identical, and is
+ * re-exported here so every existing caller keeps working unchanged.
+ *
+ * The move is the point: this module is `import 'server-only'`, so for as long
+ * as the only locale-aware formatter in the codebase lived here, no client
+ * component could reach it — and each one grew its own inline arithmetic
+ * instead. `@/lib/format` carries no such marker, so a server page, a client
+ * component and a probe can all import the same function.
+ *
+ * Prefer importing from '@/lib/format' in new code.
+ */
+export { formatDuration } from './format';

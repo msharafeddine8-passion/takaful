@@ -11,15 +11,34 @@
   /* Orange as *text* on a light background. brand-orange-dark reaches only
      3.3:1 there, short of the 4.5:1 small text needs — but it is also the
      button hover colour, where darkening it would drop the label on top of it
-     below the same bar. Two jobs, two tokens. */
-  --color-brand-orange-text: #9c6716;
+     below the same bar. Two jobs, two tokens.
+
+     Darkened from #9c6716, which was measured against plain white and nothing
+     else. Almost every use of this token is a kicker or a status pill sitting
+     on an orange tint — bg-brand-orange/15, or a bg-brand-orange/[0.08] card,
+     or a /15 pill inside a /[0.08] card where the two tints stack. Against
+     those composited backgrounds #9c6716 fell to 4.31:1 and 4.07:1, both under
+     the bar for 13px text. #7d500e is 6.2:1 on the pill, 5.9:1 on the stacked
+     pair, and 6.9:1 on plain white. */
+  --color-brand-orange-text: #7d500e;
   --color-brand-orange-soft: #fdf4e6;
+  /* The ink on every orange surface — the button label, the "you are here"
+     pill. It was pasted as a raw #241503 in 39 places; this only names the
+     value already in use, so nothing shifts. */
+  --color-brand-orange-ink: #241503;
   --color-brand-blue: #205b8b;
   --color-brand-blue-dark: #17456a;
   --color-brand-blue-deep: #0f3350;
   --color-brand-blue-soft: #e9f1f7;
   --color-brand-grey: #6b6d6e;
 
+  /* The lede and the kicker on the bg-brand-blue-deep hero band. Not ink-2 /
+     ink-3: those flip with the theme, and this band is dark in both. */
+  --color-on-deep: #c4daea;
+  --color-on-deep-2: #9dbbd2;
+
+  /* Surface greens and reds: the pill tint, the rail, the filled bar, the
+     `bg-ok text-white` chip. Never used as small text — see --ok-text below. */
   --color-ok: #1e7a4d;
   --color-danger: #c0392b;
 
@@ -40,6 +59,30 @@
      accessibility failure here. */
   --ink-3: #596c7e;
   --line: #dce4ea;
+
+  /* Green and red as *small text*, which is a different job from green and red
+     as a surface. --color-ok is #1e7a4d: on its own bg-ok/15 pill it measures
+     4.33:1 on --ground and 4.09:1 inside a bg-surface card, both under the
+     4.5:1 that 13px text needs, because the tint lightens the background the
+     text is judged against. These two are the reading colours, chosen against
+     the *composited* pill: #15633c reaches 5.9:1 on white and 5.6:1 on
+     --surface, #a32117 reaches 6.5:1 and 5.8:1. Same split, same reason, as
+     --color-brand-orange / --color-brand-orange-text above. They flip with the
+     theme rather than riding a `dark:` variant, because `dark:` is a
+     prefers-color-scheme query and would ignore the site's own theme toggle. */
+  --ok-text: #15633c;
+  --danger-text: #a32117;
+
+  /* Focus. Two rings, because one cannot be right on every background.
+     The old rule painted brand orange with a 3px offset, so the ring landed on
+     the page behind the control: 2.20:1 on --ground, 2.07:1 on --surface and
+     on the bg-brand-orange/[0.08] cards — a WCAG 2.2 SC 1.4.11 failure across
+     the whole light theme. A single colour cannot fix that, because a control
+     may sit on white, on a tinted card, or on the blue-deep hero band.
+     So: an inner ring in --focus and a halo in --focus-halo, 10:1 apart from
+     each other, one of which always contrasts with whatever is behind it. */
+  --focus: #17456a;
+  --focus-halo: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -51,6 +94,13 @@
     --ink-2: #a9becd;
     --ink-3: #7c93a4;
     --line: #24343f;
+    /* 7.2:1 and 6.6:1 on the ok/15 pill over --ground and --surface; the same
+       arithmetic for red. #1e7a4d and #c0392b are 2.97:1 and 3.14:1 here — the
+       theme the old code left entirely unmitigated. */
+    --ok-text: #46c489;
+    --danger-text: #f28b82;
+    --focus: #eb9f31;
+    --focus-halo: #0d1720;
   }
 }
 
@@ -62,6 +112,10 @@
   --ink-2: #a9becd;
   --ink-3: #7c93a4;
   --line: #24343f;
+  --ok-text: #46c489;
+  --danger-text: #f28b82;
+  --focus: #eb9f31;
+  --focus-halo: #0d1720;
 }
 
 :root[data-theme="light"] {
@@ -72,6 +126,10 @@
   --ink-2: #43596b;
   --ink-3: #596c7e;
   --line: #dce4ea;
+  --ok-text: #15633c;
+  --danger-text: #a32117;
+  --focus: #17456a;
+  --focus-halo: #ffffff;
 }
 
 @theme inline {
@@ -82,6 +140,8 @@
   --color-ink-2: var(--ink-2);
   --color-ink-3: var(--ink-3);
   --color-line: var(--line);
+  --color-ok-text: var(--ok-text);
+  --color-danger-text: var(--danger-text);
 }
 
 body {
@@ -98,14 +158,47 @@ html[lang="en"] body {
   line-height: 1.7;
 }
 
+/*
+ * ARABIC JOINS, SO NOTHING MAY TRACK IT.
+ *
+ * letter-spacing puts a gap between every glyph. In Latin that is a kicker; in
+ * a cursive script it severs the connecting strokes, and 'الشهادة القادمة'
+ * renders as a row of disconnected letters. The damage is not confined to
+ * positive tracking either — `tracking-tight` pulls Arabic glyphs into each
+ * other just as wrongly.
+ *
+ * This is a rule rather than a per-component fix on purpose: a kicker written
+ * six months from now with `tracking-[0.14em]` on it is protected too, and the
+ * component keeps the tracking that is correct for the English page. It is
+ * unlayered, so it beats the Tailwind utility in `@layer utilities` on the same
+ * element without needing !important.
+ */
+html[lang="ar"] * {
+  letter-spacing: normal;
+}
+
 h1, h2, h3, h4 {
   text-wrap: balance;
 }
 
+/*
+ * The focus ring. Inner ring in --focus, halo in --focus-halo, tokens that
+ * flip with the theme — see the block where they are declared for the
+ * measurements this replaces.
+ *
+ * Geometry: the halo shadow fills 0-7px out from the border box, the outline
+ * is drawn across 2-5px of it and paints on top of the shadow, so what is seen
+ * is halo / ring / halo. Whichever surface the control sits on, at least one of
+ * the two clears 3:1 against it, and the pair clears 10:1 against each other.
+ *
+ * No border-radius here: the old rule forced 5px onto the focused element
+ * itself, so every rounded-full button visibly changed shape on focus. Modern
+ * engines already follow the element's own radius when drawing an outline.
+ */
 :focus-visible {
-  outline: 3px solid var(--color-brand-orange);
-  outline-offset: 3px;
-  border-radius: 5px;
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 7px var(--focus-halo);
 }
 
 /* Digits align in stat rows regardless of locale. */

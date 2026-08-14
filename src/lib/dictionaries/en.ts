@@ -1,4 +1,5 @@
 import type { Dictionary } from './types';
+import { lmsEn } from './lms';
 
 export const en: Dictionary = {
   meta: {
@@ -455,6 +456,8 @@ export const en: Dictionary = {
       notStarted: 'Not started',
       attemptsMade: 'attempts',
     },
+    // Authored in ./lms.ts — the one home for the path-map strings.
+    map: lmsEn,
     programme: {
       title: 'Programme administration',
       lede: 'Levels and courses. An edit made here takes precedence over any re-seed and is never overwritten.',

@@ -200,7 +200,10 @@ try {
   standing = await standingFor(vol);
   const heldCodes = new Set((await achievementsFor(vol)).map((a) => a.code));
   const next = nextUp(standing, heldCodes);
-  check('a next badge is suggested for each kind', next.length === 4, next.length);
+  // Five kinds since the level badges landed: hours, courses, activities,
+  // stages, levels. This learner holds none of the level badges, so 'levels'
+  // contributes a suggestion like every other kind.
+  check('a next badge is suggested for each of the five kinds', next.length === 5, next.length);
   check(
     'none of them are ones already held',
     next.every((n) => !heldCodes.has(n.def.code)),

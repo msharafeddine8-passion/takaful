@@ -8,7 +8,9 @@ import { alternatesFor } from '@/lib/seo';
 import { Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
-import { formatDuration } from '@/lib/hours';
+import { formatDuration } from '@/lib/format';
+import { credentialView } from '@/lib/credential-view';
+import { plural, type PluralForms } from '@/lib/dictionaries/lms';
 import {
   recomputeAchievements,
   achievementHistory,
@@ -145,7 +147,10 @@ export default async function AchievementsPage(
                         <span aria-hidden>{n.def.icon}</span> {n.def.title[lang]}
                       </span>
                       <span className="text-[0.85rem] font-bold text-ink-3">
-                        {remaining(n.def.kind, n.remaining, lang, t)}
+                        {remaining(n.def.kind, n.remaining, lang, {
+                          ...t,
+                          remainingLevels: dict.account.map.remainingLevels,
+                        })}
                       </span>
                     </div>
                     <div
@@ -183,14 +188,32 @@ export default async function AchievementsPage(
               {withdrawn.map((a) => {
                 const def = achievementByCode(a.code);
                 if (!def) return null;
+                /*
+                 * The same presenter the map, /verify and /verify/[code] use,
+                 * so "withdrawn" is one word with one spelling everywhere. An
+                 * EarnedAchievement carries revoked_at and revoke_reason under
+                 * exactly the names credentialView reads.
+                 *
+                 * The strike-through stays, but it is no longer carrying the
+                 * meaning on its own: a line through text is invisible to a
+                 * screen reader and easy to miss at small sizes, so the state
+                 * is now also a word.
+                 */
+                const view = credentialView(a, dict.account.map, lang);
                 return (
                   <li
                     key={a.code}
-                    className="rounded-xl border border-line bg-surface-2 px-5 py-3.5 text-[0.92rem] text-ink-3"
+                    className="flex flex-wrap items-center gap-x-2 gap-y-1.5 rounded-xl border border-line bg-surface-2 px-5 py-3.5 text-[0.92rem] text-ink-3"
                   >
-                    <span aria-hidden>{def.icon}</span>{' '}
+                    <span aria-hidden>{def.icon}</span>
                     <span className="font-bold line-through">{def.title[lang]}</span>
-                    {a.revoke_reason && <span className="ms-2">— {a.revoke_reason}</span>}
+                    <span
+                      className={`rounded-full border px-2.5 py-0.5 text-[0.8rem] font-extrabold ${view.tone}`}
+                    >
+                      {view.statusLabel}
+                    </span>
+                    {view.revokedOn && <span>{view.revokedOn}</span>}
+                    {a.revoke_reason && <span>— {a.revoke_reason}</span>}
                   </li>
                 );
               })}
@@ -215,6 +238,14 @@ function remaining(
     remainingCourses: string;
     remainingActivities: string;
     remainingStages: string;
+    /* Authored in dictionaries/lms.ts alongside the rest of the level-badge
+       copy, not in the achievements namespace — one home for those strings
+       means no three-file dictionary edit to add this branch.
+
+       Declined per number rather than held as one template: "1 levels to go"
+       is what the last-level case used to render, and Arabic needs four more
+       forms than English does. See the plural() header in dictionaries/lms.ts. */
+    remainingLevels: PluralForms;
   },
 ): string {
   if (kind === 'hours') return t.remainingHours.replace('{n}', formatDuration(value, lang));
@@ -223,6 +254,11 @@ function remaining(
       ? t.remainingCourses
       : kind === 'activities'
         ? t.remainingActivities
-        : t.remainingStages;
+        : kind === 'levels'
+          ? // The Arabic one/two forms spell the count as a word and carry no
+            // {n} at all; replace() on a template without the placeholder is a
+            // no-op, so this needs no special case below.
+            plural(t.remainingLevels, value, lang)
+          : t.remainingStages;
   return template.replace('{n}', String(value));
 }

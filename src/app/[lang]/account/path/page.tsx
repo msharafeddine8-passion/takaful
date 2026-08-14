@@ -5,7 +5,7 @@ import { connection } from 'next/server';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { getDictionary, type Dictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
-import { Container, Section } from '@/components/ui';
+import { Arrow, Container, Section } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
 import { programmeStanding, type CourseStanding, type LevelStanding } from '@/lib/programme/standing';
@@ -52,13 +52,13 @@ export default async function PathPage(props: PageProps<'/[lang]/account/path'>)
     <>
       <div className="border-b border-line bg-brand-blue-deep text-white">
         <Container className="py-10 sm:py-14">
-          <p className="text-[0.82rem] font-extrabold tracking-[0.16em] text-[#9dbbd2]">
+          <p className="text-[0.82rem] font-extrabold tracking-[0.16em] text-on-deep-2">
             {dict.meta.siteName}
           </p>
           <h1 className="mt-3 text-[clamp(1.8rem,1.4rem+2.2vw,2.8rem)] font-black leading-tight tracking-tight">
             {t.title}
           </h1>
-          <p className="mt-4 max-w-[58ch] text-[1.05rem] leading-relaxed text-[#c4daea]">{t.lede}</p>
+          <p className="mt-4 max-w-[58ch] text-[1.05rem] leading-relaxed text-on-deep">{t.lede}</p>
 
           <dl className="mt-8 grid max-w-2xl grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
             <Stat label={t.levelsDone} value={`${levelsDone} / ${mainLevels.length}`} />
@@ -68,6 +68,21 @@ export default async function PathPage(props: PageProps<'/[lang]/account/path'>)
               value={String(Math.round((standing.learningMinutes / 60) * 10) / 10)}
             />
           </dl>
+
+          {/*
+            The overview, one tap from the detailed list. Both pages read the
+            same programmeStanding, so they cannot disagree about a figure —
+            this stays the list, /account/map stays the picture.
+          */}
+          <Link
+            href={`/${lang}/account/map` as Parameters<typeof Link>[0]['href']}
+            className="mt-8 inline-flex min-h-11 items-center rounded-full border border-white/40 px-6 text-[0.95rem] font-extrabold text-white transition-colors hover:border-white hover:bg-white/10"
+          >
+            {dict.account.map.title}
+            {/* U+2192 does not mirror: the bidi algorithm leaves it pointing
+                right under dir="rtl", i.e. backwards. <Arrow> picks per locale. */}
+            <Arrow lang={lang} />
+          </Link>
         </Container>
       </div>
 
@@ -148,7 +163,7 @@ export default async function PathPage(props: PageProps<'/[lang]/account/path'>)
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0">
-      <dt className="text-[0.82rem] font-bold tracking-[0.1em] text-[#9dbbd2]">{label}</dt>
+      <dt className="text-[0.82rem] font-bold tracking-[0.1em] text-on-deep-2">{label}</dt>
       <dd className="mt-1 text-[1.5rem] font-extrabold" dir="ltr">
         {value}
       </dd>
@@ -182,7 +197,7 @@ function LevelBlock({
           {isOrientation ? t.orientationTitle : `${t.levelWord} ${level.number}`}
         </span>
         {here && (
-          <span className="rounded-full bg-brand-orange px-3.5 py-1 text-[0.82rem] font-extrabold text-[#241503]">
+          <span className="rounded-full bg-brand-orange px-3.5 py-1 text-[0.82rem] font-extrabold text-brand-orange-ink">
             {t.youAreHere}
           </span>
         )}

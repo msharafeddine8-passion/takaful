@@ -313,8 +313,10 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
       <div className="bg-brand-blue-deep text-white">
         <Container className="py-10 sm:py-14">
           <nav
-            aria-label="breadcrumb"
-            className="flex flex-wrap items-center text-[0.88rem] text-[#9dbbd2]"
+            // Authored in both locales in dictionaries/lms.ts. It was the last
+            // English-only user-facing string in the codebase.
+            aria-label={dict.account.map.breadcrumb}
+            className="flex flex-wrap items-center text-[0.88rem] text-on-deep-2"
           >
             <Link
               href={`/${lang}/academy`}
@@ -640,8 +642,10 @@ function PlannedCourse({
       <div className="bg-brand-blue-deep text-white">
         <Container className="py-10 sm:py-14">
           <nav
-            aria-label="breadcrumb"
-            className="flex flex-wrap items-center text-[0.88rem] text-[#9dbbd2]"
+            // Authored in both locales in dictionaries/lms.ts. It was the last
+            // English-only user-facing string in the codebase.
+            aria-label={dict.account.map.breadcrumb}
+            className="flex flex-wrap items-center text-[0.88rem] text-on-deep-2"
           >
             <Link
               href={`/${lang}/academy`}

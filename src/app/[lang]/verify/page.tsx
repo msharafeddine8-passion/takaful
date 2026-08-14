@@ -7,6 +7,8 @@ import { alternatesFor } from '@/lib/seo';
 import { Container, Section, Kicker } from '@/components/ui';
 import { isDbConfigured } from '@/lib/db';
 import { findByCode, findMember, normaliseCode } from '@/lib/certificates';
+import { credentialView } from '@/lib/credential-view';
+import { formatDate } from '@/lib/format';
 
 export async function generateMetadata(props: PageProps<'/[lang]/verify'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -124,44 +126,69 @@ export default async function VerifyPage(props: PageProps<'/[lang]/verify'>) {
           </div>
         )}
 
-        {certificate && (
-          <div
-            className={`mt-8 rounded-2xl border p-6 ${
-              certificate.revoked_at
-                ? 'border-amber-400 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30'
+        {certificate && (() => {
+          /*
+           * The same presenter /verify/[code], the achievements page and the
+           * map read. This card used to say it in amber while the certificate
+           * page said it in red and neither showed the reason — one question,
+           * one answer, in both locales.
+           */
+          const view = credentialView(certificate, dict.account.map, lang);
+          return (
+            /*
+             * `surfaceTone`, not `tone`: the container takes the border and the
+             * tint, and no text colour. A text colour set here is inherited by
+             * the h2, the holder's name, the issue date and the certificate
+             * code — red prose at 3.1:1, and the deliberate `text-ink-2` on the
+             * revocation paragraph silently overwritten. The status is said in
+             * the pill, which is the one place the colour was measured.
+             */
+            <div className={`mt-8 rounded-2xl border p-6 ${
+              view.status === 'revoked'
+                ? view.surfaceTone
                 : 'border-emerald-400 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30'
             }`}
-          >
-            <h2 className="text-[1.15rem] font-extrabold">
-              {certificate.revoked_at ? t.revokedTitle : t.validTitle}
-            </h2>
+            >
+              <div className="flex flex-wrap items-center gap-3">
+                <h2 className="text-[1.15rem] font-extrabold">
+                  {view.status === 'revoked' ? t.revokedTitle : t.validTitle}
+                </h2>
+                <span
+                  className={`rounded-full border px-3 py-1 text-[0.8rem] font-extrabold ${view.tone}`}
+                >
+                  {view.statusLabel}
+                </span>
+              </div>
 
-            {certificate.revoked_at && (
-              <p className="mt-2 leading-relaxed text-ink-2">{t.revoked}</p>
-            )}
-
-            <p className="mt-4 text-[1.15rem] font-extrabold">
-              {lang === 'ar' ? certificate.snapshot.titleAr : certificate.snapshot.titleEn}
-            </p>
-
-            <dl className="mt-4 space-y-1.5 text-[0.96rem]">
-              <Row label={t.holder} value={certificate.snapshot.fullName} />
-              <Row
-                label={t.issued}
-                value={new Date(certificate.issued_at).toISOString().slice(0, 10)}
-                ltr
-              />
-              {certificate.revoked_at && (
-                <Row
-                  label={t.revokedOn}
-                  value={new Date(certificate.revoked_at).toISOString().slice(0, 10)}
-                  ltr
-                />
+              {view.status === 'revoked' && (
+                <>
+                  <p className="mt-2 leading-relaxed text-ink-2">{t.revoked}</p>
+                  {/* Stored on the row since revocation was built, and shown
+                      on no surface until now. A holder who cannot see why
+                      cannot correct it. */}
+                  {view.reason && (
+                    <p className="mt-1.5 leading-relaxed text-ink-2">{view.reason}</p>
+                  )}
+                </>
               )}
-              <Row label={t.codeLabelShort} value={certificate.code} ltr mono />
-            </dl>
-          </div>
-        )}
+
+              <p className="mt-4 text-[1.15rem] font-extrabold">
+                {lang === 'ar' ? certificate.snapshot.titleAr : certificate.snapshot.titleEn}
+              </p>
+
+              <dl className="mt-4 space-y-1.5 text-[0.96rem]">
+                <Row label={t.holder} value={certificate.snapshot.fullName} />
+                {/* A date in the reader's own language and digits, not a UTC
+                    ISO string sitting inside Arabic prose. */}
+                <Row label={t.issued} value={formatDate(certificate.issued_at, lang)} />
+                {certificate.revoked_at && (
+                  <Row label={t.revokedOn} value={formatDate(certificate.revoked_at, lang)} />
+                )}
+                <Row label={t.codeLabelShort} value={certificate.code} ltr mono />
+              </dl>
+            </div>
+          );
+        })()}
 
         <p className="mt-8 text-[0.88rem] leading-relaxed text-ink-3">{t.disclaimer}</p>
       </Container>

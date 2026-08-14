@@ -1,3 +1,5 @@
+import type { LmsStrings } from './lms';
+
 export type Stat = { value: string; label: string };
 
 export type Area = {
@@ -329,6 +331,8 @@ export type Account = {
     notStarted: string;
     attemptsMade: string;
   };
+  /** The path map. Every string authored in ./lms.ts, so this stays one line. */
+  map: LmsStrings;
   programme: {
     title: string;
     lede: string;

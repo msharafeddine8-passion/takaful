@@ -13,6 +13,7 @@ import {
   ensureCourseCertificate,
 } from '@/lib/academy';
 import { recomputeAchievements } from '@/lib/achievements';
+import { issueEarnedCredentials } from '@/lib/programme/credentials';
 import { isLocale, type Locale } from '@/lib/i18n';
 
 /**
@@ -121,6 +122,24 @@ export async function completeCourseAction(
     if (user.membershipStatus === 'registered_user') {
       await setMembershipStatus({ userId: user.id, next: 'course_participant' });
     }
+
+    /*
+     * The level and programme credentials this pass has just earned.
+     *
+     * ensureCourseCertificate above mints the paper for THIS course. Nothing
+     * was issuing the layer above it, so LevelStanding.certificateCode was
+     * null for every learner in production and the map's "next certificate"
+     * promised a document that would never arrive.
+     *
+     * Before recomputeAchievements, deliberately: a level badge is derived
+     * from a live credential, so the badge engine has to run after the
+     * credential exists or it awards nothing until the next pass.
+     *
+     * Same .catch(() => {}) as below — the pass is already in the ledger and
+     * a failure to mint must never cost the learner their result. The
+     * certificates page calls the same function on their next visit.
+     */
+    await issueEarnedCredentials(user.id).catch(() => {});
 
     // A badge should be waiting when they get to the page, not computed only
     // when they happen to open it. Failing here costs nothing: the page

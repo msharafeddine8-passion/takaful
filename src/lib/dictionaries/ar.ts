@@ -1,4 +1,5 @@
 import type { Dictionary } from './types';
+import { lmsAr } from './lms';
 
 export const ar: Dictionary = {
   meta: {
@@ -456,6 +457,8 @@ export const ar: Dictionary = {
       notStarted: 'لم تبدأ',
       attemptsMade: 'محاولات',
     },
+    // Authored in ./lms.ts — the one home for the path-map strings.
+    map: lmsAr,
     programme: {
       title: 'إدارة البرنامج التدريبي',
       lede: 'المستويات والدورات. التعديل هنا يسبق أي إعادة زرع ولا يُدهس.',

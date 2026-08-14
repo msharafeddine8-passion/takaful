@@ -5,7 +5,7 @@ import { connection } from 'next/server';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { getDictionary, type Dictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
-import { Container, Section, Kicker } from '@/components/ui';
+import { Arrow, Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured, queryOne } from '@/lib/db';
 import { isStaff } from '@/lib/authz';
@@ -184,7 +184,11 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
                 new Date(summary.nextActivity.starts_at).toISOString().slice(0, 16).replace('T', ' ')}
               {summary.nextActivity.location ? ` · ${summary.nextActivity.location}` : ''}
             </p>
-            <Arrow href={`/${lang}/account/activities`} label={dict.account.activities.mineTitle} />
+            <ArrowLink
+              lang={lang}
+              href={`/${lang}/account/activities`}
+              label={dict.account.activities.mineTitle}
+            />
           </Panel>
         )}
 
@@ -194,7 +198,8 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
               {COURSES.find((c) => c.slug === summary.coursesInProgress!.slug)?.title[lang] ??
                 summary.coursesInProgress.slug}
             </p>
-            <Arrow
+            <ArrowLink
+              lang={lang}
               href={`/${lang}/academy/${summary.coursesInProgress.slug}`}
               label={p.continueCta}
             />
@@ -206,14 +211,35 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
             <p className="font-mono text-[1.05rem] font-bold tracking-wider" dir="ltr">
               {summary.latestCertificateCode}
             </p>
-            <Arrow
+            <ArrowLink
+              lang={lang}
               href={`/${lang}/verify/${summary.latestCertificateCode}`}
               label={dict.account.certificate.view}
             />
           </Panel>
         )}
 
-        <nav className="mt-8 flex flex-wrap gap-3">
+        {/*
+          The map, one tap from the landing page and carrying its own lede —
+          the pills below are labels only, and "Your path map" on its own does
+          not tell a volunteer what they would be opening.
+        */}
+        <Link
+          href={`/${lang}/account/map` as Parameters<typeof Link>[0]['href']}
+          className="mt-8 block rounded-2xl border border-line bg-surface p-6 transition-colors hover:border-brand-orange hover:bg-surface-2"
+        >
+          <span className="block text-[1.05rem] font-extrabold">
+            {dict.account.map.title}
+            {/* U+2192 does not mirror: the bidi algorithm leaves it pointing
+                right under dir="rtl", i.e. backwards. <Arrow> picks per locale. */}
+            <Arrow lang={lang} />
+          </span>
+          <span className="mt-1.5 block max-w-[58ch] text-[0.92rem] leading-relaxed text-ink-2">
+            {dict.account.map.lede}
+          </span>
+        </Link>
+
+        <nav className="mt-5 flex flex-wrap gap-3">
           {[
             // First: it is the page that answers what to do next, and every
             // other tile here answers a narrower question.
@@ -283,13 +309,21 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
-function Arrow({ href, label }: { href: string; label: string }) {
+/**
+ * A panel's "go here" link. Named for what it is — a link — so it no longer
+ * collides with the directional `<Arrow>` glyph imported from '@/components/ui',
+ * which is what actually draws the mark now: the literal U+2192 that used to be
+ * typed here does not mirror under dir="rtl", so it pointed away from the link
+ * target in Arabic on all three panels.
+ */
+function ArrowLink({ lang, href, label }: { lang: Locale; href: string; label: string }) {
   return (
     <Link
       href={href as Parameters<typeof Link>[0]['href']}
       className="mt-3 inline-block font-bold text-brand-blue hover:underline dark:text-brand-orange"
     >
-      {label} →
+      {label}
+      <Arrow lang={lang} />
     </Link>
   );
 }
