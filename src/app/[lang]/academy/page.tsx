@@ -6,16 +6,18 @@ import { isLocale } from '@/lib/i18n';
 import { getDictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section } from '@/components/ui';
-import { COURSES, CATEGORIES, usedCategories, type CategoryKey } from '@/lib/courses';
+import { COURSES, coursesInLevel, electiveCourses, type Course } from '@/lib/courses';
+import { LEVELS } from '@/lib/programme/definition';
 import { COURSE_CONTENT } from '@/lib/course-content';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
 import { learningStanding, passedCourseSlugs } from '@/lib/academy';
 import {
   CourseCard,
-  CategoryHeading,
+  LevelHeading,
   ProgressBar,
   PrimaryAction,
+  courseCountLabel,
   type Standing,
 } from '@/components/academy/parts';
 
@@ -140,28 +142,70 @@ export default async function AcademyPage(props: PageProps<'/[lang]/academy'>) {
 
           <h2 className="sr-only">{t.allCourses}</h2>
 
-          {usedCategories().map((key: CategoryKey) => {
-            const inCategory = COURSES.filter((c) => c.category === key);
-            if (inCategory.length === 0) return null;
-            return (
-              <section key={key} aria-label={CATEGORIES[key][lang]}>
-                <CategoryHeading lang={lang} category={key} count={inCategory.length} t={t} />
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {inCategory.map((course) => (
-                    <CourseCard
-                      key={course.slug}
-                      lang={lang}
-                      t={t}
-                      course={course}
-                      standing={standingOf(course.slug)}
-                      percent={percentOf(course.slug)}
-                      locked={course.requires.some((r) => !passed.has(r))}
-                    />
-                  ))}
-                </div>
-              </section>
+          {/* The catalogue in path order, not by subject: a volunteer takes a
+              level together, as one stage of training, so the page shows the
+              stages the way the path defines them — 0 to 6, then the elective
+              shelf that belongs to no level. */}
+          {(() => {
+            const grid = (courses: Course[]) => (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {courses.map((course) => (
+                  <CourseCard
+                    key={course.slug}
+                    lang={lang}
+                    t={t}
+                    course={course}
+                    standing={standingOf(course.slug)}
+                    percent={percentOf(course.slug)}
+                    locked={course.requires.some((r) => !passed.has(r))}
+                  />
+                ))}
+              </div>
             );
-          })}
+
+            const electives = electiveCourses();
+
+            return (
+              <>
+                {LEVELS.map((level) => {
+                  const inLevel = coursesInLevel(level.number);
+                  if (inLevel.length === 0) return null;
+                  const done = user
+                    ? inLevel.filter((c) => standingOf(c.slug) === 'completed').length
+                    : null;
+                  return (
+                    <section key={level.number} aria-label={level.title[lang]}>
+                      <LevelHeading
+                        lang={lang}
+                        level={level}
+                        count={inLevel.length}
+                        done={done}
+                        t={t}
+                      />
+                      {grid(inLevel)}
+                    </section>
+                  );
+                })}
+
+                {electives.length > 0 && (
+                  <section aria-label={t.electivesTitle}>
+                    <div className="mb-5 mt-12 border-b border-line pb-4">
+                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        <h2 className="text-[1.35rem] font-extrabold">{t.electivesTitle}</h2>
+                        <span className="text-[0.85rem] font-bold text-ink-3">
+                          {courseCountLabel(electives.length, t)}
+                        </span>
+                      </div>
+                      <p className="mt-2 max-w-[70ch] text-[0.95rem] leading-relaxed text-ink-2">
+                        {t.electivesLede}
+                      </p>
+                    </div>
+                    {grid(electives)}
+                  </section>
+                )}
+              </>
+            );
+          })()}
 
           {!user && (
             <div className="mt-10 rounded-2xl border border-line bg-surface p-6">

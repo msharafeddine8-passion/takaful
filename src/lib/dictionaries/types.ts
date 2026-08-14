@@ -464,7 +464,21 @@ export type Account = {
     filterAll: string;
     filterLevel: string;
     noneInFilter: string;
+    /**
+     * Four forms because Arabic counts that way: one, two, three-to-ten, and
+     * eleven-plus each take a different noun form. English fills all four.
+     */
     coursesCount: string;
+    coursesCountOne: string;
+    coursesCountTwo: string;
+    coursesCountFew: string;
+    /** Per-level progress on the index, e.g. «أنجزت 3 من 6 دورات». */
+    levelDoneOf: string;
+    /** The shelf after the path for courses that sit in no level. */
+    electivesTitle: string;
+    electivesLede: string;
+    /** Replaces the level number on an elective's card. */
+    electiveWord: string;
     /** Course card + hero */
     statusAvailable: string;
     statusSoon: string;

@@ -1,5 +1,5 @@
 import type { Locale } from './i18n';
-import { COURSES as DEFINED, type CourseDef } from './programme/definition';
+import { COURSES as DEFINED, type CourseDef, type CourseKind } from './programme/definition';
 import { COURSE_CONTENT } from './course-content';
 import { AUDIENCE_OF } from './course-audience';
 
@@ -22,7 +22,10 @@ export type CategoryKey =
 
 export type Course = {
   slug: string;
-  level: number;
+  /** Orientation, core, elective or challenge — the course's role in the path. */
+  kind: CourseKind;
+  /** 0 is the orientation; 1-6 are the path levels. Electives carry null. */
+  level: number | null;
   category: CategoryKey;
   status: CourseStatus;
   difficulty: Difficulty;
@@ -148,10 +151,10 @@ function statusOf(slug: string): CourseStatus {
 function present(def: CourseDef): Course {
   return {
     slug: def.slug,
-    // Electives carry no level. The public catalogue groups by category rather
-    // than by level, so 1 here is a display fallback, not a claim about where
-    // an elective sits in the path.
-    level: def.level ?? 1,
+    kind: def.kind,
+    // null for electives, honestly: the catalogue groups by path level, and an
+    // elective does not sit in one. It sits on its own shelf at the end.
+    level: def.level,
     category: CATEGORY_OF[def.slug] ?? DEFAULT_CATEGORY,
     status: statusOf(def.slug),
     difficulty: def.difficulty,
@@ -172,20 +175,19 @@ export function courseBySlug(slug: string): Course | undefined {
   return COURSES.find((c) => c.slug === slug);
 }
 
-export function levels(): number[] {
-  return [...new Set(COURSES.map((c) => c.level))].sort((a, b) => a - b);
+/**
+ * The catalogue in path order: the courses of one level belong together,
+ * because a volunteer is meant to take a level as one stage of training —
+ * not to browse subjects. Order within a level is the authored order, with
+ * the challenge always last. Electives are not in any level; they are the
+ * separate shelf after the path.
+ */
+export function coursesInLevel(level: number): Course[] {
+  // Filter alone suffices: the programme definition is authored in path
+  // order, and present() preserves it.
+  return COURSES.filter((c) => c.level === level);
 }
 
-export function usedCategories(): CategoryKey[] {
-  const order: CategoryKey[] = [
-    'foundations',
-    'people',
-    'leadership',
-    'community',
-    'digital',
-    'projects',
-    'media',
-  ];
-  const used = new Set(COURSES.map((c) => c.category));
-  return order.filter((k) => used.has(k));
+export function electiveCourses(): Course[] {
+  return COURSES.filter((c) => c.kind === 'elective');
 }

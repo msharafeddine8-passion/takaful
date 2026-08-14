@@ -332,7 +332,7 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
 
           <div className="mt-4 flex flex-wrap items-center gap-2.5">
             <span className="rounded-full bg-white/10 px-3.5 py-1 text-[0.82rem] font-extrabold">
-              {a.level} {meta.level}
+              {meta.level === null ? a.electiveWord : `${a.level} ${meta.level}`}
             </span>
             <span className="rounded-full bg-white/10 px-3.5 py-1 text-[0.82rem] font-extrabold">
               {DIFFICULTY_LABEL[meta.difficulty][lang]}
@@ -454,7 +454,10 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
             <section className="rounded-2xl border border-line bg-surface p-6">
               <h2 className="mb-4 text-[1.1rem] font-extrabold">{a.aboutTitle}</h2>
               <dl className="grid grid-cols-2 gap-x-5 gap-y-4">
-                <Fact label={a.level} value={String(meta.level)} />
+                <Fact
+                  label={a.level}
+                  value={meta.level === null ? a.electiveWord : String(meta.level)}
+                />
                 <Fact label={a.difficulty} value={DIFFICULTY_LABEL[meta.difficulty][lang]} />
                 <Fact label={a.duration} value={`${course.minutes} ${t.minutes}`} />
                 <Fact label={a.modulesWord} value={String(course.modules.length)} />
@@ -661,7 +664,7 @@ function PlannedCourse({
 
           <div className="mt-4 flex flex-wrap items-center gap-2.5">
             <span className="rounded-full bg-white/10 px-3.5 py-1 text-[0.82rem] font-extrabold">
-              {a.level} {meta.level}
+              {meta.level === null ? a.electiveWord : `${a.level} ${meta.level}`}
             </span>
             <span className="rounded-full bg-white/10 px-3.5 py-1 text-[0.82rem] font-extrabold">
               {DIFFICULTY_LABEL[meta.difficulty][lang]}

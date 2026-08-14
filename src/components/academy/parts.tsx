@@ -1,12 +1,8 @@
 import Link from 'next/link';
 import type { Locale } from '@/lib/i18n';
 import type { Dictionary } from '@/lib/dictionaries';
-import {
-  CATEGORIES,
-  DIFFICULTY_LABEL,
-  type Course,
-  type CourseStatus,
-} from '@/lib/courses';
+import { DIFFICULTY_LABEL, type Course, type CourseStatus } from '@/lib/courses';
+import type { LevelDef } from '@/lib/programme/definition';
 
 /**
  * The academy's shared pieces.
@@ -21,6 +17,18 @@ import {
  */
 
 export type Standing = 'not-started' | 'in-progress' | 'completed';
+
+/**
+ * «دورة واحدة», «دورتان», «6 دورات», «11 دورة»: Arabic gives a counted noun a
+ * different form at one, two, three-to-ten and eleven-plus, so a single
+ * template cannot say this correctly. English fills the same four slots.
+ */
+export function courseCountLabel(n: number, t: Dictionary['account']['academy']): string {
+  if (n === 1) return t.coursesCountOne;
+  if (n === 2) return t.coursesCountTwo;
+  if (n >= 3 && n <= 10) return t.coursesCountFew.replace('{n}', String(n));
+  return t.coursesCount.replace('{n}', String(n));
+}
 
 export function standingLabel(s: Standing, t: Dictionary['account']['academy']): string {
   return s === 'completed' ? t.completed : s === 'in-progress' ? t.inProgress : t.notStarted;
@@ -199,9 +207,7 @@ export function CourseCard({
       </p>
 
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.82rem] font-bold text-ink-3">
-        <span>
-          {t.level} {course.level}
-        </span>
+        <span>{course.level === null ? t.electiveWord : `${t.level} ${course.level}`}</span>
         <span aria-hidden>·</span>
         <span>{DIFFICULTY_LABEL[course.difficulty][lang]}</span>
         <span aria-hidden>·</span>
@@ -241,23 +247,54 @@ export function CourseCard({
   );
 }
 
-export function CategoryHeading({
+/**
+ * A stage of the path, as a heading. The catalogue is organised the way the
+ * training is organised — a volunteer takes a level together, as one stage —
+ * so the heading carries what a stage needs: which level, what it is for,
+ * and how far through it the signed-in volunteer is.
+ */
+export function LevelHeading({
   lang,
-  category,
+  level,
   count,
+  done,
   t,
 }: {
   lang: Locale;
-  category: keyof typeof CATEGORIES;
+  level: LevelDef;
   count: number;
+  /** Passed courses in this level, or null when nobody is signed in. */
+  done: number | null;
   t: Dictionary['account']['academy'];
 }) {
+  const complete = done !== null && count > 0 && done === count;
   return (
-    <div className="mb-4 mt-10 flex flex-wrap items-baseline gap-x-3 gap-y-1 first:mt-0">
-      <h2 className="text-[1.2rem] font-extrabold">{CATEGORIES[category][lang]}</h2>
-      <span className="text-[0.85rem] font-bold text-ink-3">
-        {t.coursesCount.replace('{n}', String(count))}
-      </span>
+    <div className="mb-5 mt-12 border-b border-line pb-4 first:mt-0">
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        {/* Level 0 is the orientation, not a numbered stage; its title says
+            what it is and a «Level 0» chip would only puzzle. */}
+        <h2 className="text-[1.35rem] font-extrabold">
+          {level.number === 0
+            ? level.title[lang]
+            : `${t.level} ${level.number}: ${level.title[lang]}`}
+        </h2>
+        <span className="text-[0.85rem] font-bold text-ink-3">
+          {courseCountLabel(count, t)}
+        </span>
+        {done !== null && done > 0 && (
+          <span
+            className={`rounded-full px-3 py-0.5 text-[0.8rem] font-extrabold ${
+              complete ? 'bg-ok/15 text-ok-text' : 'bg-brand-orange/15 text-brand-orange-text dark:text-brand-orange'
+            }`}
+          >
+            {complete ? '✓ ' : ''}
+            {t.levelDoneOf.replace('{done}', String(done)).replace('{total}', String(count))}
+          </span>
+        )}
+      </div>
+      <p className="mt-2 max-w-[70ch] text-[0.95rem] leading-relaxed text-ink-2">
+        {level.description[lang]}
+      </p>
     </div>
   );
 }

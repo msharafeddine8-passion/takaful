@@ -170,8 +170,13 @@ for (const course of COURSES) {
   );
   // level 0 is the orientation, and it is a real level rather than a special
   // case — which is what lets "you cannot start level N until N-1 is done" be
-  // one rule instead of two.
-  check(`${course.slug} has an icon and a level`, Boolean(course.icon) && course.level >= 0);
+  // one rule instead of two. Electives are the one honest exception: they sit
+  // in no level at all, and the catalogue shows them on their own shelf.
+  check(
+    `${course.slug} has an icon and either a level or an honest elective null`,
+    Boolean(course.icon) &&
+      (course.kind === 'elective' ? course.level === null : course.level !== null && course.level >= 0),
+  );
 }
 
 for (const course of COURSES) {
