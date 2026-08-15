@@ -20,7 +20,9 @@ export default async function HomePage(props: PageProps<'/[lang]'>) {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[center_32%]"
+          /* 65%, not center: the crowd in this photo sits in the lower half,
+             and on wide screens the visible band must keep the front rows. */
+          className="object-cover object-[center_65%]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091a28]/95 via-[#091a28]/75 to-[#091a28]/40" />
         <Container className="relative pb-12 pt-24 sm:pb-20">
