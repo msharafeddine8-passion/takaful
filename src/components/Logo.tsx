@@ -27,22 +27,18 @@ export function LogoFull({
   className?: string;
 }) {
   return (
-    <Image src="/logo-full.svg" alt={siteName} width={575} height={566} className={className} />
+    <Image
+      src="/logo-full.svg"
+      alt={siteName}
+      width={575}
+      height={566}
+      className={className}
+      priority
+    />
   );
 }
 
-/** Header lockup: official symbol + live text, so the name stays crisp at small sizes. */
+/** Header and footer lockup: the official logo as-is — symbol with the wordmark beneath it. */
 export function Logo({ siteName }: { siteName: string }) {
-  return (
-    <span className="flex items-center gap-2.5">
-      <LogoMark className="h-9 w-auto shrink-0" />
-      <span className="flex flex-col leading-none">
-        <span className="text-[1.22rem] font-black tracking-tight text-brand-orange">تكافل</span>
-        <span className="text-[0.58rem] font-bold tracking-[0.2em] text-brand-blue dark:text-sky-300">
-          TAKAFUL
-        </span>
-      </span>
-      <span className="sr-only">{siteName}</span>
-    </span>
-  );
+  return <LogoFull siteName={siteName} className="h-[62px] w-auto shrink-0" />;
 }
