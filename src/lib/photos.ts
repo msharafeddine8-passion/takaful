@@ -2,8 +2,8 @@
  * Photographs extracted from the association's own portfolio.
  * Mapped to the section each one actually depicts — not decoratively.
  */
-export const HERO_PHOTO = '/photos/img-007.webp'; // large volunteer group, activity hall
-export const JOIN_PHOTO = '/photos/img-038.webp'; // outdoor group gathering
+export const HERO_PHOTO = '/photos/img-038.webp'; // volunteers on a distribution round
+export const JOIN_PHOTO = '/photos/img-020.webp'; // community kitchen team
 export const ABOUT_PHOTO = '/photos/img-026.webp'; // large group, heritage site
 
 export const AREA_PHOTOS: Record<string, string> = {
