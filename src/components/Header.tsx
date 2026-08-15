@@ -36,22 +36,25 @@ export function Header({ lang, strings }: Props) {
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-ground/90 backdrop-blur-md">
-      <div className="mx-auto flex h-[72px] max-w-6xl items-center gap-6 px-5">
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center gap-4 px-5">
         <Link
           href={`/${lang}`}
           aria-label={strings.siteName}
-          className="inline-flex min-h-11 items-center"
+          className="inline-flex min-h-11 shrink-0 items-center"
         >
           <Logo siteName={strings.siteName} />
         </Link>
 
-        <nav className="ms-auto hidden items-center gap-1 lg:flex">
+        {/* The full nav only fits from xl up — nine links plus the actions are
+            wider than a lg viewport, and squeezed flex items wrap into
+            multi-line pills that collide with the logo. Below xl, the burger. */}
+        <nav className="ms-auto hidden items-center xl:flex">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               aria-current={isActive(l.href) ? 'page' : undefined}
-              className={`rounded-lg px-3 py-2 text-[0.92rem] font-bold transition-colors ${
+              className={`whitespace-nowrap rounded-lg px-2 py-2 text-[0.9rem] font-bold transition-colors ${
                 isActive(l.href)
                   ? 'bg-brand-blue/10 text-brand-blue dark:text-sky-300'
                   : 'text-ink-2 hover:bg-surface-2 hover:text-ink'
@@ -62,11 +65,11 @@ export function Header({ lang, strings }: Props) {
           ))}
         </nav>
 
-        <div className="ms-auto flex items-center gap-2 lg:ms-0">
+        <div className="ms-auto flex shrink-0 items-center gap-2 xl:ms-0">
           <Link
             href={switchLocalePath(pathname, other)}
             hrefLang={other}
-            className="inline-flex min-h-11 items-center rounded-full border border-line px-3.5 text-[0.85rem] font-bold text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
+            className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full border border-line px-3.5 text-[0.85rem] font-bold text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
           >
             {strings.switchTo}
           </Link>
@@ -74,13 +77,13 @@ export function Header({ lang, strings }: Props) {
               /join redirects an already-signed-in visitor to their dashboard. */}
           <Link
             href={`/${lang}/account`}
-            className="hidden rounded-lg px-3 py-2 text-[0.9rem] font-bold text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink sm:inline-flex"
+            className="hidden whitespace-nowrap rounded-lg px-3 py-2 text-[0.9rem] font-bold text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink sm:inline-flex"
           >
             {strings.account}
           </Link>
           <Link
             href={`/${lang}/join`}
-            className="hidden rounded-full bg-brand-orange px-5 py-2.5 text-[0.92rem] font-extrabold text-[#241503] transition-colors hover:bg-brand-orange-dark sm:inline-flex"
+            className="hidden whitespace-nowrap rounded-full bg-brand-orange px-5 py-2.5 text-[0.92rem] font-extrabold text-[#241503] transition-colors hover:bg-brand-orange-dark sm:inline-flex"
           >
             {strings.volunteer}
           </Link>
@@ -89,7 +92,7 @@ export function Header({ lang, strings }: Props) {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label={strings.menu}
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-line text-[1.05rem] text-ink lg:hidden"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-line text-[1.05rem] text-ink xl:hidden"
           >
             {open ? '✕' : '☰'}
           </button>
@@ -97,7 +100,7 @@ export function Header({ lang, strings }: Props) {
       </div>
 
       {open && (
-        <nav className="border-t border-line bg-ground lg:hidden">
+        <nav className="border-t border-line bg-ground xl:hidden">
           {links.map((l) => (
             <Link
               key={l.href}
