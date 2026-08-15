@@ -34,10 +34,21 @@ const files = [];
   }
 })('.');
 
+/*
+ * Only real import statements. A bare /from\s+'...'/ also matches English
+ * prose inside course content — a quiz scenario saying somebody is «from
+ * 'Al-Amal'» is not an import — and that broke CI on every push. So the
+ * specifier must sit in an import/export statement (whatever comes between
+ * the keyword and `from` is identifiers, braces and commas, never a quote)
+ * or in an actual require() call.
+ */
+const IMPORT_RE = /(?:^|[\n;])\s*(?:import|export)\s[\w*{},$\s]*from\s*['"]([^'".][^'"]*)['"]/g;
+const REQUIRE_RE = /\brequire\(\s*['"]([^'".][^'"]*)['"]\s*\)/g;
+
 const missing = new Map();
 for (const file of files) {
   const src = readFileSync(file, 'utf8');
-  for (const match of src.matchAll(/(?:from\s+|require\()\s*['"]([^'".][^'"]*)['"]/g)) {
+  for (const match of [...src.matchAll(IMPORT_RE), ...src.matchAll(REQUIRE_RE)]) {
     const spec = match[1];
     if (spec.startsWith('@/') || spec.startsWith('.')) continue;
     // A scoped package is two segments; everything else is one.
