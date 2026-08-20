@@ -623,6 +623,46 @@ export type Account = {
     daysAgo: string;
   };
   activities: {
+    /*
+     * Seats and states. `full` below is the old label on the button that
+     * closes registration, which is why it read as a status on the staff
+     * listing beside "1 / 20". Statuses now live in `state` and `regState`,
+     * and the button says what it does.
+     */
+    seatsTaken: string;
+    seatsLeftLabel: string;
+    noCapacity: string;
+    seatsHeading: string;
+    seatsLeftHeading: string;
+    location: string;
+    date: string;
+    time: string;
+    durationLabel: string;
+    attendedCount: string;
+    cancelReasonLabel: string;
+    state: {
+      upcoming: string;
+      running: string;
+      ended: string;
+      cancelled: string;
+    };
+    regState: {
+      open: string;
+      almostFull: string;
+      full: string;
+      deadlinePassed: string;
+      closed: string;
+      ended: string;
+      cancelled: string;
+    };
+    actions: {
+      manageAttendance: string;
+      edit: string;
+      details: string;
+      cancel: string;
+      closeRegistration: string;
+      reopenRegistration: string;
+    };
     kicker: string;
     title: string;
     lede: string;

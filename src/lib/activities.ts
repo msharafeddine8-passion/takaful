@@ -94,13 +94,30 @@ export async function roster(activityId: string): Promise<RosterRow[]> {
   );
 }
 
-export type ManagedActivity = OpportunityRow & { is_archived: boolean };
+export type ManagedActivity = OpportunityRow & {
+  is_archived: boolean;
+  is_open: boolean;
+  cancelled_at: Date | null;
+  cancel_reason: string | null;
+  registration_closes_at: Date | null;
+  attended_count: number;
+};
 
 export async function allActivities(): Promise<ManagedActivity[]> {
   return query<ManagedActivity>(
+    /*
+     * Everything the card states, fetched once. The attendance count is a
+     * sub-select rather than another JOIN so that an activity nobody attended
+     * still comes back with 0 instead of vanishing, and so the registration
+     * count from activity_places is not multiplied by the attendance rows.
+     */
     `SELECT a.id, a.title_ar, a.title_en, a.description_ar, a.description_en,
             a.location, a.starts_at, a.ends_at, a.capacity, a.min_stage,
-            a.is_archived, p.taken, p.waiting, NULL::TEXT AS my_status
+            a.is_archived, a.is_open,
+            a.cancelled_at, a.cancel_reason, a.registration_closes_at,
+            p.taken, p.waiting, NULL::TEXT AS my_status,
+            (SELECT count(*)::INT FROM activity_attendance att
+              WHERE att.activity_id = a.id AND att.attended) AS attended_count
        FROM activities a
        JOIN activity_places p ON p.activity_id = a.id
       ORDER BY a.starts_at DESC NULLS LAST`,

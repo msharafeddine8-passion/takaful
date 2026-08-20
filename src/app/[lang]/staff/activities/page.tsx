@@ -11,6 +11,8 @@ import { can } from '@/lib/authz';
 import { isDbConfigured } from '@/lib/db';
 import { allActivities } from '@/lib/activities';
 import { createActivityAction, closeActivityAction } from '@/lib/actions/activity-admin';
+import { ActivityCard, CardLink } from '@/components/activities/ActivityCard';
+import { activityState } from '@/lib/activity-state';
 
 export async function generateMetadata(props: PageProps<'/[lang]/staff/activities'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -113,35 +115,29 @@ export default async function StaffActivitiesPage(props: PageProps<'/[lang]/staf
           </form>
         </details>
 
-        <ul className="mt-8 space-y-3">
+        <ul className="mt-8 space-y-4">
           {rows.map((row) => (
-            <li key={row.id} className="rounded-2xl border border-line bg-surface p-5">
-              <div className="flex flex-wrap items-baseline justify-between gap-3">
-                <Link
-                  href={`/${lang}/staff/activities/${row.id}`}
-                  className="text-[1.05rem] font-extrabold text-brand-blue hover:underline dark:text-brand-orange"
-                >
-                  {lang === 'ar' ? row.title_ar : row.title_en}
-                </Link>
-                {row.starts_at && (
-                  <span className="text-[0.85rem] text-ink-3" dir="ltr">
-                    {new Date(row.starts_at).toISOString().slice(0, 16).replace('T', ' ')}
-                  </span>
-                )}
-              </div>
-              <p className="mt-1.5 text-[0.9rem] text-ink-2">
-                {row.capacity === null ? row.taken : `${row.taken} / ${row.capacity}`} {a.spots}
-                {row.waiting > 0 && ` · ${a.waitlist}: ${row.waiting}`}
-                {row.min_stage !== null && ` · ${a.requiresStage} ${row.min_stage}`}
-              </p>
-              <form action={closeActivityAction} className="mt-3">
-                <input type="hidden" name="lang" value={lang} />
-                <input type="hidden" name="activityId" value={row.id} />
-                <button type="submit" className="text-[0.86rem] font-bold text-ink-3 hover:underline">
-                  {a.full}
-                </button>
-              </form>
-            </li>
+            <ActivityCard key={row.id} row={row} lang={lang} t={a}>
+              <CardLink href={`/${lang}/staff/activities/${row.id}`}>
+                {a.actions.manageAttendance}
+              </CardLink>
+              <CardLink href={`/${lang}/staff/activities/${row.id}`}>{a.actions.details}</CardLink>
+              {/* Closing registration is an action, so it is a button with a
+                  verb on it. It used to be labelled "اكتمل العدد", which read
+                  as a status and contradicted the seat count beside it. */}
+              {row.is_open && !row.cancelled_at && activityState(row) === 'upcoming' && (
+                <form action={closeActivityAction}>
+                  <input type="hidden" name="lang" value={lang} />
+                  <input type="hidden" name="activityId" value={row.id} />
+                  <button
+                    type="submit"
+                    className="min-h-11 rounded-full border border-line px-5 py-2.5 text-[0.9rem] font-bold transition-colors hover:bg-surface-2"
+                  >
+                    {a.actions.closeRegistration}
+                  </button>
+                </form>
+              )}
+            </ActivityCard>
           ))}
         </ul>
 
