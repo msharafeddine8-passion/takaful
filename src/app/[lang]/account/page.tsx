@@ -14,6 +14,7 @@ import { formatDuration } from '@/lib/hours';
 import { COURSES } from '@/lib/courses';
 import { logoutAction } from '@/lib/actions/account';
 import { VerifyBanner } from '@/components/account/VerifyBanner';
+import { claimForUser, formatMemberNumber } from '@/lib/roster';
 import { isEmailConfigured } from '@/lib/email';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account'>): Promise<Metadata> {
@@ -28,6 +29,14 @@ export async function generateMetadata(props: PageProps<'/[lang]/account'>): Pro
 }
 
 const APPLICATION_OPEN = ['submitted', 'under_review', 'interview_required', 'interview_scheduled'];
+
+/** Standings that already mean "this person volunteers here". */
+const VOLUNTEER_STANDING: readonly string[] = [
+  'accepted_volunteer',
+  'active_volunteer',
+  'inactive_volunteer',
+  'volunteer_alumni',
+];
 
 export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
   // Never prerender an account page: what it shows depends on who is asking.
@@ -53,7 +62,7 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
 
-  const [summary, application, account] = await Promise.all([
+  const [summary, application, account, rosterClaim] = await Promise.all([
     portalSummary(user.id),
     queryOne<{ id: string; status: string; submitted_at: Date | null }>(
       `SELECT id, status, submitted_at FROM volunteer_applications
@@ -64,9 +73,18 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
       'SELECT email_verified_at AS verified FROM users WHERE id = $1',
       [user.id],
     ),
+    claimForUser(user.id),
   ]);
 
   const hasOpenApplication = application ? APPLICATION_OPEN.includes(application.status) : false;
+
+  /*
+   * The prompt only makes sense for someone who is not a volunteer yet and has
+   * not already claimed a roster line. Showing it to an accepted volunteer
+   * would be inviting them to apply for what they already have.
+   */
+  const offerRosterClaim =
+    !rosterClaim && !hasOpenApplication && !VOLUNTEER_STANDING.includes(user.membershipStatus);
   const journey = summary.journey;
   const stage = journey?.currentStage ?? null;
   const next = journey?.nextAction ?? null;
@@ -81,6 +99,36 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
 
         {account && !account.verified && (
           <VerifyBanner lang={lang} dict={dict} emailConfigured={isEmailConfigured()} />
+        )}
+
+        {/* An existing volunteer should never be told to apply, so this is
+            offered before the next-step card that would say exactly that. */}
+        {offerRosterClaim && (
+          <div className="mt-6 rounded-2xl border border-brand-blue/30 bg-brand-blue/5 p-6">
+            <p className="text-[1.08rem] font-extrabold">{dict.account.claim.bannerTitle}</p>
+            <p className="mt-2 text-[1rem] leading-relaxed text-ink-2">
+              {dict.account.claim.bannerBody}
+            </p>
+            <Link
+              href={`/${lang}/account/claim`}
+              className="mt-4 inline-flex rounded-full border-2 border-brand-blue px-5 py-2.5 text-[0.95rem] font-extrabold text-brand-blue hover:bg-brand-blue/10 dark:border-sky-300 dark:text-sky-300"
+            >
+              {dict.account.claim.bannerCta} <Arrow lang={lang} />
+            </Link>
+          </div>
+        )}
+
+        {/* Claimed but not yet confirmed: say so, so the wait is not silence. */}
+        {rosterClaim && !rosterClaim.approved_at && (
+          <div className="mt-6 rounded-2xl border border-line bg-surface-2 p-6">
+            <p className="text-[1.08rem] font-extrabold">{dict.account.claim.pendingTitle}</p>
+            <p className="mt-2 text-[1rem] leading-relaxed text-ink-2">
+              {dict.account.claim.pendingBody.replace(
+                '{number}',
+                formatMemberNumber(rosterClaim.member_number),
+              )}
+            </p>
+          </div>
         )}
 
         {/* Where they stand, in one line, before anything else. */}

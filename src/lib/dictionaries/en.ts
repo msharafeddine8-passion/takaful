@@ -259,6 +259,43 @@ export const en: Dictionary = {
       applicationTitle: 'Volunteer application',
       logout: 'Sign out',
     },
+    claim: {
+      kicker: 'Already a volunteer',
+      title: 'Have you volunteered with us before?',
+      lede:
+        'If you already volunteer with Takaful, we have your name — there is no application ' +
+        'to make. Enter your phone number and we will find your record, keeping your ' +
+        'membership number and your start date exactly as they are.',
+      phoneLabel: 'Phone number',
+      phoneHint: 'The number the association has on file for you',
+      numberLabel: 'Membership number (optional)',
+      numberHint: 'If you know it — for example 47',
+      submit: 'Find my record',
+      notFoundTitle: 'No matching record',
+      notFoundBody:
+        'We may have you under a different number. Try another one you use, or make an ' +
+        'ordinary volunteering application — nothing is lost by doing so.',
+      notListed: 'Not a volunteer with us yet?',
+      applyInstead: 'Apply to volunteer',
+      pendingTitle: 'We found your record — awaiting confirmation',
+      pendingBody:
+        'Your record is number {number}. A member of staff will confirm it is you, and your ' +
+        'account becomes a volunteer account.',
+      approvedTitle: 'You have been recognised',
+      approvedBody:
+        'Your account is linked to your record, and your membership number is {number}.',
+      backToAccount: 'Back to my account',
+      errNeedIdentifier: 'Enter your phone number or your membership number.',
+      errAlreadyClaimed:
+        'That record is already linked to another account. If it is yours, contact us and we ' +
+        'will put it right.',
+      errUnavailable: 'The service is unavailable right now. Please try again shortly.',
+      bannerTitle: 'Volunteered with us before?',
+      bannerBody:
+        'No need to apply again — link your account to your record and keep your membership ' +
+        'number and seniority.',
+      bannerCta: 'Link my account',
+    },
     apply: {
       kicker: 'Volunteer application',
       title: 'Submit your application',
@@ -788,6 +825,25 @@ export const en: Dictionary = {
       logHours: 'Log your hours',
     },
     staff: {
+      roster: {
+        title: 'Roster link requests',
+        lede:
+          'These are people who created an account and said they already volunteer with us, ' +
+          'and whose details matched a record on the roster. You are the one who knows them — ' +
+          'your confirmation is what proves the account holder is the person on the record.',
+        empty: 'Nothing waiting to be confirmed.',
+        volunteerSince: 'Volunteering since {date}',
+        accountName: 'Name on the account',
+        accountEmail: 'Email address',
+        committee: 'Committee',
+        claimedAt: 'Requested',
+        nameMismatch:
+          'Careful: the name on the account does not look like the name on the record. Check ' +
+          'before confirming.',
+        approve: 'Confirm — this is them',
+        reject: 'Reject',
+        rejectReason: 'Reason (shown to the person)',
+      },
       kicker: 'Staff',
       title: 'Work queue',
       lede: 'Applications and hours waiting on a decision.',

@@ -106,6 +106,14 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
         </div>
 
         <div className="mt-10 flex flex-wrap gap-3">
+          {can(user, 'applications.review') && (
+            <Link
+              href={`/${lang}/staff/roster`}
+              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {dict.account.staff.roster.title}
+            </Link>
+          )}
           {can(user, 'members.manage') && (
             <Link
               href={`/${lang}/staff/members`}

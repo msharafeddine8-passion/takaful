@@ -137,6 +137,33 @@ export type Account = {
     applicationTitle: string;
     logout: string;
   };
+  /** Recognising someone the association already has on its roster. */
+  claim: {
+    kicker: string;
+    title: string;
+    lede: string;
+    phoneLabel: string;
+    phoneHint: string;
+    numberLabel: string;
+    numberHint: string;
+    submit: string;
+    notFoundTitle: string;
+    notFoundBody: string;
+    notListed: string;
+    applyInstead: string;
+    pendingTitle: string;
+    pendingBody: string;
+    approvedTitle: string;
+    approvedBody: string;
+    backToAccount: string;
+    errNeedIdentifier: string;
+    errAlreadyClaimed: string;
+    errUnavailable: string;
+    /** The prompt on the account page that sends people here. */
+    bannerTitle: string;
+    bannerBody: string;
+    bannerCta: string;
+  };
   apply: {
     kicker: string;
     title: string;
@@ -665,6 +692,21 @@ export type Account = {
     logHours: string;
   };
   staff: {
+    /** The queue of people claiming a place on the association's roster. */
+    roster: {
+      title: string;
+      lede: string;
+      empty: string;
+      volunteerSince: string;
+      accountName: string;
+      accountEmail: string;
+      committee: string;
+      claimedAt: string;
+      nameMismatch: string;
+      approve: string;
+      reject: string;
+      rejectReason: string;
+    };
     kicker: string;
     title: string;
     lede: string;
