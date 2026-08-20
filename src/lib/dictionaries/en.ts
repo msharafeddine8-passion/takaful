@@ -767,6 +767,7 @@ export const en: Dictionary = {
       durationLabel: 'Duration',
       attendedCount: 'Attended',
       cancelReasonLabel: 'Reason for cancellation',
+      cancelReasonPlaceholder: 'Reason (shown to everyone registered)',
       state: {
         upcoming: 'Upcoming',
         running: 'Happening now',
@@ -789,6 +790,7 @@ export const en: Dictionary = {
         cancel: 'Cancel activity',
         closeRegistration: 'Close registration',
         reopenRegistration: 'Reopen registration',
+        deleteEmpty: 'Delete permanently',
       },
       kicker: 'Opportunities',
       title: 'Volunteering opportunities',

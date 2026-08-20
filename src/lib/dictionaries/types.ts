@@ -640,6 +640,7 @@ export type Account = {
     durationLabel: string;
     attendedCount: string;
     cancelReasonLabel: string;
+    cancelReasonPlaceholder: string;
     state: {
       upcoming: string;
       running: string;
@@ -662,6 +663,7 @@ export type Account = {
       cancel: string;
       closeRegistration: string;
       reopenRegistration: string;
+      deleteEmpty: string;
     };
     kicker: string;
     title: string;

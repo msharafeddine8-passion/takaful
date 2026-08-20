@@ -6,11 +6,11 @@ import {
   registrationState,
   seatsLeft,
   activityMinutes,
-  splitMinutes,
   ACTIVITY_TONE,
   REGISTRATION_TONE,
   type Tone,
 } from '@/lib/activity-state';
+import { formatDate, formatTimeRange, formatDuration } from '@/lib/when';
 
 /**
  * One activity, told in full.
@@ -59,39 +59,8 @@ function Badge({ tone, children }: { tone: Tone; children: React.ReactNode }) {
   );
 }
 
-/** Dates are shown in the Gregorian calendar with Latin digits, which is what
- *  the association's own paperwork uses; LTR so a date never reverses. */
-function when(value: Date | string | null, lang: Locale, withTime = false): string {
-  if (!value) return '—';
-  const d = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(d.getTime())) return '—';
-  return new Intl.DateTimeFormat(lang === 'ar' ? 'ar-LB' : 'en-GB', {
-    dateStyle: 'medium',
-    ...(withTime ? { timeStyle: 'short' as const } : {}),
-    numberingSystem: 'latn',
-  }).format(d);
-}
-
-function timeOnly(value: Date | string | null, lang: Locale): string {
-  if (!value) return '—';
-  const d = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(d.getTime())) return '—';
-  return new Intl.DateTimeFormat(lang === 'ar' ? 'ar-LB' : 'en-GB', {
-    timeStyle: 'short',
-    numberingSystem: 'latn',
-  }).format(d);
-}
-
-function duration(mins: number | null, t: T, lang: Locale): string {
-  if (mins === null) return '—';
-  const { hours, minutes } = splitMinutes(mins);
-  if (lang === 'ar') {
-    const h = hours === 0 ? '' : hours === 1 ? 'ساعة' : hours === 2 ? 'ساعتان' : `${hours} ساعات`;
-    const m = minutes === 0 ? '' : minutes === 1 ? 'دقيقة' : minutes === 2 ? 'دقيقتان' : `${minutes} دقيقة`;
-    return [h, m].filter(Boolean).join(' و') || '—';
-  }
-  return [hours ? `${hours}h` : '', minutes ? `${minutes}m` : ''].filter(Boolean).join(' ') || '—';
-}
+/* Wording lives in lib/when.ts so the card, the detail page and the volunteer's
+ * own list all say a date the same way. */
 
 export function ActivityCard({
   row,
@@ -142,17 +111,15 @@ export function ActivityCard({
         </div>
         <div>
           <dt className="font-bold text-ink-2">{t.date}</dt>
-          <dd dir="ltr" className="text-start">{when(row.starts_at, lang)}</dd>
+          <dd>{formatDate(row.starts_at, lang)}</dd>
         </div>
         <div>
           <dt className="font-bold text-ink-2">{t.time}</dt>
-          <dd dir="ltr" className="text-start">
-            {timeOnly(row.starts_at, lang)} – {timeOnly(row.ends_at, lang)}
-          </dd>
+          <dd>{formatTimeRange(row.starts_at, row.ends_at, lang)}</dd>
         </div>
         <div>
           <dt className="font-bold text-ink-2">{t.durationLabel}</dt>
-          <dd>{duration(mins, t, lang)}</dd>
+          <dd>{formatDuration(mins, lang)}</dd>
         </div>
         <div>
           <dt className="font-bold text-ink-2">{t.seatsHeading}</dt>

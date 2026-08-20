@@ -762,6 +762,7 @@ export const ar: Dictionary = {
       durationLabel: 'مدة النشاط',
       attendedCount: 'عدد الحاضرين',
       cancelReasonLabel: 'سبب الإلغاء',
+      cancelReasonPlaceholder: 'سبب الإلغاء (يُعرض للمسجّلين)',
       state: {
         upcoming: 'قادم',
         running: 'جارٍ الآن',
@@ -784,6 +785,7 @@ export const ar: Dictionary = {
         cancel: 'إلغاء النشاط',
         closeRegistration: 'إقفال التسجيل',
         reopenRegistration: 'إعادة فتح التسجيل',
+        deleteEmpty: 'حذف نهائي',
       },
       kicker: 'فرص التطوّع',
       title: 'الفرص المتاحة',

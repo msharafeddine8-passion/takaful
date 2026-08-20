@@ -10,7 +10,13 @@ import { currentUser } from '@/lib/auth';
 import { can } from '@/lib/authz';
 import { isDbConfigured } from '@/lib/db';
 import { allActivities } from '@/lib/activities';
-import { createActivityAction, closeActivityAction } from '@/lib/actions/activity-admin';
+import {
+  createActivityAction,
+  closeActivityAction,
+  reopenActivityAction,
+  cancelActivityAction,
+  deleteActivityAction,
+} from '@/lib/actions/activity-admin';
 import { ActivityCard, CardLink } from '@/components/activities/ActivityCard';
 import { activityState } from '@/lib/activity-state';
 
@@ -125,15 +131,51 @@ export default async function StaffActivitiesPage(props: PageProps<'/[lang]/staf
               {/* Closing registration is an action, so it is a button with a
                   verb on it. It used to be labelled "اكتمل العدد", which read
                   as a status and contradicted the seat count beside it. */}
-              {row.is_open && !row.cancelled_at && activityState(row) === 'upcoming' && (
-                <form action={closeActivityAction}>
+              {!row.cancelled_at && activityState(row) === 'upcoming' && (
+                <form action={row.is_open ? closeActivityAction : reopenActivityAction}>
                   <input type="hidden" name="lang" value={lang} />
                   <input type="hidden" name="activityId" value={row.id} />
                   <button
                     type="submit"
                     className="min-h-11 rounded-full border border-line px-5 py-2.5 text-[0.9rem] font-bold transition-colors hover:bg-surface-2"
                   >
-                    {a.actions.closeRegistration}
+                    {row.is_open ? a.actions.closeRegistration : a.actions.reopenRegistration}
+                  </button>
+                </form>
+              )}
+
+              {/* Cancelling asks for a reason in the same breath, because the
+                  reason is shown to everyone who signed up. */}
+              {!row.cancelled_at && activityState(row) !== 'ended' && (
+                <form action={cancelActivityAction} className="flex flex-wrap items-center gap-2">
+                  <input type="hidden" name="lang" value={lang} />
+                  <input type="hidden" name="activityId" value={row.id} />
+                  <input
+                    name="reason"
+                    required
+                    placeholder={a.cancelReasonPlaceholder}
+                    className="min-h-11 w-56 rounded-xl border border-line bg-ground px-4 text-[0.9rem]"
+                  />
+                  <button
+                    type="submit"
+                    className="min-h-11 rounded-full border-2 border-bad px-5 py-2.5 text-[0.9rem] font-extrabold text-bad-text transition-colors hover:bg-bad/10 dark:text-bad"
+                  >
+                    {a.actions.cancel}
+                  </button>
+                </form>
+              )}
+
+              {/* Deleting outright is offered only for an activity nobody has
+                  touched — anything else keeps its history and gets cancelled. */}
+              {row.taken === 0 && row.waiting === 0 && row.attended_count === 0 && (
+                <form action={deleteActivityAction}>
+                  <input type="hidden" name="lang" value={lang} />
+                  <input type="hidden" name="activityId" value={row.id} />
+                  <button
+                    type="submit"
+                    className="min-h-11 rounded-full px-4 py-2.5 text-[0.86rem] font-bold text-ink-3 underline transition-colors hover:text-bad-text dark:hover:text-bad"
+                  >
+                    {a.actions.deleteEmpty}
                   </button>
                 </form>
               )}
