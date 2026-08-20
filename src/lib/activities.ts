@@ -74,18 +74,31 @@ export async function myActivities(userId: string): Promise<MyActivityRow[]> {
 export type RosterRow = {
   user_id: string;
   full_name: string;
+  /** Shown beside the name so two volunteers called the same thing can be told
+   *  apart before anyone's hours are credited to the wrong one. */
+  member_number: number | null;
+  email: string;
   registration_status: string;
   attended: boolean | null;
   attended_minutes: number | null;
+  note: string | null;
 };
 
 /** Everyone signed up for one activity, with whatever the supervisor recorded. */
 export async function roster(activityId: string): Promise<RosterRow[]> {
   return query<RosterRow>(
-    `SELECT r.user_id, pr.full_name, r.status AS registration_status,
-            att.attended, att.minutes AS attended_minutes
+    /*
+     * The membership number and email come along because two volunteers really
+     * can share a name, and a supervisor ticking the wrong «محمد علي» credits
+     * the wrong person's hours. One of the two is always enough to tell them
+     * apart on the sheet.
+     */
+    `SELECT r.user_id, pr.full_name, pr.member_number, u.email,
+            r.status AS registration_status,
+            att.attended, att.minutes AS attended_minutes, att.note
        FROM activity_registrations r
        JOIN profiles pr ON pr.user_id = r.user_id
+       JOIN users u     ON u.id = r.user_id
        LEFT JOIN activity_attendance att
          ON att.activity_id = r.activity_id AND att.user_id = r.user_id
       WHERE r.activity_id = $1 AND r.status <> 'cancelled'

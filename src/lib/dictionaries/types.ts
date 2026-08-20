@@ -28,6 +28,9 @@ export type Dictionary = {
     gallery: string;
     contact: string;
     volunteer: string;
+    /** The header button. It says «create an account» rather than «volunteer
+     *  with us», because that door now opens onto a choice between the two. */
+    createAccount: string;
     menu: string;
   };
   home: {
@@ -635,6 +638,42 @@ export type Account = {
     hoursAgo: string;
     daysAgo: string;
   };
+  /** Recording who turned up. */
+  attendance: {
+    registered: string;
+    attendedCount: string;
+    absentCount: string;
+    unsetCount: string;
+    rate: string;
+    totalHours: string;
+    searchPlaceholder: string;
+    noMatches: string;
+    filters: { all: string; attended: string; absent: string; unset: string };
+    markAllPresent: string;
+    present: string;
+    absent: string;
+    statusLegend: string;
+    alreadySaved: string;
+    hoursField: string;
+    minutesField: string;
+    wholeActivity: string;
+    noteField: string;
+    save: string;
+    saving: string;
+    confirmSave: string;
+    saved: string;
+    cappedToActivity: string;
+    warnUnset: string;
+    warnEditing: string;
+    exportCsv: string;
+    errors: {
+      forbidden: string;
+      cancelled: string;
+      notFound: string;
+      unavailable: string;
+      overLong: string;
+    };
+  };
   activities: {
     /*
      * Seats and states. `full` below is the old label on the button that
@@ -653,6 +692,7 @@ export type Account = {
     durationLabel: string;
     attendedCount: string;
     cancelReasonLabel: string;
+    summaryTitle: string;
     cancelReasonPlaceholder: string;
     state: {
       upcoming: string;

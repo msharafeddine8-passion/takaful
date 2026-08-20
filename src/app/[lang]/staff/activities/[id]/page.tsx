@@ -9,8 +9,9 @@ import { currentUser } from '@/lib/auth';
 import { can } from '@/lib/authz';
 import { isDbConfigured, queryOne } from '@/lib/db';
 import { roster, scheduledMinutes } from '@/lib/activities';
-import { formatDuration } from '@/lib/hours';
-import { confirmAttendanceAction } from '@/lib/actions/activities';
+import { activityState, registrationState, seatsLeft } from '@/lib/activity-state';
+import { formatDate, formatTimeRange, formatDuration } from '@/lib/when';
+import { AttendanceSheet } from '@/components/activities/AttendanceSheet';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -21,6 +22,7 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
   const dict = getDictionary(lang);
   const t = dict.account.staff;
   const a = dict.account.activities;
+  const att = dict.account.attendance;
 
   if (!isDbConfigured()) {
     return (
@@ -34,6 +36,8 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
 
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
+  // Asked of authz, and asked again inside the action: hiding a form is not a
+  // permission check.
   if (!can(user, 'hours.verify')) {
     return (
       <Section><Container className="max-w-2xl">
@@ -45,8 +49,13 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
   const activity = await queryOne<{
     title_ar: string; title_en: string; location: string | null;
     starts_at: Date | null; ends_at: Date | null;
+    capacity: number | null; is_open: boolean;
+    cancelled_at: Date | null; cancel_reason: string | null;
+    registration_closes_at: Date | null;
   }>(
-    'SELECT title_ar, title_en, location, starts_at, ends_at FROM activities WHERE id = $1',
+    `SELECT title_ar, title_en, location, starts_at, ends_at, capacity, is_open,
+            cancelled_at, cancel_reason, registration_closes_at
+       FROM activities WHERE id = $1`,
     [id],
   );
   if (!activity) notFound();
@@ -58,31 +67,95 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
     ),
   ]);
 
-  // Pre-filled from the activity's own schedule: the supervisor confirms a
-  // number rather than computing one, and corrects it when someone left early.
-  const defaultMinutes = scheduledMinutes(activity) ?? 60;
+  const scheduled = scheduledMinutes(activity);
+  const state = activityState(activity);
+  const reg = registrationState(activity, people.filter((p) => p.registration_status === 'registered').length);
+  const left = seatsLeft(activity.capacity, people.filter((p) => p.registration_status === 'registered').length);
+
+  // The figures the sheet has already produced, for the summary underneath it.
+  const attended = people.filter((p) => p.attended === true);
+  const absent = people.filter((p) => p.attended === false);
+  const undecided = people.filter((p) => p.attended === null);
+  const earnedMinutes = attended.reduce((sum, p) => sum + (p.attended_minutes ?? 0), 0);
+  const rate = people.length ? Math.round((attended.length / people.length) * 100) : 0;
+
+  const regLabel = {
+    open: a.regState.open,
+    'almost-full': a.regState.almostFull,
+    full: a.regState.full,
+    'deadline-passed': a.regState.deadlinePassed,
+    closed: a.regState.closed,
+    ended: a.regState.ended,
+    cancelled: a.regState.cancelled,
+  }[reg];
 
   return (
     <Section>
-      <Container className="max-w-3xl">
+      {/* Narrow enough to read, wide enough for the sheet — the old page left
+          the facts stranded at opposite edges of a wide screen. */}
+      <Container className="max-w-4xl">
         <Kicker>{t.kicker}</Kicker>
         <h1 className="mt-2.5 text-[clamp(1.5rem,1.25rem+1.3vw,2.1rem)] font-extrabold tracking-tight">
           {lang === 'ar' ? activity.title_ar : activity.title_en}
         </h1>
-        <p className="mt-2 text-[0.95rem] text-ink-2" dir="ltr">
-          {activity.starts_at &&
-            new Date(activity.starts_at).toISOString().slice(0, 16).replace('T', ' ')}
-          {activity.location ? ` · ${activity.location}` : ''}
-        </p>
 
-        {/* Say what confirming will do, before they confirm. */}
+        <div className="mt-3 flex flex-wrap gap-2">
+          <span className="rounded-full bg-surface-2 px-3 py-1 text-[0.82rem] font-extrabold">
+            {a.state[state]}
+          </span>
+          <span className="rounded-full bg-surface-2 px-3 py-1 text-[0.82rem] font-extrabold">
+            {regLabel}
+          </span>
+        </div>
+
+        <dl className="mt-5 grid gap-x-6 gap-y-3 rounded-2xl border border-line bg-surface p-5 text-[0.95rem] sm:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <dt className="font-bold text-ink-2">{a.location}</dt>
+            <dd>{activity.location || '—'}</dd>
+          </div>
+          <div>
+            <dt className="font-bold text-ink-2">{a.date}</dt>
+            <dd>{formatDate(activity.starts_at, lang)}</dd>
+          </div>
+          <div>
+            <dt className="font-bold text-ink-2">{a.time}</dt>
+            <dd>{formatTimeRange(activity.starts_at, activity.ends_at, lang)}</dd>
+          </div>
+          <div>
+            <dt className="font-bold text-ink-2">{a.durationLabel}</dt>
+            <dd>{formatDuration(scheduled, lang)}</dd>
+          </div>
+          <div>
+            <dt className="font-bold text-ink-2">{a.seatsHeading}</dt>
+            <dd>
+              {activity.capacity === null
+                ? `${people.length} · ${a.noCapacity}`
+                : a.seatsTaken
+                    .replace('{taken}', String(people.length))
+                    .replace('{capacity}', String(activity.capacity))}
+            </dd>
+          </div>
+          {activity.capacity !== null && (
+            <div>
+              <dt className="font-bold text-ink-2">{a.seatsLeftHeading}</dt>
+              <dd>{a.seatsLeftLabel.replace('{left}', String(left ?? 0))}</dd>
+            </div>
+          )}
+        </dl>
+
+        {activity.cancelled_at && activity.cancel_reason && (
+          <p className="mt-4 rounded-xl border-2 border-bad bg-bad/10 p-4 text-[0.95rem] font-bold">
+            {a.cancelReasonLabel}: {activity.cancel_reason}
+          </p>
+        )}
+
         {settings?.second && (
-          <p className="mt-5 rounded-xl border border-amber-400 bg-amber-50 px-5 py-3.5 text-[0.93rem] text-ink-2 dark:border-amber-800 dark:bg-amber-950/30">
+          <p className="mt-5 rounded-xl border border-brand-orange bg-brand-orange/10 px-5 py-3.5 text-[0.93rem] text-ink-2">
             {a.secondCheckOn}
           </p>
         )}
 
-        <h2 className="mt-9 text-[0.8rem] font-bold tracking-[0.12em] text-ink-3">
+        <h2 className="mt-9 text-[1.15rem] font-extrabold">
           {a.roster} ({people.length})
         </h2>
 
@@ -90,73 +163,43 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
           <p className="mt-3 rounded-xl border border-line bg-surface-2 px-5 py-4 text-ink-2">
             {a.mineNone}
           </p>
+        ) : activity.cancelled_at ? (
+          // A cancelled activity keeps its record and gains no more.
+          <p className="mt-3 rounded-xl border border-line bg-surface-2 px-5 py-4 text-ink-2">
+            {att.errors.cancelled}
+          </p>
         ) : (
-          <ul className="mt-3 space-y-3">
-            {people.map((p) => (
-              <li key={p.user_id} className="rounded-2xl border border-line bg-surface p-5">
-                <div className="flex flex-wrap items-baseline justify-between gap-3">
-                  <span className="text-[1.02rem] font-bold">{p.full_name}</span>
-                  {p.registration_status === 'waitlisted' && (
-                    <span className="text-[0.85rem] text-ink-3">{a.waitlist}</span>
-                  )}
-                </div>
+          <div className="mt-4">
+            <AttendanceSheet
+              lang={lang}
+              activityId={id}
+              people={people}
+              scheduledMinutes={scheduled}
+              t={a}
+              att={att}
+            />
+          </div>
+        )}
 
-                {p.attended === null ? (
-                  <form action={confirmAttendanceAction} className="mt-3 flex flex-wrap items-end gap-3">
-                    <input type="hidden" name="lang" value={lang} />
-                    <input type="hidden" name="activityId" value={id} />
-                    <input type="hidden" name="userId" value={p.user_id} />
-
-                    <label className="block">
-                      <span className="mb-1.5 block text-[0.85rem] font-bold">{a.minutesField}</span>
-                      <input
-                        name="minutes"
-                        type="number"
-                        min="1"
-                        max="1440"
-                        defaultValue={defaultMinutes}
-                        dir="ltr"
-                        className="w-28 rounded-xl border border-line bg-surface px-3 py-2 text-[0.95rem] outline-none focus:border-brand-blue"
-                      />
-                    </label>
-
-                    <button
-                      type="submit"
-                      name="attended"
-                      value="yes"
-                      className="rounded-full bg-emerald-600 px-5 py-2.5 text-[0.9rem] font-extrabold text-white hover:bg-emerald-700"
-                    >
-                      {a.markAttended}
-                    </button>
-                    <button
-                      type="submit"
-                      name="attended"
-                      value="no"
-                      className="rounded-full border border-line px-5 py-2.5 text-[0.9rem] font-bold hover:bg-surface-2"
-                    >
-                      {a.markNoShow}
-                    </button>
-                  </form>
-                ) : (
-                  <p className="mt-2.5 text-[0.93rem] font-bold">
-                    {p.attended ? (
-                      <span className="text-emerald-700 dark:text-emerald-400">
-                        ✅ {a.attended}
-                        {p.attended_minutes
-                          ? ` — ${formatDuration(p.attended_minutes, lang)}`
-                          : ''}
-                      </span>
-                    ) : (
-                      <span className="text-ink-3">{a.noShow}</span>
-                    )}
-                    <span className="ms-2 text-[0.82rem] font-normal text-ink-3">
-                      ({a.alreadyRecorded})
-                    </span>
-                  </p>
-                )}
-              </li>
-            ))}
-          </ul>
+        {/* What the register adds up to, once any of it has been recorded. */}
+        {attended.length + absent.length > 0 && (
+          <section className="mt-10 rounded-2xl border border-line bg-surface p-6">
+            <h2 className="text-[1.05rem] font-extrabold">{a.summaryTitle}</h2>
+            <dl className="mt-4 grid gap-x-6 gap-y-3 text-[0.95rem] sm:grid-cols-2 lg:grid-cols-3">
+              <Fact label={att.registered} value={String(people.length)} />
+              <Fact label={att.attendedCount} value={String(attended.length)} />
+              <Fact label={att.absentCount} value={String(absent.length)} />
+              <Fact label={att.unsetCount} value={String(undecided.length)} />
+              <Fact label={att.rate} value={`${rate}%`} />
+              <Fact label={att.totalHours} value={formatDuration(earnedMinutes, lang)} />
+            </dl>
+            <a
+              href={`/api/export/attendance?activity=${id}&lang=${lang}`}
+              className="mt-5 inline-flex min-h-11 items-center rounded-full border border-line px-5 text-[0.92rem] font-bold hover:bg-surface-2"
+            >
+              {att.exportCsv}
+            </a>
+          </section>
         )}
 
         <Link
@@ -167,5 +210,14 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
         </Link>
       </Container>
     </Section>
+  );
+}
+
+function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="font-bold text-ink-2">{label}</dt>
+      <dd className="text-[1.1rem] font-extrabold">{value}</dd>
+    </div>
   );
 }

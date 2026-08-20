@@ -36,7 +36,9 @@ export function headerStrings(dict: Dictionary): HeaderStrings {
     siteName: dict.meta.siteName,
     switchTo: dict.common.switchTo,
     account: dict.account.dashboard.kicker,
-    volunteer: dict.nav.volunteer,
+    // The header CTA now opens the volunteer-or-learner chooser, so it is
+    // labelled for what it does rather than for one of the two outcomes.
+    volunteer: dict.nav.createAccount,
     menu: dict.nav.menu,
     home: dict.nav.home,
     about: dict.nav.about,

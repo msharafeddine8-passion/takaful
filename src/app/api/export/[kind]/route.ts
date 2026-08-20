@@ -17,20 +17,24 @@ import { toCsv, csvFilename, csvResponse } from '@/lib/csv';
  * spreadsheet gets forwarded, and what is not in it cannot be forwarded.
  */
 
-type Kind = 'members' | 'hours' | 'activities';
+type Kind = 'members' | 'hours' | 'activities' | 'attendance';
 
 const KINDS: Record<Kind, { capability: Parameters<typeof can>[1]; }> = {
   members: { capability: 'members.manage' },
   hours: { capability: 'hours.verify' },
   activities: { capability: 'activities.manage' },
+  // The register for one activity, exported by whoever may record it.
+  attendance: { capability: 'hours.verify' },
 };
 
 function isKind(value: string): value is Kind {
-  return value === 'members' || value === 'hours' || value === 'activities';
+  return (
+    value === 'members' || value === 'hours' || value === 'activities' || value === 'attendance'
+  );
 }
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   context: { params: Promise<{ kind: string }> },
 ) {
   const { kind } = await context.params;
@@ -44,20 +48,27 @@ export async function GET(
     return new Response('Not found', { status: 404 });
   }
 
-  const { headers, rows } = await build(kind);
+  // The attendance register is for one activity, named in the query string.
+  const activityId = request.nextUrl.searchParams.get('activity');
+  if (kind === 'attendance' && !activityId) return new Response('Not found', { status: 404 });
+
+  const { headers, rows } = await build(kind, activityId);
 
   await audit({
     actorId: user.id,
     action: 'export.downloaded',
     targetType: 'export',
     targetId: kind,
-    newValue: { rows: rows.length },
+    newValue: { rows: rows.length, activityId },
   });
 
   return csvResponse(toCsv(headers, rows), csvFilename(`takaful-${kind}`, new Date()));
 }
 
-async function build(kind: Kind): Promise<{ headers: string[]; rows: unknown[][] }> {
+async function build(
+  kind: Kind,
+  activityId: string | null = null,
+): Promise<{ headers: string[]; rows: unknown[][] }> {
   if (kind === 'members') {
     const rows = await query<Record<string, unknown>>(`
       SELECT p.member_number, p.full_name, u.status,
@@ -101,6 +112,45 @@ async function build(kind: Kind): Promise<{ headers: string[]; rows: unknown[][]
       rows: rows.map((r) => [
         r.worked_on, r.full_name, ((r.minutes as number) / 60).toFixed(2),
         r.status, r.activity, r.verified_by, r.verified_on,
+      ]),
+    };
+  }
+
+  if (kind === 'attendance') {
+    /*
+     * One activity's register, for the file that goes to a donor or into the
+     * association's own minutes. Named and numbered, with no address, phone or
+     * date of birth — the same rule as every export here: a spreadsheet gets
+     * forwarded, and what is not in it cannot be forwarded.
+     */
+    const rows = await query<Record<string, unknown>>(
+      `SELECT p.full_name,
+              p.member_number,
+              CASE WHEN att.attended IS NULL THEN 'غير محدد'
+                   WHEN att.attended THEN 'حضر'
+                   ELSE 'لم يحضر' END                   AS status,
+              COALESCE(att.minutes, 0)::INTEGER         AS minutes,
+              ROUND(COALESCE(att.minutes, 0) / 60.0, 2) AS hours,
+              att.note,
+              a.title_ar                                AS activity,
+              a.starts_at::DATE                         AS activity_date
+         FROM activity_registrations r
+         JOIN profiles p   ON p.user_id = r.user_id
+         JOIN activities a ON a.id = r.activity_id
+         LEFT JOIN activity_attendance att
+           ON att.activity_id = r.activity_id AND att.user_id = r.user_id
+        WHERE r.activity_id = $1 AND r.status <> 'cancelled'
+        ORDER BY p.full_name`,
+      [activityId ?? ''],
+    );
+    return {
+      headers: [
+        'full_name', 'member_number', 'status', 'minutes', 'hours', 'note',
+        'activity', 'activity_date',
+      ],
+      rows: rows.map((r) => [
+        r.full_name, r.member_number, r.status, r.minutes, r.hours, r.note,
+        r.activity, r.activity_date,
       ]),
     };
   }
