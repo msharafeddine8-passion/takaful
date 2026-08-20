@@ -17,15 +17,23 @@ import { TextField, FormError, SubmitButton } from './fields';
  * stranger loads, so they are the worst place to pay for it.
  */
 type Errors = Dictionary['account']['errors'];
-type RegisterProps = { lang: Locale; t: Dictionary['account']['join']; errors: Errors };
+type RegisterProps = {
+  lang: Locale;
+  t: Dictionary['account']['join'];
+  errors: Errors;
+  /** Which door they came in by, so registration ends where they meant to go:
+   *  a volunteer at the roster claim, a learner at their account. */
+  next?: 'volunteer' | 'learner';
+};
 type LoginProps = { lang: Locale; t: Dictionary['account']['login']; errors: Errors };
 
-export function RegisterForm({ lang, t, errors }: RegisterProps) {
+export function RegisterForm({ lang, t, errors, next }: RegisterProps) {
   const [state, formAction, pending] = useActionState(registerAction, emptyState);
 
   return (
     <form action={formAction} noValidate>
       <input type="hidden" name="lang" value={lang} />
+      {next && <input type="hidden" name="next" value={next} />}
       <FormError>{state.error ? errors[state.error] : null}</FormError>
 
       <TextField

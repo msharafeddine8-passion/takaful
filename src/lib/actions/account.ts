@@ -124,8 +124,20 @@ export async function registerAction(prev: FormState, formData: FormData): Promi
   // link can be sent again from their account page.
   await requestEmailVerification(userId, lang).catch(() => {});
 
+  /*
+   * Someone who said at the door that they already volunteer is taken straight
+   * to the roster claim. Before this they landed on the account page and had
+   * to notice a prompt among everything else there, which is how a volunteer
+   * of six years ends up filling in an application form instead.
+   *
+   * Only the two known values are honoured — the field arrives from a form and
+   * an open redirect is not something to hand a stranger.
+   */
+  const next = text(formData, 'next');
+  const destination = next === 'volunteer' ? `/${lang}/account/claim` : `/${lang}/account`;
+
   // redirect() signals by throwing, so it must sit outside the try block above.
-  redirect(`/${lang}/account`);
+  redirect(destination);
 }
 
 // --------------------------------------------------------------------- login

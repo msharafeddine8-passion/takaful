@@ -70,9 +70,13 @@ export function JoinButton({
                 .replace('{yours}', String(result.yourStage ?? 0))
             : result.reason === 'already'
               ? t.refusedAlready
-              : result.reason === 'closed'
-                ? t.refusedClosed
-                : dict.account.errors.generic}
+              : result.reason === 'not_a_volunteer'
+                ? t.refusedNotVolunteer
+                : result.reason === 'cancelled'
+                  ? t.regState.cancelled
+                  : result.reason === 'closed'
+                    ? t.refusedClosed
+                    : dict.account.errors.generic}
         </p>
       )}
     </div>

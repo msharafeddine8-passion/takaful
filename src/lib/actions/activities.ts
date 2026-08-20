@@ -17,8 +17,19 @@ const text = (f: FormData, n: string) => String(f.get(n) ?? '').trim();
 
 export type JoinResult =
   | { ok: true; status: 'registered' | 'waitlisted' }
-  | { ok: false; reason: 'not_signed_in' | 'closed' | 'stage_too_low' | 'already' | 'error';
-      requiredStage?: number; yourStage?: number };
+  | {
+      ok: false;
+      reason:
+        | 'not_signed_in'
+        | 'not_a_volunteer'
+        | 'cancelled'
+        | 'closed'
+        | 'stage_too_low'
+        | 'already'
+        | 'error';
+      requiredStage?: number;
+      yourStage?: number;
+    };
 
 /**
  * Registering for an activity.
@@ -33,17 +44,38 @@ export async function joinActivityAction(activityId: string, lang: Locale): Prom
   if (!user) return { ok: false, reason: 'not_signed_in' };
 
   const result = await transaction<JoinResult>(async (client) => {
+    /*
+     * Field activities are for volunteers. A learner — anyone who made an
+     * account to take courses — is not one, and until now nothing said so:
+     * the sign-up ran, and somebody who had never been accepted, never agreed
+     * to the code of conduct and has no emergency contact on file could turn
+     * up to an activity with children at it.
+     *
+     * Checked here rather than by hiding the button, because a hidden button
+     * is not a rule. is_volunteer() reads the membership history, so it is the
+     * same answer the rest of the platform gives.
+     */
+    const { rows: standing } = await client.query<{ ok: boolean }>(
+      'SELECT is_volunteer($1) AS ok',
+      [user.id],
+    );
+    if (!standing[0]?.ok) return { ok: false, reason: 'not_a_volunteer' };
+
     // Lock the activity so two people cannot take the last place at once.
     const { rows: found } = await client.query<{
-      id: string; is_open: boolean; is_archived: boolean;
+      id: string; is_open: boolean; is_archived: boolean; cancelled_at: Date | null;
       capacity: number | null; min_stage: number | null;
     }>(
-      `SELECT id, is_open, is_archived, capacity, min_stage
+      `SELECT id, is_open, is_archived, cancelled_at, capacity, min_stage
          FROM activities WHERE id = $1 FOR UPDATE`,
       [activityId],
     );
     const activity = found[0];
-    if (!activity || !activity.is_open || activity.is_archived) {
+    if (!activity) return { ok: false, reason: 'closed' };
+    // Named separately from "closed": a called-off activity is not the same
+    // news as one whose sign-ups have shut.
+    if (activity.cancelled_at) return { ok: false, reason: 'cancelled' };
+    if (!activity.is_open || activity.is_archived) {
       return { ok: false, reason: 'closed' };
     }
 

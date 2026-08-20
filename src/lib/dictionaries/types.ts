@@ -137,6 +137,19 @@ export type Account = {
     applicationTitle: string;
     logout: string;
   };
+  /** The fork at the front door: volunteer, or here for the courses. */
+  chooser: {
+    title: string;
+    lede: string;
+    volunteerTitle: string;
+    volunteerBody: string;
+    volunteerLede: string;
+    learnerTitle: string;
+    learnerBody: string;
+    learnerLede: string;
+    continueCta: string;
+    changeChoice: string;
+  };
   /** Recognising someone the association already has on its roster. */
   claim: {
     kicker: string;
@@ -681,6 +694,7 @@ export type Account = {
     signInToJoin: string;
     refusedStage: string;
     refusedClosed: string;
+    refusedNotVolunteer: string;
     refusedAlready: string;
     mineTitle: string;
     mineLede: string;
