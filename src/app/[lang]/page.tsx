@@ -20,9 +20,18 @@ export default async function HomePage(props: PageProps<'/[lang]'>) {
           fill
           priority
           sizes="100vw"
-          /* 65%, not center: the crowd in this photo sits in the lower half,
-             and on wide screens the visible band must keep the front rows. */
-          className="object-cover object-[center_65%]"
+          /*
+           * 35%, favouring the upper half of the room.
+           *
+           * It was 65%, which suited the previous photograph — a posed group
+           * whose front rows sat low in the frame. This one is a working
+           * session shot from the doorway, and its lower band is the nearest
+           * table, where faces are largest and most recognisable. Framing
+           * higher keeps the room, the light and the Takaful sign on the wall,
+           * and keeps individual people small. See the note in lib/photos.ts:
+           * the hero is not a place for identifiable faces.
+           */
+          className="object-cover object-[center_35%]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091a28]/95 via-[#091a28]/75 to-[#091a28]/40" />
         <Container className="relative pb-12 pt-24 sm:pb-20">
