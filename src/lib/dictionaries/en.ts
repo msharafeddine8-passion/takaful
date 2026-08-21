@@ -280,6 +280,55 @@ export const en: Dictionary = {
       profile: 'My profile',
       safeguarding: 'Safety details',
     },
+    step: {
+      heading: 'Your next step',
+      otherTasks: 'Other tasks',
+      titles: {
+        safeguarding: 'Add your safety details before your first field activity',
+        'claim-roster': 'Link your account to your record with us',
+        apply: 'Apply to volunteer',
+        'await-decision': 'Your application is being reviewed — we will let you know',
+        'stage-requirement': '{label}',
+        'finish-course': 'Finish the course you started',
+        'attend-activity': 'You have an activity coming up',
+        'find-activity': 'Choose an opportunity that suits you',
+        'start-learning': 'Start your first course',
+        nothing: 'Nothing is waiting on you',
+      },
+      ctas: {
+        safeguarding: 'Complete my details',
+        'claim-roster': 'Link my account',
+        apply: 'Apply now',
+        'await-decision': 'Check your notifications',
+        'stage-requirement': 'Start now',
+        'finish-course': 'Continue the course',
+        'attend-activity': 'View the activity',
+        'find-activity': 'Browse opportunities',
+        'start-learning': 'Browse courses',
+        nothing: 'Browse the academy',
+      },
+      // Respectful, and carrying nothing from the internal record.
+      suspended: 'Your account is currently suspended. Please get in touch for details.',
+      rejected: 'Your application was not accepted this time. Get in touch if you would like it reviewed.',
+    },
+    impact: {
+      hours: {
+        zero: 'No hours logged yet', one: 'One verified hour', two: 'Two verified hours',
+        few: '{n} verified hours', many: '{n} verified hours',
+      },
+      courses: {
+        zero: 'No course started yet', one: 'One course of 41', two: 'Two courses of 41',
+        few: '{n} courses of 41', many: '{n} courses of 41',
+      },
+      activities: {
+        zero: 'No activities attended yet', one: 'One activity attended', two: 'Two activities attended',
+        few: '{n} activities attended', many: '{n} activities attended',
+      },
+      certificates: {
+        zero: 'No certificates yet', one: 'One active certificate', two: 'Two active certificates',
+        few: '{n} active certificates', many: '{n} active certificates',
+      },
+    },
     chooser: {
       title: 'How would you like to join us?',
       lede: 'Pick whichever describes you, and we will take you straight to the right place instead of leaving you to find it.',

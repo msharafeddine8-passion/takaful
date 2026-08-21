@@ -164,6 +164,41 @@ export type Account = {
     profile: string;
     safeguarding: string;
   };
+  /**
+   * The one card that matters, and the small list under it. One entry per
+   * StepKey in lib/account-state.ts — if a step is added there without a
+   * string here, this type stops the build rather than the page rendering a
+   * blank card.
+   */
+  step: {
+    heading: string;
+    otherTasks: string;
+    titles: Record<
+      'safeguarding' | 'claim-roster' | 'apply' | 'await-decision'
+      | 'stage-requirement' | 'finish-course' | 'attend-activity'
+      | 'find-activity' | 'start-learning' | 'nothing',
+      string
+    >;
+    ctas: Record<
+      'safeguarding' | 'claim-roster' | 'apply' | 'await-decision'
+      | 'stage-requirement' | 'finish-course' | 'attend-activity'
+      | 'find-activity' | 'start-learning' | 'nothing',
+      string
+    >;
+    /** Said to a stopped account. Never carries an internal reason. */
+    suspended: string;
+    rejected: string;
+  };
+  /**
+   * The four figures, phrased as sentences. «1 / 41» is not something a person
+   * says, and Arabic counts in five bands rather than two — see countPhrase.
+   */
+  impact: {
+    hours: { zero: string; one: string; two: string; few: string; many: string };
+    courses: { zero: string; one: string; two: string; few: string; many: string };
+    activities: { zero: string; one: string; two: string; few: string; many: string };
+    certificates: { zero: string; one: string; two: string; few: string; many: string };
+  };
   /** The fork at the front door: volunteer, or here for the courses. */
   chooser: {
     title: string;

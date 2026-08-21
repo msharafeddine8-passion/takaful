@@ -11,10 +11,15 @@ import { isDbConfigured, queryOne } from '@/lib/db';
 import { isStaff } from '@/lib/authz';
 import { portalSummary } from '@/lib/portal';
 import { formatDuration } from '@/lib/hours';
+import { countPhrase } from '@/lib/when';
 import { COURSES } from '@/lib/courses';
 import { logoutAction } from '@/lib/actions/account';
 import { VerifyBanner } from '@/components/account/VerifyBanner';
 import { AccountGroups, AccountBottomBar } from '@/components/account/AccountNav';
+import {
+  audienceOf, nextStepOf, otherTasksOf, VOLUNTEER_STANDING,
+  type AccountFacts, type Audience, type Step, type StepKey,
+} from '@/lib/account-state';
 import { claimForUser, formatMemberNumber } from '@/lib/roster';
 import { isEmailConfigured } from '@/lib/email';
 
@@ -31,13 +36,10 @@ export async function generateMetadata(props: PageProps<'/[lang]/account'>): Pro
 
 const APPLICATION_OPEN = ['submitted', 'under_review', 'interview_required', 'interview_scheduled'];
 
-/** Standings that already mean "this person volunteers here". */
-const VOLUNTEER_STANDING: readonly string[] = [
-  'accepted_volunteer',
-  'active_volunteer',
-  'inactive_volunteer',
-  'volunteer_alumni',
-];
+/* VOLUNTEER_STANDING lives in lib/account-state.ts. It was declared here too
+ * until the two were one edit away from disagreeing about who counts as a
+ * volunteer — which is the sort of disagreement that shows one screen a
+ * volunteer and another screen a learner, for the same person. */
 
 export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
   // Never prerender an account page: what it shows depends on who is asking.
@@ -103,6 +105,35 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
   const stage = journey?.currentStage ?? null;
   const next = journey?.nextAction ?? null;
 
+  /*
+   * Everything the page needs to decide what it is about, gathered in one
+   * object and handed to a pure function. The page renders the answer; it does
+   * not work it out itself — see lib/account-state.ts.
+   */
+  const facts: AccountFacts = {
+    accountStatus: user.status as AccountFacts['accountStatus'],
+    membershipStatus: user.membershipStatus,
+    rosterClaimPending: Boolean(rosterClaim && !rosterClaim.approved_at),
+    rosterOffered: offerRosterClaim,
+    applicationOpen: hasOpenApplication,
+    applicationRejected: application?.status === 'rejected',
+    hasSafeguarding: Boolean(safeguarding),
+    stageRequirement: next
+      ? {
+          stageNumber: next.stageNumber,
+          label: lang === 'ar' ? next.requirement.labelAr : next.requirement.labelEn,
+          courseSlug: next.requirement.courseSlug,
+        }
+      : null,
+    courseInProgress: summary.coursesInProgress?.slug ?? null,
+    coursesPassed: summary.coursesPassed,
+    nextActivityId: summary.nextActivity?.id ?? null,
+    isVolunteer: VOLUNTEER_STANDING.includes(user.membershipStatus),
+  };
+  const audience = audienceOf(facts);
+  const step = nextStepOf(facts);
+  const otherTasks = otherTasksOf(facts);
+
   return (
     <Section>
       <Container className="max-w-3xl">
@@ -115,51 +146,37 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
           <VerifyBanner lang={lang} dict={dict} emailConfigured={isEmailConfigured()} />
         )}
 
-        {/* Ahead of everything else on the page: without this the association
-            has a volunteer, possibly a minor, with no emergency contact. */}
-        {needsSafeguarding && (
-          <div className="mt-6 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-6">
-            <p className="text-[1.08rem] font-extrabold">{dict.account.safeguarding.bannerTitle}</p>
-            <p className="mt-2 text-[1rem] leading-relaxed text-ink-2">
-              {dict.account.safeguarding.bannerBody}
-            </p>
-            <Link
-              href={`/${lang}/account/safeguarding`}
-              className="mt-4 inline-flex min-h-11 items-center rounded-full bg-brand-orange px-6 py-2.5 text-[0.95rem] font-extrabold text-[#241503] hover:bg-brand-orange-dark"
-            >
-              {dict.account.safeguarding.bannerCta} <Arrow lang={lang} />
-            </Link>
-          </div>
-        )}
+        {/*
+          * One card, not five.
+          *
+          * This used to render a safeguarding banner, a roster-claim offer and
+          * a pending-claim notice independently, each deciding for itself
+          * whether it applied — so somebody newly recognised from the roster
+          * met three of them stacked, all shouting. account-state.ts picks the
+          * one that actually blocks them; everything else drops to the quiet
+          * list underneath.
+          */}
+        <PrimaryStep
+          lang={lang}
+          dict={dict}
+          step={step}
+          audience={audience}
+          others={otherTasks}
+          stageLabel={
+            next ? (lang === 'ar' ? next.requirement.labelAr : next.requirement.labelEn) : null
+          }
+        />
 
-        {/* An existing volunteer should never be told to apply, so this is
-            offered before the next-step card that would say exactly that. */}
-        {offerRosterClaim && (
-          <div className="mt-6 rounded-2xl border border-brand-blue/30 bg-brand-blue/5 p-6">
-            <p className="text-[1.08rem] font-extrabold">{dict.account.claim.bannerTitle}</p>
-            <p className="mt-2 text-[1rem] leading-relaxed text-ink-2">
-              {dict.account.claim.bannerBody}
-            </p>
-            <Link
-              href={`/${lang}/account/claim`}
-              className="mt-4 inline-flex rounded-full border-2 border-brand-blue px-5 py-2.5 text-[0.95rem] font-extrabold text-brand-blue hover:bg-brand-blue/10 dark:border-sky-300 dark:text-sky-300"
-            >
-              {dict.account.claim.bannerCta} <Arrow lang={lang} />
-            </Link>
-          </div>
-        )}
-
-        {/* Claimed but not yet confirmed: say so, so the wait is not silence. */}
+        {/* Claimed but not yet confirmed keeps its own line, because the
+            membership number is the reassuring part and the step card has no
+            room for it. */}
         {rosterClaim && !rosterClaim.approved_at && (
-          <div className="mt-6 rounded-2xl border border-line bg-surface-2 p-6">
-            <p className="text-[1.08rem] font-extrabold">{dict.account.claim.pendingTitle}</p>
-            <p className="mt-2 text-[1rem] leading-relaxed text-ink-2">
-              {dict.account.claim.pendingBody.replace(
-                '{number}',
-                formatMemberNumber(rosterClaim.member_number),
-              )}
-            </p>
-          </div>
+          <p className="mt-4 text-[0.95rem] leading-relaxed text-ink-2">
+            {dict.account.claim.pendingBody.replace(
+              '{number}',
+              formatMemberNumber(rosterClaim.member_number),
+            )}
+          </p>
         )}
 
         {/* Where they stand, in one line, before anything else. */}
@@ -248,9 +265,21 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
                 : undefined
             }
           />
-          <Stat label={p.summaryCourses} value={`${summary.coursesPassed} / ${summary.coursesTotal}`} />
-          <Stat label={p.summaryActivities} value={String(summary.activitiesAttended)} />
-          <Stat label={p.summaryCertificates} value={String(summary.certificates)} />
+          {/* Sentences rather than "1 / 41" and a bare "3". Nobody says
+              "one slash forty-one", and Arabic counts in five bands, so «2
+              أنشطة» and «3 نشاط» are both wrong — see countPhrase. */}
+          <Stat
+            label={p.summaryCourses}
+            value={countPhrase(summary.coursesPassed, dict.account.impact.courses)}
+          />
+          <Stat
+            label={p.summaryActivities}
+            value={countPhrase(summary.activitiesAttended, dict.account.impact.activities)}
+          />
+          <Stat
+            label={p.summaryCertificates}
+            value={countPhrase(summary.certificates, dict.account.impact.certificates)}
+          />
         </div>
 
         {summary.nextActivity && (
@@ -367,6 +396,93 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
       />
     </Section>
   );
+}
+
+/**
+ * The one thing being asked for, and the quiet list of everything else.
+ *
+ * Deliberately the loudest object on the page and the only one with a filled
+ * button: when six cards all had a border and a call to action, none of them
+ * was the answer to "what should I do?". The other tasks are links, not
+ * buttons, because they are available rather than expected.
+ */
+function PrimaryStep({
+  lang, dict, step, audience, others, stageLabel,
+}: {
+  lang: Locale;
+  dict: Dictionary;
+  step: Step;
+  audience: Audience;
+  others: StepKey[];
+  stageLabel: string | null;
+}) {
+  const t = dict.account.step;
+
+  // A stopped account is told so plainly, with nothing from the internal
+  // record and no cheerful button underneath.
+  if (audience === 'suspended' || audience === 'rejected') {
+    return (
+      <div className="mt-6 rounded-2xl border border-line bg-surface-2 p-6">
+        <p className="text-[1rem] leading-relaxed text-ink-2">
+          {audience === 'suspended' ? t.suspended : t.rejected}
+        </p>
+      </div>
+    );
+  }
+
+  const title = t.titles[step.key].replace('{label}', stageLabel ?? '');
+
+  return (
+    <section
+      aria-labelledby="next-step"
+      className="mt-6 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-6"
+    >
+      <h2 id="next-step" className="text-[0.78rem] font-extrabold tracking-[0.14em] text-ink-3">
+        {t.heading}
+      </h2>
+      <p className="mt-2 text-[1.15rem] font-extrabold leading-snug">{title}</p>
+      <Link
+        href={`/${lang}${step.href}` as Parameters<typeof Link>[0]['href']}
+        className="mt-4 inline-flex min-h-11 items-center rounded-full bg-brand-orange px-6 py-2.5 text-[0.95rem] font-extrabold text-[#241503] hover:bg-brand-orange-dark"
+      >
+        {t.ctas[step.key]} <Arrow lang={lang} />
+      </Link>
+
+      {others.length > 0 && (
+        <div className="mt-5 border-t border-brand-orange/25 pt-4">
+          <h3 className="text-[0.78rem] font-extrabold tracking-[0.14em] text-ink-3">
+            {t.otherTasks}
+          </h3>
+          <ul className="mt-2 space-y-1">
+            {others.map((key) => (
+              <li key={key}>
+                <Link
+                  href={`/${lang}${nextStepHrefFor(key)}` as Parameters<typeof Link>[0]['href']}
+                  className="inline-flex min-h-11 items-center text-[0.95rem] font-bold text-ink-2 underline decoration-line underline-offset-4 hover:text-ink"
+                >
+                  {t.titles[key].replace('{label}', stageLabel ?? '')}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/** Where each secondary task goes. Kept beside the card that renders them. */
+function nextStepHrefFor(key: StepKey): string {
+  switch (key) {
+    case 'safeguarding': return '/account/safeguarding';
+    case 'claim-roster': return '/account/claim';
+    case 'apply': return '/account/apply';
+    case 'finish-course': return '/academy';
+    case 'attend-activity': return '/account/activities';
+    case 'find-activity': return '/account/activities';
+    case 'start-learning': return '/academy';
+    default: return '/account/notifications';
+  }
 }
 
 function Stat({ label, value, note }: { label: string; value: string; note?: string }) {

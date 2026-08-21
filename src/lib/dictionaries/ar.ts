@@ -280,6 +280,56 @@ export const ar: Dictionary = {
       profile: 'ملفي',
       safeguarding: 'بيانات السلامة',
     },
+    step: {
+      heading: 'خطوتك التالية',
+      otherTasks: 'مهام أخرى',
+      titles: {
+        safeguarding: 'أكمل بيانات السلامة قبل أوّل نشاط ميداني',
+        'claim-roster': 'اربط حسابك بسجلّك في الجمعية',
+        apply: 'قدّم طلب تطوّع',
+        'await-decision': 'طلبك قيد المراجعة، وسنخبرك فور صدور القرار',
+        // {label} is the requirement the journey engine named.
+        'stage-requirement': '{label}',
+        'finish-course': 'أكمل الدورة التي بدأتها',
+        'attend-activity': 'لديك نشاط قادم — تعرّف على تفاصيله',
+        'find-activity': 'اختر فرصة تطوّعية تناسب اهتمامك',
+        'start-learning': 'ابدأ أوّل دورة من الأكاديمية',
+        nothing: 'لا شيء مطلوب منك الآن',
+      },
+      ctas: {
+        safeguarding: 'أكمل بياناتي',
+        'claim-roster': 'اربط حسابي',
+        apply: 'قدّم طلبك',
+        'await-decision': 'تابع إشعاراتك',
+        'stage-requirement': 'ابدأ الآن',
+        'finish-course': 'تابع الدورة',
+        'attend-activity': 'عرض النشاط',
+        'find-activity': 'تصفّح الفرص',
+        'start-learning': 'تصفّح الدورات',
+        nothing: 'تصفّح الأكاديمية',
+      },
+      // Respectful, and carrying nothing from the internal record.
+      suspended: 'حسابك موقوف حالياً. تواصل معنا لمعرفة التفاصيل.',
+      rejected: 'لم يُقبل طلبك هذه المرّة. يمكنك التواصل معنا إن رغبت بمراجعة القرار.',
+    },
+    impact: {
+      hours: {
+        zero: 'لم تُسجَّل ساعات بعد', one: 'ساعة واحدة موثّقة', two: 'ساعتان موثّقتان',
+        few: '{n} ساعات موثّقة', many: '{n} ساعة موثّقة',
+      },
+      courses: {
+        zero: 'لم تبدأ أيّ دورة بعد', one: 'دورة واحدة من أصل 41', two: 'دورتان من أصل 41',
+        few: '{n} دورات من أصل 41', many: '{n} دورة من أصل 41',
+      },
+      activities: {
+        zero: 'لم تحضر نشاطاً بعد', one: 'نشاط واحد حضرته', two: 'نشاطان حضرتهما',
+        few: '{n} أنشطة حضرتها', many: '{n} نشاطاً حضرته',
+      },
+      certificates: {
+        zero: 'لا شهادات بعد', one: 'شهادة واحدة فعّالة', two: 'شهادتان فعّالتان',
+        few: '{n} شهادات فعّالة', many: '{n} شهادة فعّالة',
+      },
+    },
     chooser: {
       title: 'كيف تحب تنضمّ إلينا؟',
       lede: 'اختر ما ينطبق عليك، ونوجّهك مباشرة إلى المكان الصحيح بدل أن تبحث عنه.',

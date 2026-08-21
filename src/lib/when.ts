@@ -166,6 +166,28 @@ export function formatTimeRange(
     : `${formatTime(a, lang)} – ${formatTime(b, lang)}`;
 }
 
+/**
+ * A count with its noun, in the form Arabic actually takes.
+ *
+ * Arabic counts in five bands, not two: nothing, one, a pair, a few (3–10),
+ * and many (11+) — and the noun changes shape in each. «2 أنشطة» and «3 نشاط»
+ * are both wrong, and «1 / 41» is not a sentence in any language. The caller
+ * supplies the four forms and this picks one.
+ *
+ * The numeral stays in Latin digits on purpose — see the note at the top of
+ * this file.
+ */
+export function countPhrase(
+  n: number,
+  forms: { zero: string; one: string; two: string; few: string; many: string },
+): string {
+  if (n <= 0) return forms.zero;
+  if (n === 1) return forms.one;
+  if (n === 2) return forms.two;
+  const shape = n <= 10 ? forms.few : forms.many;
+  return shape.replace('{n}', String(n));
+}
+
 /** «ساعة ودقيقة», «ساعتان», «45 دقيقة» — the counted-noun forms Arabic needs. */
 export function formatDuration(totalMinutes: number | null, lang: Locale): string {
   if (totalMinutes === null || !Number.isFinite(totalMinutes) || totalMinutes <= 0) return '—';

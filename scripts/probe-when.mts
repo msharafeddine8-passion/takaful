@@ -20,6 +20,7 @@
  */
 
 import {
+  countPhrase,
   formatDate,
   formatDuration,
   formatTime,
@@ -130,6 +131,41 @@ eq('eleven and above take the singular', formatDuration(660, 'ar'), '11 ساعة
 eq('hours and minutes are joined with و', formatDuration(90, 'ar'), 'ساعة و30 دقيقة');
 eq('two minutes take the dual', formatDuration(2, 'ar'), 'دقيقتان');
 eq('no time at all is a dash, not "0"', formatDuration(0, 'ar'), '—');
+
+/* ------------------------------------------------------------------ *
+ * 5. Counted nouns on the dashboard's four figures
+ * ------------------------------------------------------------------ */
+console.log('\n5. counting things the way Arabic counts them');
+
+/* Arabic has five bands, not two. The dashboard used to print "1 / 41" and a
+ * bare "3", which are not sentences, and the naive fix — "3 نشاط" or
+ * "2 أنشطة" — is a grammatical error on the association's own front page. */
+const activities = {
+  zero: 'لم تحضر نشاطاً بعد', one: 'نشاط واحد حضرته', two: 'نشاطان حضرتهما',
+  few: '{n} أنشطة حضرتها', many: '{n} نشاطاً حضرته',
+};
+eq('nothing yet is said, not shown as a zero', countPhrase(0, activities), 'لم تحضر نشاطاً بعد');
+eq('a negative count cannot happen but is not printed either', countPhrase(-3, activities), 'لم تحضر نشاطاً بعد');
+eq('one takes the singular', countPhrase(1, activities), 'نشاط واحد حضرته');
+eq('two takes the dual, not "2"', countPhrase(2, activities), 'نشاطان حضرتهما');
+eq('three to ten take the plural of paucity', countPhrase(3, activities), '3 أنشطة حضرتها');
+eq('ten is still the plural of paucity', countPhrase(10, activities), '10 أنشطة حضرتها');
+eq('eleven flips to the singular', countPhrase(11, activities), '11 نشاطاً حضرته');
+eq('and stays there', countPhrase(97, activities), '97 نشاطاً حضرته');
+check('the numeral is substituted, never left as a placeholder',
+  !countPhrase(7, activities).includes('{n}'));
+check('the singular and dual carry no placeholder to substitute',
+  !countPhrase(1, activities).includes('{n}') && !countPhrase(2, activities).includes('{n}'));
+
+/* English only needs the same five slots filled differently — the shape has
+ * to work for both or the dashboard needs two code paths. */
+const enCourses = {
+  zero: 'No course started yet', one: 'One course of 41', two: 'Two courses of 41',
+  few: '{n} courses of 41', many: '{n} courses of 41',
+};
+eq('English zero', countPhrase(0, enCourses), 'No course started yet');
+eq('English one', countPhrase(1, enCourses), 'One course of 41');
+eq('English many', countPhrase(23, enCourses), '23 courses of 41');
 
 /* ------------------------------------------------------------------ */
 
