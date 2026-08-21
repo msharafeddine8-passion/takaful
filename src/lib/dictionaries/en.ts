@@ -513,6 +513,20 @@ export const en: Dictionary = {
       notMemberCta: 'Apply to volunteer',
       print: 'Print or save as PDF',
       validNote: 'To verify this card, scan the code.',
+      verifyTitle: 'Membership card check',
+      verifyValid: 'Valid membership card',
+      verifyUnknown: 'This card could not be verified',
+      // Says nothing about why. A reason would tell a stranger something about
+      // a volunteer that the association has not chosen to say.
+      verifyUnknownBody: 'We could not confirm this card. Check that the whole code was scanned, or contact the association.',
+      verifyFooter: 'This page confirms only that the card is genuine. No other personal details are shown.',
+      holder: 'Card holder',
+      statusLabel: 'Card status',
+      statusActive: 'Active',
+      statusInactive: 'Not currently active',
+      updatedLabel: 'Last updated',
+      hoursLabel: 'Verified hours',
+      scanHint: 'Scan to verify',
     },
     certificate: {
       awardedTo: 'This certificate is awarded to',

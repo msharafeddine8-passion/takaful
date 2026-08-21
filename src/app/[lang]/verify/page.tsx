@@ -6,7 +6,7 @@ import { getDictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section, Kicker } from '@/components/ui';
 import { isDbConfigured } from '@/lib/db';
-import { findByCode, findMember, normaliseCode } from '@/lib/certificates';
+import { findByCode, normaliseCode } from '@/lib/certificates';
 import { credentialView } from '@/lib/credential-view';
 import { formatDate } from '@/lib/format';
 
@@ -32,7 +32,7 @@ export default async function VerifyPage(props: PageProps<'/[lang]/verify'>) {
   await connection();
   const { lang } = await props.params;
   if (!isLocale(lang)) notFound();
-  const { code: rawCode, member: rawMember } = await props.searchParams;
+  const { code: rawCode } = await props.searchParams;
   const dict = getDictionary(lang);
   const t = dict.account.verify;
 
@@ -40,13 +40,6 @@ export default async function VerifyPage(props: PageProps<'/[lang]/verify'>) {
   const certificate =
     submitted && isDbConfigured() ? await findByCode(submitted) : null;
 
-  // The membership card's QR arrives here with ?member=NNNN.
-  const memberNumber =
-    typeof rawMember === 'string' && /^\d{1,9}$/.test(rawMember.trim())
-      ? Number.parseInt(rawMember.trim(), 10)
-      : null;
-  const member =
-    memberNumber !== null && isDbConfigured() ? await findMember(memberNumber) : null;
 
   return (
     <Section>
@@ -83,38 +76,23 @@ export default async function VerifyPage(props: PageProps<'/[lang]/verify'>) {
           </div>
         </form>
 
-        {/* A scanned membership card. Confirms the card is genuine and who it
-            belongs to, and stops there — a stranger with a number should not
-            learn anything else about a volunteer. */}
-        {memberNumber !== null && (
-          <div
-            className={`mt-8 rounded-2xl border p-6 ${
-              member && member.status === 'active'
-                ? 'border-emerald-400 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30'
-                : 'border-line bg-surface-2'
-            }`}
-          >
-            <h2 className="text-[1.15rem] font-extrabold">
-              {member && member.status === 'active' ? t.validTitle : t.notFoundTitle}
-            </h2>
-            {member && member.status === 'active' ? (
-              <dl className="mt-4 space-y-1.5 text-[0.96rem]">
-                <Row label={t.holder} value={member.full_name} />
-                <Row
-                  label={dict.account.card.memberNumber}
-                  value={String(member.member_number)}
-                  ltr
-                  mono
-                />
-                {member.stage !== null && (
-                  <Row label={dict.account.card.stage} value={String(member.stage)} ltr />
-                )}
-              </dl>
-            ) : (
-              <p className="mt-2 leading-relaxed text-ink-2">{t.notFound}</p>
-            )}
-          </div>
-        )}
+        {/*
+          * The `?member=NNNN` card lookup that used to live here is gone.
+          *
+          * It confirmed a card by membership number and returned the holder's
+          * full name and stage. Membership numbers run in sequence from T014
+          * to T473, so a loop counting to five hundred collected the name and
+          * standing of every volunteer in the association — four hundred and
+          * thirty-nine people, from a public page, with no login. The comment
+          * sitting on it promised that a stranger "should not learn anything
+          * else about a volunteer", which was true of everything except the
+          * part that mattered.
+          *
+          * Cards verify at /verify/card/{token} now, on 128 bits of CSPRNG
+          * output that cannot be counted to. Certificate codes above are
+          * unaffected: those are random as well, and a certificate is a thing
+          * its holder chooses to show.
+          */}
 
         {submitted && !certificate && (
           <div className="mt-8 rounded-2xl border border-line bg-surface-2 p-6">

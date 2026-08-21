@@ -13,6 +13,9 @@ import { journeyFor } from '@/lib/journey';
 import { ORG } from '@/lib/org';
 import { SITE_URL } from '@/lib/seo';
 import { PrintButton } from '@/components/PrintButton';
+import { formatMemberNumber } from '@/lib/roster';
+import { verifiedMinutes, formatDuration } from '@/lib/hours';
+import { cardStatusOf, monthOf } from '@/lib/card-view';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account/card'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -45,17 +48,19 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
 
-  const [profile, photo, journey] = await Promise.all([
+  const [profile, photo, journey, minutes] = await Promise.all([
     queryOne<{
       full_name: string; member_number: number | null; created_at: Date;
+      card_token: string | null;
     }>(
-      `SELECT p.full_name, p.member_number, u.created_at
+      `SELECT p.full_name, p.member_number, p.card_token, u.created_at
          FROM profiles p JOIN users u ON u.id = p.user_id
         WHERE p.user_id = $1`,
       [user.id],
     ),
     queryOne<{ version: string }>('SELECT version FROM profile_photos WHERE user_id = $1', [user.id]),
     journeyFor(user.id),
+    verifiedMinutes(user.id),
   ]);
 
   // A card identifies a member. A learner is welcome here but is not one, and
@@ -91,16 +96,34 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
     );
   }
 
-  const verifyUrl = `${SITE_URL}/${lang}/verify?member=${profile.member_number}`;
-  const qr = await QRCode.toString(verifyUrl, {
-    type: 'svg',
-    margin: 0,
-    errorCorrectionLevel: 'M',
-    color: { dark: '#205B8B', light: '#0000' },
-  });
+  /*
+   * The QR used to carry `?member=NNNN`. Membership numbers run in sequence,
+   * so that made every card a key to every other one — see migration 026. It
+   * carries the card's own token now, which means nothing and cannot be
+   * counted to. A card with no token yet simply shows no QR rather than
+   * falling back to the number.
+   */
+  const verifyUrl = profile.card_token
+    ? `${SITE_URL}/${lang}/verify/card/${profile.card_token}`
+    : null;
+  const qr = verifyUrl
+    ? await QRCode.toString(verifyUrl, {
+        type: 'svg',
+        margin: 0,
+        // H, not M: this is printed small and read off a phone screen at an
+        // angle, often creased. The extra redundancy costs nothing here.
+        errorCorrectionLevel: 'H',
+        color: { dark: '#0d2b45', light: '#0000' },
+      })
+    : null;
 
   const stage = journey?.currentStage ?? null;
-  const since = new Date(profile.created_at).toISOString().slice(0, 7);
+  const since = monthOf(profile.created_at) ?? '';
+  const status = cardStatusOf({
+    accountStatus: user.status,
+    membershipStatus: user.membershipStatus,
+    hasMemberNumber: true,
+  });
 
   return (
     <>
@@ -154,8 +177,21 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
                 <dl className="mt-3 space-y-1 text-[0.88rem]">
                   <div className="flex gap-2">
                     <dt className="font-bold text-ink-3">{t.memberNumber}:</dt>
+                    {/* T014, the way the association writes it and the way it
+                        appears everywhere else. This printed a bare "14". */}
                     <dd className="font-mono font-bold tracking-wider" dir="ltr">
-                      {profile.member_number}
+                      {formatMemberNumber(profile.member_number)}
+                    </dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="font-bold text-ink-3">{t.hoursLabel}:</dt>
+                    <dd>{formatDuration(minutes, lang)}</dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="font-bold text-ink-3">{t.statusLabel}:</dt>
+                    <dd className="font-bold">
+                      <span aria-hidden className="me-1">{status === 'active' ? '●' : '○'}</span>
+                      {status === 'active' ? t.statusActive : t.statusInactive}
                     </dd>
                   </div>
                   <div className="flex gap-2">
@@ -173,14 +209,16 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
                 </dl>
               </div>
 
-              <div className="shrink-0 text-center">
-                <div
-                  className="h-20 w-20 [&>svg]:h-full [&>svg]:w-full"
-                  aria-hidden
-                  dangerouslySetInnerHTML={{ __html: qr }}
-                />
-                <p className="mt-1.5 text-[0.82rem] text-ink-3">{dict.account.certificate.scanToVerify}</p>
-              </div>
+              {qr && (
+                <div className="shrink-0 text-center">
+                  <div
+                    className="h-20 w-20 [&>svg]:h-full [&>svg]:w-full"
+                    aria-hidden
+                    dangerouslySetInnerHTML={{ __html: qr }}
+                  />
+                  <p className="mt-1.5 text-[0.82rem] text-ink-3">{t.scanHint}</p>
+                </div>
+              )}
             </div>
 
             <p className="border-t border-line px-7 py-3 text-[0.82rem] text-ink-3">

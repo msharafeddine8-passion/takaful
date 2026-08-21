@@ -117,28 +117,56 @@ export async function findByCode(code: string): Promise<Certificate | null> {
   );
 }
 
-export type MemberCheck = {
-  member_number: number;
+export type CardRow = {
   full_name: string;
-  status: string;
-  stage: number | null;
+  member_number: number | null;
+  is_public: boolean | null;
+  account_status: string | null;
+  membership_status: string | null;
+  stage_label: string | null;
+  created_at: Date;
+  updated_at: Date | null;
 };
 
 /**
- * Confirms a membership number, for the QR on a membership card.
+ * Confirms a membership card, by the token printed in its QR.
  *
- * Returns the holder's name and standing and nothing else — enough for
- * someone at a door to confirm the card is genuine, not enough to learn
- * anything about the person from a number they guessed.
+ * This replaced a lookup by membership number, which was a mistake with a
+ * reassuring comment on it: the old function claimed it returned "not enough
+ * to learn anything about the person from a number they guessed" while
+ * returning their full name, and membership numbers run in sequence from T014
+ * to T473. Anyone could count to five hundred and collect the association's
+ * entire roster. The numbers had to stop being the key.
+ *
+ * The token is 128 bits of CSPRNG output and means nothing. It is looked up
+ * whole — no prefix matching, no partial, nothing that would let somebody
+ * narrow it down a character at a time.
+ *
+ * What comes back is still a database row. It becomes something safe to render
+ * only by going through toPublicCard in lib/card-view.ts, which builds the
+ * public object field by field from an allowlist.
  */
-export async function findMember(memberNumber: number): Promise<MemberCheck | null> {
-  return queryOne<MemberCheck>(
-    `SELECT p.member_number, p.full_name, u.status,
-            (SELECT MAX(s.stage) FROM stage_progress s WHERE s.user_id = u.id) AS stage
+export async function findCardByToken(token: string): Promise<CardRow | null> {
+  // Shape-checked before it reaches SQL: 32 hex characters, nothing else.
+  if (!/^[0-9a-f]{32,}$/.test(token)) return null;
+
+  return queryOne<CardRow>(
+    `SELECT p.full_name,
+            p.member_number,
+            p.is_public,
+            u.status AS account_status,
+            (SELECT h.new_status FROM membership_status_history h
+              WHERE h.user_id = u.id ORDER BY h.changed_at DESC LIMIT 1) AS membership_status,
+            (SELECT js.title_ar FROM stage_progress sp
+               JOIN journey_stages js ON js.number = sp.stage
+              WHERE sp.user_id = u.id
+              ORDER BY sp.stage DESC LIMIT 1) AS stage_label,
+            u.created_at,
+            p.updated_at
        FROM profiles p
        JOIN users u ON u.id = p.user_id
-      WHERE p.member_number = $1`,
-    [memberNumber],
+      WHERE p.card_token = $1`,
+    [token],
   );
 }
 

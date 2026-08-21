@@ -369,6 +369,20 @@ export type Account = {
     notMemberCta: string;
     print: string;
     validNote: string;
+    /* The public page somebody reaches by scanning the card's QR. Its wording
+     * is deliberately thin — see lib/card-view.ts for what it may show. */
+    verifyTitle: string;
+    verifyValid: string;
+    verifyUnknown: string;
+    verifyUnknownBody: string;
+    verifyFooter: string;
+    holder: string;
+    statusLabel: string;
+    statusActive: string;
+    statusInactive: string;
+    updatedLabel: string;
+    hoursLabel: string;
+    scanHint: string;
   };
   certificate: {
     awardedTo: string;

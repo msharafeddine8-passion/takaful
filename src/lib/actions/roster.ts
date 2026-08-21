@@ -72,9 +72,20 @@ async function recogniseFromRoster(opts: {
      * T014 instead of being handed T474 because they got round to signing up
      * late. The WHERE guard leaves an already-numbered profile alone.
      */
+    /*
+     * The card token is issued in the same statement as the number, because a
+     * member with a number and no token has a membership card with no QR on
+     * it, and nothing would ever notice — migration 026 backfilled the people
+     * who already had numbers, and everyone after them arrives through here.
+     *
+     * gen_random_bytes rather than anything derived from the number: the whole
+     * point of the token is that holding one card tells you nothing about the
+     * next. Both guards keep an existing value untouched.
+     */
     await client.query(
       `UPDATE profiles
-          SET member_number = $1
+          SET member_number = $1,
+              card_token = COALESCE(card_token, encode(gen_random_bytes(16), 'hex'))
         WHERE user_id = $2 AND member_number IS NULL`,
       [opts.memberNumber, opts.userId],
     );

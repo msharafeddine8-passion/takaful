@@ -4,7 +4,7 @@
  */
 import { Client } from 'pg';
 import { randomUUID } from 'node:crypto';
-import { findMember } from '../src/lib/certificates.ts';
+import { findCardByToken } from '../src/lib/certificates.ts';
 
 const c = new Client({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 15_000 });
 await c.connect();
@@ -143,17 +143,31 @@ try {
     `INSERT INTO membership_status_history (user_id, previous_status, new_status, reason)
      VALUES ($1, 'volunteer_applicant', 'accepted_volunteer', 'probe')`, [cardUser]);
 
-  const issued = (await c.query<{ member_number: number }>(
-    'SELECT member_number FROM profiles WHERE user_id = $1', [cardUser])).rows[0].member_number;
+  const issued = (await c.query<{ member_number: number; card_token: string | null }>(
+    'SELECT member_number, card_token FROM profiles WHERE user_id = $1', [cardUser])).rows[0];
 
-  const found = await findMember(issued);
-  check('the number resolves to the holder', found?.full_name === 'حامل البطاقة', found?.full_name);
-  check('and reports their standing', found?.status === 'active', found?.status);
-  check('a stranger learns the name and standing, and nothing more',
-    found !== null && !('email' in found) && !('bio' in found));
+  /*
+   * This block used to call findMember(memberNumber) and conclude that "a
+   * stranger learns the name and standing, and nothing more" — the leak,
+   * written down as the requirement and ticked green. Membership numbers run
+   * in sequence, so a stranger with a for-loop learned the name and standing
+   * of every volunteer in the association.
+   *
+   * Lookup is by unguessable token now, and what a scan may reveal is decided
+   * by the allowlist in lib/card-view.ts, which probe-card holds separately.
+   */
+  check('a number issued now comes with a card token', Boolean(issued.card_token));
+  check('and the token is long enough not to be guessed',
+    (issued.card_token ?? '').length >= 32, `${issued.card_token?.length} chars`);
 
-  const unknown = await findMember(999_999_999);
-  check('an invented number resolves to nothing', unknown === null);
+  const found = await findCardByToken(issued.card_token ?? '');
+  check('the token resolves to the holder', found?.full_name === 'حامل البطاقة', found?.full_name);
+  check('and reports their standing', found?.account_status === 'active', found?.account_status ?? '');
+
+  check('an invented token resolves to nothing', (await findCardByToken('0'.repeat(32))) === null);
+  check('a token of the wrong shape never reaches the database',
+    (await findCardByToken('../../etc/passwd')) === null);
+  check('and neither does an empty one', (await findCardByToken('')) === null);
 } finally {
   await c.query('DELETE FROM membership_status_history WHERE user_id = $1', [cardUser]);
   await c.query('DELETE FROM user_journey_assignments WHERE user_id = $1', [cardUser]);

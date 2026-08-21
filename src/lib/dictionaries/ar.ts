@@ -509,6 +509,20 @@ export const ar: Dictionary = {
       notMemberCta: 'قدّم طلب التطوّع',
       print: 'طباعة أو حفظ PDF',
       validNote: 'للتحقّق من صحّة هذه البطاقة، امسح الرمز.',
+      verifyTitle: 'التحقّق من بطاقة عضوية',
+      verifyValid: 'بطاقة عضوية صحيحة',
+      verifyUnknown: 'تعذّر التحقّق من هذه البطاقة',
+      // Says nothing about why. A reason would tell a stranger something about
+      // a volunteer that the association has not chosen to say.
+      verifyUnknownBody: 'لم نتمكّن من تأكيد هذه البطاقة. تأكّد من مسح الرمز كاملاً، أو تواصل مع الجمعية.',
+      verifyFooter: 'هذه الصفحة تؤكّد صحّة البطاقة فقط، ولا تعرض أيّ بيانات شخصية أخرى.',
+      holder: 'حامل البطاقة',
+      statusLabel: 'حالة البطاقة',
+      statusActive: 'فعّالة',
+      statusInactive: 'غير نشطة',
+      updatedLabel: 'آخر تحديث',
+      hoursLabel: 'ساعات موثّقة',
+      scanHint: 'امسح للتحقّق',
     },
     certificate: {
       awardedTo: 'تُمنح هذه الشهادة إلى',
