@@ -36,9 +36,15 @@ export async function generateMetadata(props: PageProps<'/[lang]/account/map'>):
  * The path map.
  *
  * Built on the programme — orientation station plus levels 1-6 — and not on
- * the six journey stages. See the header of src/lib/programme/journey-map.ts
- * for why: the stages have no requirements, so they all compute 100%, and they
- * only move when a staff member awards them.
+ * the six journey stages. Those are a different progression: the association
+ * awards them, and they move on hours, attendance and a supervisor's
+ * signature. They live at /account/journey and always will.
+ *
+ * (The original reason given here was that the stages had no requirements and
+ * so all computed 100%. That was true and is not any more — migration 025
+ * filled them in. The separation stands on its own merits: courses are not
+ * what moves a volunteer through the ranks, and one page implying they are
+ * would teach four hundred people something false.)
  *
  * One database call. programmeStanding() already assembles levels, per-course
  * lock reasons and certificates from a single gate snapshot; the map model,
@@ -91,12 +97,15 @@ export default async function MapPage(props: PageProps<'/[lang]/account/map'>) {
     <>
       <div className="border-b border-line bg-brand-blue-deep text-white">
         <Container className="py-10 sm:py-14">
+          {/* Points at the volunteer journey now. It used to point at
+              /account/path, which redirects here — the breadcrumb led back to
+              the page you were already on. */}
           <nav aria-label={t.breadcrumb}>
             <Link
-              href={`/${lang}/account/path` as Parameters<typeof Link>[0]['href']}
+              href={`/${lang}/account/journey` as Parameters<typeof Link>[0]['href']}
               className="inline-flex min-h-11 items-center text-[0.88rem] font-bold text-on-deep-2 hover:text-white"
             >
-              {dict.account.path.title}
+              {dict.account.nav.journey}
             </Link>
           </nav>
 

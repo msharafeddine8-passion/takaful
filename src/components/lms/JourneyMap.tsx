@@ -146,9 +146,12 @@ function StationRow({
   const badge = badges.find((b) => b.levelNumber === station.number);
 
   const locked = station.state === 'locked';
+  // With no course to point at, the station links to the academy itself. It
+  // used to fall back to /account/path, which now redirects to the very page
+  // this component is rendered on.
   const href = station.nextSlug
     ? `/${lang}/academy/${station.nextSlug}`
-    : `/${lang}/account/path`;
+    : `/${lang}/academy`;
 
   return (
     // ps-24 clears the 5rem node with a gap; the connector sits on its centre.
