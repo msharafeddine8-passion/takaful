@@ -1,4 +1,5 @@
 import { query, queryOne } from '@/lib/db';
+import { foldName, namesAgree, phoneTail, type MatchStrength } from '@/lib/roster-match';
 
 /**
  * Recognising people the association already knows.
@@ -8,43 +9,15 @@ import { query, queryOne } from '@/lib/db';
  * queue. This looks them up in the association's own roster instead, so the
  * question becomes "is this you?" rather than "should we take you?".
  *
- * Nothing here grants anything. A match is a claim; a member of staff who
- * knows the person still has to approve it. That ordering is the whole safety
- * model — a name is not a password, and this platform has minors on it.
+ * Finding a match still grants nothing — that decision lives in
+ * lib/actions/roster.ts, which recognises the two strengths that rest on two
+ * independent facts and sends the rest to a member of staff. The comparison
+ * rules themselves are in roster-match.ts, kept free of the database so they
+ * can be tested without one.
  */
 
-/** Shown as T047. The T and the padding live here and nowhere else. */
-export function formatMemberNumber(n: number): string {
-  return `T${String(n).padStart(3, '0')}`;
-}
-
-/**
- * The same folding the import uses. Arabic spelling drifts between people and
- * across years — أ/ا, ة/ه, ى/ي, stray diacritics and doubled spaces — and two
- * spellings of one name must land on one key. Matching the association's two
- * spreadsheets on raw names found 38 people in common; folded names and phone
- * numbers found 178.
- */
-export function foldName(s: string): string {
-  return String(s ?? '')
-    .replace(/[أإآٱ]/g, 'ا')
-    .replace(/ة/g, 'ه')
-    .replace(/ى/g, 'ي')
-    .replace(/[ً-ْـٰ]/g, '')
-    .replace(/[^؀-ۿ a-zA-Z]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .toLowerCase();
-}
-
-/**
- * Lebanese numbers are written 03 xxx xxx, +961 3 xxx xxx and 00961 3 xxx xxx
- * for the same line, so only the last eight digits are comparable.
- */
-export function phoneTail(s: string): string | null {
-  const d = String(s ?? '').replace(/\D/g, '');
-  return d.length >= 8 ? d.slice(-8) : null;
-}
+export { formatMemberNumber, foldName, phoneTail, normaliseStoredTail, namesAgree } from '@/lib/roster-match';
+export type { MatchStrength } from '@/lib/roster-match';
 
 export type RosterEntry = {
   id: string;
@@ -57,9 +30,6 @@ export type RosterEntry = {
   approved_at: string | null;
 };
 
-/** How far the evidence goes. The wording a claimant sees depends on it. */
-export type MatchStrength = 'phone-and-name' | 'phone-only' | 'number-and-name';
-
 export type RosterMatch = {
   entry: RosterEntry;
   strength: MatchStrength;
@@ -68,16 +38,6 @@ export type RosterMatch = {
 const COLUMNS = `id, member_number, full_name, joined_on,
                  to_char(date_of_birth, 'YYYY-MM-DD') AS date_of_birth,
                  committee, claimed_by, approved_at`;
-
-/** Names agree when they share at least two words — enough that "محمد علي
- *  حسن" and "محمد حسن" meet, and that two unrelated people do not. */
-function namesAgree(a: string, b: string): boolean {
-  const ta = new Set(foldName(a).split(' ').filter((t) => t.length > 1));
-  const tb = foldName(b).split(' ').filter((t) => t.length > 1);
-  let shared = 0;
-  for (const t of tb) if (ta.has(t)) shared++;
-  return shared >= 2;
-}
 
 /**
  * Finds the roster line a signed-in person is claiming.
@@ -95,8 +55,13 @@ export async function findRosterMatch(opts: {
   const tail = phoneTail(opts.phone ?? '');
 
   if (tail) {
+    /* The stored key is normalised in the comparison rather than in the table
+     * — see normaliseStoredTail. It costs a sequential scan of four hundred
+     * rows, which is nothing, and it means a locally-imported 03 number is
+     * found whether the volunteer types it as 03 998 877 or +961 3 998 877. */
     const row = await queryOne<RosterEntry>(
-      `SELECT ${COLUMNS} FROM volunteer_roster WHERE phone_tail = $1 LIMIT 1`,
+      `SELECT ${COLUMNS} FROM volunteer_roster
+        WHERE regexp_replace(phone_tail, '^0', '') = $1 LIMIT 1`,
       [tail],
     );
     if (row) {

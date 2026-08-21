@@ -33,6 +33,15 @@ export type FunnelStep = {
  * Each step counts people who have *ever* reached it, not people sitting in it
  * now, so the steps only ever shrink and the drop between two of them is a
  * real loss rather than an artefact of someone having moved on.
+ *
+ * "applied" counts both doors. When the application form was the only way in,
+ * counting volunteer_applications was the same thing as counting everyone who
+ * asked to volunteer. It stopped being the same thing when a volunteer already
+ * on the association's roster could claim their record instead, and the
+ * reporting quietly went wrong: all three of the association's volunteers had
+ * come in through the roster, so the funnel showed three people accepted who
+ * had, as far as it could tell, never asked. A step deeper in the funnel than
+ * the one above it is not a rounding error, it is a number nobody can act on.
  */
 export async function funnel(): Promise<FunnelStep[]> {
   const row = await queryOne<Record<string, number>>(`
@@ -40,7 +49,11 @@ export async function funnel(): Promise<FunnelStep[]> {
       (SELECT count(*) FROM users WHERE status <> 'deactivated')::INTEGER          AS registered,
       (SELECT count(DISTINCT user_id) FROM course_attempts)::INTEGER               AS learning,
       (SELECT count(DISTINCT user_id) FROM course_attempts WHERE passed)::INTEGER  AS passed,
-      (SELECT count(DISTINCT user_id) FROM volunteer_applications)::INTEGER        AS applied,
+      (SELECT count(*) FROM (
+         SELECT user_id FROM volunteer_applications
+         UNION
+         SELECT claimed_by FROM volunteer_roster WHERE claimed_by IS NOT NULL
+       ) AS asked_to_volunteer)::INTEGER                                           AS applied,
       (SELECT count(DISTINCT user_id) FROM membership_status_history
         WHERE new_status = 'accepted_volunteer')::INTEGER                          AS accepted,
       (SELECT count(DISTINCT user_id) FROM hour_entries

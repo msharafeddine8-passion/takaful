@@ -120,10 +120,60 @@ try {
     f.every((s) => typeof s.count === 'number'),
     typeof f[0].count,
   );
+  /*
+   * Not one chain — two.
+   *
+   * This used to assert that all six steps shrink in order, and it passed only
+   * because this probe's own fixtures padded the upper ones. On the
+   * association's real data it is false, and not by accident: nobody has to
+   * pass a course to volunteer. A volunteer of six years who claims their
+   * roster record and never opens the academy reaches "applied" without ever
+   * having been counted in "learning", so "passed" sitting above "applied" in
+   * one list compares two populations that were never nested.
+   *
+   * Each track shrinks properly on its own, which is the property actually
+   * worth holding. Asserting the six-step version instead would mean a probe
+   * that only stays green while test fixtures happen to hide the shape of the
+   * real data — which is how this went unnoticed in the first place.
+   */
+  const step = (key: string) => f.find((s) => s.key === key)?.count ?? 0;
+  const shrinks = (track: string[]) =>
+    track.every((k, i) => i === 0 || step(k) <= step(track[i - 1]));
+
   check(
-    'the steps never grow as they go deeper',
-    f.every((s, i) => i === 0 || s.count <= f[i - 1].count),
-    f.map((s) => s.count).join(' > '),
+    'the learning track never grows as it goes deeper',
+    shrinks(['registered', 'learning', 'passed']),
+    ['registered', 'learning', 'passed'].map(step).join(' > '),
+  );
+  check(
+    'the volunteering track never grows as it goes deeper',
+    shrinks(['registered', 'applied', 'accepted', 'contributing']),
+    ['registered', 'applied', 'accepted', 'contributing'].map(step).join(' > '),
+  );
+
+  /*
+   * Within the volunteering track, the step that actually broke: "applied"
+   * counted volunteer_applications only, while a volunteer recognised from the
+   * roster reaches "accepted" without ever filing one. All three of the
+   * association's volunteers had come in that way, so the report showed more
+   * people accepted than had asked. Counting both doors is the fix, and this
+   * says so out loud.
+   */
+  const roster = await c.query<{ n: number }>(
+    `SELECT count(DISTINCT claimed_by)::int AS n FROM volunteer_roster WHERE claimed_by IS NOT NULL`,
+  );
+  const applications = await c.query<{ n: number }>(
+    `SELECT count(DISTINCT user_id)::int AS n FROM volunteer_applications`,
+  );
+  const applied = f.find((s) => s.key === 'applied')?.count ?? 0;
+  check(
+    'the applied step counts roster claims, not only application forms',
+    applied >= roster.rows[0].n && applied >= applications.rows[0].n,
+    `applied=${applied}, claims=${roster.rows[0].n}, applications=${applications.rows[0].n}`,
+  );
+  check(
+    'nobody is accepted without appearing at the applied step',
+    (f.find((s) => s.key === 'accepted')?.count ?? 0) <= applied,
   );
 
   console.log('\n--- courses ---');

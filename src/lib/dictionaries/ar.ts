@@ -290,8 +290,12 @@ export const ar: Dictionary = {
       notListed: 'لست متطوّعاً معنا بعد؟',
       applyInstead: 'قدّم طلب تطوّع',
       pendingTitle: 'وجدنا سجلّك — بانتظار التأكيد',
+      /* Only a name that disagrees reaches this message now; everything else is
+       * recognised on the spot. Saying why heads off the reading that the
+       * association doubts them. */
       pendingBody:
-        'سجلّك يحمل الرقم {number}. أحد المسؤولين سيؤكّد أنك أنت، ثم يُفعَّل حسابك كمتطوّع.',
+        'سجلّك يحمل الرقم {number}. الاسم المسجَّل عندنا مكتوب بصيغة تختلف عن اسم حسابك، ' +
+        'فيؤكّد أحد المسؤولين أنك أنت، ثم يُفعَّل حسابك كمتطوّع.',
       approvedTitle: 'تم التعرّف عليك',
       approvedBody: 'حسابك مرتبط بسجلّك في الجمعية، ورقم عضويتك {number}.',
       backToAccount: 'العودة إلى حسابي',
@@ -558,7 +562,9 @@ export const ar: Dictionary = {
       registered: 'سجّلوا حسابًا',
       learning: 'فتحوا دورة',
       passedCourse: 'أنهوا دورة بنجاح',
-      applied: 'قدّموا طلب تطوّع',
+      // Both doors: a new application, or a returning volunteer claiming their
+      // record. Saying only «قدّموا طلب تطوّع» would undercount the second.
+      applied: 'طلبوا التطوّع أو ربطوا سجلّهم',
       accepted: 'قُبلوا',
       contributing: 'سجّلوا ساعات موثّقة',
       ofPrevious: 'من السابقة',

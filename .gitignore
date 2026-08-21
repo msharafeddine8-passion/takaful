@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# written by scripts/probe-all.mts on every run so probes can import modules
+# that are marked server-only — regenerated, never edited, never committed
+/stub-so.ts
+/tsconfig.probe.json

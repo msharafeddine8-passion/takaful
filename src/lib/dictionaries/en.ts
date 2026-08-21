@@ -291,8 +291,12 @@ export const en: Dictionary = {
       notListed: 'Not a volunteer with us yet?',
       applyInstead: 'Apply to volunteer',
       pendingTitle: 'We found your record — awaiting confirmation',
+      /* Only a name that disagrees reaches this message now; everything else is
+       * recognised on the spot. Saying why heads off the reading that the
+       * association doubts them. */
       pendingBody:
-        'Your record is number {number}. A member of staff will confirm it is you, and your ' +
+        'Your record is number {number}. The name we have on file is written differently from ' +
+        'the name on your account, so a member of staff will confirm it is you, and your ' +
         'account becomes a volunteer account.',
       approvedTitle: 'You have been recognised',
       approvedBody:
@@ -561,7 +565,9 @@ export const en: Dictionary = {
       registered: 'Registered an account',
       learning: 'Opened a course',
       passedCourse: 'Passed a course',
-      applied: 'Applied to volunteer',
+      // Both doors: a new application, or a returning volunteer claiming their
+      // record. "Applied to volunteer" alone would undercount the second.
+      applied: 'Applied or claimed a record',
       accepted: 'Accepted',
       contributing: 'Logged verified hours',
       ofPrevious: 'of the step before',
