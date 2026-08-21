@@ -140,6 +140,30 @@ export type Account = {
     applicationTitle: string;
     logout: string;
   };
+  /**
+   * Getting around the account. Kept separate from each page's own title
+   * because a page heading and a navigation label are different jobs — a
+   * heading can explain itself, a label in a phone's bottom bar has room for
+   * about two words.
+   */
+  nav: {
+    label: string;
+    groupWhereIStand: string;
+    groupWhatIDo: string;
+    groupWhatIEarned: string;
+    groupMe: string;
+    dashboard: string;
+    journey: string;
+    learning: string;
+    activities: string;
+    hours: string;
+    achievements: string;
+    certificates: string;
+    card: string;
+    notifications: string;
+    profile: string;
+    safeguarding: string;
+  };
   /** The fork at the front door: volunteer, or here for the courses. */
   chooser: {
     title: string;

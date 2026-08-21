@@ -260,6 +260,26 @@ export const ar: Dictionary = {
       applicationTitle: 'طلب التطوّع',
       logout: 'تسجيل الخروج',
     },
+    nav: {
+      label: 'التنقّل داخل حسابي',
+      // Grouped by the question being asked, not by feature name — somebody
+      // looking for their hours is asking "what have I done", not browsing.
+      groupWhereIStand: 'أين أنا',
+      groupWhatIDo: 'ما أقوم به',
+      groupWhatIEarned: 'ما حصّلته',
+      groupMe: 'بياناتي',
+      dashboard: 'لوحتي',
+      journey: 'رحلتي',
+      learning: 'تعلّمي',
+      activities: 'أنشطتي',
+      hours: 'ساعاتي',
+      achievements: 'إنجازاتي',
+      certificates: 'شهاداتي',
+      card: 'بطاقتي',
+      notifications: 'إشعاراتي',
+      profile: 'ملفي',
+      safeguarding: 'بيانات السلامة',
+    },
     chooser: {
       title: 'كيف تحب تنضمّ إلينا؟',
       lede: 'اختر ما ينطبق عليك، ونوجّهك مباشرة إلى المكان الصحيح بدل أن تبحث عنه.',

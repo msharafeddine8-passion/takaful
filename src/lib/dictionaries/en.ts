@@ -260,6 +260,26 @@ export const en: Dictionary = {
       applicationTitle: 'Volunteer application',
       logout: 'Sign out',
     },
+    nav: {
+      label: 'Account navigation',
+      // Grouped by the question being asked, not by feature name — somebody
+      // looking for their hours is asking "what have I done", not browsing.
+      groupWhereIStand: 'Where I stand',
+      groupWhatIDo: 'What I do',
+      groupWhatIEarned: 'What I have earned',
+      groupMe: 'My details',
+      dashboard: 'My dashboard',
+      journey: 'My journey',
+      learning: 'My learning',
+      activities: 'My activities',
+      hours: 'My hours',
+      achievements: 'My achievements',
+      certificates: 'My certificates',
+      card: 'My card',
+      notifications: 'Notifications',
+      profile: 'My profile',
+      safeguarding: 'Safety details',
+    },
     chooser: {
       title: 'How would you like to join us?',
       lede: 'Pick whichever describes you, and we will take you straight to the right place instead of leaving you to find it.',

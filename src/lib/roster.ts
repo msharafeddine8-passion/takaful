@@ -1,5 +1,5 @@
 import { query, queryOne } from '@/lib/db';
-import { foldName, namesAgree, phoneTail, type MatchStrength } from '@/lib/roster-match';
+import { namesAgree, phoneTail, type MatchStrength } from '@/lib/roster-match';
 
 /**
  * Recognising people the association already knows.

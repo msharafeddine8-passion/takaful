@@ -14,6 +14,7 @@ import { formatDuration } from '@/lib/hours';
 import { COURSES } from '@/lib/courses';
 import { logoutAction } from '@/lib/actions/account';
 import { VerifyBanner } from '@/components/account/VerifyBanner';
+import { AccountGroups, AccountBottomBar } from '@/components/account/AccountNav';
 import { claimForUser, formatMemberNumber } from '@/lib/roster';
 import { isEmailConfigured } from '@/lib/email';
 
@@ -317,41 +318,30 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
           </span>
         </Link>
 
-        <nav className="mt-5 flex flex-wrap gap-3">
-          {[
-            // First: it is the page that answers what to do next, and every
-            // other tile here answers a narrower question.
-            { href: `/${lang}/account/path`, label: dict.account.path.title },
-            journey ? { href: `/${lang}/account/journey`, label: dict.account.journey.title } : null,
-            { href: `/${lang}/account/learning`, label: dict.account.learning.title },
-            { href: `/${lang}/account/achievements`, label: dict.account.achievements.title },
-            { href: `/${lang}/account/hours`, label: dict.account.hours.title },
-            { href: `/${lang}/account/activities`, label: dict.account.activities.mineTitle },
-            { href: `/${lang}/opportunities`, label: dict.account.activities.title },
-            { href: `/${lang}/account/certificates`, label: dict.account.certificate.myCertificates },
-            { href: `/${lang}/account/profile`, label: dict.account.profile.title },
-            journey ? { href: `/${lang}/account/card`, label: dict.account.card.title } : null,
-            {
-              href: `/${lang}/account/notifications`,
-              // The count sits in the label rather than a floating badge: it
-              // survives text zoom and reads correctly to a screen reader.
-              label:
-                summary.unreadNotifications > 0
-                  ? `${dict.account.notifications.title} (${summary.unreadNotifications})`
-                  : dict.account.notifications.title,
-            },
-            isStaff(user) ? { href: `/${lang}/staff`, label: dict.account.staff.dashboard.title } : null,
-          ]
-            .filter((l) => l !== null)
-            .map((l) => (
-              <Link
-                key={l.href}
-                href={l.href as Parameters<typeof Link>[0]['href']}
-                className="rounded-full border border-line px-5 py-2.5 text-[0.92rem] font-bold transition-colors hover:bg-surface-2"
-              >
-                {l.label}
-              </Link>
-            ))}
+        {/*
+          * Was a flat row of thirteen identical pills. Thirteen things of equal
+          * weight is a list nobody reads — people were finding pages by
+          * remembering where the button sat. Grouped by the question being
+          * asked, with the two links that are not part of the account proper
+          * (public opportunities, the staff area) kept out of the groups.
+          */}
+        <AccountGroups lang={lang} dict={dict} unread={summary.unreadNotifications} />
+
+        <nav className="mt-6 flex flex-wrap gap-3">
+          <Link
+            href={`/${lang}/opportunities` as Parameters<typeof Link>[0]['href']}
+            className="rounded-full border border-line px-5 py-2.5 text-[0.92rem] font-bold transition-colors hover:bg-surface-2"
+          >
+            {dict.account.activities.title}
+          </Link>
+          {isStaff(user) && (
+            <Link
+              href={`/${lang}/staff` as Parameters<typeof Link>[0]['href']}
+              className="rounded-full border border-line px-5 py-2.5 text-[0.92rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {dict.account.staff.dashboard.title}
+            </Link>
+          )}
         </nav>
 
         <form action={logoutAction} className="mt-8">
@@ -363,7 +353,18 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
             {t.logout}
           </button>
         </form>
+
+        {/* Clears the fixed bottom bar on a phone, so the sign-out button is
+            not sitting underneath it. */}
+        <div aria-hidden className="h-20 lg:hidden" />
       </Container>
+
+      <AccountBottomBar
+        lang={lang}
+        dict={dict}
+        current="dashboard"
+        unread={summary.unreadNotifications}
+      />
     </Section>
   );
 }
