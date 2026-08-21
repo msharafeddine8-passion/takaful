@@ -116,10 +116,14 @@ export function CheckField({
   name,
   label,
   error,
+  defaultChecked,
 }: {
   name: string;
   label: string;
   error?: string;
+  /** So a form that refuses a submission can hand the ticks back, rather than
+   *  making somebody agree to three things all over again. */
+  defaultChecked?: boolean;
 }) {
   return (
     <div className="mb-3.5">
@@ -128,6 +132,7 @@ export function CheckField({
           id={name}
           name={name}
           type="checkbox"
+          defaultChecked={defaultChecked}
           className="mt-1 size-[1.05rem] shrink-0 accent-brand-orange"
           aria-invalid={error ? true : undefined}
         />

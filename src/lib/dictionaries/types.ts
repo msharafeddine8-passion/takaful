@@ -638,6 +638,83 @@ export type Account = {
     hoursAgo: string;
     daysAgo: string;
   };
+  /** The short record every volunteer must have, however they arrived. */
+  safeguarding: {
+    kicker: string;
+    title: string;
+    lede: string;
+    ledeExisting: string;
+    aboutYou: string;
+    dateOfBirth: string;
+    dateOfBirthHint: string;
+    emergencyTitle: string;
+    emergencyLede: string;
+    emergencyName: string;
+    emergencyPhone: string;
+    emergencyRelation: string;
+    guardianTitle: string;
+    guardianLede: string;
+    guardianName: string;
+    guardianRelation: string;
+    guardianPhone: string;
+    guardianConsent: string;
+    commitments: string;
+    codeOfConduct: string;
+    safeguarding: string;
+    dataConsent: string;
+    medicalNotes: string;
+    submit: string;
+    saving: string;
+    saved: string;
+    backToAccount: string;
+    bannerTitle: string;
+    bannerBody: string;
+    bannerCta: string;
+  };
+  /** Writing an activity, and correcting one. */
+  activityForm: {
+    createTitle: string;
+    editTitle: string;
+    lede: string;
+    titleAr: string;
+    titleEn: string;
+    descriptionAr: string;
+    descriptionEn: string;
+    activityType: string;
+    audience: string;
+    location: string;
+    mapUrl: string;
+    mapUrlHint: string;
+    imageUrl: string;
+    imageUrlHint: string;
+    startsAt: string;
+    endsAt: string;
+    registrationClosesAt: string;
+    registrationClosesHint: string;
+    capacity: string;
+    capacityHint: string;
+    minStage: string;
+    minStageHint: string;
+    creditedMinutes: string;
+    creditedMinutesHint: string;
+    requiresApproval: string;
+    status: string;
+    statusDraft: string;
+    statusPublished: string;
+    create: string;
+    saveEdit: string;
+    saving: string;
+    savedCreate: string;
+    savedEdit: string;
+    errors: {
+      required: string;
+      endsBeforeStarts: string;
+      capacityInvalid: string;
+      deadlineAfterStart: string;
+      badUrl: string;
+      unavailable: string;
+    };
+  };
   /** Recording who turned up. */
   attendance: {
     registered: string;

@@ -62,7 +62,7 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
 
-  const [summary, application, account, rosterClaim] = await Promise.all([
+  const [summary, application, account, rosterClaim, safeguarding] = await Promise.all([
     portalSummary(user.id),
     queryOne<{ id: string; status: string; submitted_at: Date | null }>(
       `SELECT id, status, submitted_at FROM volunteer_applications
@@ -74,6 +74,10 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
       [user.id],
     ),
     claimForUser(user.id),
+    queryOne<{ user_id: string }>(
+      'SELECT user_id FROM safeguarding_records WHERE user_id = $1',
+      [user.id],
+    ),
   ]);
 
   const hasOpenApplication = application ? APPLICATION_OPEN.includes(application.status) : false;
@@ -85,6 +89,15 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
    */
   const offerRosterClaim =
     !rosterClaim && !hasOpenApplication && !VOLUNTEER_STANDING.includes(user.membershipStatus);
+
+  /*
+   * A volunteer recognised from the roster never filled in an application, and
+   * that is where the emergency contact used to be collected. Asked for here,
+   * once they are actually a volunteer — not before, because a learner
+   * browsing courses has no field activity to be safe at.
+   */
+  const needsSafeguarding =
+    !safeguarding && VOLUNTEER_STANDING.includes(user.membershipStatus);
   const journey = summary.journey;
   const stage = journey?.currentStage ?? null;
   const next = journey?.nextAction ?? null;
@@ -99,6 +112,23 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
 
         {account && !account.verified && (
           <VerifyBanner lang={lang} dict={dict} emailConfigured={isEmailConfigured()} />
+        )}
+
+        {/* Ahead of everything else on the page: without this the association
+            has a volunteer, possibly a minor, with no emergency contact. */}
+        {needsSafeguarding && (
+          <div className="mt-6 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-6">
+            <p className="text-[1.08rem] font-extrabold">{dict.account.safeguarding.bannerTitle}</p>
+            <p className="mt-2 text-[1rem] leading-relaxed text-ink-2">
+              {dict.account.safeguarding.bannerBody}
+            </p>
+            <Link
+              href={`/${lang}/account/safeguarding`}
+              className="mt-4 inline-flex min-h-11 items-center rounded-full bg-brand-orange px-6 py-2.5 text-[0.95rem] font-extrabold text-[#241503] hover:bg-brand-orange-dark"
+            >
+              {dict.account.safeguarding.bannerCta} <Arrow lang={lang} />
+            </Link>
+          </div>
         )}
 
         {/* An existing volunteer should never be told to apply, so this is

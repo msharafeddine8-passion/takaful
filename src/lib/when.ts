@@ -62,6 +62,49 @@ function partsInZone(d: Date): {
   };
 }
 
+/** How far ahead of UTC Beirut is at a given instant, in milliseconds. */
+function offsetAt(ts: number): number {
+  const p = partsInZone(new Date(ts));
+  return Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute) - Math.floor(ts / 60000) * 60000;
+}
+
+/**
+ * Reads a `<input type="datetime-local">` value as Beirut wall time.
+ *
+ * The browser hands over a bare "2026-10-01T15:00" with no zone, and every
+ * layer below is entitled to guess: `new Date()` guesses the server's zone,
+ * and Postgres guesses its session zone, which on the production database is
+ * GMT. A coordinator in Tripoli typing 3pm was getting an activity that
+ * started at 6pm. What they mean is Beirut, always — the association has never
+ * run an activity anywhere else — so that is what this fixes it to.
+ *
+ * The offset is applied twice because the first pass is measured at the wrong
+ * instant; on the two days a year the clocks move, that matters.
+ */
+export function parseLocalInput(value: string | null | undefined): Date | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec((value ?? '').trim());
+  if (!m) return null;
+  const [y, mo, d, h, mi] = m.slice(1).map(Number);
+  const wall = Date.UTC(y, mo - 1, d, h, mi);
+  let ts = wall;
+  for (let i = 0; i < 2; i++) ts = wall - offsetAt(ts);
+  const out = new Date(ts);
+  return Number.isNaN(out.getTime()) ? null : out;
+}
+
+/**
+ * The reverse: an instant as the "YYYY-MM-DDTHH:mm" a datetime-local input
+ * wants, in Beirut. Rendering it in the viewer's own zone instead would show a
+ * coordinator abroad a different time than the one they saved.
+ */
+export function toLocalInput(value: Date | string | null | undefined): string {
+  const d = toDate(value ?? null);
+  if (!d) return '';
+  const p = partsInZone(d);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${p.year}-${pad(p.month)}-${pad(p.day)}T${pad(p.hour)}:${pad(p.minute)}`;
+}
+
 /** «الثلاثاء في 25 - 8 - 2026» / «Tue, 25 Aug 2026» */
 export function formatDate(value: Date | string | null, lang: Locale): string {
   const d = toDate(value);

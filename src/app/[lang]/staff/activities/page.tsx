@@ -11,7 +11,6 @@ import { can } from '@/lib/authz';
 import { isDbConfigured } from '@/lib/db';
 import { allActivities } from '@/lib/activities';
 import {
-  createActivityAction,
   closeActivityAction,
   reopenActivityAction,
   cancelActivityAction,
@@ -19,6 +18,7 @@ import {
 } from '@/lib/actions/activity-admin';
 import { ActivityCard, CardLink } from '@/components/activities/ActivityCard';
 import { activityState } from '@/lib/activity-state';
+import { ActivityForm } from '@/components/activities/ActivityForm';
 
 export async function generateMetadata(props: PageProps<'/[lang]/staff/activities'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -30,9 +30,6 @@ export async function generateMetadata(props: PageProps<'/[lang]/staff/activitie
     robots: { index: false, follow: false },
   };
 }
-
-const field =
-  'w-full rounded-xl border border-line bg-surface px-4 py-2.5 text-[0.95rem] outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/25';
 
 export default async function StaffActivitiesPage(props: PageProps<'/[lang]/staff/activities'>) {
   await connection();
@@ -73,52 +70,16 @@ export default async function StaffActivitiesPage(props: PageProps<'/[lang]/staf
         </h1>
         <p className="mt-3 max-w-[62ch] text-[1.02rem] leading-relaxed text-ink-2">{a.manageLede}</p>
 
+        {/* The full form has its own page now: it asks for a dozen things, and a
+            dozen things inside a <details> on a listing page is where an
+            activity ends up half-written. */}
         <details className="mt-8 rounded-2xl border border-line bg-surface p-6">
           <summary className="cursor-pointer text-[1rem] font-extrabold text-brand-blue dark:text-brand-orange">
             {a.newActivity}
           </summary>
-
-          <form action={createActivityAction} className="mt-5 grid gap-4 sm:grid-cols-2">
-            <input type="hidden" name="lang" value={lang} />
-
-            <label className="block">
-              <span className="mb-1.5 block text-[0.88rem] font-bold">{a.titleArField}</span>
-              <input name="titleAr" required dir="rtl" className={field} />
-            </label>
-            <label className="block">
-              <span className="mb-1.5 block text-[0.88rem] font-bold">{a.titleEnField}</span>
-              <input name="titleEn" required dir="ltr" className={field} />
-            </label>
-            <label className="block sm:col-span-2">
-              <span className="mb-1.5 block text-[0.88rem] font-bold">{a.locationField}</span>
-              <input name="location" className={field} />
-            </label>
-            <label className="block">
-              <span className="mb-1.5 block text-[0.88rem] font-bold">{a.startsField}</span>
-              <input name="startsAt" type="datetime-local" required className={field} dir="ltr" />
-            </label>
-            <label className="block">
-              <span className="mb-1.5 block text-[0.88rem] font-bold">{a.endsField}</span>
-              <input name="endsAt" type="datetime-local" required className={field} dir="ltr" />
-            </label>
-            <label className="block">
-              <span className="mb-1.5 block text-[0.88rem] font-bold">{a.capacityField}</span>
-              <input name="capacity" type="number" min="1" className={field} dir="ltr" />
-            </label>
-            <label className="block">
-              <span className="mb-1.5 block text-[0.88rem] font-bold">{a.minStageField}</span>
-              <input name="minStage" type="number" min="1" max="6" className={field} dir="ltr" />
-            </label>
-
-            <div className="sm:col-span-2">
-              <button
-                type="submit"
-                className="rounded-full bg-brand-blue px-6 py-2.5 text-[0.92rem] font-extrabold text-white hover:bg-brand-blue-dark"
-              >
-                {a.create}
-              </button>
-            </div>
-          </form>
+          <div className="mt-5">
+            <ActivityForm lang={lang} t={dict.account.activityForm} mode="create" />
+          </div>
         </details>
 
         <ul className="mt-8 space-y-4">
@@ -128,6 +89,9 @@ export default async function StaffActivitiesPage(props: PageProps<'/[lang]/staf
                 {a.actions.manageAttendance}
               </CardLink>
               <CardLink href={`/${lang}/staff/activities/${row.id}`}>{a.actions.details}</CardLink>
+              <CardLink href={`/${lang}/staff/activities/${row.id}/edit`}>
+                {a.actions.edit}
+              </CardLink>
               {/* Closing registration is an action, so it is a button with a
                   verb on it. It used to be labelled "اكتمل العدد", which read
                   as a status and contradicted the seat count beside it. */}
