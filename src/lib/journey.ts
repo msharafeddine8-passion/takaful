@@ -88,6 +88,7 @@ type Signals = {
   allocatedByRequirement: Map<string, number>;
   manualProgress: Set<string>;             // requirement ids satisfied by a recorded row
   completedStages: Map<number, Date>;      // stage number -> when
+  activitiesAttended: number;              // confirmed attendance, all time
 };
 
 export async function journeyFor(userId: string): Promise<JourneyView | null> {
@@ -197,7 +198,7 @@ export async function journeyFor(userId: string): Promise<JourneyView | null> {
 }
 
 async function gatherSignals(userId: string): Promise<Signals> {
-  const [courses, allocations, manual, completed] = await Promise.all([
+  const [courses, allocations, manual, completed, attended] = await Promise.all([
     query<{ course_slug: string; score: number | null }>(
       'SELECT course_slug, score FROM course_progress WHERE user_id = $1 AND passed',
       [userId],
@@ -214,6 +215,21 @@ async function gatherSignals(userId: string): Promise<Signals> {
       'SELECT stage, reached_at FROM stage_progress WHERE user_id = $1',
       [userId],
     ),
+    /*
+     * Attendance a supervisor has already confirmed.
+     *
+     * Without this an `activity` requirement had no automatic signal at all:
+     * somebody could turn up to five activities, have every one confirmed by
+     * their supervisor, and the requirement would still sit unsatisfied until
+     * a second person recorded a separate row saying so. Nobody was ever going
+     * to do that, so a journey containing an activity requirement stalled on
+     * it forever — and that is precisely the step the dashboard puts in its
+     * "your next step" card.
+     */
+    queryOne<{ n: string }>(
+      'SELECT count(*) AS n FROM activity_attendance WHERE user_id = $1 AND attended',
+      [userId],
+    ),
   ]);
 
   return {
@@ -223,6 +239,7 @@ async function gatherSignals(userId: string): Promise<Signals> {
     ),
     manualProgress: new Set(manual.map((m) => m.requirement_id)),
     completedStages: new Map(completed.map((s) => [s.stage, s.reached_at])),
+    activitiesAttended: Number.parseInt(attended?.n ?? '0', 10),
   };
 }
 
@@ -278,9 +295,24 @@ function evaluate(r: RequirementRow, signals: Signals): RequirementView {
       };
     }
 
+    /*
+     * How many activities they have actually turned up to, against how many
+     * the stage asks for. Counted from attendance a supervisor confirmed, so
+     * nobody can satisfy it by registering and staying home — and nobody has
+     * to remember to record it a second time by hand.
+     */
+    case 'activity': {
+      const target = Number.parseInt(r.config.count ?? '1', 10) || 1;
+      const current = signals.activitiesAttended;
+      return {
+        ...base,
+        satisfied: current >= target,
+        progress: { current, target, unit: 'count' },
+      };
+    }
+
     // These have no automatic signal: something records a row when they are
     // met, and the manualProgress check above catches it.
-    case 'activity':
     case 'evaluation':
     case 'document':
     case 'approval':
