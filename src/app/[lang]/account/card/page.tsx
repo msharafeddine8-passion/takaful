@@ -14,6 +14,7 @@ import { ORG } from '@/lib/org';
 import { SITE_URL } from '@/lib/seo';
 import { PrintButton } from '@/components/PrintButton';
 import { formatMemberNumber } from '@/lib/roster';
+import { LogoMark } from '@/components/Logo';
 import { verifiedMinutes, formatDuration } from '@/lib/hours';
 import { cardStatusOf, monthOf } from '@/lib/card-view';
 
@@ -130,9 +131,28 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
       <style>{`
         @media print {
           header, footer, .no-print { display: none !important; }
-          @page { size: A4; margin: 20mm; }
+          @page { size: A4; margin: 18mm; }
           body { background: #fff !important; }
-          .member-card { box-shadow: none !important; break-inside: avoid; }
+          /*
+           * The real thing, at the real size. Fixing the width in millimetres
+           * rather than letting it fill the page is what makes a print
+           * cuttable: 85.6mm wide, and the aspect-ratio on the element gives
+           * the 54mm height without stating it twice.
+           *
+           * print-color-adjust because the header is a dark navy block with
+           * white text on it, and browsers strip background colours from
+           * printouts by default — which would leave white text on white
+           * paper.
+           */
+          .member-card {
+            width: 85.6mm !important;
+            max-width: 85.6mm !important;
+            box-shadow: none !important;
+            break-inside: avoid;
+            border: 0.2mm solid #94a3b8 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
         }
       `}</style>
 
@@ -144,87 +164,109 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
           </h1>
           <p className="no-print mt-3 text-[1.02rem] leading-relaxed text-ink-2">{t.lede}</p>
 
-          {/* Proportioned like a real card, so it prints and photographs as one. */}
-          <article className="member-card mt-8 overflow-hidden rounded-2xl border border-line bg-surface">
-            <div className="bg-brand-blue-deep px-7 py-5 text-white">
-              <p className="text-[0.82rem] font-extrabold tracking-[0.2em] text-[#9dbbd2]">
-                {dict.meta.siteName}
-              </p>
-              <p className="mt-0.5 text-[0.82rem] text-[#9dbbd2]">
-                {dict.account.certificate.registration} {ORG.registrationNumber}
-              </p>
-            </div>
+          {/*
+            * An ID card, at the size of one.
+            *
+            * 85.6 × 54 mm is the ISO/IEC 7810 ID-1 format — a bank card, a
+            * Lebanese ID, the thing already in the volunteer's wallet. Holding
+            * that ratio is not decoration: a card that photographs and prints
+            * at the size people expect reads as issued rather than as a web
+            * page about a person. Everything inside is sized in `cqw`
+            * (percentages of the card's own width) rather than rem, so the
+            * whole thing scales as one object — on a phone, on a desktop, and
+            * at exactly 85.6mm on paper — instead of the text reflowing out of
+            * a fixed frame.
+            */}
+          <article
+            className="member-card mt-8 w-full max-w-[30rem] overflow-hidden rounded-[4cqw] border border-line bg-surface text-ink shadow-sm"
+            style={{ aspectRatio: '85.6 / 54', containerType: 'inline-size' }}
+          >
+            <div className="flex h-full flex-col">
+              {/* Header: the association's own mark, not its name in text. */}
+              <div className="flex items-center gap-[2.5cqw] bg-brand-blue-deep px-[5cqw] py-[3cqw] text-white">
+                <LogoMark className="h-[9cqw] w-auto" />
+                <div className="min-w-0">
+                  <p className="truncate text-[3.1cqw] font-extrabold tracking-[0.12em] text-[#9dbbd2]">
+                    {dict.meta.siteName}
+                  </p>
+                  <p className="truncate text-[2.6cqw] text-[#9dbbd2]" dir="ltr">
+                    {ORG.registrationNumber}
+                  </p>
+                </div>
+                <span
+                  className={`ms-auto shrink-0 rounded-full px-[2.5cqw] py-[1cqw] text-[2.6cqw] font-extrabold ${
+                    status === 'active' ? 'bg-ok text-[#04240f]' : 'bg-white/25 text-white'
+                  }`}
+                >
+                  {status === 'active' ? t.statusActive : t.statusInactive}
+                </span>
+              </div>
 
-            <div className="flex flex-wrap items-start gap-6 p-7">
-              <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2">
-                {photo ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={`/api/photo/${user.id}?v=${photo.version}`}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <span className="flex h-full w-full items-center justify-center text-[1.8rem] text-ink-3" aria-hidden>
-                    🙂
-                  </span>
+              <div className="flex flex-1 items-stretch gap-[4cqw] px-[5cqw] py-[3.5cqw]">
+                {/* Portrait proportions, like every ID photo. */}
+                <div className="aspect-[3/4] h-full shrink-0 overflow-hidden rounded-[2cqw] border border-line bg-surface-2">
+                  {photo ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={`/api/photo/${user.id}?v=${photo.version}`}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span
+                      className="flex h-full w-full items-center justify-center text-[8cqw] text-ink-3"
+                      aria-hidden
+                    >
+                      🙂
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <p className="truncate text-[5cqw] font-extrabold leading-tight">
+                    {profile.full_name}
+                  </p>
+                  {/* The number is the card's real subject, so it is the
+                      largest thing after the name and set in tabular figures
+                      that stay Latin under html[lang="ar"]. */}
+                  <p
+                    className="mt-[0.5cqw] font-mono text-[6cqw] font-black leading-none tracking-[0.08em] text-brand-blue"
+                    dir="ltr"
+                  >
+                    {formatMemberNumber(profile.member_number)}
+                  </p>
+
+                  <dl className="mt-auto grid grid-cols-2 gap-x-[3cqw] gap-y-[0.8cqw] text-[2.8cqw]">
+                    <Field label={t.memberSince} value={since} ltr />
+                    <Field label={t.hoursLabel} value={formatDuration(minutes, lang)} />
+                    {stage && (
+                      <div className="col-span-2 min-w-0">
+                        <dt className="font-bold text-ink-3">{t.stage}</dt>
+                        <dd className="truncate font-bold">
+                          {lang === 'ar' ? stage.titleAr : stage.titleEn}
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
+                </div>
+
+                {qr && (
+                  <div className="flex shrink-0 flex-col items-center justify-end">
+                    <div
+                      className="aspect-square w-[17cqw] [&>svg]:h-full [&>svg]:w-full"
+                      aria-hidden
+                      dangerouslySetInnerHTML={{ __html: qr }}
+                    />
+                    <p className="mt-[1cqw] text-[2.3cqw] text-ink-3">{t.scanHint}</p>
+                  </div>
                 )}
               </div>
-
-              <div className="min-w-[12rem] flex-1">
-                <p className="text-[1.3rem] font-extrabold leading-tight">{profile.full_name}</p>
-
-                <dl className="mt-3 space-y-1 text-[0.88rem]">
-                  <div className="flex gap-2">
-                    <dt className="font-bold text-ink-3">{t.memberNumber}:</dt>
-                    {/* T014, the way the association writes it and the way it
-                        appears everywhere else. This printed a bare "14". */}
-                    <dd className="font-mono font-bold tracking-wider" dir="ltr">
-                      {formatMemberNumber(profile.member_number)}
-                    </dd>
-                  </div>
-                  <div className="flex gap-2">
-                    <dt className="font-bold text-ink-3">{t.hoursLabel}:</dt>
-                    <dd>{formatDuration(minutes, lang)}</dd>
-                  </div>
-                  <div className="flex gap-2">
-                    <dt className="font-bold text-ink-3">{t.statusLabel}:</dt>
-                    <dd className="font-bold">
-                      <span aria-hidden className="me-1">{status === 'active' ? '●' : '○'}</span>
-                      {status === 'active' ? t.statusActive : t.statusInactive}
-                    </dd>
-                  </div>
-                  <div className="flex gap-2">
-                    <dt className="font-bold text-ink-3">{t.memberSince}:</dt>
-                    <dd dir="ltr">{since}</dd>
-                  </div>
-                  {stage && (
-                    <div className="flex gap-2">
-                      <dt className="font-bold text-ink-3">{t.stage}:</dt>
-                      <dd>
-                        {stage.number} — {lang === 'ar' ? stage.titleAr : stage.titleEn}
-                      </dd>
-                    </div>
-                  )}
-                </dl>
-              </div>
-
-              {qr && (
-                <div className="shrink-0 text-center">
-                  <div
-                    className="h-20 w-20 [&>svg]:h-full [&>svg]:w-full"
-                    aria-hidden
-                    dangerouslySetInnerHTML={{ __html: qr }}
-                  />
-                  <p className="mt-1.5 text-[0.82rem] text-ink-3">{t.scanHint}</p>
-                </div>
-              )}
             </div>
-
-            <p className="border-t border-line px-7 py-3 text-[0.82rem] text-ink-3">
-              {t.validNote}
-            </p>
           </article>
+
+          <p className="no-print mt-4 max-w-[30rem] text-[0.85rem] leading-relaxed text-ink-3">
+            {t.validNote}
+          </p>
 
           <div className="no-print mt-8 flex flex-wrap gap-3">
             <PrintButton label={t.print} />
@@ -238,5 +280,15 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
         </Container>
       </Section>
     </>
+  );
+}
+
+/** One labelled fact on the card. Sized by the card, like everything else. */
+function Field({ label, value, ltr }: { label: string; value: string; ltr?: boolean }) {
+  return (
+    <div className="min-w-0">
+      <dt className="truncate font-bold text-ink-3">{label}</dt>
+      <dd className="truncate font-bold" dir={ltr ? 'ltr' : undefined}>{value}</dd>
+    </div>
   );
 }
