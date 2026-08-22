@@ -14,7 +14,7 @@ import { ORG } from '@/lib/org';
 import { SITE_URL } from '@/lib/seo';
 import { PrintButton } from '@/components/PrintButton';
 import { formatMemberNumber } from '@/lib/roster';
-import { LogoMark } from '@/components/Logo';
+import { LogoFull } from '@/components/Logo';
 import { verifiedMinutes, formatDuration } from '@/lib/hours';
 import { cardStatusOf, monthOf } from '@/lib/card-view';
 
@@ -51,11 +51,30 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
 
   const [profile, photo, journey, minutes] = await Promise.all([
     queryOne<{
-      full_name: string; member_number: number | null; created_at: Date;
+      full_name: string; member_number: number | null; joined_at: Date;
       card_token: string | null;
     }>(
-      `SELECT p.full_name, p.member_number, p.card_token, u.created_at
-         FROM profiles p JOIN users u ON u.id = p.user_id
+      /*
+       * `joined_on` first, `created_at` only as a fallback.
+       *
+       * The card said "member since 2026-08" to a volunteer carrying T133,
+       * because it was reading when the *account* was made rather than when
+       * the person joined the association. Those are the same date only for
+       * somebody who signed up today. For the four hundred people recognised
+       * from the roster — the ones the whole feature exists for — the account
+       * is weeks old and the membership is years old, and printing the wrong
+       * one on a membership card erases exactly the seniority the roster was
+       * imported to preserve.
+       *
+       * The roster carries the real date. Where it does not, the account's
+       * own creation is the honest answer rather than a blank.
+       */
+      `SELECT p.full_name, p.member_number, p.card_token,
+              COALESCE(r.joined_on::timestamptz, u.created_at) AS joined_at
+         FROM profiles p
+         JOIN users u ON u.id = p.user_id
+         LEFT JOIN volunteer_roster r
+                ON r.claimed_by = p.user_id AND r.approved_at IS NOT NULL
         WHERE p.user_id = $1`,
       [user.id],
     ),
@@ -119,7 +138,7 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
     : null;
 
   const stage = journey?.currentStage ?? null;
-  const since = monthOf(profile.created_at) ?? '';
+  const since = monthOf(profile.joined_at) ?? '';
   const status = cardStatusOf({
     accountStatus: user.status,
     membershipStatus: user.membershipStatus,
@@ -182,13 +201,25 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
             style={{ aspectRatio: '85.6 / 54', containerType: 'inline-size' }}
           >
             <div className="flex h-full flex-col">
-              {/* Header: the association's own mark, not its name in text. */}
-              <div className="flex items-center gap-[2.5cqw] bg-brand-blue-deep px-[5cqw] py-[3cqw] text-white">
-                <LogoMark className="h-[9cqw] w-auto" />
+              {/*
+                * The logo whole, the way the association drew it.
+                *
+                * This was LogoMark beside the words «جمعية تكافل» set in
+                * letter-spaced type — the symbol and the wordmark pulled apart
+                * and reassembled in a different typeface. A logo is one thing;
+                * taking it to pieces on the association's own membership card
+                * is the one place that should never happen.
+                *
+                * It sits in a light chip because the full lockup's wordmark is
+                * #205B8B, which on this navy is very nearly invisible. Putting
+                * the real logo on a ground it was drawn for beats recolouring
+                * it to survive the background.
+                */}
+              <div className="flex items-center gap-[3cqw] bg-brand-blue-deep px-[4cqw] py-[2.5cqw] text-white">
+                <span className="flex shrink-0 items-center rounded-[1.5cqw] bg-white px-[2cqw] py-[1.2cqw]">
+                  <LogoFull siteName={dict.meta.siteName} className="h-[11cqw] w-auto" />
+                </span>
                 <div className="min-w-0">
-                  <p className="truncate text-[3.1cqw] font-extrabold tracking-[0.12em] text-[#9dbbd2]">
-                    {dict.meta.siteName}
-                  </p>
                   <p className="truncate text-[2.6cqw] text-[#9dbbd2]" dir="ltr">
                     {ORG.registrationNumber}
                   </p>
