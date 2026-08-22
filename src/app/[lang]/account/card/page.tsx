@@ -203,8 +203,23 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
               </div>
 
               <div className="flex flex-1 items-stretch gap-[4cqw] px-[5cqw] py-[3.5cqw]">
-                {/* Portrait proportions, like every ID photo. */}
-                <div className="aspect-[3/4] h-full shrink-0 overflow-hidden rounded-[2cqw] border border-line bg-surface-2">
+                {/*
+                  * Width first, height from the ratio.
+                  *
+                  * This was `aspect-[3/4] h-full`, which reads as reasonable
+                  * and destroyed the card. `h-full` inside an `items-stretch`
+                  * row has no resolved height to measure against, so the box
+                  * fell back to the photograph's intrinsic size — and
+                  * `shrink-0` then refused to give any of it back. The
+                  * portrait filled the entire card and pushed the name, the
+                  * membership number, the hours and the QR out of the frame.
+                  * A membership card showing nothing but a face.
+                  *
+                  * Sizing from the card's own width instead, on the same cqw
+                  * basis as everything else, the height follows from the 3:4
+                  * ratio and cannot run away.
+                  */}
+                <div className="aspect-[3/4] w-[19cqw] shrink-0 self-center overflow-hidden rounded-[2cqw] border border-line bg-surface-2">
                   {photo ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
