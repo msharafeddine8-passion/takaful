@@ -130,3 +130,18 @@ export function activityMinutes(a: ActivityTiming): number | null {
   if (s === null || e === null || e <= s) return null;
   return Math.round((e - s) / 60000);
 }
+
+/**
+ * An activity that exists but has no date yet.
+ *
+ * The single definition of "waiting", so the card, the button, the action and
+ * the staff list cannot disagree about which activities are in this state.
+ * Disagreement here means offering a volunteer a button the action then
+ * refuses, which reads as the site being broken.
+ *
+ * A cancelled activity with no date is not waiting: nothing is coming, so
+ * there is nothing to be told about.
+ */
+export function isAwaitingDate(a: { starts_at: Date | null; cancelled_at?: Date | null }): boolean {
+  return a.starts_at === null && !a.cancelled_at;
+}

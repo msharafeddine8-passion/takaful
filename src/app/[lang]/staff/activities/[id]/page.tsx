@@ -8,7 +8,8 @@ import { Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { can } from '@/lib/authz';
 import { isDbConfigured, queryOne } from '@/lib/db';
-import { roster, scheduledMinutes } from '@/lib/activities';
+import { roster, scheduledMinutes, interestedIn } from '@/lib/activities';
+import { formatMemberNumber } from '@/lib/roster';
 import { activityState, registrationState, seatsLeft } from '@/lib/activity-state';
 import { formatDate, formatTimeRange, formatDuration } from '@/lib/when';
 import { AttendanceSheet } from '@/components/activities/AttendanceSheet';
@@ -60,11 +61,12 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
   );
   if (!activity) notFound();
 
-  const [people, settings] = await Promise.all([
+  const [people, settings, waiting] = await Promise.all([
     roster(id),
     queryOne<{ second: boolean }>(
       'SELECT hours_require_second_check AS second FROM org_settings LIMIT 1',
     ),
+    interestedIn(id),
   ]);
 
   const scheduled = scheduledMinutes(activity);
@@ -153,6 +155,49 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
           <p className="mt-5 rounded-xl border border-brand-orange bg-brand-orange/10 px-5 py-3.5 text-[0.93rem] text-ink-2">
             {a.secondCheckOn}
           </p>
+        )}
+
+        {/*
+          * Who is waiting on this one.
+          *
+          * Shown whenever anybody has asked, including after the date is set —
+          * the coordinator needs it beforehand to judge whether the activity
+          * is worth scheduling at all (twenty names is a different decision
+          * from two), and afterwards to see that the message actually went
+          * out. Hiding it once scheduled would remove the evidence at exactly
+          * the moment somebody asks "did they get told?".
+          */}
+        {waiting.length > 0 && (
+          <section className="mt-9">
+            <h2 className="text-[1.15rem] font-extrabold">
+              {a.interest.staffTitle} ({waiting.length})
+            </h2>
+            <p className="mt-1.5 text-[0.93rem] leading-relaxed text-ink-2">
+              {a.interest.staffLede}
+            </p>
+            <ul className="mt-3 divide-y divide-line rounded-xl border border-line">
+              {waiting.map((w) => (
+                <li key={w.user_id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
+                  <span className="font-bold">{w.full_name}</span>
+                  {w.member_number !== null && (
+                    <span className="font-mono text-[0.86rem] text-ink-3" dir="ltr">
+                      {formatMemberNumber(w.member_number)}
+                    </span>
+                  )}
+                  <span
+                    className={`ms-auto rounded-full px-2.5 py-0.5 text-[0.78rem] font-bold ${
+                      w.notified_at
+                        ? 'bg-ok/15 text-ok-text dark:text-ok'
+                        : 'bg-surface-2 text-ink-3'
+                    }`}
+                  >
+                    {/* A tick as well as the colour. */}
+                    {w.notified_at ? `✓ ${a.interest.staffNotified}` : a.interest.staffWaiting}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
 
         <h2 className="mt-9 text-[1.15rem] font-extrabold">

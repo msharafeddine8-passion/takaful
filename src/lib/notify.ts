@@ -21,6 +21,9 @@ export type NotificationKind =
   | 'stage.unlocked' | 'stage.completed'
   | 'certificate.issued'
   | 'activity.reminder' | 'activity.registered' | 'activity.attended'
+  // An activity published without a date has been given one, and the people
+  // who asked to be told are being told. Sent once — see migration 028.
+  | 'activity.scheduled'
   | 'course.available' | 'account.welcome';
 
 export type Notification = {

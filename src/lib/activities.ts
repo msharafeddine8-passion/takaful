@@ -1,5 +1,5 @@
 import 'server-only';
-import { query } from './db';
+import { query, queryOne } from './db';
 
 /**
  * Reading activities.
@@ -136,6 +136,64 @@ export async function allActivities(): Promise<ManagedActivity[]> {
       ORDER BY a.starts_at DESC NULLS LAST`,
   );
 }
+
+export type InterestedRow = {
+  user_id: string;
+  full_name: string;
+  member_number: number | null;
+  email: string;
+  created_at: Date;
+  notified_at: Date | null;
+};
+
+/**
+ * Who has asked to be told when this activity opens.
+ *
+ * The coordinator needs this to decide whether the activity is worth
+ * scheduling at all — twenty names is a different decision from two — and
+ * afterwards to see that the message actually went out. Ordered by when people
+ * put their names down, because that is the order they asked in.
+ */
+export async function interestedIn(activityId: string): Promise<InterestedRow[]> {
+  return query<InterestedRow>(
+    `SELECT i.user_id, p.full_name, p.member_number, u.email, i.created_at, i.notified_at
+       FROM activity_interest i
+       JOIN users u ON u.id = i.user_id
+       JOIN profiles p ON p.user_id = i.user_id
+      WHERE i.activity_id = $1
+      ORDER BY i.created_at`,
+    [activityId],
+  );
+}
+
+/**
+ * Every activity this person is waiting on, as a set.
+ *
+ * One query for a whole listing rather than one per card — the opportunities
+ * page renders every open activity, and asking the database once per card is
+ * how a page that was fast at ten becomes slow at fifty.
+ */
+export async function interestsOf(userId: string): Promise<Set<string>> {
+  const rows = await query<{ activity_id: string }>(
+    'SELECT activity_id FROM activity_interest WHERE user_id = $1',
+    [userId],
+  );
+  return new Set(rows.map((r) => r.activity_id));
+}
+
+/** Whether this person is already waiting on this activity. */
+export async function hasInterest(activityId: string, userId: string): Promise<boolean> {
+  const row = await queryOne<{ ok: boolean }>(
+    'SELECT true AS ok FROM activity_interest WHERE activity_id = $1 AND user_id = $2',
+    [activityId, userId],
+  );
+  return Boolean(row?.ok);
+}
+
+/* isAwaitingDate lives in lib/activity-state.ts with the other pure state
+ * rules — this module is `server-only`, and a rule the probes cannot import is
+ * a rule nothing holds. */
+export { isAwaitingDate } from './activity-state';
 
 /** Minutes an activity is worth, from its own start and end. */
 export function scheduledMinutes(a: { starts_at: Date | null; ends_at: Date | null }): number | null {

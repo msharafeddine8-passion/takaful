@@ -2,11 +2,45 @@
 
 import { randomUUID } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
-import { isDbConfigured, execute, queryOne } from '@/lib/db';
+import { isDbConfigured, execute, query, queryOne, transaction } from '@/lib/db';
 import { audit } from '@/lib/auth';
 import { requireCapability } from '@/lib/authz';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { parseLocalInput } from '@/lib/when';
+import { notifyIn } from '@/lib/notify';
+
+/**
+ * Tells everybody waiting on this activity that it now has a date.
+ *
+ * Marks each row as it goes, in the same transaction as the messages, so a
+ * failure halfway cannot leave some people notified and unmarked — those
+ * people would be told again on the next edit. Only rows still waiting are
+ * selected, and they are locked for the duration: two coordinators saving the
+ * same activity at the same moment would otherwise each send the full set.
+ */
+async function notifyInterested(
+  activityId: string,
+  message: { titleAr: string; titleEn: string; bodyAr: string; bodyEn: string; link: string },
+): Promise<void> {
+  await transaction(async (client) => {
+    const { rows } = await client.query<{ id: string; user_id: string }>(
+      `SELECT id, user_id FROM activity_interest
+        WHERE activity_id = $1 AND notified_at IS NULL
+        FOR UPDATE SKIP LOCKED`,
+      [activityId],
+    );
+    if (!rows.length) return;
+
+    for (const row of rows) {
+      await notifyIn(client, { userId: row.user_id, kind: 'activity.scheduled', ...message });
+    }
+
+    await client.query(
+      'UPDATE activity_interest SET notified_at = now() WHERE id = ANY($1::uuid[])',
+      [rows.map((r) => r.id)],
+    );
+  });
+}
 
 function localeOf(f: FormData): Locale {
   const v = String(f.get('lang') ?? 'ar');
@@ -83,8 +117,20 @@ function readActivityForm(formData: FormData):
   const startsAt = parseLocalInput(text(formData, 'startsAt'));
   const endsAt = parseLocalInput(text(formData, 'endsAt'));
 
-  if (!titleAr || !titleEn || !startsAt || !endsAt) return { ok: false, error: 'required' };
-  if (endsAt <= startsAt) return { ok: false, error: 'endsBeforeStarts' };
+  if (!titleAr || !titleEn) return { ok: false, error: 'required' };
+
+  /*
+   * The times are optional now, because a coordinator often knows an activity
+   * is coming long before they know when. Such an activity is published,
+   * described, and offers "tell me when this opens" instead of a registration
+   * button — see migration 028.
+   *
+   * Optional as a pair, though, not individually. An end with no start says
+   * nothing anybody can act on, and a start with no end breaks the duration
+   * the credited hours are read from. Half a schedule is worse than none.
+   */
+  if (Boolean(startsAt) !== Boolean(endsAt)) return { ok: false, error: 'required' };
+  if (startsAt && endsAt && endsAt <= startsAt) return { ok: false, error: 'endsBeforeStarts' };
 
   const capacityRaw = text(formData, 'capacity');
   const capacity = optionalInt(capacityRaw, 1, 10_000);
@@ -92,7 +138,9 @@ function readActivityForm(formData: FormData):
   if (capacityRaw && capacity === null) return { ok: false, error: 'capacityInvalid' };
 
   const deadline = parseLocalInput(text(formData, 'registrationClosesAt'));
-  if (deadline && deadline > startsAt) {
+  // Only comparable when there is a start to compare against. An activity with
+  // no date cannot have a deadline that falls after it.
+  if (deadline && startsAt && deadline > startsAt) {
     return { ok: false, error: 'deadlineAfterStart' };
   }
 
@@ -214,6 +262,27 @@ export async function editActivityAction(
       v.capacity, v.minStage, v.creditedMinutes, v.requiresApproval, v.isPublished,
     ] as Parameters<typeof execute>[1],
   );
+
+  /*
+   * The moment a waiting activity gets a date, everybody who asked to be told
+   * is told — once.
+   *
+   * The condition is deliberately "it had no start time and now it does", not
+   * "the start time changed". An activity whose time is corrected by an hour
+   * has not become available; it was already available, and sending the "you
+   * can register now" message again would train people to ignore it. The
+   * `notified_at IS NULL` guard is the same idea enforced per person, so a
+   * second edit cannot reach somebody twice.
+   */
+  if (before.starts_at === null && v.startsAt !== null) {
+    await notifyInterested(id, {
+      titleAr: `تحدّد موعد «${v.titleAr}» — يمكنك التسجيل الآن`,
+      titleEn: `A date is set for "${v.titleEn}" — you can register now`,
+      bodyAr: 'كنت قد طلبت أن نخبرك عندما يُفتح التسجيل لهذا النشاط. الموعد صار معروفاً.',
+      bodyEn: 'You asked to be told when this activity opened. The date is now set.',
+      link: `/account/activities`,
+    });
+  }
 
   await audit({
     actorId: actor.id,

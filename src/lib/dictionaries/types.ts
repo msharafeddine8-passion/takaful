@@ -764,6 +764,7 @@ export type Account = {
     endsAt: string;
     registrationClosesAt: string;
     registrationClosesHint: string;
+    datesOptionalHint: string;
     capacity: string;
     capacityHint: string;
     minStage: string;
@@ -886,6 +887,26 @@ export type Account = {
     refusedClosed: string;
     refusedNotVolunteer: string;
     refusedAlready: string;
+    /**
+     * An activity published before its date is known. It offers "tell me when"
+     * rather than "register", because registering for something with no date
+     * is meaningless — see lib/actions/interest.ts.
+     */
+    interest: {
+      badge: string;
+      dateUnknown: string;
+      notifyMe: string;
+      notifyMeHint: string;
+      waiting: string;
+      waitingHint: string;
+      saving: string;
+      staffTitle: string;
+      staffLede: string;
+      staffEmpty: string;
+      staffNotified: string;
+      staffWaiting: string;
+      errors: { unavailable: string; notVolunteer: string; notWaiting: string };
+    };
     mineTitle: string;
     mineLede: string;
     upcoming: string;

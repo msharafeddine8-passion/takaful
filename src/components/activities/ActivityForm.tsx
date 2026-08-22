@@ -139,11 +139,11 @@ export function ActivityForm({
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <Field label={t.startsAt} name="startsAt">
-          <input id="startsAt" name="startsAt" type="datetime-local" required defaultValue={echoed.startsAt ?? forInput(draft?.starts_at)} className={field} dir="ltr" />
+        <Field label={t.startsAt} name="startsAt" hint={t.datesOptionalHint}>
+          <input id="startsAt" name="startsAt" type="datetime-local" defaultValue={echoed.startsAt ?? forInput(draft?.starts_at)} className={field} dir="ltr" />
         </Field>
         <Field label={t.endsAt} name="endsAt">
-          <input id="endsAt" name="endsAt" type="datetime-local" required defaultValue={echoed.endsAt ?? forInput(draft?.ends_at)} className={field} dir="ltr" />
+          <input id="endsAt" name="endsAt" type="datetime-local" defaultValue={echoed.endsAt ?? forInput(draft?.ends_at)} className={field} dir="ltr" />
         </Field>
         <Field label={t.registrationClosesAt} name="registrationClosesAt" hint={t.registrationClosesHint}>
           <input id="registrationClosesAt" name="registrationClosesAt" type="datetime-local" defaultValue={echoed.registrationClosesAt ?? forInput(draft?.registration_closes_at)} className={field} dir="ltr" />
