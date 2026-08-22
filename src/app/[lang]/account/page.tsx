@@ -11,7 +11,7 @@ import { isDbConfigured, queryOne } from '@/lib/db';
 import { isStaff } from '@/lib/authz';
 import { portalSummary } from '@/lib/portal';
 import { formatDuration } from '@/lib/hours';
-import { countPhrase } from '@/lib/when';
+import { countPhrase, formatDateTime } from '@/lib/when';
 import { COURSES } from '@/lib/courses';
 import { logoutAction } from '@/lib/actions/account';
 import { VerifyBanner } from '@/components/account/VerifyBanner';
@@ -259,10 +259,24 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
             <p className="text-[1.05rem] font-extrabold">
               {lang === 'ar' ? summary.nextActivity.title_ar : summary.nextActivity.title_en}
             </p>
-            <p className="mt-1.5 text-[0.92rem] text-ink-2" dir="ltr">
-              {summary.nextActivity.starts_at &&
-                new Date(summary.nextActivity.starts_at).toISOString().slice(0, 16).replace('T', ' ')}
-              {summary.nextActivity.location ? ` · ${summary.nextActivity.location}` : ''}
+            {/*
+              * Joined rather than concatenated, and no `dir="ltr"`.
+              *
+              * This printed a raw UTC ISO string — the wrong time, in the
+              * wrong format, forced left-to-right inside Arabic prose. And
+              * when an activity had no date yet, the ` · ` in front of the
+              * location was still emitted, so the line read «مدينة طرابلس ·»
+              * with a separator separating nothing.
+              */}
+            <p className="mt-1.5 text-[0.92rem] text-ink-2">
+              {[
+                summary.nextActivity.starts_at
+                  ? formatDateTime(summary.nextActivity.starts_at, lang)
+                  : dict.account.activities.interest.dateUnknown,
+                summary.nextActivity.location,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
             </p>
             <ArrowLink
               lang={lang}

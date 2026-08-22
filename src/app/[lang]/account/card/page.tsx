@@ -215,18 +215,28 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
                 * the real logo on a ground it was drawn for beats recolouring
                 * it to survive the background.
                 */}
-              <div className="flex items-center gap-[3cqw] bg-brand-blue-deep px-[4cqw] py-[2.5cqw] text-white">
-                <span className="flex shrink-0 items-center rounded-[1.5cqw] bg-white px-[2cqw] py-[1.2cqw]">
-                  <LogoFull siteName={dict.meta.siteName} className="h-[11cqw] w-auto" />
-                </span>
-                <div className="min-w-0">
-                  <p className="truncate text-[2.6cqw] text-[#9dbbd2]" dir="ltr">
-                    {ORG.registrationNumber}
-                  </p>
-                </div>
+              {/* A thin brand rule along the top edge, the way an issued card
+                  carries a band. It gives the navy somewhere to live now that
+                  the header is light. */}
+              <div aria-hidden className="h-[1.2cqw] bg-gradient-to-l from-brand-orange to-brand-blue" />
+
+              <div className="flex items-center gap-[3cqw] border-b border-line bg-surface-2 px-[4cqw] py-[2.5cqw]">
+                {/* No white chip. The logo used to sit in one because the full
+                    lockup's wordmark is #205B8B and vanishes on navy — but a
+                    white rectangle pasted onto a dark header is a patch, not a
+                    design. The header is light instead, so the logo sits on the
+                    kind of ground it was drawn for and needs nothing around it. */}
+                <LogoFull siteName={dict.meta.siteName} className="h-[12cqw] w-auto shrink-0" />
+
+                <p className="min-w-0 truncate text-[2.6cqw] text-ink-3" dir="ltr">
+                  {ORG.registrationNumber}
+                </p>
+
                 <span
                   className={`ms-auto shrink-0 rounded-full px-[2.5cqw] py-[1cqw] text-[2.6cqw] font-extrabold ${
-                    status === 'active' ? 'bg-ok text-[#04240f]' : 'bg-white/25 text-white'
+                    status === 'active'
+                      ? 'bg-ok text-[#04240f]'
+                      : 'bg-surface text-ink-2 ring-1 ring-line'
                   }`}
                 >
                   {status === 'active' ? t.statusActive : t.statusInactive}
