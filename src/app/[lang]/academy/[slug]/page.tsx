@@ -30,6 +30,8 @@ import {
   type Standing,
 } from '@/components/academy/parts';
 import type { Block } from '@/lib/course-content/types';
+import { decideAccess } from '@/lib/programme/access';
+import { CourseLocked } from '@/components/academy/CourseLocked';
 
 /*
  * This page used to be prerendered for both languages. It no longer can be:
@@ -209,11 +211,39 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
     return <PlannedCourse lang={lang} dict={dict} meta={meta} />;
   }
   const isApproved = meta.status === 'available';
+  const user = isDbConfigured() ? await currentUser() : null;
+
+  /*
+   * The gate, before anything is built.
+   *
+   * This page used to load the questions, open an attempt and render every
+   * module — and then print a padlock over the top. The lock was decoration: a
+   * locked course sent 123KB of lessons to anybody with the URL, signed in or
+   * not, and offered a "start the course" button underneath the sentence
+   * saying they could not. It computed the right answer and ignored it.
+   *
+   * Deciding here means the refusal happens before `questionsIn`, before
+   * `startOrResumeAttempt`, and before a single module is touched. The page
+   * cannot leak content it never fetched, which is the only version of this
+   * that survives somebody later adding an endpoint over the same objects.
+   */
+  const gate = await eligibilityFor(user?.id ?? null, slug);
+  const access = decideAccess({
+    kind: meta.kind,
+    signedIn: Boolean(user),
+    prerequisitesMet: gate.allowed,
+    published: isApproved,
+  });
+
+  if (!access.canRead) {
+    return (
+      <CourseLocked lang={lang} dict={dict} meta={meta} state={access.state} missing={gate.missing} />
+    );
+  }
+
   const questions = questionsIn(slug);
   // The finish bar needs to know how many answers make a complete attempt.
   const questionCount = questions.length;
-
-  const user = isDbConfigured() ? await currentUser() : null;
 
   /*
    * Opening the page opens the attempt. It has to happen here rather than on

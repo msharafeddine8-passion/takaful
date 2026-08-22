@@ -725,6 +725,18 @@ export const en: Dictionary = {
       noProvider: 'Email sending is not switched on for this site yet, so the link will not arrive.',
     },
     academy: {
+      locked: {
+        title: 'This course is not open to you yet',
+        reasonSignIn: 'This course is for registered volunteers. Create an account or sign in to begin.',
+        reasonPrerequisite: 'This course opens once you have finished the ones before it. Complete them and it unlocks on its own.',
+        reasonUnpublished: 'This course is still being written. Its page is here so you can see what it will cover.',
+        reasonStaff: 'This course is for particular roles within the association.',
+        requiredTitle: 'Required first',
+        signInCta: 'Sign in',
+        goToRequirement: 'Start the required course',
+        backToAcademy: 'All courses',
+        readableNotCertified: 'You can read the content, but saving progress, sitting the quiz and earning the certificate need an account and the earlier courses finished.',
+      },
       heroTitle: 'Takaful Academy',
       heroLede:
         'Courses grounded in recognised international standards, written for any volunteer anywhere. They start from the foundations, and each one ends with a certificate anybody can verify.',

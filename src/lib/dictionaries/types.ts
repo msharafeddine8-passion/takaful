@@ -571,6 +571,24 @@ export type Account = {
     noProvider: string;
   };
   academy: {
+    /**
+     * The page a locked course shows instead of its content. Every string here
+     * has to work as the *whole* answer — the modules are not on that page at
+     * all, so this is all the reader gets.
+     */
+    locked: {
+      title: string;
+      reasonSignIn: string;
+      reasonPrerequisite: string;
+      reasonUnpublished: string;
+      reasonStaff: string;
+      requiredTitle: string;
+      signInCta: string;
+      goToRequirement: string;
+      backToAcademy: string;
+      /** Said where content is readable but the certificate is not. */
+      readableNotCertified: string;
+    };
     /** Index page */
     heroTitle: string;
     heroLede: string;
