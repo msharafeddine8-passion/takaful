@@ -10,12 +10,22 @@
  * probe is the difference between a clean slate and a slow accumulation of
  * accounts nobody remembers creating.
  *
- * It only ever touches addresses ending in @example.test, which is a reserved
- * domain that cannot belong to anyone. A real member's address can never match.
+ * It only ever touches addresses under example.test and example.invalid, both
+ * reserved domains that cannot belong to anyone. A real member's address can
+ * never match.
+ *
+ * `.invalid` used to be missing, and the omission was expensive. Probes use
+ * both, so every fixture created under `.invalid` was invisible here and
+ * stayed in the production database. One such account had accumulated 37
+ * course attempts and 28 certificates — so the association's own reports
+ * counted 30 certificates when 2 were real. All the while this printed
+ * "Nothing to sweep", which is the worst way to be wrong.
  */
 import { Client } from 'pg';
 
-const SUFFIX = '%@example.test';
+/* An array rather than a second pattern, so adding a third reserved domain is
+ * one entry and not a second code path to keep in step with the first. */
+const SUFFIXES = ['%@example.test', '%@example.invalid'];
 
 const c = new Client({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 15_000 });
 await c.connect();
@@ -56,8 +66,8 @@ for (const v of versions) {
 
 const stale = (
   await c.query<{ id: string; email: string }>(
-    'SELECT id, email FROM users WHERE email LIKE $1 ORDER BY email',
-    [SUFFIX],
+    'SELECT id, email FROM users WHERE email LIKE ANY($1) ORDER BY email',
+    [SUFFIXES],
   )
 ).rows;
 
@@ -129,7 +139,8 @@ for (const u of stale) {
 }
 
 const left = (
-  await c.query<{ n: string }>('SELECT count(*)::TEXT AS n FROM users WHERE email LIKE $1', [SUFFIX])
+  await c.query<{ n: string }>(
+    'SELECT count(*)::TEXT AS n FROM users WHERE email LIKE ANY($1)', [SUFFIXES])
 ).rows[0].n;
 
 console.log(`\n${left} probe account(s) remaining (expected 0)`);
