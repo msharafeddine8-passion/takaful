@@ -22,6 +22,9 @@ import {
 } from '@/lib/account-state';
 import { claimForUser, formatMemberNumber } from '@/lib/roster';
 import { isEmailConfigured } from '@/lib/email';
+import { DashboardHero, StageRail } from '@/components/account/DashboardHero';
+import { ImpactTiles } from '@/components/account/ImpactTiles';
+import { cardStatusOf } from '@/lib/card-view';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -65,7 +68,7 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
 
-  const [summary, application, account, rosterClaim, safeguarding] = await Promise.all([
+  const [summary, application, account, rosterClaim, safeguarding, profile, photo] = await Promise.all([
     portalSummary(user.id),
     queryOne<{ id: string; status: string; submitted_at: Date | null }>(
       `SELECT id, status, submitted_at FROM volunteer_applications
@@ -79,6 +82,16 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
     claimForUser(user.id),
     queryOne<{ user_id: string }>(
       'SELECT user_id FROM safeguarding_records WHERE user_id = $1',
+      [user.id],
+    ),
+    // For the hero: the membership number and the photograph that make the
+    // page about a person rather than about an account.
+    queryOne<{ member_number: number | null }>(
+      'SELECT member_number FROM profiles WHERE user_id = $1',
+      [user.id],
+    ),
+    queryOne<{ version: string }>(
+      'SELECT version FROM profile_photos WHERE user_id = $1',
       [user.id],
     ),
   ]);
@@ -130,17 +143,38 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
     nextActivityId: summary.nextActivity?.id ?? null,
     isVolunteer: VOLUNTEER_STANDING.includes(user.membershipStatus),
   };
+  const cardStatus = cardStatusOf({
+    accountStatus: user.status,
+    membershipStatus: user.membershipStatus,
+    hasMemberNumber: profile?.member_number != null,
+  });
   const audience = audienceOf(facts);
   const step = nextStepOf(facts);
   const otherTasks = otherTasksOf(facts);
 
   return (
     <Section>
-      <Container className="max-w-3xl">
-        <Kicker>{t.kicker}</Kicker>
-        <h1 className="mt-2.5 text-[clamp(1.7rem,1.3rem+1.6vw,2.4rem)] font-extrabold tracking-tight">
-          {p.greeting} {user.fullName} 👋
-        </h1>
+      {/*
+        * Wider than it was. At max-w-3xl the four impact tiles could never sit
+        * in a row, so on a laptop the page was one narrow column of stacked
+        * boxes with half the screen empty beside it.
+        */}
+      <Container className="max-w-5xl">
+        {/* The hero carries the greeting, so there is no separate heading
+            above it repeating the same name in a larger size. */}
+        <DashboardHero
+          lang={lang}
+          dict={dict}
+          userId={user.id}
+          fullName={user.fullName}
+          memberNumber={profile?.member_number ?? null}
+          photoVersion={photo?.version ?? null}
+          statusLabel={dict.account.statuses[user.membershipStatus as keyof typeof dict.account.statuses] ?? ''}
+          cardStatus={cardStatus}
+          stageNumber={stage?.number ?? null}
+          stageTitle={stage ? (lang === 'ar' ? stage.titleAr : stage.titleEn) : null}
+          stageTotal={journey?.stages.length ?? 6}
+        />
 
         {account && !account.verified && (
           <VerifyBanner lang={lang} dict={dict} emailConfigured={isEmailConfigured()} />
@@ -179,106 +213,44 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
           </p>
         )}
 
-        {/* Where they stand, in one line, before anything else. */}
-        {stage ? (
-          <div className="mt-6 rounded-2xl border border-line bg-surface p-6">
-            <p className="text-[0.95rem] text-ink-2">
-              {p.youAreIn}{' '}
-              <span className="font-extrabold text-ink">
-                {p.stage} {stage.number} — {lang === 'ar' ? stage.titleAr : stage.titleEn}
-              </span>
+        {/*
+          * Where they stand on a path that has an end.
+          *
+          * Was a thin bar and a bare percentage inside another identical box.
+          * Six segments say something a percentage cannot: how far along a
+          * journey of six stages this is, and that there is an end to reach.
+          */}
+        <div className="mt-6">
+          <StageRail
+            current={stage?.number ?? null}
+            total={journey?.stages.length ?? 6}
+            percent={stage?.percent ?? 0}
+            isConfigured={stage?.isConfigured ?? false}
+            label={stage ? (lang === 'ar' ? stage.titleAr : stage.titleEn) : null}
+            dict={dict}
+          />
+          {!journey && (
+            <p className="rounded-2xl border border-line bg-surface p-5 text-[0.98rem] leading-relaxed text-ink-2">
+              {p.learnerNote}
             </p>
-            {/* A stage nobody has configured computes as 100% — nought of
-                nought required items met — and telling a volunteer they have
-                finished a stage that was never defined is worse than telling
-                them nothing. */}
-            {stage.isConfigured && (
-              <>
-                <div
-                  className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-surface-2"
-                  role="progressbar"
-                  aria-valuenow={stage.percent}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label={lang === 'ar' ? stage.titleAr : stage.titleEn}
-                >
-                  <div
-                    className="h-full rounded-full bg-brand-orange"
-                    style={{ width: `${stage.percent}%` }}
-                  />
-                </div>
-                <p className="mt-2 text-[0.88rem] font-bold text-ink-2">{stage.percent}%</p>
-              </>
-            )}
-          </div>
-        ) : (
-          <p className="mt-6 rounded-2xl border border-line bg-surface p-6 text-[1rem] leading-relaxed text-ink-2">
-            {p.learnerNote}
-          </p>
-        )}
-
-        {/* One next step. Not fifteen cards someone has to triage. */}
-        <div className="mt-5 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-6">
-          <p className="text-[0.82rem] font-extrabold tracking-[0.13em] text-brand-orange-text dark:text-brand-orange">
-            {p.nextStepTitle}
-          </p>
-          {next ? (
-            <>
-              <p className="mt-2 text-[1.15rem] font-extrabold">
-                {lang === 'ar' ? next.requirement.labelAr : next.requirement.labelEn}
-              </p>
-              <NextLink lang={lang} dict={dict} req={next.requirement} />
-            </>
-          ) : hasOpenApplication ? (
-            <p className="mt-2 text-[1.02rem] leading-relaxed">{t.applyPending}</p>
-          ) : !journey ? (
-            <>
-              <p className="mt-2 text-[1.02rem] leading-relaxed">{t.nextStep}</p>
-              <div className="mt-4 flex flex-wrap gap-3">
-                <Link
-                  href={`/${lang}/academy`}
-                  className="rounded-full bg-brand-orange px-6 py-3 text-[0.95rem] font-extrabold text-[#241503] hover:bg-brand-orange-dark"
-                >
-                  {t.coursesCta} →
-                </Link>
-                <Link
-                  href={`/${lang}/account/apply`}
-                  className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold hover:bg-surface-2"
-                >
-                  {t.applyCta}
-                </Link>
-              </div>
-            </>
-          ) : (
-            <p className="mt-2 text-[1.02rem] leading-relaxed">{p.nothingNext}</p>
           )}
         </div>
 
-        {/* Four figures. Enough to feel progress, few enough to read at a glance. */}
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Stat
-            label={p.summaryHours}
-            value={formatDuration(summary.verifiedMinutes, lang)}
-            note={
-              summary.pendingMinutes > 0
-                ? p.pendingNote.replace('{n}', formatDuration(summary.pendingMinutes, lang))
-                : undefined
-            }
-          />
-          {/* Sentences rather than "1 / 41" and a bare "3". Nobody says
-              "one slash forty-one", and Arabic counts in five bands, so «2
-              أنشطة» and «3 نشاط» are both wrong — see countPhrase. */}
-          <Stat
-            label={p.summaryCourses}
-            value={countPhrase(summary.coursesPassed, dict.account.impact.courses)}
-          />
-          <Stat
-            label={p.summaryActivities}
-            value={countPhrase(summary.activitiesAttended, dict.account.impact.activities)}
-          />
-          <Stat
-            label={p.summaryCertificates}
-            value={countPhrase(summary.certificates, dict.account.impact.certificates)}
+        {/*
+          * The four figures, as four things you can open.
+          *
+          * They were static boxes: the page said "3 activities" and gave
+          * nowhere to go and look at the three.
+          */}
+        <div className="mt-6">
+          <ImpactTiles
+            lang={lang}
+            dict={dict}
+            verifiedMinutes={summary.verifiedMinutes}
+            pendingMinutes={summary.pendingMinutes}
+            coursesPassed={summary.coursesPassed}
+            activitiesAttended={summary.activitiesAttended}
+            certificates={summary.certificates}
           />
         </div>
 
