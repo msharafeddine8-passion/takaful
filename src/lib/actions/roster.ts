@@ -22,18 +22,33 @@ export type ClaimState = { error?: string; notFound?: boolean };
 /**
  * Which matches the association is willing to accept without a human looking.
  *
- * Both of these are two independent facts agreeing: a phone number that is
- * already on the roster line *and* a name that folds to the same name, or a
- * membership number *and* a name. Someone who can produce either was recognised
- * years ago, and making them wait for an administrator to press a button — a
- * button that says nothing more than "yes, that is them" — was the friction
+ * All four are two independent facts agreeing: something that identifies the
+ * line — a phone number already on it, or the membership number — and
+ * something that corroborates the person holding it, either a name that folds
+ * to the same name or the right date of birth. Someone who can produce a pair
+ * was recognised years ago, and making them wait for an administrator to press
+ * a button that says nothing more than "yes, that is them" was the friction
  * this whole feature existed to remove, reintroduced one step later.
  *
- * `phone-only` is deliberately not here. A phone that matches while the name
- * does not is the ordinary case of a household sharing one number, and telling
- * a mother she is her son is not a small mistake. That one still goes to staff.
+ * The date of birth pairs were added after the name-only version turned out to
+ * work for a minority of real members. The roster is in Arabic and most people
+ * register in Latin script, so ten of the sixteen volunteers who got this far
+ * had to be approved by hand — and everyone who typed their membership number
+ * instead of their phone was told, wrongly, that no such record existed. A
+ * birthday reads the same in both alphabets.
+ *
+ * `phone-only` and `number-only` are deliberately not here. One fact is not
+ * two: a phone that matches while nothing else does is the ordinary case of a
+ * household sharing a number, and telling a mother she is her son is not a
+ * small mistake. Those go to staff — but they are recorded first, which is
+ * what `number-only` had to be invented to fix.
  */
-const SELF_EVIDENT: readonly MatchStrength[] = ['phone-and-name', 'number-and-name'];
+const SELF_EVIDENT: readonly MatchStrength[] = [
+  'phone-and-name',
+  'phone-and-dob',
+  'number-and-name',
+  'number-and-dob',
+];
 
 /**
  * Everything that happens when the association recognises somebody.
@@ -144,7 +159,11 @@ export async function claimRosterAction(
   const phone = text(formData, 'phone');
   const numberRaw = text(formData, 'memberNumber').replace(/[^\d]/g, '');
   const memberNumber = numberRaw ? Number(numberRaw) : null;
+  const dateOfBirth = text(formData, 'dateOfBirth');
 
+  /* The date of birth is corroboration, never an identifier. On its own it
+   * would match a line the claimant has no other claim to, and four people on
+   * this roster share a birthday. */
   if (!phoneTail(phone) && !memberNumber) return { error: 'needIdentifier' };
 
   // One claim per account. Someone who already claimed cannot go shopping for
@@ -155,7 +174,12 @@ export async function claimRosterAction(
   );
   if (existing) redirect(`/${lang}/account`);
 
-  const match = await findRosterMatch({ phone, memberNumber, accountName: user.fullName });
+  const match = await findRosterMatch({
+    phone,
+    memberNumber,
+    accountName: user.fullName,
+    dateOfBirth,
+  });
   if (!match) return { notFound: true };
   // Already spoken for. Said plainly rather than silently ignored, because the
   // usual cause is a real person whose entry someone else has claimed.

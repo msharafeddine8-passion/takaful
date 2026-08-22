@@ -373,20 +373,26 @@ export const ar: Dictionary = {
       phoneHint: 'الرقم نفسه المسجَّل لدى الجمعية',
       numberLabel: 'رقم العضوية (اختياري)',
       numberHint: 'إن كنت تعرفه — مثال: 47',
+      dobLabel: 'تاريخ ميلادك',
+      dobHint:
+        'اختياري، لكنه يختصر الطريق: إن طابق ما هو مسجّل عندنا، يُربط حسابك فوراً بلا انتظار موافقة.',
       submit: 'ابحث عن سجلّي',
       notFoundTitle: 'لم نجد سجلاً مطابقاً',
       notFoundBody:
-        'قد يكون رقمك مسجّلاً لدينا بصيغة أخرى. جرّب رقماً آخر تستعمله، ' +
-        'أو قدّم طلب تطوّع عادياً ولن يضيع شيء من حقوقك.',
+        'جرّب رقم الهاتف الذي أعطيته للجمعية أوّل مرة — قد يكون غير الذي تستعمله اليوم. ' +
+        'وإن كنت تحمل بطاقة قديمة، اكتب رقم العضوية المدوّن عليها. ' +
+        'وإن لم ينفع أيّ منهما، قدّم طلب تطوّع عادياً ولن يضيع شيء من حقوقك ولا من سنواتك معنا.',
       notListed: 'لست متطوّعاً معنا بعد؟',
       applyInstead: 'قدّم طلب تطوّع',
       pendingTitle: 'وجدنا سجلّك — بانتظار التأكيد',
-      /* Only a name that disagrees reaches this message now; everything else is
-       * recognised on the spot. Saying why heads off the reading that the
-       * association doubts them. */
+      /* Reached when one fact matched and nothing corroborated it — the name
+       * is spelled differently, or in another alphabet, and no birthday was
+       * given. Says what would have avoided the wait, because next time it
+       * will. */
       pendingBody:
-        'سجلّك يحمل الرقم {number}. الاسم المسجَّل عندنا مكتوب بصيغة تختلف عن اسم حسابك، ' +
-        'فيؤكّد أحد المسؤولين أنك أنت، ثم يُفعَّل حسابك كمتطوّع.',
+        'سجلّك يحمل الرقم {number}. لم نتمكّن من التأكّد وحدنا أنك أنت: الاسم عندنا مكتوب ' +
+        'بصيغة تختلف عن اسم حسابك، ولم تُدخل تاريخ ميلادك. يؤكّد أحد المسؤولين ذلك، ثم يُفعَّل ' +
+        'حسابك كمتطوّع. ولو أدخلت تاريخ ميلادك المسجَّل عندنا لتمّ الربط فوراً.',
       approvedTitle: 'تم التعرّف عليك',
       approvedBody: 'حسابك مرتبط بسجلّك في الجمعية، ورقم عضويتك {number}.',
       backToAccount: 'العودة إلى حسابي',
@@ -1159,6 +1165,7 @@ export const ar: Dictionary = {
         accountName: 'الاسم في الحساب',
         accountEmail: 'البريد الإلكتروني',
         committee: 'اللجنة',
+        rosterDob: 'تاريخ الميلاد في السجلّ',
         claimedAt: 'تاريخ الطلب',
         nameMismatch:
           'تنبيه: الاسم المسجَّل في الحساب لا يشبه الاسم في السجلّ. تحقّق قبل التأكيد.',

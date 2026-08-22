@@ -34,6 +34,19 @@ export async function grantRoleAction(formData: FormData): Promise<void> {
   const role = text(formData, 'role') as Role;
   if (!isDbConfigured() || !userId || !ROLES.includes(role)) return;
 
+  /*
+   * Standing is not a job, and this is said on the server rather than only in
+   * the page's list of buttons. The list is what somebody sees; this is what
+   * is true.
+   *
+   * Granting 'volunteer' wrote the row and moved nothing else — is_volunteer()
+   * reads the membership history — so the member came out looking approved and
+   * still unable to register for anything. It happened to a real person. The
+   * two paths that actually confer it, /staff/roster and /staff/applications,
+   * set the status and the role together.
+   */
+  if (role === 'volunteer') return;
+
   const actor = await requireCapability('members.manage');
   if (actor.id === userId) return;
 

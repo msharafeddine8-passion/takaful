@@ -18,7 +18,7 @@
  */
 
 import {
-  foldName, formatMemberNumber, namesAgree, normaliseStoredTail, phoneTail,
+  datesAgree, foldName, formatMemberNumber, namesAgree, normaliseStoredTail, phoneTail,
 } from '../src/lib/roster-match.ts';
 import type { MatchStrength } from '../src/lib/roster-match.ts';
 
@@ -55,15 +55,36 @@ check('the auto-approval list is declared where it can be found', declared !== n
 const listed = (declared?.[1] ?? '')
   .split(',').map((s) => s.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
 
-const ALL: MatchStrength[] = ['phone-and-name', 'phone-only', 'number-and-name'];
+const ALL: MatchStrength[] = [
+  'phone-and-name', 'phone-and-dob', 'number-and-name', 'number-and-dob',
+  'phone-only', 'number-only',
+];
 eq('a phone and a name that agree is enough', listed.includes('phone-and-name'), true);
+eq('a phone and the right birthday is enough', listed.includes('phone-and-dob'), true);
 eq('a membership number and a name that agree is enough', listed.includes('number-and-name'), true);
+eq('a membership number and the right birthday is enough', listed.includes('number-and-dob'), true);
 eq('a phone alone is NOT enough — households share numbers', listed.includes('phone-only'), false);
-eq('nothing else has been added to the list', listed.length, 2);
+eq('a membership number alone is NOT enough — numbers are sequential',
+  listed.includes('number-only'), false);
+eq('nothing else has been added to the list', listed.length, 4);
 check(
   'every listed strength is one the matcher can actually return',
   listed.every((s) => (ALL as string[]).includes(s)),
   listed.join(', '),
+);
+/*
+ * The rule behind the list, stated as a rule. Four named assertions can all
+ * pass while a fifth strength is quietly added; this cannot.
+ */
+check(
+  'every strength that grants recognition rests on two facts',
+  listed.every((s) => s.includes('-and-')),
+  listed.join(', '),
+);
+check(
+  'and every one-fact strength is left out',
+  ALL.filter((s) => !s.includes('-and-')).every((s) => !listed.includes(s)),
+  'phone-only and number-only both go to a person',
 );
 
 /* The other half of the rule: the automatic path must not sign itself. */
@@ -186,6 +207,90 @@ check('findRosterMatch normalises the stored key the same way',
 eq('a membership number keeps its T and its padding', formatMemberNumber(14), 'T014');
 eq('a three-digit number is not padded further', formatMemberNumber(474), 'T474');
 eq('a four-digit number is not truncated', formatMemberNumber(1024), 'T1024');
+
+
+
+/* ------------------------------------------------------------------
+ * 6. The birthday, which is the fact that survives the alphabet.
+ *
+ * Name agreement cannot cross scripts: the roster is in Arabic and most
+ * people register in Latin letters, so thirteen of the association's
+ * twenty-one accounts agreed with no roster line anywhere. Everyone in that
+ * position had to be approved by hand, and anyone who typed their membership
+ * number instead of their phone was told no such record existed.
+ *
+ * A date has to be compared as a calendar date and nothing else. The database
+ * session runs GMT and the association lives in Beirut, so anything that
+ * turns either side into an instant moves a midnight birthday to the day
+ * before — the same fault that put every activity three hours out.
+ * ------------------------------------------------------------------ */
+console.log('\n6. the birthday');
+
+eq('the same date agrees', datesAgree('1998-04-17', '1998-04-17'), true);
+eq('a different day does not', datesAgree('1998-04-17', '1998-04-18'), false);
+eq('a different year does not', datesAgree('1998-04-17', '1997-04-17'), false);
+eq('day and month the wrong way round does not', datesAgree('1998-04-17', '1998-17-04'), false);
+eq('no birthday on the roster line never agrees', datesAgree(null, '1998-04-17'), false);
+eq('nothing typed never agrees', datesAgree('1998-04-17', ''), false);
+eq('both missing never agrees', datesAgree(null, ''), false);
+
+/*
+ * A timestamp is refused, not trimmed to its first ten characters.
+ *
+ * Querying the column without to_char returns 2002-12-31T22:00:00.000Z for a
+ * birthday of 1 January — the session is GMT, Beirut is two hours ahead — so
+ * the first ten characters are the day before. Trimming would hand somebody
+ * the wrong record; refusing means nobody is recognised until a person
+ * notices. These two are the guard, and they must stay false.
+ */
+eq('a timestamp is refused rather than trimmed',
+  datesAgree('1998-04-17T00:00:00.000Z', '1998-04-17'), false);
+eq('and one shifted across midnight by the GMT session is refused too',
+  datesAgree('2002-12-31T22:00:00.000Z', '2003-01-01'), false);
+eq('surrounding whitespace does not stop it agreeing',
+  datesAgree(' 1998-04-17 ', ' 1998-04-17 '), true);
+eq('a malformed stored value never agrees', datesAgree('17/04/1998', '17/04/1998'), false);
+eq('an empty stored value never agrees', datesAgree('', '1998-04-17'), false);
+
+/* The whole point: it works where the name cannot. */
+{
+  const account = 'Hala ghemrawi';
+  const roster = 'هلا معن غمرواي';
+  eq('two spellings of one person do not agree by name', namesAgree(roster, account), false);
+  eq('but their birthday does', datesAgree('2001-06-09', '2001-06-09'), true);
+}
+
+/* ------------------------------------------------------------------
+ * 7. Standing cannot be handed out as a job.
+ *
+ * The staff member page offered "grant role: volunteer". Pressing it wrote a
+ * user_roles row and moved nothing else — is_volunteer() reads the membership
+ * history — so the page showed "volunteer" against an account that still
+ * could not register for a single activity. An administrator pressed it on a
+ * real member twenty-seven minutes after they signed up.
+ *
+ * Both halves are checked: the button is gone, and the action refuses anyway.
+ * Removing only the button leaves a rule that a hidden form field can walk
+ * past, which is the same mistake the locked courses made.
+ * ------------------------------------------------------------------ */
+console.log('\n7. standing is not a job');
+
+const memberPage = readFileSync(
+  `${ROOT}src/app/[lang]/staff/members/[id]/page.tsx`, 'utf8');
+const grantable = /const GRANTABLE: Role\[\] = \[([^\]]*)\]/.exec(memberPage);
+check('the grantable-roles list is where it can be found', grantable !== null);
+const grantList = (grantable?.[1] ?? '')
+  .split(',').map((x) => x.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
+check('volunteer is not offered as a role to grant',
+  !grantList.includes('volunteer'), grantList.join(', '));
+check('the staff jobs are still offered',
+  grantList.includes('field_supervisor') && grantList.includes('program_admin'),
+  `${grantList.length} roles`);
+
+const members = readFileSync(`${ROOT}src/lib/actions/members.ts`, 'utf8');
+check('and the action refuses it server-side, not just in the page',
+  /if \(role === 'volunteer'\) return;/.test(members),
+  'a hidden field must not be able to walk past a list of buttons');
 
 /* ------------------------------------------------------------------ */
 

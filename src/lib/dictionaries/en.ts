@@ -373,11 +373,16 @@ export const en: Dictionary = {
       phoneHint: 'The number the association has on file for you',
       numberLabel: 'Membership number (optional)',
       numberHint: 'If you know it — for example 47',
+      dobLabel: 'Your date of birth',
+      dobHint:
+        'Optional, but it saves waiting: if it matches what we have on file, your account is linked straight away instead of going to a member of staff.',
       submit: 'Find my record',
       notFoundTitle: 'No matching record',
       notFoundBody:
-        'We may have you under a different number. Try another one you use, or make an ' +
-        'ordinary volunteering application — nothing is lost by doing so.',
+        'Try the phone number you first gave the association — it may not be the one you use now. ' +
+        'If you still have an old card, enter the membership number printed on it. ' +
+        'If neither finds you, make an ordinary volunteering application: nothing is lost, ' +
+        'and neither are your years with us.',
       notListed: 'Not a volunteer with us yet?',
       applyInstead: 'Apply to volunteer',
       pendingTitle: 'We found your record — awaiting confirmation',
@@ -385,9 +390,11 @@ export const en: Dictionary = {
        * recognised on the spot. Saying why heads off the reading that the
        * association doubts them. */
       pendingBody:
-        'Your record is number {number}. The name we have on file is written differently from ' +
-        'the name on your account, so a member of staff will confirm it is you, and your ' +
-        'account becomes a volunteer account.',
+        'Your record is number {number}. We could not confirm it is you on our own: the name ' +
+        'we have on file is written differently from the one on your account, and you did not ' +
+        'give a date of birth. A member of staff will confirm it, and your account becomes a ' +
+        'volunteer account. Entering the date of birth we have on file would have linked it ' +
+        'straight away.',
       approvedTitle: 'You have been recognised',
       approvedBody:
         'Your account is linked to your record, and your membership number is {number}.',
@@ -1165,6 +1172,7 @@ export const en: Dictionary = {
         accountName: 'Name on the account',
         accountEmail: 'Email address',
         committee: 'Committee',
+        rosterDob: 'Date of birth on file',
         claimedAt: 'Requested',
         nameMismatch:
           'Careful: the name on the account does not look like the name on the record. Check ' +

@@ -23,8 +23,24 @@ import { ConfirmSubmit } from '@/components/staff/ConfirmSubmit';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
+/*
+ * Jobs, not standing. 'volunteer' is deliberately not on this list.
+ *
+ * It used to be, and pressing it did not do what it looked like it did. A row
+ * went into user_roles and nothing else moved — `is_volunteer()` reads the
+ * membership history, not the roles — so the page then showed "volunteer"
+ * against somebody who still could not register for a single activity. It
+ * happened to a real person: an administrator pressed it twenty-seven minutes
+ * after they signed up, and the account sat there looking approved and
+ * behaving as though it were not.
+ *
+ * Volunteer standing comes from the two paths that set the status and the role
+ * together, each recording who decided and why: recognising a roster line in
+ * /staff/roster, or accepting an application in /staff/applications. This page
+ * hands out the jobs a volunteer can hold on top of that.
+ */
 const GRANTABLE: Role[] = [
-  'volunteer', 'team_leader', 'instructor', 'field_supervisor',
+  'team_leader', 'instructor', 'field_supervisor',
   'project_coordinator', 'content_manager', 'program_admin', 'super_admin',
 ];
 

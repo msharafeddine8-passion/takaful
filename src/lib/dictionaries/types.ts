@@ -240,6 +240,8 @@ export type Account = {
     phoneHint: string;
     numberLabel: string;
     numberHint: string;
+    dobLabel: string;
+    dobHint: string;
     submit: string;
     notFoundTitle: string;
     notFoundBody: string;
@@ -1029,6 +1031,7 @@ export type Account = {
       accountName: string;
       accountEmail: string;
       committee: string;
+      rosterDob: string;
       claimedAt: string;
       nameMismatch: string;
       approve: string;

@@ -44,6 +44,28 @@ export function ClaimForm({ lang, t }: Props) {
       <TextField name="phone" label={t.phoneLabel} hint={t.phoneHint} type="tel" autoComplete="tel" />
       <TextField name="memberNumber" label={t.numberLabel} hint={t.numberHint} />
 
+      {/*
+        * The birthday is what gets most people through without waiting.
+        *
+        * Recognition needs two facts: one that finds the line, one that says
+        * the person holding it is the person on it. The second fact used to be
+        * the account's own name, and the roster is written in Arabic while
+        * most people sign up in Latin script — so it almost never agreed, and
+        * ten of the sixteen volunteers who reached this form had to be
+        * approved by hand. A date reads the same in both alphabets.
+        *
+        * Optional, because somebody whose name does agree should not be made
+        * to type it, and because forty-four roster lines have no birthday
+        * recorded at all.
+        */}
+      <TextField
+        name="dateOfBirth"
+        label={t.dobLabel}
+        hint={t.dobHint}
+        type="date"
+        autoComplete="bday"
+      />
+
       <SubmitButton label={t.submit} pending={pending} />
     </form>
   );

@@ -99,6 +99,18 @@ export default async function StaffRosterPage(props: PageProps<'/[lang]/staff/ro
                       <dd>{c.committee}</dd>
                     </div>
                   ) : null}
+                  {/* The reviewer's other fact.
+                      Claims now also arrive from somebody who entered a
+                      membership number the association does recognise but
+                      whose account name is in Latin script, so the name is no
+                      evidence either way. The birthday on file is what a
+                      reviewer can actually put to the person. */}
+                  {c.date_of_birth ? (
+                    <div>
+                      <dt className="font-bold text-ink-2">{t.rosterDob}</dt>
+                      <dd dir="ltr" className="text-start">{c.date_of_birth}</dd>
+                    </div>
+                  ) : null}
                   <div>
                     <dt className="font-bold text-ink-2">{t.claimedAt}</dt>
                     <dd>{c.claimed_at}</dd>

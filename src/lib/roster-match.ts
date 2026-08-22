@@ -93,6 +93,15 @@ export function normaliseStoredTail(stored: string): string {
  * roster is a محمد or an علي. Two also means a single-word name never agrees
  * with anything, which sends those to a member of staff instead of through —
  * the cautious side to fail on, given what agreement now unlocks.
+ *
+ * What it cannot do is cross alphabets. The roster is in Arabic and most
+ * people register in Latin script, so "Hala ghemrawi" and "هلا معن غمرواي"
+ * share nothing at all: thirteen of the association's twenty-one accounts
+ * have a name that agrees with no roster line anywhere. Romanising the Arabic
+ * side was tried against the real pairs and rescued three of twelve; getting
+ * the rest would have meant prefix and near-miss matching, which is not a
+ * thing to put in front of an automatic grant of somebody's membership
+ * identity. The date of birth carries those instead — see datesAgree.
  */
 export function namesAgree(a: string, b: string): boolean {
   const ta = new Set(foldName(a).split(' ').filter((t) => t.length > 1));
@@ -102,5 +111,59 @@ export function namesAgree(a: string, b: string): boolean {
   return shared >= 2;
 }
 
-/** How far the evidence goes. The wording a claimant sees depends on it. */
-export type MatchStrength = 'phone-and-name' | 'phone-only' | 'number-and-name';
+/**
+ * A date of birth, compared as a calendar date.
+ *
+ * The second factor that survives the alphabet. A volunteer knows their own
+ * birthday whichever way they spell their name, and somebody else in the same
+ * household sharing the phone has a different one — which is the case
+ * name agreement was there to catch.
+ *
+ * String equality on YYYY-MM-DD, deliberately, and never a Date object. The
+ * database session runs GMT while the association lives in Beirut, so turning
+ * either side into an instant makes a birthday recorded at midnight Beirut
+ * into the previous day. The roster column is selected as
+ * `to_char(…, 'YYYY-MM-DD')` and an `<input type="date">` submits the same
+ * shape, so both sides are text before they ever meet.
+ *
+ * Both sides must be exactly that shape, and a timestamp is refused rather
+ * than trimmed down to its first ten characters. Trimming looks like the
+ * forgiving choice and is the dangerous one: querying the column without
+ * to_char yields `2002-12-31T22:00:00.000Z` for a birthday of 1 January,
+ * because the session is GMT and Beirut is two hours ahead — so the first ten
+ * characters are the wrong day, and this would quietly hand somebody the
+ * wrong record. Refusing means that if the query ever loses its to_char,
+ * nobody is recognised automatically until someone notices, which is the side
+ * to fail on.
+ */
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+export function datesAgree(rosterIso: string | null, typed: string): boolean {
+  if (!rosterIso) return false;
+  const a = rosterIso.trim();
+  const b = typed.trim();
+  return ISO_DATE.test(a) && ISO_DATE.test(b) && a === b;
+}
+
+/**
+ * How far the evidence goes. The wording a claimant sees depends on it.
+ *
+ * The four two-fact strengths are what recognition can happen on without a
+ * person watching. `phone-only` and `number-only` are one fact each and go to
+ * a member of staff.
+ *
+ * `number-only` exists because what it replaced was worse than a queue. A
+ * membership number matching a real line whose name did not agree used to
+ * return no match at all — so a volunteer of six years holding their own card
+ * was told the association had never heard of them, and because nothing was
+ * written down there was no claim for anybody to approve. With most accounts
+ * in Latin script and the roster in Arabic, "the name did not agree" is the
+ * ordinary case rather than the suspicious one.
+ */
+export type MatchStrength =
+  | 'phone-and-name'
+  | 'phone-and-dob'
+  | 'number-and-name'
+  | 'number-and-dob'
+  | 'phone-only'
+  | 'number-only';

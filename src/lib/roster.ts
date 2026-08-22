@@ -1,5 +1,5 @@
 import { query, queryOne } from '@/lib/db';
-import { namesAgree, phoneTail, type MatchStrength } from '@/lib/roster-match';
+import { namesAgree, datesAgree, phoneTail, type MatchStrength } from '@/lib/roster-match';
 
 /**
  * Recognising people the association already knows.
@@ -16,7 +16,7 @@ import { namesAgree, phoneTail, type MatchStrength } from '@/lib/roster-match';
  * can be tested without one.
  */
 
-export { formatMemberNumber, foldName, phoneTail, normaliseStoredTail, namesAgree } from '@/lib/roster-match';
+export { formatMemberNumber, foldName, phoneTail, normaliseStoredTail, namesAgree, datesAgree } from '@/lib/roster-match';
 export type { MatchStrength } from '@/lib/roster-match';
 
 export type RosterEntry = {
@@ -42,17 +42,44 @@ const COLUMNS = `id, member_number, full_name, joined_on,
 /**
  * Finds the roster line a signed-in person is claiming.
  *
- * The phone is the key because it is the one thing here that only its owner
- * knows; the account's own name is then used to corroborate. A membership
- * number is accepted too, for the volunteers who carry an old card, but never
- * on its own — numbers are sequential and therefore guessable.
+ * The phone or the membership number identifies the line; a second fact then
+ * corroborates that the person holding it is the person on it. Either the
+ * account's own name agrees, or the date of birth they gave does.
+ *
+ * The date of birth was added because the name could not do the job alone.
+ * The roster is written in Arabic and most people register in Latin script,
+ * so name agreement fails for the majority of real members — thirteen of the
+ * association's twenty-one accounts agree with no roster line anywhere. A
+ * birthday is the same fact in both alphabets, and it still distinguishes a
+ * claimant from whoever else in the household answers that phone, which is
+ * the case the corroboration exists for.
+ *
+ * A line that is found but not corroborated is still a match. It comes back
+ * as `phone-only` or `number-only`, which grants nothing and goes to a member
+ * of staff — but it is written down, which is the part that was missing.
  */
 export async function findRosterMatch(opts: {
   phone?: string | null;
   memberNumber?: number | null;
   accountName: string;
+  /** As typed into a date input: YYYY-MM-DD, or empty. */
+  dateOfBirth?: string | null;
 }): Promise<RosterMatch | null> {
   const tail = phoneTail(opts.phone ?? '');
+  const dob = (opts.dateOfBirth ?? '').trim();
+
+  /*
+   * Which second fact backs this line up, if either does.
+   *
+   * The date is tried first: it works when the name is in another alphabet,
+   * and it is the fact the claimant has just typed rather than one carried
+   * over from whatever they wrote at registration.
+   */
+  const corroboration = (entry: RosterEntry): 'dob' | 'name' | null => {
+    if (dob && datesAgree(entry.date_of_birth, dob)) return 'dob';
+    if (namesAgree(entry.full_name, opts.accountName)) return 'name';
+    return null;
+  };
 
   if (tail) {
     /* The stored key is normalised in the comparison rather than in the table
@@ -65,9 +92,11 @@ export async function findRosterMatch(opts: {
       [tail],
     );
     if (row) {
+      const how = corroboration(row);
       return {
         entry: row,
-        strength: namesAgree(row.full_name, opts.accountName) ? 'phone-and-name' : 'phone-only',
+        strength:
+          how === 'dob' ? 'phone-and-dob' : how === 'name' ? 'phone-and-name' : 'phone-only',
       };
     }
   }
@@ -77,9 +106,21 @@ export async function findRosterMatch(opts: {
       `SELECT ${COLUMNS} FROM volunteer_roster WHERE member_number = $1 LIMIT 1`,
       [opts.memberNumber],
     );
-    // A number alone proves nothing, so the name has to carry this one.
-    if (row && namesAgree(row.full_name, opts.accountName)) {
-      return { entry: row, strength: 'number-and-name' };
+    if (row) {
+      /*
+       * A number alone still proves nothing — numbers are sequential and so
+       * guessable — but it no longer means "no such person". This returned
+       * null when the name disagreed, and told a real member holding their
+       * own card that the association had no record of them. Nothing was
+       * recorded, so there was no claim for staff to see and no way for the
+       * volunteer to get any further. Now it is a claim that a person decides.
+       */
+      const how = corroboration(row);
+      return {
+        entry: row,
+        strength:
+          how === 'dob' ? 'number-and-dob' : how === 'name' ? 'number-and-name' : 'number-only',
+      };
     }
   }
 
