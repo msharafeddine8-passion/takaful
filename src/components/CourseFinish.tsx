@@ -5,12 +5,27 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCourseProgress } from './CourseProgress';
 import { completeCourseAction, type CompleteResult } from '@/lib/actions/courses';
+import { countPhrase } from '@/lib/when';
 import type { Locale } from '@/lib/i18n';
 
 const UI = {
   ar: {
     title: 'إنهاء الدورة',
-    progress: (done: number, total: number) => `أجبت على ${done} من ${total} سؤالاً`,
+    /*
+     * The counted noun agrees with the total, and Arabic needs five bands to
+     * do it. This said «0 من 7 سؤالاً» — the singular accusative, which
+     * belongs to eleven and above. Three to ten takes a plural: «7 أسئلة».
+     * It was wrong on every course in the academy, because not one of them
+     * asks eleven questions.
+     */
+    progress: (done: number, total: number) =>
+      `أجبت على ${done} من ${countPhrase(total, {
+        zero: 'لا أسئلة',
+        one: 'سؤال واحد',
+        two: 'سؤالين',
+        few: '{n} أسئلة',
+        many: '{n} سؤالاً',
+      })}`,
     incomplete: 'أجب على كل الأسئلة قبل الإنهاء.',
     submit: 'أنهِ الدورة',
     sending: 'جارٍ الحفظ…',

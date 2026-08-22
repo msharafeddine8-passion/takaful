@@ -128,10 +128,19 @@ export function nextStepOf(f: AccountFacts): Step {
     };
   }
 
+  /*
+   * Half way through something: the player, not the description. /learn
+   * resolves which unit they stopped on, so this stays one string and the
+   * resume rule stays in lib/programme/player.ts.
+   *
+   * The stage requirement above keeps pointing at the overview deliberately.
+   * That is a course they have most likely never opened, and the first useful
+   * thing about it is what it covers and what it needs first.
+   */
   if (f.courseInProgress) {
     return {
       key: 'finish-course',
-      href: `/academy/${f.courseInProgress}`,
+      href: `/academy/${f.courseInProgress}/learn`,
       detail: { courseSlug: f.courseInProgress },
     };
   }

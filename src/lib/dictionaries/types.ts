@@ -647,6 +647,27 @@ export type Account = {
     lockedBody: string;
     signInToTrack: string;
     signInCta: string;
+    /** The course player: one unit to a screen. */
+    player: {
+      open: string;
+      openResume: string;
+      contents: string;
+      contentsShow: string;
+      contentsHide: string;
+      unitOf: string;
+      next: string;
+      prev: string;
+      markAndNext: string;
+      saving: string;
+      savedJust: string;
+      overview: string;
+      assessmentTitle: string;
+      assessmentLede: string;
+      stateDone: string;
+      stateCurrent: string;
+      stateAhead: string;
+      progressAria: string;
+    };
     /** Module navigation */
     contentsTitle: string;
     moduleOf: string;

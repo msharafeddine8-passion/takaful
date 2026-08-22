@@ -292,9 +292,11 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
               {COURSES.find((c) => c.slug === summary.coursesInProgress!.slug)?.title[lang] ??
                 summary.coursesInProgress.slug}
             </p>
+            {/* The player, at the unit they stopped on — /learn works that
+                out. A course already in progress does not need re-describing. */}
             <ArrowLink
               lang={lang}
-              href={`/${lang}/academy/${summary.coursesInProgress.slug}`}
+              href={`/${lang}/academy/${summary.coursesInProgress.slug}/learn`}
               label={p.continueCta}
             />
           </Panel>

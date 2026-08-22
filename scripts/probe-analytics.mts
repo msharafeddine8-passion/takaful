@@ -108,12 +108,27 @@ try {
     (f.find((s) => s.key === key)?.count ?? 0) -
     (before.funnel.find((s) => s.key === key)?.count ?? 0);
 
-  check('four new accounts show at the top', delta('registered') === 4, delta('registered'));
-  check('three of them opened a course', delta('learning') === 3, delta('learning'));
-  check('two of those passed one', delta('passed') === 2, delta('passed'));
-  check('two applied', delta('applied') === 2, delta('applied'));
-  check('one was accepted', delta('accepted') === 1, delta('accepted'));
-  check('and one has verified hours', delta('contributing') === 1, delta('contributing'));
+  /*
+   * At least, not exactly.
+   *
+   * These read `=== 4` and so on, which is right against a database nobody
+   * else is touching. This one is production. Sixteen people registered in
+   * one afternoon, one of them between the before and after snapshots, and
+   * the probe reported a hole in the funnel that did not exist. A test that
+   * fails when the association is busiest is worse than no test: it is the
+   * one nobody believes the second time.
+   *
+   * Somebody else using the site can only push a step up, never down, so
+   * `>=` still catches the failure worth catching — a step that does not
+   * count what it should. Over-counting here is other people volunteering.
+   */
+  const atLeast = (key: string, n: number) => delta(key) >= n;
+  check('four new accounts show at the top', atLeast('registered', 4), delta('registered'));
+  check('three of them opened a course', atLeast('learning', 3), delta('learning'));
+  check('two of those passed one', atLeast('passed', 2), delta('passed'));
+  check('two applied', atLeast('applied', 2), delta('applied'));
+  check('one was accepted', atLeast('accepted', 1), delta('accepted'));
+  check('and one has verified hours', atLeast('contributing', 1), delta('contributing'));
 
   check(
     'every step is a number, not a string',

@@ -156,7 +156,10 @@ export async function completeCourseAction(
   });
 
   revalidatePath(`/${locale}/account`);
-  revalidatePath(`/${locale}/academy/${slug}`);
+  /* 'layout' so the player's unit pages under this course go with it. The
+   * course path on its own leaves the contents list inside the player still
+   * showing the assessment unfinished after it has been passed. */
+  revalidatePath(`/${locale}/academy/${slug}`, 'layout');
   return { ok: true, score: graded.score, passed: graded.passed, certificateCode };
 }
 

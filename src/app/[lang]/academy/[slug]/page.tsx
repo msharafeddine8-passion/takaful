@@ -6,22 +6,16 @@ import { isLocale, type Locale } from '@/lib/i18n';
 import { getDictionary, type Dictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section } from '@/components/ui';
-import { Quiz } from '@/components/Quiz';
-import { CourseProgressProvider } from '@/components/CourseProgress';
-import { CourseFinish } from '@/components/CourseFinish';
-import { ModuleRead } from '@/components/ModuleRead';
 import { CourseLd } from '@/components/StructuredData';
 import { COURSE_CONTENT } from '@/lib/course-content';
 import { CATEGORIES, DIFFICULTY_LABEL, courseBySlug } from '@/lib/courses';
 import { isDbConfigured } from '@/lib/db';
 import { currentUser } from '@/lib/auth';
 import {
-  startOrResumeAttempt,
   questionsIn,
   completedModules,
   eligibilityFor,
   passedCourseSlugs,
-  type Attempt,
 } from '@/lib/academy';
 import {
   ProgressBar,
@@ -29,16 +23,24 @@ import {
   Fact,
   type Standing,
 } from '@/components/academy/parts';
-import type { Block } from '@/lib/course-content/types';
 import { decideAccess } from '@/lib/programme/access';
 import { CourseLocked } from '@/components/academy/CourseLocked';
+import { unitsOf, resumeUnitId, ASSESSMENT_ID } from '@/lib/programme/player';
 
 /*
- * This page used to be prerendered for both languages. It no longer can be:
- * the order the quiz options appear in belongs to the reader's attempt, and
- * the answers they have already given have to come back with the page. The
- * catalogue at /academy is still static, which is where the search engines
- * and the newcomers land.
+ * The course, described. The course itself is at ./learn/[unit].
+ *
+ * This page used to carry both: the description and every module body, quiz
+ * and the finish bar, in one document. The bodies moved to the player when
+ * the academy went one-unit-per-screen, and they moved rather than being
+ * copied — the same authored paragraphs on two routes would be duplicate
+ * content to a search engine and two places to fix a typo.
+ *
+ * What is left is the page somebody lands on from a search or from the
+ * catalogue: what the course covers, who it is for, what it needs first, and
+ * one button into it. That is also why it stopped opening an attempt. Reading
+ * the description is not sitting the paper, and every visit used to record
+ * one.
  */
 
 export async function generateMetadata(
@@ -60,132 +62,6 @@ export async function generateMetadata(
     description: course?.lede[lang] ?? meta.summary[lang],
     alternates: alternatesFor(lang, `/academy/${slug}`),
   };
-}
-
-const CALLOUT_STYLE = {
-  info: 'border-brand-blue/30 bg-brand-blue/[0.07]',
-  warn: 'border-brand-orange/40 bg-brand-orange/[0.09]',
-  stop: 'border-danger/30 bg-danger/[0.07]',
-} as const;
-
-const CALLOUT_TITLE = {
-  info: 'text-brand-blue dark:text-sky-300',
-  warn: 'text-brand-orange-text dark:text-brand-orange',
-  stop: 'text-danger',
-} as const;
-
-/** Everything the quiz blocks need that the content itself cannot supply. */
-type QuizContext = {
-  slug: string;
-  /** Display order of the options, per question id. */
-  order: Record<string, number[]>;
-  /** What the server has already recorded, keyed by question id. */
-  previous: Record<string, { displayedIndex: number; correct: boolean; feedback: string }>;
-};
-
-function renderBlock(block: Block, lang: Locale, key: number, quiz: QuizContext) {
-  switch (block.type) {
-    case 'text':
-      return (
-        <p key={key} className="mb-4 max-w-[70ch] text-[1.02rem] leading-relaxed text-ink-2">
-          {block.content[lang]}
-        </p>
-      );
-
-    case 'list':
-      return (
-        <ul key={key} className="mb-5 flex max-w-[70ch] flex-col gap-2">
-          {block.items[lang].map((item, i) => (
-            <li
-              key={i}
-              className="relative ps-5 text-[0.97rem] leading-relaxed text-ink-2 before:absolute before:top-[0.7em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-orange before:content-[''] before:start-0"
-            >
-              {item}
-            </li>
-          ))}
-        </ul>
-      );
-
-    case 'ordered':
-      return (
-        <ol key={key} className="mb-5 flex max-w-[70ch] list-decimal flex-col gap-2 ps-6">
-          {block.items[lang].map((item, i) => (
-            <li key={i} className="text-[0.97rem] leading-relaxed text-ink-2">
-              {item}
-            </li>
-          ))}
-        </ol>
-      );
-
-    case 'callout':
-      return (
-        <div key={key} className={`my-6 rounded-2xl border p-5 ${CALLOUT_STYLE[block.variant]}`}>
-          <p className={`mb-2 text-[0.95rem] font-extrabold ${CALLOUT_TITLE[block.variant]}`}>
-            {block.title[lang]}
-          </p>
-          <p className="text-[0.96rem] leading-relaxed text-ink-2">{block.content[lang]}</p>
-        </div>
-      );
-
-    case 'grid':
-      return (
-        <div key={key} className="my-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {block.items.map((item, i) => (
-            <div key={i} className="rounded-xl border border-line bg-surface p-4">
-              {/* h3, not h4: these sit directly under the module's h2, and a
-                  skipped level tells a screen-reader user a heading is
-                  missing between them. */}
-              <h3 className="mb-1.5 text-[1rem] font-extrabold text-brand-blue dark:text-sky-300">
-                {item.title[lang]}
-              </h3>
-              <p className="text-[0.9rem] leading-relaxed text-ink-2">{item.text[lang]}</p>
-            </div>
-          ))}
-        </div>
-      );
-
-    case 'compare':
-      return (
-        <div key={key} className="my-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-ok/30 bg-ok/[0.08] p-5">
-            <h3 className="mb-2.5 text-[0.98rem] font-extrabold text-ok">{block.yesTitle[lang]}</h3>
-            <ul className="flex list-disc flex-col gap-1.5 ps-5 text-[0.92rem] text-ink-2">
-              {block.yes[lang].map((t, i) => (
-                <li key={i}>{t}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="rounded-xl border border-danger/30 bg-danger/[0.07] p-5">
-            <h3 className="mb-2.5 text-[0.98rem] font-extrabold text-danger">
-              {block.noTitle[lang]}
-            </h3>
-            <ul className="flex list-disc flex-col gap-1.5 ps-5 text-[0.92rem] text-ink-2">
-              {block.no[lang].map((t, i) => (
-                <li key={i}>{t}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      );
-
-    case 'quiz': {
-      // Fall back to the authored order for a visitor with no attempt open.
-      const order = quiz.order[block.id] ?? block.options.map((_, i) => i);
-      return (
-        <Quiz
-          key={key}
-          lang={lang}
-          slug={quiz.slug}
-          id={block.id}
-          label={block.label[lang]}
-          question={block.question[lang]}
-          scenario={block.scenario?.[lang]}
-          options={order.map((original) => block.options[original][lang])}
-          previous={quiz.previous[block.id]}
-        />
-      );
-    }
-  }
 }
 
 export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug]'>) {
@@ -241,57 +117,22 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
     );
   }
 
-  const questions = questionsIn(slug);
-  // The finish bar needs to know how many answers make a complete attempt.
-  const questionCount = questions.length;
-
-  /*
-   * Opening the page opens the attempt. It has to happen here rather than on
-   * the first tap, because the option order shown must be the order the
-   * server grades against. startOrResumeAttempt returns the attempt already
-   * in progress if there is one, and a unique index makes a double render
-   * harmless, so this stays safe to repeat.
-   */
-  let attempt: Attempt | null = null;
-  let readModules: string[] = [];
-  if (user && isApproved && questionCount > 0) {
-    [attempt, readModules] = await Promise.all([
-      startOrResumeAttempt(user.id, slug),
-      completedModules(user.id, slug),
-    ]);
-  } else if (user) {
-    readModules = await completedModules(user.id, slug);
-  }
-
-  const quizContext: QuizContext = { slug, order: {}, previous: {} };
-  if (attempt) {
-    quizContext.order = attempt.option_order;
-    for (const q of questions) {
-      const original = attempt.answers[q.id];
-      if (original === undefined) continue;
-      const order = attempt.option_order[q.id] ?? q.options.map((_, i) => i);
-      quizContext.previous[q.id] = {
-        displayedIndex: Math.max(0, order.indexOf(original)),
-        correct: original === q.correct,
-        feedback: q.feedback[lang],
-      };
-    }
-  }
-  const answeredIds = Object.keys(quizContext.previous);
+  const questionCount = questionsIn(slug).length;
 
   /*
    * Where this volunteer stands, worked out once and used by the hero, the
    * contents list and the call to action — so the three cannot disagree.
    */
-  const [eligibility, passed] = await Promise.all([
-    eligibilityFor(user?.id ?? null, slug),
+  const [readModules, passed] = await Promise.all([
+    user ? completedModules(user.id, slug) : Promise.resolve([] as string[]),
     user ? passedCourseSlugs(user.id) : Promise.resolve(new Set<string>()),
   ]);
+  const eligibility = gate;
   const modulesRead = readModules.length;
   const hasPassed = passed.has(slug);
   const standing: Standing = hasPassed
     ? 'completed'
-    : modulesRead > 0 || answeredIds.length > 0
+    : modulesRead > 0
       ? 'in-progress'
       : 'not-started';
   const percent = hasPassed
@@ -301,12 +142,17 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
       : (modulesRead / course.modules.length) * 100;
 
   /*
-   * Where the main button goes. Somebody part-way through wants the module
-   * they stopped on, not the top of the page they have already read.
+   * Where the main button goes: into the player, at the unit they stopped on.
+   * The resume rule lives in lib/programme/player.ts and is the same one
+   * ./learn uses, so this button and that redirect cannot point at different
+   * modules for the same reader.
    */
-  const firstUnread = course.modules.find((m) => !readModules.includes(m.id));
-  const startTargetId =
-    standing === 'in-progress' && firstUnread ? firstUnread.id : (course.modules[0]?.id ?? 'contents');
+  const units = unitsOf({
+    moduleIds: course.modules.map((m) => m.id),
+    hasQuestions: questionCount > 0,
+  });
+  const resumeId = resumeUnitId(units, readModules);
+  const enterHref = `/${lang}/academy/${slug}/learn${resumeId ? `/${resumeId}` : ''}`;
 
   const t = {
     ar: {
@@ -416,12 +262,12 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
 
           {isApproved && (
             <div className="mt-7 flex flex-wrap gap-3">
-              <PrimaryAction href={`#${startTargetId}`}>
+              <PrimaryAction href={enterHref}>
                 {standing === 'completed'
                   ? a.review
                   : standing === 'in-progress'
-                    ? a.resume
-                    : a.start}
+                    ? a.player.openResume
+                    : a.player.open}
               </PrimaryAction>
               {!user && (
                 <Link
@@ -539,6 +385,9 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
           </div>
 
           {/* ------------------------------------------------------ contents */}
+          {/* Every row is a way in, not an anchor down the page. A reader who
+              wants the module on disclosure can go straight to it instead of
+              entering at the top and scrolling. */}
           <section id="contents" className="mb-12 scroll-mt-24 rounded-2xl border border-line bg-surface p-6">
             <h2 className="text-[1.15rem] font-extrabold">{a.contentsTitle}</h2>
             <ol className="mt-4 space-y-2">
@@ -547,8 +396,8 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
                 const isCurrent = !done && course.modules.slice(0, i).every((m) => readModules.includes(m.id));
                 return (
                   <li key={mod.id}>
-                    <a
-                      href={`#${mod.id}`}
+                    <Link
+                      href={`/${lang}/academy/${slug}/learn/${mod.id}` as Parameters<typeof Link>[0]['href']}
                       className={`flex items-center gap-3 rounded-xl border p-3.5 transition-colors hover:bg-surface-2 ${
                         isCurrent ? 'border-brand-orange bg-brand-orange/[0.06]' : 'border-line'
                       }`}
@@ -577,69 +426,51 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
                           </span>
                         )}
                       </span>
-                    </a>
+                    </Link>
                   </li>
                 );
               })}
+
+              {/* The assessment is a step the reader takes, so it belongs in
+                  the list they are counting. Leaving it out made a seven
+                  module course look finished at the seventh. */}
+              {questionCount > 0 && (
+                <li>
+                  <Link
+                    href={`/${lang}/academy/${slug}/learn/${ASSESSMENT_ID}` as Parameters<typeof Link>[0]['href']}
+                    className="flex items-center gap-3 rounded-xl border border-line p-3.5 transition-colors hover:bg-surface-2"
+                  >
+                    <span
+                      className={`grid h-9 w-9 shrink-0 place-items-center rounded-full text-[0.9rem] font-extrabold ${
+                        hasPassed ? 'bg-ok text-white' : 'border border-line text-ink-3'
+                      }`}
+                      aria-hidden
+                    >
+                      {hasPassed ? '✓' : course.modules.length + 1}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-bold leading-snug">{a.player.assessmentTitle}</span>
+                      <span className="mt-0.5 block text-[0.82rem] text-ink-3">
+                        {a.questionsWord}: {questionCount} · {a.passMark} {course.passMark}%
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              )}
             </ol>
-          </section>
 
-          <CourseProgressProvider totalQuestions={questionCount} initiallyAnswered={answeredIds}>
-            {course.modules.map((mod, i) => (
-              <section key={mod.id} className="mb-14 scroll-mt-24" id={mod.id}>
-                <div className="mb-3 flex flex-wrap items-center gap-3">
-                  <span className="rounded-full bg-brand-blue/10 px-3 py-1 text-[0.82rem] font-extrabold text-brand-blue dark:bg-sky-300/10 dark:text-sky-300">
-                    {a.moduleOf
-                      .replace('{n}', String(i + 1))
-                      .replace('{total}', String(course.modules.length))}
-                  </span>
-                  {readModules.includes(mod.id) && (
-                    <span className="text-[0.82rem] font-extrabold text-ok">✓ {a.moduleDone}</span>
-                  )}
-                </div>
-
-                <h2 className="text-[clamp(1.4rem,1.15rem+1.2vw,2rem)] font-extrabold tracking-tight">
-                  {mod.title[lang]}
-                </h2>
-                <p className="mb-7 mt-3 max-w-[64ch] text-[1.05rem] leading-relaxed text-ink-2">
-                  {mod.lede[lang]}
-                </p>
-
-                {mod.blocks.map((b, bi) => renderBlock(b, lang, bi, quizContext))}
-
-                <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-line pt-5">
-                  {user && (
-                    <ModuleRead
-                      lang={lang}
-                      slug={slug}
-                      moduleId={mod.id}
-                      done={readModules.includes(mod.id)}
-                    />
-                  )}
-                  {/* min-h-11 on both: these are the two links a volunteer uses
-                      most on a phone, and a 26px-tall inline link is a miss. */}
-                  <a
-                    href={i + 1 < course.modules.length ? `#${course.modules[i + 1].id}` : '#finish'}
-                    className="inline-flex min-h-11 items-center rounded-full border border-line px-4 text-[0.92rem] font-extrabold text-brand-blue transition-colors hover:bg-surface-2 dark:text-brand-orange"
-                  >
-                    {i + 1 < course.modules.length ? `${a.nextModule} →` : `${dict.account.learning.title} →`}
-                  </a>
-                  <a
-                    href="#contents"
-                    className="inline-flex min-h-11 items-center px-1 text-[0.9rem] font-bold text-ink-3 hover:underline"
-                  >
-                    {a.backToContents}
-                  </a>
-                </div>
-              </section>
-            ))}
-
-            {isApproved && questionCount > 0 && (
-              <div id="finish" className="scroll-mt-24">
-                <CourseFinish lang={lang} slug={slug} passMark={course.passMark} />
+            {isApproved && (
+              <div className="mt-5">
+                <PrimaryAction href={enterHref}>
+                  {standing === 'completed'
+                    ? a.review
+                    : standing === 'in-progress'
+                      ? a.player.openResume
+                      : a.player.open}
+                </PrimaryAction>
               </div>
             )}
-          </CourseProgressProvider>
+          </section>
 
           <div className="rounded-2xl border border-line bg-surface p-6">
             <h2 className="mb-3 text-[0.86rem] font-extrabold tracking-[0.1em] text-ink-3">

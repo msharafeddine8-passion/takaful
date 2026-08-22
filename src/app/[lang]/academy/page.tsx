@@ -130,7 +130,11 @@ export default async function AcademyPage(props: PageProps<'/[lang]/academy'>) {
                       </div>
                     )}
                     <div className="mt-5">
-                      <PrimaryAction href={`/${lang}/academy/${resume.slug}`}>
+                      {/* Straight into the player, at the unit they stopped
+                          on. This card says "continue"; sending it to the
+                          description of a course somebody is half way through
+                          is a tap to get past a page they have already read. */}
+                      <PrimaryAction href={`/${lang}/academy/${resume.slug}/learn`}>
                         {t.continueCta} →
                       </PrimaryAction>
                     </div>
