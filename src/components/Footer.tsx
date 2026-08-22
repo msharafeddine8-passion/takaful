@@ -13,6 +13,10 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
   const vol = [
     { href: `/${lang}/academy`, label: dict.nav.academy },
     { href: `/${lang}/journey`, label: dict.nav.journey },
+    /* The forms go here rather than in the header. Somebody looks for an
+       attendance sheet when they are about to run something, not while
+       browsing — and the header already carries eight items. */
+    { href: `/${lang}/resources`, label: dict.resources.kicker },
     { href: `/${lang}/contact`, label: dict.contact.ctaVolunteer },
     { href: `/${lang}/contact`, label: dict.contact.ctaPartner },
   ];

@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { locales } from '@/lib/i18n';
 import { SITE_URL } from '@/lib/seo';
 import { COURSES } from '@/lib/courses';
+import { printableTemplates } from '@/lib/templates/catalogue';
 import { isDbConfigured, query } from '@/lib/db';
 
 /**
@@ -13,7 +14,9 @@ import { isDbConfigured, query } from '@/lib/db';
  * sitemap is an invitation and there is no reason to issue one.
  */
 
-const STATIC = ['', '/about', '/areas', '/academy', '/journey', '/projects', '/gallery', '/contact'];
+const STATIC = [
+  '', '/about', '/areas', '/academy', '/journey', '/projects', '/gallery', '/contact', '/resources',
+];
 
 export const revalidate = 3600;
 
@@ -23,6 +26,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/opportunities',
     // Draft courses are not published, so they are not advertised.
     ...COURSES.filter((c) => c.status === 'available').map((c) => `/academy/${c.slug}`),
+    /* Only the forms that print. The four held for specialist review have
+     * real pages, but the page is an explanation of why there is nothing to
+     * download yet, and inviting a search engine to it would put the
+     * association's unapproved safeguarding drafts in front of people
+     * searching for a safeguarding form. */
+    ...printableTemplates().map((t) => `/resources/${t.slug}`),
   ];
 
   /*

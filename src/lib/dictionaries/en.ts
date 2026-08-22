@@ -220,6 +220,27 @@ export const en: Dictionary = {
     switchTo: 'العربية',
     skipToContent: 'Skip to content',
   },
+  resources: {
+    kicker: 'Association forms',
+    title: 'Forms ready to print',
+    lede:
+      'The forms a volunteer needs in the field — an activity plan, an attendance sheet, meeting minutes and the rest. Open one and print it, or save it as a PDF from the print dialog.',
+    printCta: 'Print or save as PDF',
+    openCta: 'Open the form',
+    backToLibrary: 'All forms',
+    forCourse: 'Taught in',
+    readyTitle: 'Ready to use',
+    readyCount: '{n} of {total} ready to use',
+    heldTitle: 'Awaiting specialist review',
+    heldLede:
+      'These forms touch child protection, safety or legal matters. The drafts exist, but they do not print until someone qualified in the association has approved them — a form that gets filled in without anyone having signed it off looks official and is not.',
+    heldBadge: 'Draft — not for use yet',
+    heldOnSheet: 'This form has not been approved and must not be used in the field.',
+    whyHeld: 'Why it is held',
+    printHint:
+      'Choose "Save as PDF" in the print dialog if you want a digital copy. The margins are set in the page, so there is nothing to change.',
+    notFound: 'There is no form by that name.',
+  },
   account: {
     join: {
       kicker: 'New account',

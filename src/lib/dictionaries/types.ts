@@ -85,6 +85,25 @@ export type Dictionary = {
   };
   footer: { orgTitle: string; volunteersTitle: string; rights: string };
   common: { readMore: string; backHome: string; switchTo: string; skipToContent: string };
+  /** The printable forms library. */
+  resources: {
+    kicker: string;
+    title: string;
+    lede: string;
+    printCta: string;
+    openCta: string;
+    backToLibrary: string;
+    forCourse: string;
+    readyTitle: string;
+    readyCount: string;
+    heldTitle: string;
+    heldLede: string;
+    heldBadge: string;
+    heldOnSheet: string;
+    whyHeld: string;
+    printHint: string;
+    notFound: string;
+  };
   account: Account;
 };
 

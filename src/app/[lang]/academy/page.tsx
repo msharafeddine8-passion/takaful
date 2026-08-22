@@ -144,6 +144,27 @@ export default async function AcademyPage(props: PageProps<'/[lang]/academy'>) {
             </div>
           )}
 
+          {/* The forms the courses refer to. A volunteer who has just read the
+              module on documentation needs the attendance sheet, and until now
+              there was nowhere to send them. */}
+          <Link
+            href={`/${lang}/resources` as Parameters<typeof Link>[0]['href']}
+            className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-line bg-surface-2 p-5 transition-colors hover:bg-surface"
+          >
+            <span className="text-[1.6rem]" aria-hidden>
+              📄
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-extrabold">{dict.resources.title}</span>
+              <span className="mt-0.5 block text-[0.9rem] leading-relaxed text-ink-2">
+                {dict.resources.lede}
+              </span>
+            </span>
+            <span aria-hidden className="text-[1.2rem] font-extrabold text-brand-blue dark:text-brand-orange">
+              {lang === 'ar' ? '←' : '→'}
+            </span>
+          </Link>
+
           <h2 className="sr-only">{t.allCourses}</h2>
 
           {/* The catalogue in path order, not by subject: a volunteer takes a
