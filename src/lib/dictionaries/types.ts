@@ -920,6 +920,7 @@ export type Account = {
       waiting: string;
       waitingHint: string;
       saving: string;
+      signInToBeTold: string;
       staffTitle: string;
       staffLede: string;
       staffEmpty: string;

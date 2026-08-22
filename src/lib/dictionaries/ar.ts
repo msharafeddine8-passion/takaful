@@ -1041,6 +1041,7 @@ export const ar: Dictionary = {
         waiting: 'أنت على قائمة المهتمّين',
         waitingHint: 'سنُعلمك فور تحديد الموعد. اضغط لإزالة اسمك.',
         saving: 'جارٍ الحفظ…',
+        signInToBeTold: 'سجّل الدخول ليصلك الإشعار',
         staffTitle: 'المهتمّون',
         staffLede: 'من طلبوا أن نُعلمهم عند تحديد موعد هذا النشاط.',
         staffEmpty: 'لم يسجّل أحد اهتمامه بعد.',

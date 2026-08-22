@@ -183,6 +183,7 @@ function ActivityCard({
             lang={lang}
             dict={dict}
             interested={interested}
+            signedIn={signedIn}
           />
         ) : (
           <JoinButton

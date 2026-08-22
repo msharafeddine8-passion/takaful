@@ -1046,6 +1046,7 @@ export const en: Dictionary = {
         waiting: 'You are on the interested list',
         waitingHint: 'We will tell you as soon as a date is set. Press to take your name off.',
         saving: 'Saving…',
+        signInToBeTold: 'Sign in to be told',
         staffTitle: 'Interested volunteers',
         staffLede: 'People who asked to be told when this activity gets a date.',
         staffEmpty: 'Nobody has registered interest yet.',

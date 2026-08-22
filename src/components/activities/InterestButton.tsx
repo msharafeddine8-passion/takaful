@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useActionState } from 'react';
 import { markInterestAction, withdrawInterestAction, type InterestState } from '@/lib/actions/interest';
 import type { Dictionary } from '@/lib/dictionaries';
@@ -20,18 +21,39 @@ import type { Locale } from '@/lib/i18n';
 const empty: InterestState = {};
 
 export function InterestButton({
-  lang, dict, activityId, interested,
+  lang, dict, activityId, interested, signedIn,
 }: {
   lang: Locale;
   dict: Dictionary;
   activityId: string;
   interested: boolean;
+  signedIn: boolean;
 }) {
   const t = dict.account.activities.interest;
   const [state, formAction, pending] = useActionState(
     interested ? withdrawInterestAction : markInterestAction,
     empty,
   );
+
+  /*
+   * Signed out, this is a link to sign in — not the button.
+   *
+   * The register button next to it has always done this; this one did not, so
+   * a stranger browsing the public opportunities page was offered ten "tell me
+   * when it opens" buttons, every one of which would bounce them to the login
+   * page the moment they pressed it. Same failure as a locked course offering
+   * "start the course": an invitation the server will refuse.
+   */
+  if (!signedIn) {
+    return (
+      <Link
+        href={`/${lang}/login` as Parameters<typeof Link>[0]['href']}
+        className="inline-flex min-h-11 items-center rounded-full border border-line px-5 py-2.5 text-[0.92rem] font-bold hover:bg-surface-2"
+      >
+        {t.signInToBeTold}
+      </Link>
+    );
+  }
 
   return (
     <form action={formAction}>
