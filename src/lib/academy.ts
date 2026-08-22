@@ -4,6 +4,7 @@ import { query, queryOne, execute, transaction } from './db';
 import { COURSE_CONTENT } from './course-content';
 import { COURSES, courseBySlug } from './courses';
 import { generateCode } from './certificates';
+import { courseFingerprint } from './course-version';
 import type { Locale } from './i18n';
 
 /**
@@ -64,6 +65,26 @@ export function passMarkFor(slug: string): number {
   return COURSE_CONTENT[slug]?.passMark ?? 70;
 }
 
+/**
+ * The fingerprint stamped on a new attempt — see lib/course-version.ts.
+ *
+ * Computed once per course and cached: it is a hash over content that cannot
+ * change while the process is running, and 41 courses × every page load is a
+ * lot of hashing for an answer that never differs.
+ *
+ * Null for a course with no content written yet, which is the honest value —
+ * there is nothing to fingerprint.
+ */
+const versionCache = new Map<string, string | null>();
+export function versionOf(slug: string): string | null {
+  const cached = versionCache.get(slug);
+  if (cached !== undefined) return cached;
+  const content = COURSE_CONTENT[slug];
+  const version = content ? courseFingerprint(content) : null;
+  versionCache.set(slug, version);
+  return version;
+}
+
 export function isCoursePublished(slug: string): boolean {
   return COURSES.find((c) => c.slug === slug)?.status === 'available';
 }
@@ -95,7 +116,7 @@ export type Attempt = {
 };
 
 const ATTEMPT_COLUMNS = `id, user_id, course_slug, question_ids, option_order,
-  answers, started_at, submitted_at, score, passed, pass_mark`;
+  answers, started_at, submitted_at, score, passed, pass_mark, content_version`;
 
 export async function openAttemptFor(userId: string, slug: string): Promise<Attempt | null> {
   return queryOne<Attempt>(
@@ -127,10 +148,21 @@ export async function startOrResumeAttempt(userId: string, slug: string): Promis
 
   try {
     return await queryOne<Attempt>(
-      `INSERT INTO course_attempts (id, user_id, course_slug, question_ids, option_order, pass_mark)
-       VALUES ($1, $2, $3, $4, $5, $6)
+      /*
+       * The content version is stamped when the attempt opens, not when it is
+       * submitted. The paper somebody sat is the one they were shown: if an
+       * editor changes the course while their tab is open, the attempt still
+       * belongs to the version that produced these question ids and this
+       * option order. See lib/course-version.ts.
+       */
+      `INSERT INTO course_attempts
+         (id, user_id, course_slug, question_ids, option_order, pass_mark, content_version)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING ${ATTEMPT_COLUMNS}`,
-      [randomUUID(), userId, slug, ids, JSON.stringify(optionOrder), passMarkFor(slug)],
+      [
+        randomUUID(), userId, slug, ids, JSON.stringify(optionOrder), passMarkFor(slug),
+        versionOf(slug),
+      ],
     );
   } catch (error) {
     // Two tabs opening the same course race for the one-open-attempt index.
