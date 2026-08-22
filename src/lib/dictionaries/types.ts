@@ -855,6 +855,8 @@ export type Account = {
     noCapacity: string;
     seatsHeading: string;
     seatsLeftHeading: string;
+    /** Shown on the staff listing for an activity volunteers cannot see. */
+    draftBadge: string;
     location: string;
     date: string;
     time: string;

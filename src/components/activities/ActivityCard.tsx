@@ -94,6 +94,21 @@ export function ActivityCard({
   return (
     <li className="rounded-2xl border border-line bg-surface p-5 sm:p-6">
       <div className="flex flex-wrap items-center gap-2">
+        {/*
+          * Draft, said first.
+          *
+          * The staff listing showed no publish state at all, so a coordinator
+          * could not tell a draft from a live activity — and because the
+          * public listing was ignoring is_published too, drafts appeared to
+          * volunteers anyway and the distinction never surfaced. Now that the
+          * public page honours it, activities saved as drafts stop being
+          * visible, and the only humane way to do that is to say which ones.
+          */}
+        {'is_published' in row && row.is_published === false && (
+          <Badge tone="warn">
+            {t.draftBadge}
+          </Badge>
+        )}
         <Badge tone={ACTIVITY_TONE[state]}>{t.state[state]}</Badge>
         <Badge tone={REGISTRATION_TONE[reg]}>{regLabel}</Badge>
       </div>

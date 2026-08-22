@@ -154,6 +154,46 @@ await mustFail(
   [randomUUID(), vol],
 );
 
+console.log('\n--- a draft is not a public activity ---');
+/*
+ * The listing and the action have to agree about which activities exist.
+ * They did not: the listing asked only about is_open, so seven draft
+ * activities were live on the public page, and pressing "interested" on one
+ * was refused with "no longer waiting for a date" — because the action does
+ * check is_published. The volunteer saw a button that could not work and a
+ * reason that was not the reason.
+ */
+const draft = randomUUID();
+await c.query(
+  `INSERT INTO activities (id, title_ar, title_en, is_published)
+   VALUES ($1,'مسوّدة','ZZ-draft',false)`, [draft]);
+const cancelled = randomUUID();
+await c.query(
+  `INSERT INTO activities (id, title_ar, title_en, is_published, cancelled_at, cancel_reason)
+   VALUES ($1,'ملغى','ZZ-cancelled',true, now(), 'اختبار')`, [cancelled]);
+
+const listed = async (id: string) => {
+  const { rows } = await c.query<{ n: number }>(
+    `SELECT count(*)::int AS n FROM activities a
+       JOIN activity_places p ON p.activity_id = a.id
+      WHERE a.id = $1
+        AND a.is_published AND a.cancelled_at IS NULL
+        AND a.is_open AND NOT a.is_archived
+        AND (a.ends_at IS NULL OR a.ends_at > now())`, [id]);
+  return rows[0].n > 0;
+};
+check('a draft does not appear on the public list', !(await listed(draft)),
+  'the draft/published choice on the form has to mean something');
+check('a cancelled activity does not either', !(await listed(cancelled)),
+  'is_open is about registration, not about the activity still being on');
+check('a published, live one does appear', await listed(waiting));
+
+const listSrc = readFileSync(`${ROOT}src/lib/activities.ts`, 'utf8');
+const actionSrc = readFileSync(`${ROOT}src/lib/actions/interest.ts`, 'utf8');
+check('the listing filters on is_published', /WHERE a\.is_published/.test(listSrc));
+check('and the action requires the same', actionSrc.includes('AND is_published'),
+  'a card the action refuses is worse than no card');
+
 console.log('\n--- the code agrees with itself ---');
 const action = readFileSync(`${ROOT}src/lib/actions/interest.ts`, 'utf8');
 check('registering interest is gated on being a volunteer',

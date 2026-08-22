@@ -982,6 +982,7 @@ export const ar: Dictionary = {
       noCapacity: 'بلا حدّ للمقاعد',
       seatsHeading: 'المقاعد',
       seatsLeftHeading: 'المتبقّي',
+      draftBadge: 'مسوّدة — لا يراها المتطوّعون',
       location: 'المكان',
       date: 'التاريخ',
       time: 'التوقيت',

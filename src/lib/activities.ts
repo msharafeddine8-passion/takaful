@@ -26,7 +26,23 @@ export type OpportunityRow = {
   my_status: 'registered' | 'waitlisted' | null;
 };
 
-/** Upcoming, open activities, soonest first. */
+/**
+ * Upcoming, open activities, soonest first.
+ *
+ * `is_published` was the whole point of the draft/published choice on the
+ * activity form, and this listing never asked about it. Every half-written
+ * activity a coordinator saved as a draft was on the public page immediately —
+ * seven of them, when this was found.
+ *
+ * It surfaced as something else entirely: the interest button refused with
+ * "this activity is no longer waiting for a date", because the action *does*
+ * check is_published and the listing did not. The card and the action
+ * disagreed about which activities exist, and the volunteer got a button that
+ * could not work and a reason that was not the reason.
+ *
+ * Cancelled activities are excluded here too. `is_open` is about registration
+ * being open, not about the activity still being on.
+ */
 export async function opportunities(viewerId: string | null): Promise<OpportunityRow[]> {
   return query<OpportunityRow>(
     `SELECT a.id, a.title_ar, a.title_en, a.description_ar, a.description_en,
@@ -37,7 +53,9 @@ export async function opportunities(viewerId: string | null): Promise<Opportunit
        JOIN activity_places p ON p.activity_id = a.id
        LEFT JOIN activity_registrations r
          ON r.activity_id = a.id AND r.user_id = $1 AND r.status <> 'cancelled'
-      WHERE a.is_open
+      WHERE a.is_published
+        AND a.cancelled_at IS NULL
+        AND a.is_open
         AND NOT a.is_archived
         AND (a.ends_at IS NULL OR a.ends_at > now())
       ORDER BY a.starts_at ASC NULLS LAST, a.title_ar ASC`,
@@ -109,6 +127,8 @@ export async function roster(activityId: string): Promise<RosterRow[]> {
 
 export type ManagedActivity = OpportunityRow & {
   is_archived: boolean;
+  /** Whether volunteers can see it at all — see the note in opportunities(). */
+  is_published: boolean;
   is_open: boolean;
   cancelled_at: Date | null;
   cancel_reason: string | null;
@@ -126,7 +146,7 @@ export async function allActivities(): Promise<ManagedActivity[]> {
      */
     `SELECT a.id, a.title_ar, a.title_en, a.description_ar, a.description_en,
             a.location, a.starts_at, a.ends_at, a.capacity, a.min_stage,
-            a.is_archived, a.is_open,
+            a.is_archived, a.is_open, a.is_published,
             a.cancelled_at, a.cancel_reason, a.registration_closes_at,
             p.taken, p.waiting, NULL::TEXT AS my_status,
             (SELECT count(*)::INT FROM activity_attendance att

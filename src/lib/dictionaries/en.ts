@@ -987,6 +987,7 @@ export const en: Dictionary = {
       noCapacity: 'No seat limit',
       seatsHeading: 'Seats',
       seatsLeftHeading: 'Remaining',
+      draftBadge: 'Draft — volunteers cannot see it',
       location: 'Location',
       date: 'Date',
       time: 'Time',
