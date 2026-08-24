@@ -2,13 +2,13 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { execute, isDbConfigured, queryOne, transaction } from '@/lib/db';
+import { execute, isDbConfigured, query, queryOne, transaction } from '@/lib/db';
 import { audit, currentUser, setMembershipStatus } from '@/lib/auth';
 import { requireCapability } from '@/lib/authz';
 import { notifyIn } from '@/lib/notify';
 import { recomputeAchievements } from '@/lib/achievements';
 import { isLocale, type Locale } from '@/lib/i18n';
-import { findRosterMatch, formatMemberNumber, phoneTail, type MatchStrength } from '@/lib/roster';
+import { findRosterMatch, formatMemberNumber, namesAgree, phoneTail, type MatchStrength } from '@/lib/roster';
 
 function localeOf(formData: FormData): Locale {
   const value = String(formData.get('lang') ?? 'ar');
@@ -394,6 +394,146 @@ export async function linkAccountToRosterAction(
 
   revalidatePath(`/${lang}/staff/roster`);
   return { ok: `${label} · ${account.full_name}` };
+}
+
+/**
+ * Staff accept somebody who is not on the roster at all.
+ *
+ * The sibling of the link above, and the case that had no path. Everything
+ * else assumes the person is either already known to the association or has
+ * filled in an application — so a volunteer who simply turned up, made an
+ * account and is standing in front of a coordinator could not be accepted by
+ * anybody. The only button that looked like it might do it granted a role and
+ * no standing at all, which is how a real member spent two days unable to
+ * register for anything.
+ *
+ * They get a NEW membership number from the sequence, issued by the trigger on
+ * the status change. That is the difference from linking, and why the two are
+ * separate actions rather than one with a flag: linking preserves the number
+ * the association gave somebody years ago, and this cannot, because there
+ * isn't one. Choosing wrongly is not recoverable by editing a field — it
+ * writes over the seniority the roster import exists to protect. So this
+ * refuses anybody who already has a number, and the reason it asks for is the
+ * only record of why a person was accepted without either route.
+ */
+export async function acceptAsVolunteerAction(
+  _prev: LinkState,
+  formData: FormData,
+): Promise<LinkState> {
+  const lang = localeOf(formData);
+  const email = text(formData, 'email').toLowerCase();
+  const reason = text(formData, 'reason');
+  if (!isDbConfigured()) return { error: 'unavailable' };
+  if (!email) return { error: 'needEmail' };
+  if (reason.length < 10) return { error: 'needReason' };
+
+  const reviewer = await requireCapability('applications.review');
+
+  const account = await queryOne<{ id: string; full_name: string; member_number: number | null }>(
+    `SELECT u.id, p.full_name, p.member_number
+       FROM users u JOIN profiles p ON p.user_id = u.id
+      WHERE lower(u.email) = $1`,
+    [email],
+  );
+  if (!account) return { error: 'noAccount' };
+  if (account.id === reviewer.id) return { error: 'notYourself' };
+  if (account.member_number !== null) return { error: 'alreadyNumbered' };
+
+  /*
+   * An unclaimed roster line whose name agrees means this is the wrong action.
+   *
+   * They are an old member who should keep the number the association gave
+   * them, and this route would hand them a fresh one from the sequence —
+   * writing over exactly the seniority the roster import exists to protect,
+   * in a way no later edit can undo. So it refuses and names the line rather
+   * than warning, because a warning beside a button gets read after the press.
+   *
+   * The comparison is in application code because namesAgree is: folding
+   * Arabic spelling variants is not something to reimplement in SQL, and
+   * having one definition of "the same name" is what stops this and the claim
+   * form disagreeing about who somebody is.
+   */
+  const unclaimed = await query<{ member_number: number; full_name: string }>(
+    `SELECT member_number, full_name FROM volunteer_roster
+      WHERE claimed_by IS NULL AND full_name IS NOT NULL`,
+  );
+  const known = unclaimed.find((line) => namesAgree(line.full_name, account.full_name));
+  if (known) {
+    return { error: 'onTheRoster', ok: formatMemberNumber(known.member_number) };
+  }
+
+  await recogniseAsNewVolunteer({
+    userId: account.id,
+    reviewer: reviewer.id,
+    reason,
+  });
+
+  await audit({
+    actorId: reviewer.id,
+    action: 'volunteer.accepted_directly',
+    targetType: 'user',
+    targetId: account.id,
+    newValue: { email },
+    reason,
+  });
+
+  revalidatePath(`/${lang}/staff/roster`);
+  return { ok: account.full_name };
+}
+
+/**
+ * Accepting somebody with no prior record.
+ *
+ * Deliberately the same steps as recogniseFromRoster minus the roster ones, in
+ * the same order and for the same reason: the status change is what fires the
+ * trigger that issues the number and assigns the journey, so everything that
+ * depends on it comes after.
+ */
+async function recogniseAsNewVolunteer(opts: {
+  userId: string;
+  reviewer: string;
+  reason: string;
+}): Promise<void> {
+  await setMembershipStatus({
+    userId: opts.userId,
+    next: 'accepted_volunteer',
+    changedBy: opts.reviewer,
+    actorRole: 'applications.review',
+    reason: opts.reason,
+  });
+
+  await execute(
+    `INSERT INTO user_roles (user_id, role, scope_type, granted_by)
+     VALUES ($1, 'volunteer', 'self', $2) ON CONFLICT DO NOTHING`,
+    [opts.userId, opts.reviewer],
+  );
+  await execute(
+    `INSERT INTO stage_progress (user_id, stage, awarded_by, note)
+     VALUES ($1, 1, $2, $3) ON CONFLICT (user_id, stage) DO NOTHING`,
+    [opts.userId, opts.reviewer, opts.reason],
+  );
+
+  const numbered = await queryOne<{ member_number: number | null }>(
+    'SELECT member_number FROM profiles WHERE user_id = $1',
+    [opts.userId],
+  );
+  const label = numbered?.member_number ? formatMemberNumber(numbered.member_number) : '';
+
+  await execute(
+    `INSERT INTO notifications (user_id, kind, title_ar, title_en, body_ar, body_en, link)
+     VALUES ($1,'application.accepted',$2,$3,$4,$5,'/account')`,
+    [
+      opts.userId,
+      label ? `أهلاً بك متطوّعاً — رقم عضويتك ${label} 🎉` : 'أهلاً بك متطوّعاً 🎉',
+      label ? `Welcome as a volunteer — membership number ${label} 🎉` : 'Welcome as a volunteer 🎉',
+      'صار بإمكانك التسجيل في الأنشطة ومتابعة مسار التطوّع.',
+      'You can now register for activities and follow the volunteer path.',
+    ],
+  );
+
+  await recomputeAchievements(opts.userId, 'قُبل متطوّعاً').catch((error) =>
+    console.error('[roster] achievements not recomputed:', error),
+  );
 }
 
 /**

@@ -1228,6 +1228,15 @@ export const en: Dictionary = {
         linkSubmit: 'Link',
         linkSaving: 'Linking…',
         linkDone: 'Linked {who}',
+        acceptTitle: 'Accept a new volunteer who is not on the roster',
+        acceptLede:
+          'For somebody with no prior record with the association. They get a new membership ' +
+          'number from the sequence, not an old one. If their name is on the roster, use the link ' +
+          'above instead so they keep their seniority.',
+        acceptReason: 'Reason for accepting',
+        acceptReasonHint: 'Who knows them, and how long they have volunteered with us',
+        acceptSubmit: 'Accept as a volunteer',
+        acceptDone: '{who} accepted as a volunteer',
         linkErrors: {
           needBoth: 'Enter both the email and the membership number.',
           noAccount: 'No account with that email.',
@@ -1235,6 +1244,11 @@ export const en: Dictionary = {
           lineTaken: 'That line is already claimed by another account.',
           alreadyNumbered: 'That account already has a membership number.',
           notYourself: 'You cannot link your own account.',
+          onTheRoster:
+            'Their name matches roster line {number}, which nobody has claimed. Link them to it so they ' +
+            'keep their number and seniority — accepting them as new issues a different one and cannot be undone.',
+          needEmail: 'Enter the account email.',
+          needReason: 'Write a reason somebody could review later, not one word.',
           unavailable: 'The link could not be completed. Try again.',
         },
         claimedAt: 'Requested',

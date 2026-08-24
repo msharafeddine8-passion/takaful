@@ -1080,6 +1080,12 @@ export type Account = {
       linkSubmit: string;
       linkSaving: string;
       linkDone: string;
+      acceptTitle: string;
+      acceptLede: string;
+      acceptReason: string;
+      acceptReasonHint: string;
+      acceptSubmit: string;
+      acceptDone: string;
       linkErrors: {
         needBoth: string;
         noAccount: string;
@@ -1087,6 +1093,9 @@ export type Account = {
         lineTaken: string;
         alreadyNumbered: string;
         notYourself: string;
+        onTheRoster: string;
+        needEmail: string;
+        needReason: string;
         unavailable: string;
       };
       claimedAt: string;

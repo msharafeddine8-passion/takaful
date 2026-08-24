@@ -9,7 +9,7 @@ import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
 import { pendingClaims, formatMemberNumber } from '@/lib/roster';
 import { approveClaimAction, rejectClaimAction } from '@/lib/actions/roster';
-import { LinkRosterForm } from '@/components/staff/LinkRosterForm';
+import { LinkRosterForm, AcceptVolunteerForm } from '@/components/staff/LinkRosterForm';
 
 export async function generateMetadata(
   props: PageProps<'/[lang]/staff/roster'>,
@@ -176,6 +176,22 @@ export default async function StaffRosterPage(props: PageProps<'/[lang]/staff/ro
             {t.linkLede}
           </p>
           <LinkRosterForm lang={lang} t={t} />
+        </section>
+
+        {/*
+          * The other case, and deliberately its own box rather than a second
+          * button in the one above. These two do opposite things to somebody's
+          * seniority — one returns the number the association issued years
+          * ago, the other issues a new one from the sequence — and choosing
+          * wrongly cannot be undone by editing a field afterwards. Side by
+          * side is how a reviewer sees there is a choice at all.
+          */}
+        <section className="mt-6 rounded-2xl border border-brand-orange/30 bg-brand-orange/[0.05] p-6">
+          <h2 className="text-[1.05rem] font-extrabold">{t.acceptTitle}</h2>
+          <p className="mt-2 max-w-[62ch] text-[0.94rem] leading-relaxed text-ink-2">
+            {t.acceptLede}
+          </p>
+          <AcceptVolunteerForm lang={lang} t={t} />
         </section>
       </Container>
     </Section>
