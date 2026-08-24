@@ -857,6 +857,8 @@ export const ar: Dictionary = {
       earnedOn: 'حصلت عليه في',
       nextTitle: 'القادم',
       remainingHours: 'باقي {n}',
+      remainingCertificates: 'بقيت لك {n} شهادات',
+      remainingYears: 'بقيت لك {n} سنوات',
       remainingCourses: 'باقي {n} دورات',
       remainingActivities: 'باقي {n} أنشطة',
       remainingStages: 'باقي {n} مراحل',

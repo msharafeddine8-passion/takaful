@@ -237,6 +237,8 @@ function remaining(
     remainingHours: string;
     remainingCourses: string;
     remainingActivities: string;
+    remainingCertificates: string;
+    remainingYears: string;
     remainingStages: string;
     /* Authored in dictionaries/lms.ts alongside the rest of the level-badge
        copy, not in the achievements namespace — one home for those strings
@@ -249,16 +251,35 @@ function remaining(
   },
 ): string {
   if (kind === 'hours') return t.remainingHours.replace('{n}', formatDuration(value, lang));
-  const template =
-    kind === 'courses'
-      ? t.remainingCourses
-      : kind === 'activities'
-        ? t.remainingActivities
-        : kind === 'levels'
-          ? // The Arabic one/two forms spell the count as a word and carry no
-            // {n} at all; replace() on a template without the placeholder is a
-            // no-op, so this needs no special case below.
-            plural(t.remainingLevels, value, lang)
-          : t.remainingStages;
-  return template.replace('{n}', String(value));
+
+  /*
+   * A switch rather than a chain ending in a catch-all.
+   *
+   * It fell through to the stages wording for anything it did not recognise,
+   * so the moment certificate and membership badges arrived, somebody four
+   * certificates short was told they were four stages short. A default that
+   * guesses is worse than one that says nothing: a wrong sentence is believed,
+   * a missing one is asked about.
+   */
+  switch (kind) {
+    case 'courses':
+      return t.remainingCourses.replace('{n}', String(value));
+    case 'activities':
+      return t.remainingActivities.replace('{n}', String(value));
+    case 'certificates':
+      return t.remainingCertificates.replace('{n}', String(value));
+    case 'membership':
+      return t.remainingYears.replace('{n}', String(value));
+    case 'stages':
+      return t.remainingStages.replace('{n}', String(value));
+    case 'levels':
+      // The Arabic one/two forms spell the count as a word and carry no {n}
+      // at all; replace() on a template without the placeholder is a no-op.
+      return plural(t.remainingLevels, value, lang).replace('{n}', String(value));
+    default:
+      /* The yes-or-no kinds. nextUp produces no hint for them — there is
+       * nothing to count towards — so this is unreachable by design, and says
+       * nothing rather than inventing a unit if it is ever reached. */
+      return '';
+  }
 }

@@ -862,6 +862,8 @@ export const en: Dictionary = {
       earnedOn: 'Earned on',
       nextTitle: 'Next',
       remainingHours: '{n} to go',
+      remainingCertificates: '{n} more certificates to go',
+      remainingYears: '{n} more years to go',
       remainingCourses: '{n} more courses',
       remainingActivities: '{n} more activities',
       remainingStages: '{n} more stages',

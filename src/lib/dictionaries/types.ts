@@ -717,6 +717,8 @@ export type Account = {
     /** One per kind: a bare number leaves "4 to go" meaning nothing. */
     remainingHours: string;
     remainingCourses: string;
+    remainingCertificates: string;
+    remainingYears: string;
     remainingActivities: string;
     remainingStages: string;
     revokedNote: string;
