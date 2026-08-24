@@ -86,7 +86,13 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
     created_at: Date;
     status: string;
   }>(
-    `SELECT p.full_name, u.email, u.created_at, u.status
+    /* joined_on is the association's date and created_at is the account's.
+     * They are the same only for somebody who signed up today; for the
+     * volunteers recognised from the roster the second is weeks old and the
+     * first is years old, and this is the page decisions get made on. */
+    `SELECT p.full_name, u.email, u.created_at, u.status,
+            (SELECT to_char(r.joined_on, 'YYYY-MM-DD') FROM volunteer_roster r
+              WHERE r.claimed_by = u.id AND r.approved_at IS NOT NULL LIMIT 1) AS joined_on
        FROM users u JOIN profiles p ON p.user_id = u.id WHERE u.id = $1`,
     [id],
   );

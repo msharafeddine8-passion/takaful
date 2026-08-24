@@ -1164,6 +1164,7 @@ export type Account = {
       colHours: string;
       colStage: string;
       colJoined: string;
+      accountSince: string;
       noResults: string;
       showing: string;
       noRoles: string;

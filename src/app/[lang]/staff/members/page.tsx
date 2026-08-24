@@ -140,8 +140,29 @@ export default async function StaffMembersPage(props: PageProps<'/[lang]/staff/m
                       {formatDuration(Number.parseInt(r.verified_minutes, 10), lang)}
                     </td>
                     <td className="px-4 py-3">{r.stage ?? '—'}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-ink-3" dir="ltr">
-                      {new Date(r.created_at).toISOString().slice(0, 10)}
+                    {/*
+                      * The association's date first, the account's underneath
+                      * and only where they differ.
+                      *
+                      * This showed created_at alone under a heading that says
+                      * "joined", so a volunteer recognised from the roster
+                      * after five years read as having arrived the day they
+                      * signed up. Both are facts and staff need the first;
+                      * keeping the second is what stops the fix hiding a
+                      * different question — "why is this account so new" has
+                      * an answer, and it belongs on the same row.
+                      */}
+                    <td className="px-4 py-3 whitespace-nowrap text-ink-2" dir="ltr">
+                      {r.joined_on ? (
+                        <>
+                          <span className="font-bold">{r.joined_on}</span>
+                          <span className="block text-[0.78rem] text-ink-3">
+                            {m.accountSince} {new Date(r.created_at).toISOString().slice(0, 10)}
+                          </span>
+                        </>
+                      ) : (
+                        new Date(r.created_at).toISOString().slice(0, 10)
+                      )}
                     </td>
                   </tr>
                 ))}

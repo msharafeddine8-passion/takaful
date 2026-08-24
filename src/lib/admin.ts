@@ -67,6 +67,22 @@ export type MemberRow = {
   roles: string[];
   verified_minutes: string;
   stage: number | null;
+  /*
+   * When they joined the ASSOCIATION, which for most people here is not when
+   * they made an account.
+   *
+   * The list was showing created_at under a column headed "joined", so a
+   * volunteer of five years read as having arrived last Tuesday — the same
+   * fault the membership card had, and it matters more here, because this is
+   * the page staff make decisions on. It comes from the roster line they were
+   * recognised through; null when there is no such line, which is the honest
+   * answer for somebody genuinely new rather than a date standing in for one.
+   *
+   * Kept beside created_at rather than replacing it, so the two can be shown
+   * together where they differ. "With us since 2021, account since 2026" is
+   * useful to an administrator; one date pretending to be the other is not.
+   */
+  joined_on: string | null;
 };
 
 /**
@@ -83,7 +99,13 @@ export async function members(search = '', limit = 50, offset = 0): Promise<Memb
                        WHERE r.user_id = u.id
                          AND (r.valid_until IS NULL OR r.valid_until > now())), '{}') AS roles,
             COALESCE((SELECT vm.minutes FROM verified_minutes vm WHERE vm.user_id = u.id), 0)::TEXT AS verified_minutes,
-            (SELECT MAX(s.stage) FROM stage_progress s WHERE s.user_id = u.id) AS stage
+            (SELECT MAX(s.stage) FROM stage_progress s WHERE s.user_id = u.id) AS stage,
+            /* to_char, not the bare date. The session runs GMT and the
+             * association is in Beirut, so a date handed back as a timestamp
+             * arrives two hours early and renders as the day before. */
+            (SELECT to_char(r.joined_on, 'YYYY-MM-DD') FROM volunteer_roster r
+              WHERE r.claimed_by = u.id AND r.approved_at IS NOT NULL
+              LIMIT 1) AS joined_on
        FROM users u
        JOIN profiles p ON p.user_id = u.id
       WHERE ($1 = '' OR p.full_name ILIKE '%' || $1 || '%' OR u.email ILIKE '%' || $1 || '%')

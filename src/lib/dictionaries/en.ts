@@ -1318,6 +1318,7 @@ export const en: Dictionary = {
         colRoles: 'Roles',
         colHours: 'Verified hours',
         colStage: 'Stage',
+        accountSince: 'account since',
         colJoined: 'Joined',
         noResults: 'No results.',
         showing: 'Showing',

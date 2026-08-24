@@ -1307,6 +1307,7 @@ export const ar: Dictionary = {
         colRoles: 'الأدوار',
         colHours: 'ساعات معتمدة',
         colStage: 'المرحلة',
+        accountSince: 'الحساب منذ',
         colJoined: 'الانضمام',
         noResults: 'لا نتائج.',
         showing: 'عرض',
