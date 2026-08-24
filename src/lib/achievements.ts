@@ -24,7 +24,34 @@ import { LEVEL_BADGES } from './programme/level-badges';
  * missing translation should stop a build rather than render as a blank.
  */
 
-export type AchievementKind = 'hours' | 'courses' | 'activities' | 'stages' | 'levels';
+/**
+ * What a badge is measured against.
+ *
+ * The last five are yes-or-no rather than counts, and they need no special
+ * handling: a threshold of 1 against a figure that is 0 or 1 says exactly
+ * "this is true of them", which is what `value >= threshold` already means.
+ * Worth stating, because the alternative — a second kind of rule with its own
+ * branch in the engine — is how an engine stops being safe to re-run.
+ *
+ * `certificates` is deliberately not `courses`. A course somebody passed and a
+ * certificate that is still valid are different facts: revoking a certificate
+ * leaves the passed attempt behind it, and these badges are about the
+ * credential rather than the exam.
+ */
+export type AchievementKind =
+  | 'hours' | 'courses' | 'activities' | 'stages' | 'levels'
+  /** Course certificates that have not been revoked. */
+  | 'certificates'
+  /** Whole years since the join date the association holds. */
+  | 'membership'
+  /** 1 once they are a volunteer at all. */
+  | 'accepted'
+  /** 1 when they joined on or before 31 December 2023 and still stand. */
+  | 'continuity'
+  /** 1 when hours, activities and certificates are all met together. */
+  | 'balanced'
+  /** 1 when they turned up to at least 90% of what they signed up for. */
+  | 'reliability';
 
 export type AchievementDef = {
   code: string;
@@ -142,6 +169,275 @@ export const ACHIEVEMENTS: AchievementDef[] = [
       en: 'Reached the third stage of the volunteer journey.',
     },
   },
+
+  /* ------------------------------------------------- the rest of the set
+   *
+   * Added to the nine that were already here rather than replacing them: the
+   * codes above are on people's records, and renaming one would take a badge
+   * off somebody's wall to no purpose.
+   *
+   * Every one of these reads a figure in `standingFor` and nothing else. There
+   * is no badge here for a quality — no "team spirit", no "positive
+   * attitude" — because nothing in this database evidences one, and a badge
+   * awarded from hours for a thing hours cannot show is a badge that means
+   * whatever the person holding it decides it means.
+   */
+
+  // ---- becoming a volunteer at all
+  {
+    code: 'impact-begins',
+    kind: 'accepted',
+    threshold: 1,
+    icon: '🤝',
+    title: { ar: 'بداية الأثر', en: 'Where the impact begins' },
+    description: {
+      ar: 'قبلتك الجمعية متطوّعاً. من هنا تبدأ.',
+      en: 'Accepted by the association as a volunteer. This is where it starts.',
+    },
+  },
+
+  // ---- turning up
+  {
+    code: 'activities-5',
+    kind: 'activities',
+    threshold: 5,
+    icon: '🚶',
+    title: { ar: 'مشارِك مستمر', en: 'A regular' },
+    description: {
+      ar: 'حضور خمسة أنشطة موثّقة.',
+      en: 'Five activities attended and confirmed.',
+    },
+  },
+  {
+    code: 'activities-25',
+    kind: 'activities',
+    threshold: 25,
+    icon: '🧱',
+    title: { ar: 'ركيزة الميدان', en: 'A fixture in the field' },
+    description: {
+      ar: 'حضور خمسة وعشرين نشاطاً موثّقاً.',
+      en: 'Twenty-five activities attended and confirmed.',
+    },
+  },
+  {
+    code: 'activities-50',
+    kind: 'activities',
+    threshold: 50,
+    icon: '🌍',
+    title: { ar: 'أثر ممتد', en: 'Impact that carries' },
+    description: {
+      ar: 'حضور خمسين نشاطاً موثّقاً.',
+      en: 'Fifty activities attended and confirmed.',
+    },
+  },
+
+  // ---- hours, filling the gaps between the four that existed
+  {
+    code: 'hours-25',
+    kind: 'hours',
+    threshold: 1500,
+    icon: '⏳',
+    title: { ar: '٢٥ ساعة عطاء', en: '25 hours given' },
+    description: {
+      ar: 'خمس وعشرون ساعة تطوّع موثّقة.',
+      en: 'Twenty-five verified hours of volunteering.',
+    },
+  },
+  {
+    code: 'hours-250',
+    kind: 'hours',
+    threshold: 15000,
+    icon: '🏔️',
+    title: { ar: '٢٥٠ ساعة عطاء', en: '250 hours given' },
+    description: {
+      ar: 'مئتان وخمسون ساعة تطوّع موثّقة.',
+      en: 'Two hundred and fifty verified hours of volunteering.',
+    },
+  },
+  {
+    code: 'hours-500',
+    kind: 'hours',
+    threshold: 30000,
+    icon: '🗻',
+    title: { ar: '٥٠٠ ساعة عطاء', en: '500 hours given' },
+    description: {
+      ar: 'خمسمئة ساعة تطوّع موثّقة.',
+      en: 'Five hundred verified hours of volunteering.',
+    },
+  },
+
+  // ---- certificates that still stand
+  {
+    code: 'certs-1',
+    kind: 'certificates',
+    threshold: 1,
+    icon: '📜',
+    title: { ar: 'أول شهادة', en: 'A first certificate' },
+    description: {
+      ar: 'أول شهادة دورة فعّالة.',
+      en: 'A first course certificate, still valid.',
+    },
+  },
+  {
+    code: 'certs-3',
+    kind: 'certificates',
+    threshold: 3,
+    icon: '📚',
+    title: { ar: 'متعلّم مستمر', en: 'Still learning' },
+    description: {
+      ar: 'ثلاث شهادات دورات فعّالة.',
+      en: 'Three valid course certificates.',
+    },
+  },
+  {
+    code: 'certs-5',
+    kind: 'certificates',
+    threshold: 5,
+    icon: '🧭',
+    title: { ar: 'باني المعرفة', en: 'Building knowledge' },
+    description: {
+      ar: 'خمس شهادات دورات فعّالة.',
+      en: 'Five valid course certificates.',
+    },
+  },
+  {
+    code: 'certs-10',
+    kind: 'certificates',
+    threshold: 10,
+    icon: '🎓',
+    title: { ar: 'متميّز الأكاديمية', en: 'Academy standout' },
+    description: {
+      ar: 'عشر شهادات دورات فعّالة.',
+      en: 'Ten valid course certificates.',
+    },
+  },
+  {
+    code: 'certs-20',
+    kind: 'certificates',
+    threshold: 20,
+    icon: '🏛️',
+    title: { ar: 'قائد المعرفة', en: 'Leading on learning' },
+    description: {
+      ar: 'عشرون شهادة دورة فعّالة.',
+      en: 'Twenty valid course certificates.',
+    },
+  },
+
+  // ---- the remaining stages
+  {
+    code: 'stage-two',
+    kind: 'stages',
+    threshold: 2,
+    icon: '🗣️',
+    title: { ar: 'صوت المجتمع', en: 'A voice in the community' },
+    description: {
+      ar: 'الوصول إلى المرحلة الثانية من مسار المتطوّع.',
+      en: 'Reached the second stage of the volunteer journey.',
+    },
+  },
+  {
+    code: 'stage-four',
+    kind: 'stages',
+    threshold: 4,
+    icon: '🧑‍🤝‍🧑',
+    title: { ar: 'قائد فريق', en: 'Leading a team' },
+    description: {
+      ar: 'الوصول إلى المرحلة الرابعة من مسار المتطوّع.',
+      en: 'Reached the fourth stage of the volunteer journey.',
+    },
+  },
+  {
+    code: 'stage-five',
+    kind: 'stages',
+    threshold: 5,
+    icon: '🗂️',
+    title: { ar: 'صانع مبادرة', en: 'Making things happen' },
+    description: {
+      ar: 'الوصول إلى المرحلة الخامسة من مسار المتطوّع.',
+      en: 'Reached the fifth stage of the volunteer journey.',
+    },
+  },
+  {
+    code: 'stage-six',
+    kind: 'stages',
+    threshold: 6,
+    icon: '🕯️',
+    title: { ar: 'مرشد وخريج', en: 'Mentor and graduate' },
+    description: {
+      ar: 'الوصول إلى المرحلة السادسة، آخر مراحل المسار.',
+      en: 'Reached the sixth stage, the last of the journey.',
+    },
+  },
+
+  // ---- staying
+  {
+    code: 'year-1',
+    kind: 'membership',
+    threshold: 1,
+    icon: '🌿',
+    title: { ar: 'عام من الأثر', en: 'A year of it' },
+    description: {
+      ar: 'مرّ عام كامل على انتسابك إلى الجمعية.',
+      en: 'A full year since joining the association.',
+    },
+  },
+  {
+    code: 'years-3',
+    kind: 'membership',
+    threshold: 3,
+    icon: '🌳',
+    title: { ar: 'ثلاثة أعوام من العطاء', en: 'Three years of giving' },
+    description: {
+      ar: 'ثلاثة أعوام كاملة مع الجمعية.',
+      en: 'Three full years with the association.',
+    },
+  },
+  {
+    code: 'years-5',
+    kind: 'membership',
+    threshold: 5,
+    icon: '🏵️',
+    title: { ar: 'خمسة أعوام من الاستمرارية', en: 'Five years of continuity' },
+    description: {
+      ar: 'خمسة أعوام كاملة مع الجمعية.',
+      en: 'Five full years with the association.',
+    },
+  },
+  {
+    code: 'continuity-maker',
+    kind: 'continuity',
+    threshold: 1,
+    icon: '🕊️',
+    title: { ar: 'صانع الاستمرارية', en: 'Maker of continuity' },
+    description: {
+      ar: 'انتسبتَ في أو قبل نهاية ٢٠٢٣، وما زلت مع الجمعية.',
+      en: 'Joined on or before the end of 2023, and still here.',
+    },
+  },
+
+  // ---- the two that read more than one figure at once
+  {
+    code: 'reliable-attendance',
+    kind: 'reliability',
+    threshold: 1,
+    icon: '📌',
+    title: { ar: 'حضور موثوق', en: 'Someone who turns up' },
+    description: {
+      ar: 'سجّلت على عشرة أنشطة على الأقل، وحضرت تسعة من كل عشرة.',
+      en: 'Signed up for at least ten activities, and turned up to nine in ten.',
+    },
+  },
+  {
+    code: 'balanced-impact',
+    kind: 'balanced',
+    threshold: 1,
+    icon: '⚖️',
+    title: { ar: 'إنجاز متوازن', en: 'Balanced' },
+    description: {
+      ar: 'خمسون ساعة موثّقة، وخمسة أنشطة، وخمس شهادات فعّالة — تعلّم وميدان معاً.',
+      en: 'Fifty verified hours, five activities and five valid certificates — the field and the learning together.',
+    },
+  },
   /*
    * The six level badges, built from the programme catalogue rather than
    * retyped. Code, icon, title and description all come from
@@ -257,10 +553,93 @@ export async function standingFor(userId: string): Promise<Standing> {
                    )
                  )
             )
-       ), 0)::INTEGER                                                        AS levels`,
+       ), 0)::INTEGER                                                        AS levels,
+
+       /* Certificates that still stand. Not the same question as the courses figure:
+        * revoking one leaves the passed attempt behind it, and a badge that
+        * counted attempts would survive a revocation it should not. */
+       (SELECT count(*) FROM certificates
+         WHERE user_id = $1 AND kind = 'course' AND revoked_at IS NULL)::INTEGER
+                                                                             AS certificates,
+
+       /*
+        * Whole years since the association's own join date.
+        *
+        * COALESCE onto the account's creation, exactly as the membership card
+        * does: for the four hundred people recognised from the roster the
+        * account is weeks old and the membership is years old, and the years
+        * badges are about the second. A line with no join date at all yields
+        * the account date, which is the honest floor rather than a guess.
+        *
+        * AGE and EXTRACT rather than dividing days: a year is not 365 days and
+        * the difference shows up on somebody's anniversary.
+        */
+       COALESCE(EXTRACT(YEAR FROM age(
+         CURRENT_DATE,
+         COALESCE((SELECT r.joined_on FROM volunteer_roster r
+                    WHERE r.claimed_by = $1 AND r.approved_at IS NOT NULL LIMIT 1),
+                  (SELECT u.created_at::date FROM users u WHERE u.id = $1))
+       )), 0)::INTEGER                                                       AS membership,
+
+       (CASE WHEN is_volunteer($1) THEN 1 ELSE 0 END)::INTEGER               AS accepted,
+
+       /* Joined on or before the end of 2023 AND still a volunteer. Both
+        * halves matter: this is a badge for continuing, so somebody whose
+        * standing has lapsed does not hold it until it returns. A roster line
+        * with no join date is not eligible — it must not be guessed at. */
+       (CASE WHEN is_volunteer($1) AND EXISTS (
+          SELECT 1 FROM volunteer_roster r
+           WHERE r.claimed_by = $1 AND r.approved_at IS NOT NULL
+             AND r.joined_on IS NOT NULL AND r.joined_on <= DATE '2023-12-31'
+        ) THEN 1 ELSE 0 END)::INTEGER                                        AS continuity,
+
+       /* Fifty hours, five activities and five live certificates together.
+        * The point of it is the combination, so it is one figure and not a
+        * badge the engine could half-award. */
+       (CASE WHEN
+          COALESCE((SELECT sum(minutes) FROM hour_entries
+                     WHERE user_id = $1 AND status='verified'),0) >= 3000
+          AND (SELECT count(*) FROM activity_attendance
+                WHERE user_id = $1 AND attended) >= 5
+          AND (SELECT count(*) FROM certificates
+                WHERE user_id = $1 AND kind='course' AND revoked_at IS NULL) >= 5
+        THEN 1 ELSE 0 END)::INTEGER                                          AS balanced,
+
+       /*
+        * Turned up to at least nine in ten of what they signed up for, over at
+        * least ten registrations.
+        *
+        * Activities the association itself called off are out of the
+        * denominator — nobody's record suffers because a thing was cancelled.
+        * Ten is the floor because two out of two is not a record of
+        * reliability, it is a coincidence.
+        *
+        * Only ever read to award. The ratio is never displayed and the
+        * absences behind it are never shown: this badge says what somebody
+        * did, and there is no counterpart saying what they missed.
+        */
+       (CASE WHEN (
+          SELECT count(*) FROM activity_registrations ar
+            JOIN activities a ON a.id = ar.activity_id
+           WHERE ar.user_id = $1 AND ar.status <> 'cancelled' AND a.cancelled_at IS NULL
+        ) >= 10 AND (
+          SELECT count(*) FILTER (WHERE aa.attended)::numeric
+                 / NULLIF(count(*), 0)
+            FROM activity_registrations ar
+            JOIN activities a ON a.id = ar.activity_id
+            LEFT JOIN activity_attendance aa
+                   ON aa.activity_id = ar.activity_id AND aa.user_id = ar.user_id
+           WHERE ar.user_id = $1 AND ar.status <> 'cancelled' AND a.cancelled_at IS NULL
+        ) >= 0.9 THEN 1 ELSE 0 END)::INTEGER                                 AS reliability`,
     [userId],
   );
-  return rows[0] ?? { hours: 0, courses: 0, activities: 0, stages: 0, levels: 0 };
+  return (
+    rows[0] ?? {
+      hours: 0, courses: 0, activities: 0, stages: 0, levels: 0,
+      certificates: 0, membership: 0, accepted: 0,
+      continuity: 0, balanced: 0, reliability: 0,
+    }
+  );
 }
 
 export type Recomputed = { earned: string[]; revoked: string[] };
@@ -337,7 +716,25 @@ export type NextUp = { def: AchievementDef; current: number; remaining: number }
 
 export function nextUp(standing: Standing, held: Set<string>): NextUp[] {
   const out: NextUp[] = [];
-  for (const kind of ['hours', 'courses', 'activities', 'stages', 'levels'] as AchievementKind[]) {
+  /*
+   * The counting kinds only.
+   *
+   * A hint reads "42 of 50 hours — eight to go", which needs a figure that
+   * climbs. The yes-or-no kinds have nothing to count towards: "0 of 1
+   * balanced" tells nobody anything they can act on, and a bar towards
+   * continuity would be a bar towards a date in 2023 that has already gone.
+   * Those appear on the page with their condition written out instead.
+   *
+   * Derived from the definitions rather than listed, so a kind added above is
+   * either counted here or deliberately named as an exception — never
+   * silently missing, which is what the hardcoded list allowed.
+   */
+  const NOT_COUNTABLE: AchievementKind[] = ['accepted', 'continuity', 'balanced', 'reliability'];
+  const countable = [...new Set(ACHIEVEMENTS.map((a) => a.kind))].filter(
+    (k) => !NOT_COUNTABLE.includes(k),
+  );
+
+  for (const kind of countable) {
     const next = ACHIEVEMENTS.filter((a) => a.kind === kind && !held.has(a.code)).sort(
       (a, b) => a.threshold - b.threshold,
     )[0];

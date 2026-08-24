@@ -200,25 +200,57 @@ try {
   standing = await standingFor(vol);
   const heldCodes = new Set((await achievementsFor(vol)).map((a) => a.code));
   const next = nextUp(standing, heldCodes);
-  // Five kinds since the level badges landed: hours, courses, activities,
-  // stages, levels. This learner holds none of the level badges, so 'levels'
-  // contributes a suggestion like every other kind.
-  check('a next badge is suggested for each of the five kinds', next.length === 5, next.length);
+  /*
+   * One suggestion per counting kind, worked out from the definitions rather
+   * than from a number typed here.
+   *
+   * This read `=== 5` and broke the day the certificate and membership badges
+   * arrived — both correctly written, merely counted. A hint reads "42 of 50
+   * hours, eight to go", so only a kind whose figure climbs can produce one;
+   * nextUp excludes the yes-or-no kinds for that reason.
+   */
+  const countableKinds = new Set(
+    ACHIEVEMENTS.map((a) => a.kind).filter(
+      (k) => !['accepted', 'continuity', 'balanced', 'reliability'].includes(k),
+    ),
+  );
+  check(
+    'a next badge is suggested for every counting kind',
+    next.length === countableKinds.size,
+    `${next.length} of ${countableKinds.size}`,
+  );
+  check(
+    'and none for a yes-or-no kind',
+    next.every((n) => countableKinds.has(n.def.kind)),
+    'a bar towards "balanced" is not something anybody can act on',
+  );
   check(
     'none of them are ones already held',
     next.every((n) => !heldCodes.has(n.def.code)),
     next.map((n) => n.def.code).join(','),
   );
-  check(
-    'the suggestion is the nearest one, not the grandest',
-    next.find((n) => n.def.kind === 'hours')?.def.code === 'fifty-hours',
-    next.find((n) => n.def.kind === 'hours')?.def.code,
-  );
-  check(
-    'and it says how far there is to go',
-    next.find((n) => n.def.kind === 'hours')?.remaining === 3000 - standing.hours,
-    next.find((n) => n.def.kind === 'hours')?.remaining,
-  );
+  /*
+   * The nearest unheld badge of the kind, whichever one that happens to be.
+   * Naming it meant rewriting the assertion every time a threshold was added
+   * between two others — which is precisely when it most needs to still hold.
+   */
+  {
+    const hoursNext = next.find((n) => n.def.kind === 'hours');
+    const nearest = ACHIEVEMENTS.filter((a) => a.kind === 'hours' && !heldCodes.has(a.code)).sort(
+      (a, b) => a.threshold - b.threshold,
+    )[0];
+    check(
+      'the suggestion is the nearest one, not the grandest',
+      hoursNext?.def.code === nearest?.code,
+      hoursNext?.def.code,
+    );
+    check(
+      'and it says how far there is to go',
+      hoursNext?.remaining === nearest.threshold - standing.hours,
+      `${hoursNext?.remaining} to ${nearest?.code}`,
+    );
+    check('which is never negative', (hoursNext?.remaining ?? 0) >= 0);
+  }
 
   console.log('\n--- the catalogue itself ---');
   check(
