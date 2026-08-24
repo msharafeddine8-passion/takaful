@@ -32,6 +32,24 @@ const AR_WEEKDAYS = [
  */
 const ZONE = 'Asia/Beirut';
 
+/**
+ * Today's date in Beirut, as YYYY-MM-DD.
+ *
+ * For comparing against a date somebody has typed. `toISOString().slice(0,10)`
+ * gives the date in GMT, which between midnight and two in the morning Beirut
+ * time is still yesterday — so an entry made at half past midnight would be
+ * judged against the wrong day, and a "not in the future" rule would reject
+ * today. en-CA is used because its short date format is ISO order.
+ */
+export function beirutToday(): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+}
+
 function toDate(value: Date | string | null | undefined): Date | null {
   if (!value) return null;
   const d = value instanceof Date ? value : new Date(value);

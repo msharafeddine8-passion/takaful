@@ -1026,6 +1026,42 @@ export type Account = {
   };
   staff: {
     /** The queue of people claiming a place on the association's roster. */
+    prior: {
+      title: string;
+      lede: string;
+      hoursHeading: string;
+      hoursLabel: string;
+      upToLabel: string;
+      noteLabel: string;
+      hoursNoteHint: string;
+      hoursSubmit: string;
+      hoursDone: string;
+      courseHeading: string;
+      courseLabel: string;
+      coursePlaceholder: string;
+      courseNoteHint: string;
+      courseSubmit: string;
+      courseDone: string;
+      saving: string;
+      errors: {
+        "hours-missing": string;
+        "hours-not-a-number": string;
+        "hours-not-positive": string;
+        "hours-too-many": string;
+        "date-missing": string;
+        "date-malformed": string;
+        "date-future": string;
+        "date-before-founding": string;
+        "note-missing": string;
+        "course-missing": string;
+        "course-unknown": string;
+        "note-too-short": string;
+        alreadyPassed: string;
+        notYourself: string;
+        noMember: string;
+        unavailable: string;
+      };
+    };
     roster: {
       title: string;
       lede: string;

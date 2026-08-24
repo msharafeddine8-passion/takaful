@@ -1164,6 +1164,45 @@ export const en: Dictionary = {
       logHours: 'Log your hours',
     },
     staff: {
+      prior: {
+        title: 'Record from before the platform',
+        lede:
+          'The association has been running since 2020 and this site is weeks old. What is recorded ' +
+          'here grants the same standing as an activity attended or an exam sat — and stays marked ' +
+          'as carried forward, so reports can tell the two apart.',
+        hoursHeading: 'Volunteering hours from before the site',
+        hoursLabel: 'Hours',
+        upToLabel: 'Counted up to',
+        noteLabel: 'What it covers',
+        hoursNoteHint: 'e.g. field volunteering 2021–2024, from the committee records',
+        hoursSubmit: 'Add the hours',
+        hoursDone: 'Added {minutes} minutes',
+        courseHeading: 'A course already completed',
+        courseLabel: 'Course',
+        coursePlaceholder: 'Choose a course',
+        courseNoteHint: 'When and where they did it, and who vouches for it',
+        courseSubmit: 'Recognise it',
+        courseDone: 'Recognised, and the certificate is issued',
+        saving: 'Saving…',
+        errors: {
+          "hours-missing": 'Enter a number of hours.',
+          "hours-not-a-number": 'Hours has to be a number.',
+          "hours-not-positive": 'Hours has to be more than zero.',
+          "hours-too-many": 'Implausibly large — check it. The ceiling is ten thousand hours.',
+          "date-missing": 'Enter the date it is counted up to.',
+          "date-malformed": 'That is not a valid date.',
+          "date-future": 'That date is in the future.',
+          "date-before-founding": 'That is before the association was founded in 2020.',
+          "note-missing": 'Say what these hours cover.',
+          "course-missing": 'Choose a course.',
+          "course-unknown": 'No course with that identifier.',
+          "note-too-short": 'Write a reason somebody could review later, not one word.',
+          alreadyPassed: 'Their record already has this course completed.',
+          notYourself: 'You cannot credit your own record.',
+          noMember: 'That member was not found.',
+          unavailable: 'Could not save. Try again.',
+        },
+      },
       roster: {
         title: 'Roster link requests',
         lede:

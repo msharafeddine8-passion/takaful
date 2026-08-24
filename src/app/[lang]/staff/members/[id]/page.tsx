@@ -20,6 +20,8 @@ import {
 } from '@/lib/actions/members';
 import { issueHoursCertificateAction } from '@/lib/actions/certificates';
 import { ConfirmSubmit } from '@/components/staff/ConfirmSubmit';
+import { CarriedHoursForm, RecogniseCourseForm } from '@/components/staff/PriorCreditForms';
+import { COURSES } from '@/lib/courses';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -51,6 +53,12 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
   const dict = getDictionary(lang);
   const t = dict.account.staff;
   const mm = t.member;
+  const pr = t.prior;
+  /* Only courses whose content exists — recognising a course nobody can open
+   * would leave a certificate pointing at a page that says "coming soon". */
+  const courseChoices = COURSES
+    .filter((c) => c.status === 'available')
+    .map((c) => ({ slug: c.slug, title: c.title[lang] }));
 
   if (!isDbConfigured()) {
     return (
@@ -404,6 +412,36 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
             </button>
           </form>
         )}
+
+        {/*
+          * What the association knows and this platform never saw.
+          *
+          * Placed with the hours and the stages rather than in a page of its
+          * own, because it is the same job: a member of staff correcting what
+          * the record says about a person. Both forms demand a reason, and
+          * both mark what they write as carried forward so a report can always
+          * separate it from what happened here.
+          */}
+        {can(user, 'hours.verify') || can(user, 'stages.award') ? (
+          <section className="mt-12 rounded-2xl border border-line bg-surface-2 p-6">
+            <h2 className="text-[1.1rem] font-extrabold">{pr.title}</h2>
+            <p className="mt-2 max-w-[64ch] text-[0.94rem] leading-relaxed text-ink-2">{pr.lede}</p>
+
+            {can(user, 'hours.verify') && (
+              <div className="mt-6">
+                <h3 className="text-[0.95rem] font-extrabold">{pr.hoursHeading}</h3>
+                <CarriedHoursForm lang={lang} userId={id} t={pr} />
+              </div>
+            )}
+
+            {can(user, 'stages.award') && (
+              <div className="mt-8">
+                <h3 className="text-[0.95rem] font-extrabold">{pr.courseHeading}</h3>
+                <RecogniseCourseForm lang={lang} userId={id} courses={courseChoices} t={pr} />
+              </div>
+            )}
+          </section>
+        ) : null}
 
         <h2 className="mt-10 text-[1.1rem] font-extrabold">{mm.hoursTitle}</h2>
         {entries.length === 0 ? (
