@@ -12,7 +12,10 @@ import { isVolunteer } from '@/lib/journey';
 import { PhotoUpload } from '@/components/account/PhotoUpload';
 import { ProfileForm } from '@/components/account/ProfileForm';
 import { PasswordForm } from '@/components/account/PasswordForm';
+import { VisibilityForm } from '@/components/account/VisibilityForm';
 import { removePhotoAction } from '@/lib/actions/profile';
+import { getRecognition } from '@/lib/dictionaries/recognition';
+import { visibilityFrom } from '@/lib/visibility';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account/profile'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -31,6 +34,10 @@ export default async function ProfilePage(props: PageProps<'/[lang]/account/prof
   if (!isLocale(lang)) notFound();
   const dict = getDictionary(lang);
   const t = dict.account.profile;
+  /* Straight from its own module rather than through the dictionary, so this
+   * feature does not have to edit types.ts, ar.ts and en.ts while somebody
+   * else is in them. See the header of dictionaries/recognition.ts. */
+  const rt = getRecognition(lang);
 
   if (!isDbConfigured()) {
     return (
@@ -50,8 +57,16 @@ export default async function ProfilePage(props: PageProps<'/[lang]/account/prof
       full_name: string; display_name: string | null; bio: string | null;
       interests: string | null; skills: string | null; languages: string | null;
       member_number: number | null;
+      public_visibility: string | null; birthday_greetings: boolean | null;
+      visibility_chosen_at: Date | null;
     }>(
-      `SELECT full_name, display_name, bio, interests, skills, languages, member_number
+      /* No date of birth here, and none anywhere on this page. What the person
+       * may choose is not affected by how old they are — the age question is
+       * asked once, by the public page, at the moment it renders. A profile
+       * page that held the answer would be a screenshot away from telling
+       * somebody which of their volunteers are children. */
+      `SELECT full_name, display_name, bio, interests, skills, languages, member_number,
+              public_visibility, birthday_greetings, visibility_chosen_at
          FROM profiles WHERE user_id = $1`,
       [user.id],
     ),
@@ -141,6 +156,24 @@ export default async function ProfilePage(props: PageProps<'/[lang]/account/prof
               interests: profile.interests ?? '',
               skills: profile.skills ?? '',
               languages: profile.languages ?? '',
+            }}
+          />
+        </section>
+
+        {/* Directly below the profile form on purpose: "show my display name
+            only" is meaningless until you can see which display name it means,
+            and the field that sets it is the one immediately above. */}
+        <section className="mt-5 rounded-2xl border border-line bg-surface p-6">
+          <h2 className="text-[0.8rem] font-bold tracking-[0.12em] text-ink-3">{rt.title}</h2>
+          <p className="mt-2 max-w-[52ch] text-[0.94rem] leading-relaxed text-ink-2">{rt.lede}</p>
+          <VisibilityForm
+            lang={lang}
+            t={rt}
+            errors={dict.account.errors}
+            values={{
+              choice: visibilityFrom(profile.public_visibility),
+              birthdayGreetings: profile.birthday_greetings === true,
+              everChosen: profile.visibility_chosen_at !== null,
             }}
           />
         </section>

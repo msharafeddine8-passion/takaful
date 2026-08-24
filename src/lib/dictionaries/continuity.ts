@@ -80,7 +80,7 @@ export const continuityAr: ContinuityStrings = {
     'ووجود اسم قبل آخر لا يعني شيئاً.',
 
   sortLabel: 'طريقة العرض',
-  sortLongest: 'الأقدم انتساباً أولاً',
+  sortLongest: 'الأقدم انتساباً',
   sortHours: 'الأكثر ساعات موثّقة',
   sortName: 'بحسب الحروف',
   yearLabel: 'سنة الانتساب',

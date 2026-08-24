@@ -11,6 +11,7 @@ import { can, isStaff } from '@/lib/authz';
 import { isDbConfigured } from '@/lib/db';
 import { overview } from '@/lib/admin';
 import { formatDuration } from '@/lib/hours';
+import { challengeDictionaries } from '@/lib/dictionaries/challenges';
 
 export async function generateMetadata(props: PageProps<'/[lang]/staff'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -128,6 +129,17 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
               className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
             >
               {dict.account.activities.manageTitle}
+            </Link>
+          )}
+          {can(user, 'challenges.manage') && (
+            <Link
+              href={`/${lang}/staff/challenges`}
+              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {/* Imported from the challenges dictionary directly rather than
+                  spliced into types.ts/ar.ts/en.ts — see the header of
+                  src/lib/dictionaries/challenges.ts. */}
+              {challengeDictionaries[lang].manageTitle}
             </Link>
           )}
           {can(user, 'members.manage') && (

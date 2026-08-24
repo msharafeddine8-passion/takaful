@@ -19,6 +19,7 @@ export type Capability =
   | 'hours.log'
   | 'hours.verify'
   | 'activities.manage'
+  | 'challenges.manage'
   | 'stages.award'
   | 'certificates.issue'
   | 'certificates.revoke'
@@ -50,6 +51,17 @@ const GRANTS: Record<Capability, readonly Role[]> = {
   'hours.verify': ['team_leader', 'field_supervisor', 'project_coordinator', 'program_admin', 'super_admin'],
 
   'activities.manage': ['project_coordinator', 'program_admin', 'super_admin'],
+
+  /*
+   * Setting a goal for the whole association.
+   *
+   * Its own capability rather than a reuse of activities.manage, because a
+   * challenge is an announcement to every volunteer about what the association
+   * is asking of them collectively — a different act from scheduling a field
+   * activity, even though the same people do both today. Named for the act, so
+   * it can be re-scoped later without hunting for role checks.
+   */
+  'challenges.manage': ['project_coordinator', 'program_admin', 'super_admin'],
 
   // Advancing someone through the six stages is a judgement about a person,
   // so it sits with programme leadership rather than field supervisors.

@@ -25,6 +25,9 @@ import { isEmailConfigured } from '@/lib/email';
 import { DashboardHero, StageRail } from '@/components/account/DashboardHero';
 import { ImpactTiles } from '@/components/account/ImpactTiles';
 import { cardStatusOf } from '@/lib/card-view';
+import { challengeBoard } from '@/lib/challenge-progress';
+import { ChallengePanel } from '@/components/account/ChallengePanel';
+import { challengeDictionaries } from '@/lib/dictionaries/challenges';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -68,7 +71,9 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
 
-  const [summary, application, account, rosterClaim, safeguarding, profile, photo] = await Promise.all([
+  const [
+    summary, application, account, rosterClaim, safeguarding, profile, photo, challenges,
+  ] = await Promise.all([
     portalSummary(user.id),
     queryOne<{ id: string; status: string; submitted_at: Date | null }>(
       `SELECT id, status, submitted_at FROM volunteer_applications
@@ -94,6 +99,10 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
       'SELECT version FROM profile_photos WHERE user_id = $1',
       [user.id],
     ),
+    /* The shared goals, with this person's own part in each. The id goes in so
+     * that the private line can be worked out; nothing comes back that names
+     * anybody, here or anywhere else. */
+    challengeBoard(user.id),
   ]);
 
   const hasOpenApplication = application ? APPLICATION_OPEN.includes(application.status) : false;
@@ -253,6 +262,17 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
             certificates={summary.certificates}
           />
         </div>
+
+        {/*
+          * What the association is working towards, under what this one person
+          * has done. Deliberately in that order: the tiles above are "you", and
+          * this is "us" — and a volunteer who had a thin month should meet the
+          * shared goal after their own figures, not instead of them.
+          *
+          * Renders nothing at all when no challenge is running. An empty box
+          * saying there is nothing to work towards makes the page look broken.
+          */}
+        <ChallengePanel lang={lang} t={challengeDictionaries[lang]} cards={challenges} />
 
         {summary.nextActivity && (
           <Panel title={p.upcomingTitle}>
