@@ -539,7 +539,8 @@ export const en: Dictionary = {
       stage: 'Stage',
       notMember: 'A membership card is issued once your volunteering application is accepted. The academy and its certificates are open to you now.',
       notMemberCta: 'Apply to volunteer',
-      print: 'Print or save as PDF',
+      print: 'Print on an A4 sheet',
+      savePdf: 'Save the card as a PDF',
       validNote: 'To verify this card, scan the code.',
       verifyTitle: 'Membership card check',
       verifyValid: 'Valid membership card',
@@ -1173,6 +1174,25 @@ export const en: Dictionary = {
         accountEmail: 'Email address',
         committee: 'Committee',
         rosterDob: 'Date of birth on file',
+        linkTitle: 'Link an account to an unclaimed line',
+        linkLede:
+          'For the case the claim form cannot reach: a volunteer the association is sure of who ' +
+          'has not filled it in. Recorded against your name, and they get their number, path and ' +
+          'card exactly as if they had claimed it themselves.',
+        linkEmail: 'Account email',
+        linkNumber: 'Member no.',
+        linkSubmit: 'Link',
+        linkSaving: 'Linking…',
+        linkDone: 'Linked {who}',
+        linkErrors: {
+          needBoth: 'Enter both the email and the membership number.',
+          noAccount: 'No account with that email.',
+          noLine: 'No roster line with that number.',
+          lineTaken: 'That line is already claimed by another account.',
+          alreadyNumbered: 'That account already has a membership number.',
+          notYourself: 'You cannot link your own account.',
+          unavailable: 'The link could not be completed. Try again.',
+        },
         claimedAt: 'Requested',
         nameMismatch:
           'Careful: the name on the account does not look like the name on the record. Check ' +

@@ -389,6 +389,7 @@ export type Account = {
     notMember: string;
     notMemberCta: string;
     print: string;
+    savePdf: string;
     validNote: string;
     /* The public page somebody reaches by scanning the card's QR. Its wording
      * is deliberately thin — see lib/card-view.ts for what it may show. */
@@ -1032,6 +1033,22 @@ export type Account = {
       accountEmail: string;
       committee: string;
       rosterDob: string;
+      linkTitle: string;
+      linkLede: string;
+      linkEmail: string;
+      linkNumber: string;
+      linkSubmit: string;
+      linkSaving: string;
+      linkDone: string;
+      linkErrors: {
+        needBoth: string;
+        noAccount: string;
+        noLine: string;
+        lineTaken: string;
+        alreadyNumbered: string;
+        notYourself: string;
+        unavailable: string;
+      };
       claimedAt: string;
       nameMismatch: string;
       approve: string;

@@ -285,6 +285,98 @@ export async function approveClaimAction(formData: FormData): Promise<void> {
   revalidatePath(`/${lang}/staff/roster`);
 }
 
+export type LinkState = { error?: string; ok?: string };
+
+/**
+ * Staff attach an account to a roster line nobody has claimed.
+ *
+ * The claim form is how this is meant to happen — the volunteer produces two
+ * facts and the platform recognises them. This is for the case the form
+ * cannot reach: somebody the association is certain about who has not filled
+ * it in.
+ *
+ * It had to exist. Without it, an administrator looking at a member they know
+ * is on the roster has no way to say so, and the only button that looked like
+ * it would help was "grant role: volunteer" — which wrote a role, moved no
+ * membership status, and left a real person unable to register for anything
+ * for two days while the page displayed "volunteer" next to their name.
+ *
+ * Deliberately does the same thing the approval queue does, through the same
+ * function, so a link made this way and a claim approved in the ordinary way
+ * produce records that cannot be told apart in what they grant — only in the
+ * audit reason, which says a person did it without the volunteer asking.
+ */
+export async function linkAccountToRosterAction(
+  _prev: LinkState,
+  formData: FormData,
+): Promise<LinkState> {
+  const lang = localeOf(formData);
+  const email = text(formData, 'email').toLowerCase();
+  const numberRaw = text(formData, 'memberNumber').replace(/[^\d]/g, '');
+  const memberNumber = numberRaw ? Number(numberRaw) : null;
+  if (!isDbConfigured()) return { error: 'unavailable' };
+  if (!email || !memberNumber) return { error: 'needBoth' };
+
+  const reviewer = await requireCapability('applications.review');
+
+  const account = await queryOne<{ id: string; full_name: string; member_number: number | null }>(
+    `SELECT u.id, p.full_name, p.member_number
+       FROM users u JOIN profiles p ON p.user_id = u.id
+      WHERE lower(u.email) = $1`,
+    [email],
+  );
+  if (!account) return { error: 'noAccount' };
+  // Nobody links themselves, for the same reason nobody approves their own claim.
+  if (account.id === reviewer.id) return { error: 'notYourself' };
+  if (account.member_number !== null) return { error: 'alreadyNumbered' };
+
+  const entry = await queryOne<{ id: string; full_name: string; claimed_by: string | null }>(
+    'SELECT id, full_name, claimed_by FROM volunteer_roster WHERE member_number = $1',
+    [memberNumber],
+  );
+  if (!entry) return { error: 'noLine' };
+  if (entry.claimed_by) return { error: 'lineTaken' };
+
+  const label = formatMemberNumber(memberNumber);
+  const reason =
+    `Linked to roster line ${label} by a member of staff — the volunteer did not use the claim ` +
+    `form. Roster name "${entry.full_name}", account name "${account.full_name}".`;
+
+  /*
+   * The claim is written first, because recogniseFromRoster answers a claim
+   * rather than creating one: it sets approved_at on a line and expects a
+   * claimant to already be on it. Guarded on claimed_by so two members of
+   * staff pressing this at once cannot both proceed.
+   */
+  const claimed = await queryOne<{ id: string }>(
+    `UPDATE volunteer_roster SET claimed_by = $1, claimed_at = now()
+      WHERE id = $2 AND claimed_by IS NULL
+      RETURNING id`,
+    [account.id, entry.id],
+  );
+  if (!claimed) return { error: 'lineTaken' };
+
+  await recogniseFromRoster({
+    rosterId: entry.id,
+    memberNumber,
+    userId: account.id,
+    reviewer: reviewer.id,
+    reason,
+  });
+
+  await audit({
+    actorId: reviewer.id,
+    action: 'roster.linked_by_staff',
+    targetType: 'volunteer_roster',
+    targetId: entry.id,
+    newValue: { memberNumber, userId: account.id, email },
+    reason,
+  });
+
+  revalidatePath(`/${lang}/staff/roster`);
+  return { ok: `${label} · ${account.full_name}` };
+}
+
 /**
  * Staff say this is not that person. The roster line is released so the real
  * volunteer can claim it, and the claimant is told — a claim that disappears

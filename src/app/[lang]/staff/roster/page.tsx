@@ -9,6 +9,7 @@ import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
 import { pendingClaims, formatMemberNumber } from '@/lib/roster';
 import { approveClaimAction, rejectClaimAction } from '@/lib/actions/roster';
+import { LinkRosterForm } from '@/components/staff/LinkRosterForm';
 
 export async function generateMetadata(
   props: PageProps<'/[lang]/staff/roster'>,
@@ -160,6 +161,22 @@ export default async function StaffRosterPage(props: PageProps<'/[lang]/staff/ro
             ))}
           </ul>
         )}
+
+        {/*
+          * Below the queue, not above it. A volunteer proving who they are is
+          * the rule and this is the exception — but it had to exist, because
+          * without it an administrator who knows a member is on the roster has
+          * no way to say so, and the only button that looked like it might
+          * help was "grant role: volunteer", which granted a role and no
+          * standing at all.
+          */}
+        <section className="mt-12 rounded-2xl border border-line bg-surface-2 p-6">
+          <h2 className="text-[1.05rem] font-extrabold">{t.linkTitle}</h2>
+          <p className="mt-2 max-w-[62ch] text-[0.94rem] leading-relaxed text-ink-2">
+            {t.linkLede}
+          </p>
+          <LinkRosterForm lang={lang} t={t} />
+        </section>
       </Container>
     </Section>
   );

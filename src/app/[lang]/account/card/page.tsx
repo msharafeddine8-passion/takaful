@@ -12,7 +12,7 @@ import { isDbConfigured, queryOne } from '@/lib/db';
 import { journeyFor } from '@/lib/journey';
 import { ORG } from '@/lib/org';
 import { SITE_URL } from '@/lib/seo';
-import { PrintButton } from '@/components/PrintButton';
+import { CardPrintButtons } from '@/components/account/CardPrintButtons';
 import { formatMemberNumber } from '@/lib/roster';
 import { LogoFull } from '@/components/Logo';
 import { verifiedMinutes, formatDuration } from '@/lib/hours';
@@ -150,7 +150,6 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
       <style>{`
         @media print {
           header, footer, .no-print { display: none !important; }
-          @page { size: A4; margin: 18mm; }
           body { background: #fff !important; }
           /*
            * The real thing, at the real size. Fixing the width in millimetres
@@ -174,6 +173,14 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
           }
         }
       `}</style>
+
+      {/*
+        * The page size lives in its own style element because it is the one
+        * rule that changes between the two buttons — a card-shaped page for a
+        * PDF, an A4 sheet for a home printer — and `@page` cannot be switched
+        * with a class. CardPrintButtons rewrites this and puts it back.
+        */}
+      <style id="card-page-rule">{'@media print { @page { size: A4; margin: 18mm; } }'}</style>
 
       <Section>
         <Container className="max-w-2xl">
@@ -325,7 +332,9 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
           </p>
 
           <div className="no-print mt-8 flex flex-wrap gap-3">
-            <PrintButton label={t.print} />
+            {/* Two, because they want different paper: a PDF whose page IS the
+                card, and an A4 sheet to cut one out of. */}
+            <CardPrintButtons pdfLabel={t.savePdf} sheetLabel={t.print} />
             <Link
               href={`/${lang}/account/profile`}
               className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold hover:bg-surface-2"

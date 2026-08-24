@@ -93,10 +93,33 @@ check(
   /reviewer:\s*null/.test(source),
   'reviewer: null is what keeps approved_by and granted_by honest',
 );
+/*
+ * Every way in goes through one function.
+ *
+ * There are three now — a volunteer whose evidence speaks for itself, a
+ * member of staff approving a claim, and a member of staff attaching an
+ * account to a line nobody claimed. This used to assert there were exactly
+ * two call sites, which failed the moment the third arrived even though the
+ * third was written the right way. Counting call sites was never the point;
+ * the point is that nobody writes a second copy of the steps.
+ *
+ * So: one definition, and no other place in the action file writing a
+ * membership number. A path that granted recognition on its own would have to
+ * do that, and would be caught here.
+ */
 check(
-  'the automatic and staff paths share one implementation',
-  (source.match(/await recogniseFromRoster\(/g) ?? []).length === 2,
-  'two call sites, one function — so the two can never drift',
+  'recognition is implemented once',
+  (source.match(/async function recogniseFromRoster\(/g) ?? []).length === 1,
+);
+check(
+  'and every path that grants it goes through that one function',
+  (source.match(/await recogniseFromRoster\(/g) ?? []).length >= 2,
+  `${(source.match(/await recogniseFromRoster\(/g) ?? []).length} call sites`,
+);
+check(
+  'no path writes a membership number of its own',
+  (source.match(/SET[\s\S]{0,80}member_number\s*=/g) ?? []).length === 1,
+  'the one write is inside recogniseFromRoster, before the status change',
 );
 check(
   'an automatic recognition is logged under its own action',
