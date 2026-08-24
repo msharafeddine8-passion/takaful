@@ -6,6 +6,7 @@ import { execute, isDbConfigured, queryOne, transaction } from '@/lib/db';
 import { audit, currentUser, setMembershipStatus } from '@/lib/auth';
 import { requireCapability } from '@/lib/authz';
 import { notifyIn } from '@/lib/notify';
+import { recomputeAchievements } from '@/lib/achievements';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { findRosterMatch, formatMemberNumber, phoneTail, type MatchStrength } from '@/lib/roster';
 
@@ -135,6 +136,24 @@ async function recogniseFromRoster(opts: {
      VALUES ($1, 1, $2, $3)
      ON CONFLICT (user_id, stage) DO NOTHING`,
     [opts.userId, opts.reviewer, opts.reason],
+  );
+
+  /*
+   * Badges, now that the four facts they read have all changed at once.
+   *
+   * Recognition is the single largest event in this system: it sets the
+   * membership status, the roster link, the join date and stage one in one
+   * go — and four badge rules read exactly those. Without this, somebody
+   * recognised today holds none of them until some unrelated action happens
+   * to trigger a recompute, which for a volunteer who is not yet logging
+   * hours could be never.
+   *
+   * Outside the transaction and outside the failure surface: they are a
+   * volunteer either way, and recomputeAchievements is idempotent, so the
+   * next run repairs anything a failure here leaves behind.
+   */
+  await recomputeAchievements(opts.userId, 'تم التعرّف على العضوية').catch((error) =>
+    console.error('[roster] achievements not recomputed:', error),
   );
 }
 
