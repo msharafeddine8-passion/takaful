@@ -305,7 +305,7 @@ export const ar: Dictionary = {
       heading: 'خطوتك التالية',
       otherTasks: 'مهام أخرى',
       titles: {
-        safeguarding: 'أكمل بيانات السلامة قبل أوّل نشاط ميداني',
+        safeguarding: 'أضف جهة اتصال للطوارئ ليصل إليها المسؤول من هاتفه في الميدان',
         'claim-roster': 'اربط حسابك بسجلّك في الجمعية',
         apply: 'قدّم طلب تطوّع',
         'await-decision': 'طلبك قيد المراجعة، وسنخبرك فور صدور القرار',
@@ -318,7 +318,7 @@ export const ar: Dictionary = {
         nothing: 'لا شيء مطلوب منك الآن',
       },
       ctas: {
-        safeguarding: 'أكمل بياناتي',
+        safeguarding: 'أضفها',
         'claim-roster': 'اربط حسابي',
         apply: 'قدّم طلبك',
         'await-decision': 'تابع إشعاراتك',

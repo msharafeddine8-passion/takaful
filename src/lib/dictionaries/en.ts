@@ -305,7 +305,7 @@ export const en: Dictionary = {
       heading: 'Your next step',
       otherTasks: 'Other tasks',
       titles: {
-        safeguarding: 'Add your safety details before your first field activity',
+        safeguarding: 'Add an emergency contact, so a coordinator can reach it from their phone in the field',
         'claim-roster': 'Link your account to your record with us',
         apply: 'Apply to volunteer',
         'await-decision': 'Your application is being reviewed — we will let you know',
@@ -317,7 +317,7 @@ export const en: Dictionary = {
         nothing: 'Nothing is waiting on you',
       },
       ctas: {
-        safeguarding: 'Complete my details',
+        safeguarding: 'Add one',
         'claim-roster': 'Link my account',
         apply: 'Apply now',
         'await-decision': 'Check your notifications',

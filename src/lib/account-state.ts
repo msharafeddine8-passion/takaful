@@ -97,9 +97,24 @@ export function nextStepOf(f: AccountFacts): Step {
     return { key: 'nothing', href: '/account/notifications' };
   }
 
-  if (audience === 'volunteer' && !f.hasSafeguarding) {
-    return { key: 'safeguarding', href: '/account/safeguarding' };
-  }
+  /*
+   * Safeguarding details are NOT the headline step, deliberately.
+   *
+   * They used to be: any volunteer without a record was told, above
+   * everything else, to go and fill one in. The association collects this on
+   * paper in the office and has done for years, so for most of these people
+   * the platform was demanding something they had already given — and the one
+   * task a volunteer sees first should be one they can actually act on.
+   *
+   * It stays in otherTasksOf as an offer. Nothing anywhere refuses a
+   * volunteer for the want of it, and nothing should start to: a record the
+   * association already holds does not become missing because this database
+   * cannot see it.
+   *
+   * The reason to keep offering it at all is narrow and worth stating — a
+   * coordinator in the field with a phone can reach an emergency contact that
+   * is in here, and cannot reach one that is in a drawer in the office.
+   */
 
   if (audience === 'roster-unlinked') {
     return f.rosterClaimPending

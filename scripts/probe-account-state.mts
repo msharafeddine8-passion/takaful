@@ -81,12 +81,35 @@ eq('being a volunteer outranks an old open application',
  * ------------------------------------------------------------------ */
 console.log('\n2. the primary step');
 
-eq('a volunteer with no emergency contact is asked for that first',
+/*
+ * Safeguarding details are not the headline step, and this asserts the change
+ * rather than merely dropping the old assertion.
+ *
+ * They were the headline: a volunteer without a record was told to fill one in
+ * before anything else. The association collects this on paper in the office
+ * and has done for years, so for most of these people the platform was
+ * demanding something they had already given — and the first task somebody
+ * sees should be one they can act on.
+ */
+eq('a volunteer with no emergency contact is pointed at real work, not a form',
   nextStepOf(facts({ isVolunteer: true, hasSafeguarding: false, courseInProgress: 'x', nextActivityId: 'y' })).key,
-  'safeguarding');
-eq('and it points at the safeguarding form',
-  nextStepOf(facts({ isVolunteer: true, hasSafeguarding: false })).href,
-  '/account/safeguarding');
+  'attend-activity');
+eq('and one with nothing else owed is sent to the field',
+  nextStepOf(facts({ isVolunteer: true, hasSafeguarding: false })).key,
+  'find-activity');
+/* Still offered, just not demanded. The narrow reason to keep offering it: a
+ * coordinator in the field with a phone can reach a contact that is in here,
+ * and cannot reach one that is in a drawer in the office. */
+check('but it stays on the list of things they could do',
+  otherTasksOf(facts({ isVolunteer: true, hasSafeguarding: false })).includes('safeguarding'));
+check('and drops off once the association has it',
+  !otherTasksOf(facts({ isVolunteer: true, hasSafeguarding: true })).includes('safeguarding'));
+/* The rule the whole change rests on. Nothing may refuse a volunteer for the
+ * want of it: a record the association already holds does not become missing
+ * because this database cannot see it. */
+check('and having no record never makes somebody less of a volunteer',
+  audienceOf(facts({ isVolunteer: true, hasSafeguarding: false }))
+    === audienceOf(facts({ isVolunteer: true, hasSafeguarding: true })));
 
 eq('an unclaimed record is offered before an application',
   nextStepOf(facts({ rosterOffered: true })).key, 'claim-roster');
