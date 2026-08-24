@@ -65,35 +65,92 @@ console.log('\n2. nothing prints crooked');
   check('and there are tables to check', grids.length > 0, `${grids.length}`);
 }
 
-console.log('\n3. the held ones are actually held');
+console.log('\n3. holding a form back still works');
 {
-  const held = TEMPLATES.filter((t) => t.review === 'needs-review');
-  check('some forms are held', held.length > 0, `${held.length} held`);
-  check('none of them carries a single field to fill in',
-    held.every((t) => t.sections.length === 0),
-    held.filter((t) => t.sections.length > 0).map((t) => t.slug).join(',') || 'all empty');
-  check('every one says why, in both languages',
-    held.every((t) => (t.reviewBecause?.ar.length ?? 0) > 40 && (t.reviewBecause?.en.length ?? 0) > 40),
-    held.filter((t) => !t.reviewBecause).map((t) => t.slug).join(',') || 'all explained');
-  check('none of them is printable', held.every((t) => !isPrintable(t)));
-  check('the library will not offer one',
+  /*
+   * Nothing is held at the moment — the four that were have been written out.
+   * The machinery has to keep working anyway, because the next form somebody
+   * is unsure about will need it, so it is exercised against a constructed
+   * template rather than against whatever happens to be in the catalogue.
+   * Asserting "at least one form is held" would mean inventing a held form to
+   * keep a test green, which is the wrong way round.
+   */
+  const draft = {
+    slug: 'a-draft', title: { ar: 'ع', en: 'e' }, purpose: { ar: 'ع', en: 'e' },
+    course: null, orientation: 'portrait' as const, review: 'needs-review' as const,
+    reviewBecause: {
+      ar: 'سبب مكتوب بطول كافٍ ليشرح لماذا يحتاج هذا النموذج مراجعة مختص قبل استعماله.',
+      en: 'A reason long enough to explain why this form needs a specialist to look at it first.',
+    },
+    sections: [],
+  };
+  check('a held form is not printable', !isPrintable(draft));
+  check('and a held form with a reason and no fields is otherwise sound',
+    problemsWith(draft).length === 0, problemsWith(draft).join('|'));
+  check('the library never offers a held form',
     printableTemplates().every((t) => t.review === 'ready'),
     `${printableTemplates().length} offered`);
 
+  /* And whatever is held in the catalogue, if anything ever is again. */
+  const held = TEMPLATES.filter((t) => t.review === 'needs-review');
+  check('every held form in the catalogue carries no fields and says why',
+    held.every((t) => t.sections.length === 0 && (t.reviewBecause?.ar.length ?? 0) > 40),
+    held.length ? held.map((t) => t.slug).join(',') : 'none held right now');
+}
+
+console.log('\n3b. the forms somebody could be harmed by');
+{
   /*
-   * The subjects the association said a model must not write as final. If a
-   * form on one of these ever flips to 'ready', this is what says so.
+   * These four were held back at first, on the association's instruction that
+   * a model should not write child protection, safety or legal content as
+   * final. That instruction was lifted and they are now written out, so the
+   * guard changes shape rather than disappearing.
+   *
+   * What is checked now is that each still ends with a person's name against
+   * it and records that the association adopted the wording. An incident
+   * report nobody signed is a document nobody stands behind; a safety
+   * checklist nobody signed is a column of ticks nobody made — and a form
+   * with no adoption line cannot be told apart from a draft that escaped.
    */
-  const MUST_BE_HELD = [
+  const DUTY = [
     'incident-report',
     'safeguarding-referral',
     'photo-consent',
     'field-safety-checklist',
   ];
-  for (const slug of MUST_BE_HELD) {
+  for (const slug of DUTY) {
     const t = templateBySlug(slug);
-    check(`${slug} is still held for a specialist`, t?.review === 'needs-review', t?.review ?? 'missing');
+    check(`${slug} is marked as carrying a duty`, t?.carriesDuty === true, t ? '' : 'missing');
   }
+  check('and nothing else claims to', TEMPLATES.filter((t) => t.carriesDuty).length === DUTY.length,
+    TEMPLATES.filter((t) => t.carriesDuty).map((t) => t.slug).join(','));
+
+  /* problemsWith enforces both halves; this states them where they can be read. */
+  check('each ends with somebody signing it',
+    DUTY.every((s) => {
+      const t = templateBySlug(s);
+      const last = t?.sections[t.sections.length - 1];
+      return last?.fields.some((f) => f.kind === 'signoff') ?? false;
+    }));
+  check('each records that the association adopted the wording',
+    DUTY.every((s) => (problemsWith(templateBySlug(s)!)).length === 0));
+
+  /*
+   * The two facts a model must not invent, because they are facts about
+   * Lebanon and about this association rather than expertise: which body is
+   * competent to receive a referral, and what the law requires of an image
+   * consent. Both are blanks on the form. If either is ever filled in with a
+   * named body or a cited statute that nobody verified, this fails.
+   */
+  const referral = templateBySlug('safeguarding-referral');
+  const bodyNamed = JSON.stringify(referral).match(/وزارة|مكتب حماية|Ministry|Union for Protection|UPEL/);
+  check('the referral form names no external body on the model’s authority',
+    bodyNamed === null, bodyNamed?.[0] ?? 'left as a field the association fills');
+
+  const consent = templateBySlug('photo-consent');
+  const lawCited = JSON.stringify(consent).match(/قانون رقم|المادة \d|Law No|Article \d/);
+  check('the consent form cites no statute on the model’s authority',
+    lawCited === null, lawCited?.[0] ?? 'legal basis left to the association’s review');
 }
 
 console.log('\n4. the ready ones are usable');

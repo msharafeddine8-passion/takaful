@@ -1,4 +1,5 @@
 import type { Template } from './types';
+import { DUTY_OF_CARE } from './duty-of-care';
 
 /**
  * The association's printable forms.
@@ -726,74 +727,7 @@ export const TEMPLATES: Template[] = [
     ],
   },
 
-  // --------------------------------------------------- awaiting specialist
-  {
-    slug: 'incident-report',
-    title: L('تقرير حادثة', 'Incident report'),
-    purpose: L(
-      'ما وقع، ومتى، ومن أُبلغ — للحوادث التي تمسّ سلامة شخص.',
-      'What happened, when, and who was told — for anything touching a person’s safety.',
-    ),
-    course: 'protecting-vulnerable',
-    review: 'needs-review',
-    reviewBecause: L(
-      'نموذج الإبلاغ عن حادثة هو وثيقة سياسة حماية، لا استمارة تنظيمية. صيغته تحدّد ماذا يُسجَّل ومن يراه وكم يُحفظ، وقد تُستخدم لاحقاً في إجراء رسمي. يجب أن يعتمده مسؤول الحماية في الجمعية قبل أن يملأه أي متطوّع.',
-      'An incident-report form is a safeguarding policy document, not an administrative one. Its wording decides what gets recorded, who sees it and how long it is kept, and it may be used in a formal process later. The association’s safeguarding lead must approve it before any volunteer fills one in.',
-    ),
-    orientation: 'portrait',
-    sections: [],
-  },
-
-  {
-    slug: 'safeguarding-referral',
-    title: L('استمارة إحالة', 'Safeguarding referral'),
-    purpose: L(
-      'إحالة حالة إلى الجهة المختصة داخل الجمعية أو خارجها.',
-      'Referring a case to the right person inside the association or outside it.',
-    ),
-    course: 'protecting-vulnerable',
-    review: 'needs-review',
-    reviewBecause: L(
-      'مسار الإحالة يعتمد على من هي الجهة المختصة قانونياً في لبنان وعلى اتفاقات الجمعية معها، وهي معلومات لا يجوز افتراضها. تحديد المسار الخاطئ قد يؤخّر حماية طفل أو يكشف بياناته لمن لا يحقّ له.',
-      'A referral route depends on which body is legally competent in Lebanon and on the association’s own arrangements with it — neither can be assumed. Getting the route wrong could delay protection for a child, or expose their details to someone with no right to them.',
-    ),
-    orientation: 'portrait',
-    sections: [],
-  },
-
-  {
-    slug: 'photo-consent',
-    title: L('استمارة موافقة على التصوير', 'Photography consent'),
-    purpose: L(
-      'إذن مكتوب بالتقاط صورة ونشرها، ومدى هذا الإذن.',
-      'Written permission to take a photograph and to publish it, and the limits of that permission.',
-    ),
-    course: 'media-and-content',
-    review: 'needs-review',
-    reviewBecause: L(
-      'الموافقة على الصورة مسألة قانونية، وتزداد تعقيداً حين يكون المصوَّر طفلاً أو ناجياً من عنف. صياغة الإذن تحدّد ما يحقّ للجمعية نشره ولكم من الوقت وكيف يُسحب الإذن. تحتاج مراجعة قانونية، لا صياغة تقريبية.',
-      'Consent to an image is a legal matter, and more so when the subject is a child or a survivor of violence. The wording decides what the association may publish, for how long, and how consent is withdrawn. This needs a legal review, not an approximation.',
-    ),
-    orientation: 'portrait',
-    sections: [],
-  },
-
-  {
-    slug: 'field-safety-checklist',
-    title: L('قائمة تحقّق للسلامة الميدانية', 'Field safety checklist'),
-    purpose: L(
-      'ما يُتحقَّق منه قبل الخروج إلى الميدان.',
-      'What gets checked before going out into the field.',
-    ),
-    course: 'field-safety',
-    review: 'needs-review',
-    reviewBecause: L(
-      'قائمة السلامة يعتمد عليها الناس. البند الناقص فيها يُقرأ على أنه ليس مطلوباً، والقائمة التي تشمل الإسعاف الأولي تحتاج من يقرّها مهنياً — لا نموذجاً لغوياً. تُعرض هنا كي تكون نقطة بداية لمن سيراجعها.',
-      'People rely on a safety list. An item missing from it reads as an item not required, and a list that touches first aid needs someone professionally qualified to sign it off — not a language model. It sits here as a starting point for whoever reviews it.',
-    ),
-    orientation: 'portrait',
-    sections: [],
-  },
+  ...DUTY_OF_CARE,
 ];
 
 export function templateBySlug(slug: string): Template | undefined {

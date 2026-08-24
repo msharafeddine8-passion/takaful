@@ -50,6 +50,21 @@ export type Section = {
  */
 export type ReviewState = 'ready' | 'needs-review';
 
+/**
+ * A form somebody could be harmed by.
+ *
+ * Not a severity label — a structural requirement. A form that records a
+ * child protection concern, takes consent for a photograph, or certifies that
+ * a place was checked before people were taken to it, has to end with a named
+ * person putting their name to it and a note of when the association adopted
+ * the wording. An anonymous incident report is a document nobody stands
+ * behind, and an anonymous safety checklist is a tick nobody made.
+ *
+ * `problemsWith` enforces the sign-off; probe-templates asserts the four that
+ * carry a duty are still marked as carrying one.
+ */
+export type CarriesDuty = true;
+
 export type Template = {
   slug: string;
   title: Bilingual;
@@ -60,6 +75,8 @@ export type Template = {
   review: ReviewState;
   /** Why a specialist has to see it. Required when review is 'needs-review'. */
   reviewBecause?: Bilingual;
+  /** See CarriesDuty. Forces a sign-off at the end of the form. */
+  carriesDuty?: CarriesDuty;
   orientation: 'portrait' | 'landscape';
   sections: Section[];
 };

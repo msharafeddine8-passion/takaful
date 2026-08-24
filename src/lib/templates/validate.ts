@@ -73,6 +73,30 @@ export function problemsWith(t: Template): string[] {
     if (t.reviewBecause) out.push(`${t.slug}: marked ready but still carries a review reason`);
   }
 
+  /*
+   * A form somebody could be harmed by ends with a name against it.
+   *
+   * An incident report nobody signed is a document nobody stands behind; a
+   * safety checklist nobody signed is a column of ticks nobody made. And the
+   * adoption line beside the signature is what separates a form the
+   * association has agreed to use from a draft that escaped — which matters
+   * most for exactly these four, since they were held back for review before
+   * being written out.
+   */
+  if (t.carriesDuty) {
+    const last = t.sections[t.sections.length - 1];
+    const signs = last?.fields.some((f) => f.kind === 'signoff') ?? false;
+    if (!signs) out.push(`${t.slug}: carries a duty but does not end with a sign-off`);
+    const adopts = t.sections.some((s) =>
+      s.fields.some(
+        (f) =>
+          (f.kind === 'line' || f.kind === 'box') &&
+          /اعتمدت الجمعية|adopted by the association/i.test(f.label.ar + f.label.en),
+      ),
+    );
+    if (!adopts) out.push(`${t.slug}: carries a duty but records no adoption by the association`);
+  }
+
   t.sections.forEach((s, i) => {
     if (s.fields.length === 0) out.push(`${t.slug}: section ${i + 1} has no fields`);
     s.fields.forEach((f, j) => out.push(...fieldProblems(f, `${t.slug} §${i + 1}.${j + 1}`)));
