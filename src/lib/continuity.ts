@@ -101,6 +101,8 @@ export type ConsentSubject = {
   sensitive_dob?: string | null;
   /** safeguarding_records.date_of_birth, as YYYY-MM-DD text. */
   safeguarding_dob?: string | null;
+  /** volunteer_roster.date_of_birth, via a claimed and approved line. */
+  roster_dob?: string | null;
 };
 
 /**
@@ -116,6 +118,7 @@ export function consentFor(subject: ConsentSubject, today: string): ContinuityCo
     isMinor: treatAsMinor({
       sensitiveDob: subject.sensitive_dob,
       safeguardingDob: subject.safeguarding_dob,
+      rosterDob: subject.roster_dob,
       today,
     }),
     fullName: subject.full_name ?? '',
@@ -208,6 +211,8 @@ export type ContinuityRow = {
   public_visibility?: string | null;
   sensitive_dob?: string | null;
   safeguarding_dob?: string | null;
+  /** volunteer_roster.date_of_birth, via a claimed and approved line. */
+  roster_dob?: string | null;
 };
 
 /**

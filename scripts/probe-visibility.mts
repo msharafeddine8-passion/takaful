@@ -318,6 +318,42 @@ console.log('\n10. birthday greetings');
     JSON.stringify(publicBirthdayIdentity({ ...CHILD, choice: 'display_name', birthdayGreetings: true })) === '{"show":false}');
 }
 
+/* ------------------------------------------------------------------
+ * The roster as a third source of age.
+ *
+ * Failing closed on an unknown age is right, and was very nearly unusable.
+ * With only profiles_sensitive and safeguarding_records, twenty of the
+ * association's thirty-seven accounts had no date anywhere and were therefore
+ * treated as children — more than half the platform hidden from every public
+ * page, not because anybody objected but because nothing knew how old they
+ * were. The association's own roster carries 418 of these dates, on lines
+ * these people have claimed and staff have approved.
+ * ------------------------------------------------------------------ */
+console.log('\nthe roster as a third source of age');
+{
+  const TODAY = '2026-08-24';
+  check('an adult date on the roster alone is enough to be shown',
+    treatAsMinor({ rosterDob: '1990-01-01', today: TODAY }) === false);
+  check('a child date on the roster alone is respected',
+    treatAsMinor({ rosterDob: '2015-01-01', today: TODAY }) === true);
+  check('no date anywhere is still treated as a child',
+    treatAsMinor({ today: TODAY }) === true,
+    'the rule that made a third source necessary, not one it replaces');
+
+  /* Disagreement resolves protectively, whichever source dissents. */
+  check('the roster does not override a safeguarding record saying child',
+    treatAsMinor({ safeguardingDob: '2015-01-01', rosterDob: '1990-01-01', today: TODAY }) === true);
+  check('nor a sensitive record saying child',
+    treatAsMinor({ sensitiveDob: '2015-01-01', rosterDob: '1990-01-01', today: TODAY }) === true);
+  check('and a roster child outweighs an adult record elsewhere',
+    treatAsMinor({ safeguardingDob: '1990-01-01', rosterDob: '2015-01-01', today: TODAY }) === true);
+
+  check('a malformed roster date is no answer rather than an adult one',
+    treatAsMinor({ rosterDob: '01/01/1990', today: TODAY }) === true);
+  check('an empty roster date is no answer either',
+    treatAsMinor({ rosterDob: '', today: TODAY }) === true);
+}
+
 /* ------------------------------------------------------------------ */
 if (holes.length) {
   console.log('\nholes:');

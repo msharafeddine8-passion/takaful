@@ -138,13 +138,34 @@ export function treatAsMinor(opts: {
   sensitiveDob?: string | null;
   /** safeguarding_records.date_of_birth, as YYYY-MM-DD text. */
   safeguardingDob?: string | null;
+  /**
+   * volunteer_roster.date_of_birth, from a line this account has claimed and
+   * staff have approved. YYYY-MM-DD text.
+   *
+   * The third source, and the one that makes failing closed survivable. With
+   * only the first two, twenty of thirty-seven accounts had no date anywhere
+   * and were therefore treated as children — so more than half the
+   * association would have disappeared from every public page, not because
+   * anybody objected but because the platform did not know how old they were.
+   * Reading the roster as well leaves seven.
+   *
+   * It is the association's own record of that person's birth date, and it is
+   * consulted only for a line that this account has claimed and a member of
+   * staff has approved — the same evidence the membership number and the join
+   * date already rest on. An unclaimed line belongs to somebody else.
+   */
+  rosterDob?: string | null;
   /** Today in Beirut, as YYYY-MM-DD. The caller owns the clock. */
   today: string;
 }): boolean {
   const answers = [
     isMinorOn(opts.sensitiveDob, opts.today),
     isMinorOn(opts.safeguardingDob, opts.today),
+    isMinorOn(opts.rosterDob, opts.today),
   ];
+  /* Any source saying "child" outweighs any number saying otherwise. Three
+   * sources make a disagreement more likely rather than less, and the
+   * protective answer is the one to take when they differ. */
   if (answers.some((a) => a === true)) return true;
   return !answers.some((a) => a === false);
 }

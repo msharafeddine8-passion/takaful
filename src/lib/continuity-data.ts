@@ -77,6 +77,10 @@ const SQL = `
           * are the wrong day for anybody born after ten in the evening. */
          to_char(ps.date_of_birth, 'YYYY-MM-DD')                          AS sensitive_dob,
          to_char(sr.date_of_birth, 'YYYY-MM-DD')                          AS safeguarding_dob,
+         /* The association's own record of the same fact, and for most people
+          * here the only one that exists. Same treatment: read by
+          * treatAsMinor and carried no further. */
+         to_char(r.date_of_birth, 'YYYY-MM-DD')                           AS roster_dob,
 
          st.title_ar                                                      AS stage_ar,
          st.title_en                                                      AS stage_en,
