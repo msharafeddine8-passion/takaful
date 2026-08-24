@@ -541,6 +541,8 @@ export const en: Dictionary = {
       notMemberCta: 'Apply to volunteer',
       print: 'Print on an A4 sheet',
       savePdf: 'Save the card as a PDF',
+      fullScreen: 'Show it larger',
+      fullScreenClose: 'Close',
       validNote: 'To verify this card, scan the code.',
       verifyTitle: 'Membership card check',
       verifyValid: 'Valid membership card',

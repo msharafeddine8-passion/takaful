@@ -13,6 +13,7 @@ import { journeyFor } from '@/lib/journey';
 import { ORG } from '@/lib/org';
 import { SITE_URL } from '@/lib/seo';
 import { CardPrintButtons } from '@/components/account/CardPrintButtons';
+import { CardStage } from '@/components/account/CardStage';
 import { formatMemberNumber } from '@/lib/roster';
 import { LogoFull } from '@/components/Logo';
 import { verifiedMinutes, formatDuration } from '@/lib/hours';
@@ -203,6 +204,16 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
             * at exactly 85.6mm on paper — instead of the text reflowing out of
             * a fixed frame.
             */}
+          {/*
+            * Wrapped so the card can be opened to fill the screen.
+            *
+            * On a 320px phone the card is 288px wide and its three smallest
+            * type sizes land at 6.6px, 7.5px and 8.1px — the membership
+            * number and the name among them. The card cannot be made wider
+            * without giving up the ID-1 ratio, so the stage turns it ninety
+            * degrees and uses the length of the phone instead.
+            */}
+          <CardStage openLabel={t.fullScreen} closeLabel={t.fullScreenClose}>
           <article
             className="member-card mt-8 w-full max-w-[30rem] overflow-hidden rounded-[4cqw] border border-line bg-surface text-ink shadow-sm"
             style={{ aspectRatio: '85.6 / 54', containerType: 'inline-size' }}
@@ -326,6 +337,7 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
               </div>
             </div>
           </article>
+          </CardStage>
 
           <p className="no-print mt-4 max-w-[30rem] text-[0.85rem] leading-relaxed text-ink-3">
             {t.validNote}

@@ -536,6 +536,8 @@ export const ar: Dictionary = {
       notMemberCta: 'قدّم طلب التطوّع',
       print: 'اطبع على ورقة A4',
       savePdf: 'احفظ البطاقة PDF',
+      fullScreen: 'كبّر البطاقة',
+      fullScreenClose: 'إغلاق',
       validNote: 'للتحقّق من صحّة هذه البطاقة، امسح الرمز.',
       verifyTitle: 'التحقّق من بطاقة عضوية',
       verifyValid: 'بطاقة عضوية صحيحة',

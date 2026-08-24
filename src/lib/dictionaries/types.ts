@@ -390,6 +390,8 @@ export type Account = {
     notMemberCta: string;
     print: string;
     savePdf: string;
+    fullScreen: string;
+    fullScreenClose: string;
     validNote: string;
     /* The public page somebody reaches by scanning the card's QR. Its wording
      * is deliberately thin — see lib/card-view.ts for what it may show. */
