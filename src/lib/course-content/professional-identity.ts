@@ -202,6 +202,53 @@ export const professionalIdentity: CourseContent = {
             en: 'Documenting achievements professionally means converting field experience into a citable record. The best method is building a living achievement portfolio updated during the experience, not after it — because details fade with time and the direct supervisor may leave the organisation.\n\nFor each achievement: record the context (what the situation was before you), the specific role you played, and the outcome in measurable numbers or indicators. Obtain a written recommendation from your supervisor during the project, not after it ends. A portfolio built this way becomes a dual tool: a personal self-development reference, and a strong asset in any future job or volunteer application.',
           },
         },
+        /*
+         * Practice, not assessment — see the note on the practice block types
+         * in course-content/types.ts.
+         *
+         * Placed in an elective deliberately. It is one of the few written
+         * courses somebody can open without an account, so it is also where a
+         * person deciding whether to volunteer here first meets the idea that
+         * the academy expects them to do something rather than read.
+         */
+        {
+          type: 'reveal',
+          prompt: {
+            ar: 'اكتب سطراً واحداً عن آخر شيء تطوّعت فيه، بحيث يفهم قارئ لا يعرفك ماذا تغيّر بسببك. ثم انظر.',
+            en: 'Write one line about the last thing you volunteered on, such that a reader who does not know you understands what changed because of you. Then look.',
+          },
+          answer: {
+            ar: 'السطر المفيد فيه ثلاثة أشياء: الوضع قبلك، وما فعلتَه أنت تحديداً، والنتيجة برقم أو بحالة يمكن التحقّق منها. «شاركت في حملة شتوية» لا يحمل أياً منها. أما «كان التوزيع يستغرق ثلاث ساعات وينتظر الناس في البرد؛ أعدتُ ترتيب الطابور إلى ثلاث محطات؛ صار ساعة وربعاً لـ١٤٠ عائلة» فيحمل الثلاثة — ويُكتب في اليوم نفسه، لأن الرقم يضيع بعد أسبوع.',
+            en: 'A line that works has three things in it: the situation before you, what you specifically did, and the outcome as a number or a checkable state. "Took part in a winter campaign" has none of them. "Distribution was taking three hours with people waiting in the cold; I reorganised the queue into three stations; it came down to an hour and a quarter for 140 families" has all three — and gets written the same day, because the number is gone within a week.',
+          },
+        },
+        {
+          type: 'order',
+          prompt: {
+            ar: 'ملفّ الإنجازات يُبنى بترتيب. رتّب الخطوات.',
+            en: 'An achievement record gets built in an order. Put the steps into it.',
+          },
+          steps: {
+            ar: [
+              'تختار الفرصة على أساس المهارة التي تريد بناءها، لا على أساس ما هو متاح',
+              'تكتب السياق قبل أن تبدأ: ما الوضع الآن، وبأي رقم',
+              'تسجّل دورك والنتيجة أثناء المشروع لا بعده',
+              'تطلب التوصية المكتوبة من مشرفك وهو ما يزال في موقعه',
+              'تراجع الملفّ كل بضعة أشهر وتحذف ما لم يعد يمثّلك',
+            ],
+            en: [
+              'Choose the opportunity for the skill you want to build, not for what happens to be available',
+              'Write the context before you start: what the situation is now, and in what number',
+              'Record your part and the outcome during the project rather than after it',
+              'Ask your supervisor for the written recommendation while they are still in post',
+              'Revisit the record every few months and take out what no longer represents you',
+            ],
+          },
+          afterword: {
+            ar: 'الخطوتان اللتان يقع فيهما الخطأ عادةً هما الثانية والرابعة. من لا يكتب الوضع قبل أن يبدأ لا يستطيع لاحقاً إثبات أن شيئاً تغيّر — يبقى معه انطباع فقط. ومن يؤجّل طلب التوصية إلى ما بعد المشروع يكتشف أن المشرف غادر، أو أنه يتذكّر الحماس ولا يتذكّر الأرقام.',
+            en: 'The two most often got wrong are the second and the fourth. Somebody who does not write the situation down before starting cannot afterwards show that anything changed — all they are left with is an impression. And somebody who leaves the recommendation until after the project finds the supervisor has moved on, or remembers the enthusiasm and none of the numbers.',
+          },
+        },
         {
           type: 'quiz',
           id: 'pi-q5',

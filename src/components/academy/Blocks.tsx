@@ -1,4 +1,8 @@
 import { Quiz } from '@/components/Quiz';
+import { OrderBlock } from '@/components/academy/practice/OrderBlock';
+import { SortBlock } from '@/components/academy/practice/SortBlock';
+import { ScenarioBlock } from '@/components/academy/practice/ScenarioBlock';
+import { RevealBlock } from '@/components/academy/practice/RevealBlock';
 import type { Block } from '@/lib/course-content/types';
 import type { Locale } from '@/lib/i18n';
 
@@ -141,5 +145,63 @@ export function renderBlock(block: Block, lang: Locale, key: number, quiz: QuizC
         />
       );
     }
+
+    /* ------------------------------------------------------------ practice
+     *
+     * None of these is marked and none of them reaches the server. They are
+     * rendered here beside the graded quiz so an author writing a module does
+     * not have to think about which system a block belongs to — the type
+     * decides, and questionsIn() only ever collects 'quiz'.
+     */
+    case 'order':
+      return (
+        <OrderBlock
+          key={key}
+          lang={lang}
+          prompt={block.prompt[lang]}
+          steps={block.steps[lang]}
+          afterword={block.afterword[lang]}
+        />
+      );
+
+    case 'sort':
+      return (
+        <SortBlock
+          key={key}
+          lang={lang}
+          prompt={block.prompt[lang]}
+          buckets={block.buckets.map((b) => ({ id: b.id, label: b.label[lang] }))}
+          items={block.items.map((it) => ({
+            text: it.text[lang],
+            bucket: it.bucket,
+            because: it.because[lang],
+          }))}
+        />
+      );
+
+    case 'scenario':
+      return (
+        <ScenarioBlock
+          key={key}
+          lang={lang}
+          title={block.title[lang]}
+          situation={block.situation[lang]}
+          choices={block.choices.map((c) => ({
+            text: c.text[lang],
+            outcome: c.outcome[lang],
+            best: c.best,
+          }))}
+        />
+      );
+
+    case 'reveal':
+      return (
+        <RevealBlock
+          key={key}
+          lang={lang}
+          prompt={block.prompt[lang]}
+          answer={block.answer[lang]}
+        />
+      );
   }
 }

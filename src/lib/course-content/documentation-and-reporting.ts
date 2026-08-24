@@ -176,6 +176,75 @@ export const documentationAndReporting: CourseContent = {
             en: 'Your reading matters: you were the one there. But it goes on a separate, labelled line — "my observation: he seemed frightened when home was mentioned". That way the reader can weigh the fact and the impression separately, build a decision on the first and take account of the second, rather than inheriting your conclusion without knowing it was one.',
           },
         },
+        /*
+         * Practice, not assessment.
+         *
+         * The two lists above can be read and agreed with by somebody who
+         * still cannot tell one from the other in a sentence nobody has
+         * sorted for them — which is the actual skill. The only way to find
+         * out is to try it, and this costs no marks.
+         */
+        {
+          type: 'sort',
+          prompt: {
+            ar: 'ضع كل جملة في مكانها. الواقعة شيء يستطيع شخصان حضرا الموقف أن يتّفقا عليه.',
+            en: 'Put each sentence where it belongs. A fact is something two people who were there could agree on.',
+          },
+          buckets: [
+            { id: 'fact', label: { ar: 'واقعة', en: 'Fact' } },
+            { id: 'view', label: { ar: 'تفسير', en: 'Interpretation' } },
+          ],
+          items: [
+            {
+              text: { ar: '«تأخّر عن النشاط ثلاث مرات هذا الشهر.»', en: '"He was late to the activity three times this month."' },
+              bucket: 'fact',
+              because: {
+                ar: 'عدد ومدّة. أي شخص يفتح سجلّ الحضور يصل إلى الرقم نفسه.',
+                en: 'A count and a period. Anyone opening the attendance sheet arrives at the same number.',
+              },
+            },
+            {
+              text: { ar: '«لا يهتمّ بالنشاط.»', en: '"He is not interested in the activity."' },
+              bucket: 'view',
+              because: {
+                ar: 'استنتاج عن نيّة شخص. قد يكون صحيحاً، وقد يكون السبب أن الباص يصل متأخراً — والجملة كما هي لا تترك لأحد مجالاً ليسأل.',
+                en: 'A conclusion about what somebody intends. It may be right, or the bus may arrive late — and the sentence as written leaves nobody room to ask.',
+              },
+            },
+            {
+              text: { ar: '«قالت الأم إنها لا تستطيع إحضاره يوم السبت.»', en: '"His mother said she cannot bring him on Saturdays."' },
+              bucket: 'fact',
+              because: {
+                ar: 'كلام منقول منسوب إلى قائله. الواقعة هنا أن هذا قيل، لا أنه صحيح.',
+                en: 'Reported speech, attributed. The fact is that this was said — not that it is true.',
+              },
+            },
+            {
+              text: { ar: '«الجوّ في المجموعة كان متوتّراً.»', en: '"The mood in the group was tense."' },
+              bucket: 'view',
+              because: {
+                ar: 'انطباع. اكتب ما رأيته — «تكلّم اثنان بصوت عالٍ وخرج ثالث» — ثم انطباعك في سطر معلَّم تحته.',
+                en: 'An impression. Write what you saw — "two of them raised their voices and a third walked out" — then your impression on a labelled line under it.',
+              },
+            },
+            {
+              text: { ar: '«لم يحضر أحد من اللجنة الاجتماع.»', en: '"Nobody from the committee attended the meeting."' },
+              bucket: 'fact',
+              because: {
+                ar: 'قابل للتحقّق من محضر الاجتماع، ولا يحتمل قراءتين.',
+                en: 'Checkable against the minutes, and not open to two readings.',
+              },
+            },
+            {
+              text: { ar: '«المكان غير مناسب للأطفال.»', en: '"The venue is not suitable for children."' },
+              bucket: 'view',
+              because: {
+                ar: 'حكم. الواقعة التي تحته قد تكون «الدرج بلا درابزين والباب يفتح على الشارع» — وهذه يمكن معالجتها، أما الحكم فلا.',
+                en: 'A judgement. The fact underneath it might be "the stairs have no rail and the door opens onto the street" — which can be acted on, where a judgement cannot.',
+              },
+            },
+          ],
+        },
         {
           type: 'quiz',
           id: 'dr-q2',
@@ -239,6 +308,66 @@ export const documentationAndReporting: CourseContent = {
             ar: 'أكثر بند يتكرّر في المحاضر ولا يُنفَّذ هو البند المكتوب باسم الجميع. «سنتواصل مع البلدية» يعني أن كل حاضر يفترض أن غيره سيفعلها. اسم واحد وتاريخ واحد يحوّلان النيّة إلى التزام — ويجعلان السؤال في الاجتماع القادم ممكناً بلا اتّهام.',
             en: 'The item that most often appears in minutes and never happens is the one addressed to everybody. "We will contact the municipality" means every person present assumes somebody else will. One name and one date turn an intention into a commitment — and make the question at the next meeting askable without it sounding like an accusation.',
           },
+        },
+        /*
+         * Practice, not assessment. Written as a scenario rather than a
+         * question because there is no single right answer here — the
+         * difference between the responses is what happens at the next
+         * meeting, and that is the part worth showing.
+         */
+        {
+          type: 'scenario',
+          title: {
+            ar: 'الاجتماع على وشك أن ينتهي',
+            en: 'The meeting is about to end',
+          },
+          situation: {
+            ar: 'أنت تكتب المحضر. قيل قبل قليل: «لازم نتواصل مع البلدية قبل النشاط.» وافق الجميع بإيماءة، ولم يقل أحد إنه سيفعلها. الوقت انتهى والناس بدأت تجمع أغراضها.',
+            en: 'You are taking the minutes. Somebody said a moment ago: "we need to contact the municipality before the activity." Everyone nodded, and nobody said they would do it. The time is up and people are gathering their things.',
+          },
+          choices: [
+            {
+              text: {
+                ar: 'تكتبها كما قيلت: «التواصل مع البلدية قبل النشاط.»',
+                en: 'Write it as it was said: "contact the municipality before the activity."',
+              },
+              outcome: {
+                ar: 'المحضر دقيق ولا أحد ينفّذ. في الاجتماع القادم يكتشف الفريق أن أحداً لم يتواصل، ويقضي عشرين دقيقة في معرفة من كان يفترض أن يفعلها — والجواب أنه لم يكن أحد.',
+                en: 'The minutes are accurate and nobody acts. At the next meeting the team discovers no one made contact, and spends twenty minutes working out whose job it was — the answer being that it was nobody’s.',
+              },
+            },
+            {
+              text: {
+                ar: 'تسأل قبل أن ينفضّ الاجتماع: «مين بياخدها ولوين تاريخ؟»',
+                en: 'Ask before the meeting breaks up: "who is taking this, and by when?"',
+              },
+              outcome: {
+                ar: 'سؤال من عشر كلمات يوقف الجميع نصف دقيقة، ثم يخرج اسم وتاريخ. المهمّة تُكتب باسم شخص، ويصبح السؤال عنها في الاجتماع القادم عادياً لا اتّهاماً.',
+                en: 'A ten-word question stops everybody for half a minute, and a name and a date come out of it. The action is written against a person, and asking about it next time is ordinary rather than an accusation.',
+              },
+              best: true,
+            },
+            {
+              text: {
+                ar: 'تكتبها باسمك أنت، لأنك من لاحظ أنها بلا صاحب.',
+                en: 'Put your own name on it, since you are the one who noticed it had no owner.',
+              },
+              outcome: {
+                ar: 'تُنفَّذ هذه المرة. ومع الوقت يصير كاتب المحضر هو من يحمل كل بند معلّق، ويتعلّم الفريق أنه لا يحتاج أن يلتزم بشيء — وأنت وحدك من يدفع الثمن.',
+                en: 'It gets done this time. Over a few months the person taking the minutes ends up carrying every loose item, the team learns it need not commit to anything, and you are the only one paying for it.',
+              },
+            },
+            {
+              text: {
+                ar: 'تتركها خارج المحضر، فهي لم تُحسم أصلاً.',
+                en: 'Leave it out of the minutes — it was never actually settled.',
+              },
+              outcome: {
+                ar: 'الأمر يختفي تماماً. لا أحد ينفّذه ولا أحد يتذكّره، ويصل يوم النشاط بلا إذن من البلدية. ما لم يُحسم يُكتب في خانته الخاصة — «لم يُحسم، يُعاد إليه في…» — لا يُحذف.',
+                en: 'It disappears altogether. Nobody does it, nobody remembers it, and the day arrives with no permission from the municipality. What was not settled goes in its own line — "left open, returns on…" — rather than out of the record.',
+              },
+            },
+          ],
         },
         {
           type: 'quiz',
@@ -388,6 +517,51 @@ export const documentationAndReporting: CourseContent = {
           content: {
             ar: 'وقبل الإرسال، اقرأ ما كتبت مرّة واحدة وأنت تسأل نفسك سؤالين فقط: هل يستطيع من لم يحضر أن يفهم ما جرى من هذا وحده؟ وهل هناك معلومة عن شخص لا يحتاجها القارئ ليتصرّف؟ السؤال الأول يمسك النقص، والثاني يمسك الزيادة — وهما الخطآن الوحيدان اللذان يقع فيهما التقرير عادةً.',
             en: 'And before sending, read it once asking yourself two questions only: could somebody who was not there understand what happened from this alone? And is there anything about a person the reader does not need in order to act? The first catches what is missing, the second catches what is surplus — and those are the only two mistakes a report usually makes.',
+          },
+        },
+        /*
+         * Practice, and the one thing in this course that has never actually
+         * happened: the association has no verified hours at all, because
+         * attendance keeps coming back as a photograph of a list on unlined
+         * paper. The order is what makes the difference — signatures before
+         * people leave, not a name recalled afterwards.
+         */
+        {
+          type: 'order',
+          prompt: {
+            ar: 'انتهى النشاط. رتّب ما تفعله، من الأول إلى الأخير.',
+            en: 'The activity has finished. Put what you do in order, first to last.',
+          },
+          steps: {
+            ar: [
+              'تجمع سجلّ الحضور قبل أن يغادر أحد',
+              'تكتب وقت المغادرة وتوقّع أنك رأيتهم حاضرين',
+              'تدوّن ما جرى في اليوم نفسه ولو ناقصاً',
+              'ترفع الحضور فيُحتسب للمتطوّعين ساعاتهم',
+              'تجلس مع الفريق بعد أيام لمراجعة ما يُعدَّل',
+            ],
+            en: [
+              'Collect the attendance sheet before anybody leaves',
+              'Write the leaving time and sign that you saw them there',
+              'Write down what happened the same day, even if incomplete',
+              'Submit the attendance so the volunteers’ hours are counted',
+              'Sit with the team a few days later to review what to change',
+            ],
+          },
+          afterword: {
+            ar: 'الترتيب ليس شكلياً. التوقيع بعد انصراف الناس معناه أنك تكتب ما تتذكّره، لا ما رأيته — والساعات المبنيّة على ذاكرة لا يستطيع أحد التصديق عليها. لهذا يأتي سجلّ الحضور أولاً، والمراجعة أخيراً حين يكون الغضب قد هدأ والوقائع ما تزال مكتوبة.',
+            en: 'The order is not a formality. Signing after people have gone means writing what you remember rather than what you saw — and hours built on a memory are hours nobody can verify. That is why the sheet comes first and the review comes last, once tempers have settled and the facts are still written down.',
+          },
+        },
+        {
+          type: 'reveal',
+          prompt: {
+            ar: 'كتبتَ في التقرير: «تصرّف الأب بعدوانية عند الاستلام». ما الخطأ، وكيف تُعيد كتابتها؟',
+            en: 'You wrote in the report: "the father behaved aggressively at collection". What is wrong with it, and how would you write it again?',
+          },
+          answer: {
+            ar: 'كلمة «بعدوانية» حكم، لا واقعة — ومن يقرأ لا يعرف ما رأيتَه فعلاً. اكتب ما جرى: «رفع صوته أمام الأطفال ودفع الباب بقوة، ثم غادر مع ابنه الساعة ١:٤٠.» ثم في سطر معلَّم: «ملاحظتي: بدا لي غاضباً من التأخير.» الأولى يستطيع أي شخص التصرّف بناءً عليها، والثانية تبقى رأيك ومعروفة أنها رأيك.',
+            en: 'The word "aggressively" is a judgement, not a fact — and the reader has no idea what you actually saw. Write what happened: "he raised his voice in front of the children and pushed the door hard, then left with his son at 13:40." Then on a labelled line: "my observation: he seemed angry about the delay." Anybody can act on the first; the second stays your reading, and is known to be one.',
           },
         },
         {
