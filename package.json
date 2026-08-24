@@ -11,7 +11,8 @@
     "probe": "tsx --env-file=.env.local scripts/probe-all.mts",
     "sweep": "tsx --env-file=.env.local scripts/sweep.mts",
     "check": "tsc --noEmit && tsc -p scripts --noEmit && next build",
-    "imports": "node scripts/undeclared-imports.mjs"
+    "imports": "node scripts/undeclared-imports.mjs",
+    "ci": "node scripts/undeclared-imports.mjs && npm run build && tsc --noEmit && tsc -p scripts --noEmit"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",

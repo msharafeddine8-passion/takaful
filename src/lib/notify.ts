@@ -24,7 +24,21 @@ export type NotificationKind =
   // An activity published without a date has been given one, and the people
   // who asked to be told are being told. Sent once — see migration 028.
   | 'activity.scheduled'
-  | 'course.available' | 'account.welcome';
+  | 'course.available' | 'account.welcome'
+  /*
+   * A badge earned, and a personal milestone.
+   *
+   * These went into chk_notification_kind in migration 032 and were left out
+   * of this union — the wrong half to forget. The database accepted the rows,
+   * thirty notifications went out, and nothing noticed until `tsc -p scripts`
+   * did. This list and that constraint are one rule written twice; either one
+   * drifting means the other is not enforcing what it appears to.
+   *
+   * Neither is sent for a small change. A leaderboard place that moves every
+   * time somebody else logs an hour is not news, and the badge backfill sends
+   * one message per person rather than one per badge.
+   */
+  | 'badge.earned' | 'milestone.reached';
 
 export type Notification = {
   id: string;

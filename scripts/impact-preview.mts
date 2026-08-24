@@ -22,9 +22,11 @@ const url = /DATABASE_URL\s*=\s*"?([^"\n\r]+)"?/.exec(env)![1].trim();
 const c = new Client({ connectionString: url, ssl: { rejectUnauthorized: false } });
 await c.connect();
 
-const one = async <T>(sql: string, args: unknown[] = []): Promise<T> =>
+/* The trailing comma is required: in a .mts file a bare `<T>` on an arrow
+ * function is reserved syntax, because it cannot be told apart from JSX. */
+const one = async <T,>(sql: string, args: unknown[] = []): Promise<T> =>
   (await c.query(sql, args)).rows[0] as T;
-const all = async <T>(sql: string, args: unknown[] = []): Promise<T[]> =>
+const all = async <T,>(sql: string, args: unknown[] = []): Promise<T[]> =>
   (await c.query(sql, args)).rows as T[];
 
 const rule = (s: string) => console.log(`\n${'—'.repeat(4)} ${s}`);
