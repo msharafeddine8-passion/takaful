@@ -138,6 +138,21 @@ function CourseRow({
       </div>
       <p className="mt-2 max-w-[60ch] text-[0.94rem] leading-relaxed text-ink-2">{summary}</p>
 
+      {/*
+        * Recognised, not sat.
+        *
+        * The association credited this course from prior learning, so there is
+        * no score and there never was a paper. Said in a sentence rather than
+        * left to the facts below, where it would show as a pass with the score
+        * line simply missing — and a missing score on a passed course reads as
+        * something having gone wrong.
+        */}
+      {standing?.recognised && (
+        <p className="mt-3 rounded-xl border border-brand-blue/30 bg-brand-blue/[0.06] px-4 py-3 text-[0.92rem] leading-relaxed text-ink-2">
+          {t.recognisedNote}
+        </p>
+      )}
+
       {touched && (
         <dl className="mt-4 flex flex-wrap gap-x-7 gap-y-2 text-[0.88rem]">
           {standing.best_score !== null && (

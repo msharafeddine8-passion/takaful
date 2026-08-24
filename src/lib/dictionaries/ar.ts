@@ -488,6 +488,7 @@ export const ar: Dictionary = {
       statusVerified: 'معتمدة',
       statusRejected: 'مرفوضة',
       statusCorrected: 'مصحَّحة',
+      carriedOver: 'محمولة من قبل الموقع',
       correctionOf: 'تصحيح',
       backToAccount: 'رجوع إلى حسابي',
     },
@@ -871,6 +872,8 @@ export const ar: Dictionary = {
       passed: 'ناجح',
       failed: 'لم تجتز بعد',
       draft: 'مسوّدة',
+      recognisedNote:
+        'اعتمدت الجمعية هذه الدورة لك على أساس إتمامك إياها قبل الموقع، فلا توجد علامة — لم يكن هناك امتحان هنا. الشهادة صادرة والدورات التالية مفتوحة.',
       bestScore: 'أفضل نتيجة',
       passMark: 'درجة النجاح',
       attempts: 'المحاولات',

@@ -415,6 +415,15 @@ export type CourseStanding = {
   last_attempt_at: Date | null;
   open_answered: number | null;
   modules_read: number;
+  /*
+   * Passed because the association recognised prior learning, not because a
+   * paper was sat here.
+   *
+   * Kept beside `passed` rather than folded into it. The standing is the
+   * same; the story is not, and a page reporting "1 attempt, no score,
+   * passed" reads as a fault rather than as recognition.
+   */
+  recognised: boolean;
 };
 
 /**
@@ -426,12 +435,21 @@ export type CourseStanding = {
  */
 export async function learningStanding(userId: string): Promise<Map<string, CourseStanding>> {
   const rows = await query<CourseStanding>(
+    /*
+     * A recognised pass is a row here but was never an attempt: nothing was
+     * sat, and it carries no score by design. So it is excluded from the
+     * attempt count, the best score and the last-attempt date — otherwise the
+     * page says "1 attempt, no score" about somebody who answered nothing —
+     * and surfaced on its own flag instead.
+     */
     `WITH attempts AS (
        SELECT course_slug,
-              (count(*) FILTER (WHERE submitted_at IS NOT NULL))::INTEGER AS attempts,
+              (count(*) FILTER (WHERE submitted_at IS NOT NULL
+                                  AND source <> 'recognised'))::INTEGER    AS attempts,
               MAX(score) FILTER (WHERE submitted_at IS NOT NULL)          AS best_score,
               COALESCE(bool_or(passed), false)                            AS passed,
-              MAX(submitted_at)                                           AS last_attempt_at,
+              COALESCE(bool_or(source = 'recognised'), false)             AS recognised,
+              MAX(submitted_at) FILTER (WHERE source <> 'recognised')     AS last_attempt_at,
               -- Parenthesised so the cast applies to the aggregate and not to
               -- the FILTER clause, and because MAX over count(*) is a bigint,
               -- which the driver would otherwise hand back as a string.
@@ -446,6 +464,7 @@ export async function learningStanding(userId: string): Promise<Map<string, Cour
             COALESCE(a.attempts, 0)                  AS attempts,
             a.best_score,
             COALESCE(a.passed, false)                AS passed,
+            COALESCE(a.recognised, false)            AS recognised,
             a.last_attempt_at,
             a.open_answered,
             COALESCE(m.modules_read, 0)              AS modules_read

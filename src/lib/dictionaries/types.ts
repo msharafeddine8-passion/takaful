@@ -344,6 +344,7 @@ export type Account = {
     statusRejected: string;
     statusCorrected: string;
     correctionOf: string;
+    carriedOver: string;
     backToAccount: string;
   };
   profile: {
@@ -730,6 +731,7 @@ export type Account = {
     failed: string;
     draft: string;
     bestScore: string;
+    recognisedNote: string;
     passMark: string;
     attempts: string;
     modulesRead: string;

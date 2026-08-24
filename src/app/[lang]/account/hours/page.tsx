@@ -145,7 +145,23 @@ export default async function HoursPage(props: PageProps<'/[lang]/account/hours'
                       {new Date(e.worked_on).toISOString().slice(0, 10)}
                     </td>
                     <td className="px-4 py-3 text-ink-2">
-                      {(lang === 'ar' ? e.activity_title_ar : e.activity_title_en) ?? '—'}
+                      {/*
+                        * A carried-over row is not a day of work and must not
+                        * read as one. It has no activity, because there was no
+                        * activity on this platform — so without saying what it
+                        * is, the ledger prints a hundred and twenty hours
+                        * against a single Tuesday next to an em dash.
+                        */}
+                      {e.carried_over ? (
+                        <>
+                          <span className="rounded-full bg-brand-blue/10 px-2.5 py-1 text-[0.8rem] font-extrabold text-brand-blue dark:bg-sky-300/10 dark:text-sky-300">
+                            {t.carriedOver}
+                          </span>
+                          {e.note && <span className="ms-2 text-[0.88rem]">{e.note}</span>}
+                        </>
+                      ) : (
+                        (lang === 'ar' ? e.activity_title_ar : e.activity_title_en) ?? '—'
+                      )}
                       {e.corrects_id && (
                         <span className="ms-2 text-[0.8rem] text-ink-3">({t.correctionOf})</span>
                       )}

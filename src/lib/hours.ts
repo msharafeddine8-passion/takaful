@@ -22,6 +22,15 @@ export type HourEntry = {
   verified_at: Date | null;
   reject_reason: string | null;
   corrects_id: string | null;
+  /*
+   * Hours carried forward from before the platform. Not a day of work: one
+   * row covering a period, with the note saying which period.
+   *
+   * Read here so the ledger can say that, rather than printing a hundred and
+   * twenty hours against a single Tuesday and leaving the volunteer to work
+   * out what happened to them.
+   */
+  carried_over: boolean;
 };
 
 /** Verified minutes only. Pending hours are not hours yet. */
@@ -47,7 +56,7 @@ export async function pendingMinutes(userId: string): Promise<number> {
 
 export async function entriesFor(userId: string, limit = 50): Promise<HourEntry[]> {
   return query<HourEntry>(
-    `SELECT h.id, h.worked_on, h.minutes, h.note, h.status,
+    `SELECT h.id, h.worked_on, h.minutes, h.note, h.status, h.carried_over,
             a.title_ar AS activity_title_ar, a.title_en AS activity_title_en,
             h.verified_at, h.reject_reason, h.corrects_id
        FROM hour_entries h

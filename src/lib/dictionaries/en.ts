@@ -494,6 +494,7 @@ export const en: Dictionary = {
       statusVerified: 'Verified',
       statusRejected: 'Rejected',
       statusCorrected: 'Corrected',
+      carriedOver: 'Carried over from before the site',
       correctionOf: 'correction',
       backToAccount: 'Back to my account',
     },
@@ -876,6 +877,8 @@ export const en: Dictionary = {
       passed: 'Passed',
       failed: 'Not passed yet',
       draft: 'Draft',
+      recognisedNote:
+        'The association credited this course to you for having completed it before the site existed, so there is no score — no paper was sat here. The certificate is issued and the courses that follow are open.',
       bestScore: 'Best score',
       passMark: 'Pass mark',
       attempts: 'Attempts',
