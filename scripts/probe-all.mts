@@ -173,10 +173,36 @@ if (before && after) {
       to = after[table];
     if (from === undefined || to === undefined || from === to) continue;
     polluted = true;
-    console.log(
-      `\n  LEFT BEHIND  ${table}: ${from} before, ${to} after — a probe changed the association's ` +
-        `configuration and did not put it back.`,
-    );
+
+    /*
+     * Which way it moved changes what it means, and printing "LEFT BEHIND" for
+     * both directions cost half an hour of believing the association's journey
+     * configuration had been deleted in production.
+     *
+     * MORE rows after than before is the real fault: a probe added something
+     * and did not take it back.
+     *
+     * FEWER rows is usually the opposite. The run began while a previously
+     * crashed probe's rows were still in the tables, so the "before" was the
+     * polluted number and a sweep during this run put it right. Both counts
+     * that triggered this — journey_stages 12 to 6 and stage_requirements 32
+     * to 31 — turned out to match migration 025 exactly, stage for stage.
+     *
+     * So the line now says what to check rather than what to conclude.
+     */
+    if (to > from) {
+      console.log(
+        `\n  LEFT BEHIND  ${table}: ${from} before, ${to} after — a probe added ${to - from} ` +
+          `row(s) and did not remove them. Run: npm run sweep`,
+      );
+    } else {
+      console.log(
+        `\n  FEWER ROWS   ${table}: ${from} before, ${to} after — ${from - to} row(s) went away ` +
+          `during the run. Usually a sweep clearing up after an earlier crashed probe, which ` +
+          `makes the 'before' the wrong number and this the right one. Compare against the seed ` +
+          `migration before concluding anything was lost.`,
+      );
+    }
   }
   if (!polluted) console.log('\nConfiguration is exactly as the run found it.');
 } else {
