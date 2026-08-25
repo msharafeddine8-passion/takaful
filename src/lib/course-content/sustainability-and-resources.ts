@@ -62,7 +62,7 @@ export const sustainabilityAndResources: CourseContent = {
         {
           type: 'text',
           content: {
-            ar: 'المشروع الذي ينهار بمجرّد انتهاء عقد التمويل لم يبنِ استدامةً — بنى اعتماداً. والفرق بين الاثنين يظهر في تصميم المشروع من اليوم الأوّل: هل أوجدنا قدرةً تبقى في المجتمع أم قدّمنا خدمةً تنتهي بمغادرة الفريق؟ الاستدامة في العمل التطوّعي والإنساني تعني أن الأثر الذي أحدثته المنظمة يستمرّ بعد انتهاء تمويلها أو حضورها، وأن المجتمع المستفيد قادر على المضيّ دون الحاجة الدائمة إلى طرف خارجي. هذا لا يعني إيقاف الدعم الخارجي فجأةً، بل بناءه بحيث يتناقص الاعتماد عليه تدريجياً بينما تنمو القدرة الداخلية للمجتمع والمنظمة معاً. والمنظمات التي تفكّر في الاستدامة منذ البداية تجد أن الخروج الكريم ممكن — والتي لا تفكّر فيه تجد أنها بنت هشاشةً وعلّقت أمالاً لا تستطيع الوفاء بها.',
+            ar: 'المشروع الذي ينهار بمجرّد انتهاء عقد التمويل لم يبنِ استدامةً — بنى اعتماداً. والفرق بين الاثنين يظهر في تصميم المشروع من اليوم الأوّل: هل أوجدنا قدرةً تبقى في المجتمع أم قدّمنا خدمةً تنتهي بمغادرة الفريق؟ الاستدامة في العمل التطوّعي والإنساني تعني أن الأثر الذي أحدثته المنظمة يستمرّ بعد انتهاء تمويلها أو حضورها، وأن المجتمع المستفيد قادر على المضيّ دون الحاجة الدائمة إلى طرف خارجي. هذا لا يعني إيقاف الدعم الخارجي فجأةً، بل بناءه بحيث يتناقص الاعتماد عليه تدريجياً بينما تنمو القدرة الداخلية للمجتمع والمنظمة معاً. والمنظمات التي تفكّر في الاستدامة منذ البداية تجد أن الخروج الكريم ممكن — والتي لا تفكّر فيه تجد أنها بنت هشاشةً وعلّقت آمالاً لا تستطيع الوفاء بها.',
             en: 'A project that collapses the moment a funding contract ends has not built sustainability — it has built dependence. The difference between the two shows up in how a project is designed from day one: did we create capacity that stays in the community, or did we deliver a service that ends when the team leaves? Sustainability in volunteer and humanitarian work means that the impact an organisation creates continues after its funding or presence ends, and that the beneficiary community can carry on without permanently depending on an outside party. This does not mean withdrawing external support suddenly; it means building it so that dependence decreases gradually while the internal capacity of the community and organisation grows together.',
           },
         },
@@ -73,7 +73,7 @@ export const sustainabilityAndResources: CourseContent = {
               title: { ar: 'الاستدامة المالية', en: 'Financial Sustainability' },
               text: {
                 ar: 'قدرة المنظمة على توليد أو تنويع الموارد الكافية لتغطية تكاليفها دون الاعتماد الكامل على مصدر واحد. تشمل التمويل الحكومي والمانحين الدوليين والتبرّعات المحلية وأيّ إيرادات ذاتية يمكن توليدها.',
-                en: 'The organisation\'s capacity to generate or diversify enough resources to cover its costs without depending entirely on a single source.',
+                en: 'The organisation\'s capacity to generate or diversify enough resources to cover its costs without depending entirely on a single source. It covers government funding, international donors, local donations and any earned income the organisation can generate itself.',
               },
             },
             {
@@ -101,7 +101,7 @@ export const sustainabilityAndResources: CourseContent = {
           },
           content: {
             ar: 'أشيع خطأ في التخطيط للاستدامة هو تركها لآخر ستة أشهر من المشروع، حين تكون الموارد قد نفدت والفريق مرهقاً والتوثيق لم يكتمل. المشروع الذي لم يضع سؤال «ماذا سيبقى بعدنا؟» في خطّته الأولى يجد الإجابة في الغالب: لا شيء يُذكر. والأصعب من ذلك هو أن المجتمعات التي اعتمدت على مشروع من هذا النوع تعاني من فجوة مضاعفة: حُرمت من بناء قدرتها الخاصة طوال سنوات الدعم، ثم خُيِّرت فجأةً بين لا شيء أو الاعتماد على مشروع آخر بنفس النمط.',
-            en: 'The most common mistake in sustainability planning is leaving it to the last six months of a project, when resources are exhausted, the team is tired and documentation is incomplete. A project that did not build the question "what will remain after us?" into its first plan usually finds the answer: very little.',
+            en: 'The most common mistake in sustainability planning is leaving it to the last six months of a project, when resources are exhausted, the team is tired and documentation is incomplete. A project that did not build the question "what will remain after us?" into its first plan usually finds the answer: very little. Harder still, communities that came to rely on a project of this kind suffer a double gap: denied the chance to build their own capacity throughout the years of support, then suddenly left to choose between nothing and dependence on another project built the same way.',
           },
         },
         {
@@ -184,7 +184,7 @@ export const sustainabilityAndResources: CourseContent = {
           type: 'text',
           content: {
             ar: 'تنويع مصادر التمويل يستغرق وقتاً وجهداً — وكثير من الفرق تتجنّبه لأنه أصعب من كتابة مقترح واحد ضخم. لكن قاعدة الأربعين بالمئة تستحق الجهد: إذا لم يتجاوز أيّ مصدر أربعين بالمئة من ميزانيتك، فإن فقدانه مؤلم لكنه لا يوقف عملك. والإحصاءات الإقليمية تُظهر باستمرار أن المنظمات ذات المصادر المتعدّدة تعيش ضعف عمر تلك المعتمدة على مصدر واحد في ظروف متشابهة. التنويع ليس ترفاً — هو الحدّ الفاصل بين منظمة تخطّط لعقد ومنظمة تتمنّى ألّا ينتهي العقد الحالي.',
-            en: 'Diversifying funding sources takes time and effort — and many teams avoid it because it is harder than writing one large proposal. But the forty per cent rule is worth the effort: if no source exceeds forty per cent of your budget, losing it hurts but does not stop your work.',
+            en: 'Diversifying funding sources takes time and effort — and many teams avoid it because it is harder than writing one large proposal. But the forty per cent rule is worth the effort: if no source exceeds forty per cent of your budget, losing it hurts but does not stop your work. Regional figures consistently show that organisations with multiple sources survive twice as long as those depending on a single source in comparable circumstances. Diversification is not a luxury — it is the line between an organisation planning for the next decade and an organisation hoping its current contract does not end.',
           },
         },
         {
@@ -239,7 +239,7 @@ export const sustainabilityAndResources: CourseContent = {
           type: 'text',
           content: {
             ar: 'حين نقول «نحتاج موارد»، الذهن يذهب مباشرةً إلى المال. لكن كثيراً من ما يكلّف النقد يمكن الحصول عليه بطريقة أخرى: مكان مجّاني يقدّمه مسجد أو مدرسة، خبير محاسب يتطوّع بمراجعة حسابات المنظمة، محامٍ يقدّم استشارة قانونية، مطبعة تطبع المواد بسعر التكلفة، تاجر يتبرّع بالمواد الغذائية لفعالية. كل هذه موارد عينية — أي موارد ذات قيمة مالية تُقدَّم دون تحويل نقدي — وهي تقلّل الحاجة إلى التمويل النقدي وتبني في الوقت نفسه علاقات مجتمعية حقيقية. المنظمة التي تعمل وسط مجتمع دون أن تطلب موارده المحلية تفوّت فرصتين في آنٍ واحد: الفرصة المادية وفرصة بناء الملكية المجتمعية.',
-            en: 'When we say "we need resources", the mind goes straight to money. But much of what costs cash can be obtained another way: a free space offered by a mosque or school, an accountant volunteering to review the organisation\'s books, a lawyer giving legal advice, a printer producing materials at cost, a merchant donating food supplies for an event. These are all in-kind resources — resources with monetary value offered without a cash transfer — and they reduce the need for financial funding while simultaneously building genuine community relationships.',
+            en: 'When we say "we need resources", the mind goes straight to money. But much of what costs cash can be obtained another way: a free space offered by a mosque or school, an accountant volunteering to review the organisation\'s books, a lawyer giving legal advice, a printer producing materials at cost, a merchant donating food supplies for an event. These are all in-kind resources — resources with monetary value offered without a cash transfer — and they reduce the need for financial funding while simultaneously building genuine community relationships. An organisation working inside a community without ever asking for its local resources misses two opportunities at once: the material one, and the chance to build community ownership.',
           },
         },
         {
@@ -272,7 +272,7 @@ export const sustainabilityAndResources: CourseContent = {
           type: 'text',
           content: {
             ar: 'التطوّع المهني يستحق اهتماماً خاصاً لأنه يُحلّ مشكلتين في آنٍ واحد: الخبرة والتمويل. المنظمة الصغيرة التي لا تستطيع توظيف محاسب قانوني يمكنها أن تطلب تطوّع أحد أعضاء نقابة المحاسبين. المدرسة التي لا تملك معلّمي لغات أجنبية يمكنها التواصل مع جمعيات المغتربين. الجمعية التي تحتاج مواقع إلكترونية يمكنها التواصل مع كلية الحاسوب في الجامعة القريبة. المفتاح هو أن تُحدّد ما تحتاجه بدقّة، وأن تبحث في المجتمع المحيط عمّن يملكه ويرغب في المساهمة، وأن تجعل المساهمة سهلة ومُقدَّرة ومُوثَّقة. الخبير الذي يتطوّع ولا يرى اسمه في تقرير ولا تقديراً رسمياً لن يتطوّع مرّة ثانية. الذي يرى أثره موثّقاً وعمله مُقدَّراً يصبح سفيراً للمنظمة.',
-            en: 'Skilled volunteering deserves special attention because it solves two problems at once: expertise and funding. A small organisation that cannot afford a licensed accountant can ask a member of the accounting association to volunteer. The key is to define exactly what is needed, search the surrounding community for whoever has it and wants to contribute, and make that contribution easy, valued and documented.',
+            en: 'Skilled volunteering deserves special attention because it solves two problems at once: expertise and funding. A small organisation that cannot afford a licensed accountant can ask a member of the accounting association to volunteer. A school with no foreign-language teachers can approach diaspora associations. An association that needs a website can approach the computing faculty at a nearby university. The key is to define exactly what is needed, search the surrounding community for whoever has it and wants to contribute, and make that contribution easy, valued and documented. An expert who volunteers and never sees their name in a report or any formal acknowledgement will not volunteer a second time. One who sees their contribution documented and their work valued becomes an ambassador for the organisation.',
           },
         },
         {
@@ -336,7 +336,7 @@ export const sustainabilityAndResources: CourseContent = {
           type: 'text',
           content: {
             ar: 'خطة الاستدامة وثيقة مختصرة وعملية تجيب على سؤال واحد: ماذا سيحدث لهذا المشروع بعد خمس سنوات أو بعد انتهاء التمويل الحالي، وما الخطوات التي نتّخذها اليوم لضمان أن يكون الجواب شيئاً إيجابياً؟ هي ليست تقريراً أكاديمياً ولا وثيقة استراتيجية ضخمة — هي خريطة طريق واضحة بأسماء ومواعيد ومؤشرات يمكن قياسها. المنظمات التي تكتب هذه الخطّة وتُراجعها سنوياً تُظهر للمانحين نضجاً مؤسسياً حقيقياً، وتخفّف من قلق الفريق حين تتغيّر الظروف، وتجعل الخروج من المشروع أمراً يُخطَّط له لا أمراً يفاجئ الجميع.',
-            en: 'A sustainability plan is a concise, practical document that answers one question: what will happen to this project in five years or after the current funding ends, and what steps are we taking today to ensure the answer is something positive? It is not an academic report or a large strategic document — it is a clear roadmap with names, dates and measurable indicators.',
+            en: 'A sustainability plan is a concise, practical document that answers one question: what will happen to this project in five years or after the current funding ends, and what steps are we taking today to ensure the answer is something positive? It is not an academic report or a large strategic document — it is a clear roadmap with names, dates and measurable indicators. Organisations that write this plan and review it every year show funders genuine institutional maturity, ease the team\'s anxiety when circumstances change, and make leaving a project something planned for rather than something that takes everyone by surprise.',
           },
         },
         {
@@ -452,7 +452,7 @@ export const sustainabilityAndResources: CourseContent = {
           type: 'text',
           content: {
             ar: 'حين يشتدّ الضغط المالي، يقع الفريق في إغراء تضخيم الوعود: «سنغيّر حياة ألف أسرة»، «سنُنهي الأمية في المنطقة»، «ستصبح القرية نموذجاً». هذه الجمل تُقنع المانحين أحياناً — لكنها تُنشئ التزامات مستحيلة تُقيَّم المنظمة عليها لاحقاً، وتُحبط المتطوّعين الذين لا يرون النتائج الموعودة، وتُخيّب ظنّ المجتمع الذي آمن بالوعود. الاتصالات الأخلاقية في جمع الدعم لا تعني التواضع الكاذب — تعني الدقّة الصادقة: «هذا ما نستطيع تحقيقه بهذا المبلغ في هذا الوقت، وهذا ما سيتغيّر فعلياً في حياة هؤلاء الناس.» الصدق لا يُضعف المقترحات — يبني الثقة طويلة الأمد التي تُحوِّل المانحين إلى شركاء لا مجرّد ممولّين.',
-            en: 'When financial pressure mounts, the temptation is to inflate promises: "we will change the lives of a thousand families", "we will end illiteracy in the region". These sentences sometimes persuade funders — but they create impossible obligations by which the organisation is later judged, and they disappoint communities that believed in the promises. Ethical fundraising communications do not mean false modesty — they mean honest precision: "this is what we can achieve with this amount in this time, and this is what will actually change in these people\'s lives."',
+            en: 'When financial pressure mounts, the temptation is to inflate promises: "we will change the lives of a thousand families", "we will end illiteracy in the region", "the village will become a model". These sentences sometimes persuade funders — but they create impossible obligations by which the organisation is later judged, they demoralise the volunteers who never see the promised results, and they disappoint the community that believed in the promises. Ethical fundraising communications do not mean false modesty — they mean honest precision: "this is what we can achieve with this amount in this time, and this is what will actually change in these people\'s lives." Honesty does not weaken a proposal — it builds the long-term trust that turns funders into partners rather than mere financiers.',
           },
         },
         {
@@ -482,7 +482,7 @@ export const sustainabilityAndResources: CourseContent = {
           title: { ar: 'الوعد المستحيل يكلّف أكثر من رفض التمويل', en: 'An impossible promise costs more than refusing funding' },
           content: {
             ar: 'المنظمة التي تقبل شروط منحة لا تستطيع الوفاء بها اعتقاداً أن الأمور ستنحلّ تجازف بأكثر من المال: تجازف بسمعتها مع المانح، وثقة المجتمع المستفيد، ومعنويات فريقها حين يعمل تحت ضغط هدف غير قابل للتحقيق. «لا تستطيع أن تعد بما لا تملكه» ليس موقفاً ضعيفاً — هو أساس كلّ شراكة ناجحة على المدى البعيد. والمانح الجيّد يفضّل الصدق ويُعيد التفاوض، بينما المانح الذي لا يريد سماع الحقيقة ليس شريكاً بل ممولّاً يبحث عن قصّة ناجحة بصرف النظر عمّا يحدث فعلاً.',
-            en: 'An organisation that accepts grant conditions it cannot meet — believing things will work out — risks more than money: it risks its reputation with the funder, the community\'s trust, and its team\'s morale when working under an unachievable target. Saying "we cannot promise what we do not have" is not weakness — it is the foundation of every successful long-term partnership.',
+            en: 'An organisation that accepts grant conditions it cannot meet — believing things will work out — risks more than money: it risks its reputation with the funder, the community\'s trust, and its team\'s morale when working under an unachievable target. Saying "we cannot promise what we do not have" is not weakness — it is the foundation of every successful long-term partnership. A good funder prefers the honest answer and will renegotiate; a funder who does not want to hear the truth is not a partner but a financier looking for a success story regardless of what is actually happening.',
           },
         },
         {
