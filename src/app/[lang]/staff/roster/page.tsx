@@ -121,7 +121,7 @@ export default async function StaffRosterPage(props: PageProps<'/[lang]/staff/ro
                 {/* Said out loud rather than buried: the reviewer is the only
                     check that the person claiming is the person listed. */}
                 {!c.name_agrees ? (
-                  <p className="mt-4 rounded-xl border-2 border-warn bg-warn/10 p-4 text-[0.95rem] font-bold">
+                  <p className="mt-4 rounded-xl border-2 border-warn bg-warn/10 p-4 text-[0.95rem] font-bold text-warn-text">
                     {t.nameMismatch}
                   </p>
                 ) : null}

@@ -44,11 +44,11 @@ export type ActivityCardRow = {
 };
 
 const TONE_CLASS: Record<Tone, string> = {
-  ok: 'bg-ok/15 text-ok-text dark:text-ok',
+  ok: 'bg-ok/15 text-ok-text',
   warn: 'bg-brand-orange/20 text-brand-orange-text dark:text-brand-orange',
   info: 'bg-brand-blue/10 text-brand-blue dark:text-sky-300',
   muted: 'bg-surface-2 text-ink-2',
-  bad: 'bg-bad/15 text-bad-text dark:text-bad',
+  bad: 'bg-danger/15 text-danger-text',
 };
 
 function Badge({ tone, children }: { tone: Tone; children: React.ReactNode }) {
@@ -176,7 +176,7 @@ export function ActivityCard({
       </dl>
 
       {row.cancelled_at && row.cancel_reason && (
-        <p className="mt-4 rounded-xl border border-bad/40 bg-bad/10 p-3 text-[0.9rem] font-bold">
+        <p className="mt-4 rounded-xl border border-danger/40 bg-danger/10 p-3 text-[0.9rem] font-bold">
           {t.cancelReasonLabel}: {row.cancel_reason}
         </p>
       )}

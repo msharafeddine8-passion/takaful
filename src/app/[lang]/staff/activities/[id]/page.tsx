@@ -146,7 +146,7 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
         </dl>
 
         {activity.cancelled_at && activity.cancel_reason && (
-          <p className="mt-4 rounded-xl border-2 border-bad bg-bad/10 p-4 text-[0.95rem] font-bold">
+          <p className="mt-4 rounded-xl border-2 border-danger bg-danger/10 p-4 text-[0.95rem] font-bold">
             {a.cancelReasonLabel}: {activity.cancel_reason}
           </p>
         )}
@@ -187,7 +187,7 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
                   <span
                     className={`ms-auto rounded-full px-2.5 py-0.5 text-[0.78rem] font-bold ${
                       w.notified_at
-                        ? 'bg-ok/15 text-ok-text dark:text-ok'
+                        ? 'bg-ok/15 text-ok-text'
                         : 'bg-surface-2 text-ink-3'
                     }`}
                   >

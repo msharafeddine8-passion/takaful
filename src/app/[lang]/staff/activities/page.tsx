@@ -122,7 +122,7 @@ export default async function StaffActivitiesPage(props: PageProps<'/[lang]/staf
                   />
                   <button
                     type="submit"
-                    className="min-h-11 rounded-full border-2 border-bad px-5 py-2.5 text-[0.9rem] font-extrabold text-bad-text transition-colors hover:bg-bad/10 dark:text-bad"
+                    className="min-h-11 rounded-full border-2 border-danger px-5 py-2.5 text-[0.9rem] font-extrabold text-danger-text transition-colors hover:bg-danger/10"
                   >
                     {a.actions.cancel}
                   </button>
@@ -137,7 +137,7 @@ export default async function StaffActivitiesPage(props: PageProps<'/[lang]/staf
                   <input type="hidden" name="activityId" value={row.id} />
                   <button
                     type="submit"
-                    className="min-h-11 rounded-full px-4 py-2.5 text-[0.86rem] font-bold text-ink-3 underline transition-colors hover:text-bad-text dark:hover:text-bad"
+                    className="min-h-11 rounded-full px-4 py-2.5 text-[0.86rem] font-bold text-ink-3 underline transition-colors hover:text-danger-text dark:hover:text-danger"
                   >
                     {a.actions.deleteEmpty}
                   </button>

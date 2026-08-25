@@ -77,7 +77,7 @@ export function SortBlock({
                       className={`inline-flex min-h-11 items-center rounded-full border-2 px-4 text-[0.9rem] font-bold transition-colors ${
                         picked
                           ? correct
-                            ? 'border-ok bg-ok/10 text-ok-text dark:text-ok'
+                            ? 'border-ok bg-ok/10 text-ok-text'
                             : 'border-danger bg-danger/10 text-danger'
                           : 'border-line hover:bg-surface-2'
                       }`}

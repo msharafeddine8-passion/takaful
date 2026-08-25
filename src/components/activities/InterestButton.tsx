@@ -65,7 +65,7 @@ export function InterestButton({
         disabled={pending}
         className={
           interested
-            ? 'inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-ok bg-ok/10 px-5 py-2.5 text-[0.93rem] font-extrabold text-ok-text disabled:opacity-60 dark:text-ok'
+            ? 'inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-ok bg-ok/10 px-5 py-2.5 text-[0.93rem] font-extrabold text-ok-text disabled:opacity-60'
             : 'inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-brand-blue px-5 py-2.5 text-[0.93rem] font-extrabold text-brand-blue hover:bg-brand-blue/10 disabled:opacity-60 dark:border-sky-300 dark:text-sky-300'
         }
       >
@@ -84,7 +84,7 @@ export function InterestButton({
       </p>
 
       {state.error && (
-        <p role="alert" className="mt-2 text-[0.86rem] font-bold text-bad-text dark:text-bad">
+        <p role="alert" className="mt-2 text-[0.86rem] font-bold text-danger-text">
           {t.errors[state.error]}
         </p>
       )}

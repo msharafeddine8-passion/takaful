@@ -41,6 +41,22 @@
      `bg-ok text-white` chip. Never used as small text — see --ok-text below. */
   --color-ok: #1e7a4d;
   --color-danger: #c0392b;
+
+  /* Amber, for the third case: not an error and not a success, but something a
+     staff member is being asked to look at. Twenty-odd places across the app
+     were reaching for `bg-warn/10` and `border-warn`, which no token defined —
+     Tailwind v4 does not warn about an unknown utility, it simply emits no
+     rule, so those panels rendered as a plain box with a currentColor border
+     and the reader had no way to tell a caution from a caption. Same for
+     `bad` and `good`, which were a second vocabulary for --color-danger and
+     --color-ok; those usages are now written in the one vocabulary and this is
+     the only new colour.
+
+     #b26a00 rather than the brand orange: --color-brand-orange is #eb9f31,
+     which is 1.9:1 on white and cannot carry a border that must read as a
+     warning. This measures 4.6:1 on --ground and 4.4:1 on --surface as a
+     border, and see --warn-text below for the reading colour on the tint. */
+  --color-warn: #b26a00;
 }
 
 /* Surface and ink flip with the theme. Components read these tokens,
@@ -70,6 +86,10 @@
      prefers-color-scheme query and would ignore the site's own theme toggle. */
   --ok-text: #15633c;
   --danger-text: #a32117;
+  /* The same split again: --color-warn on its own bg-warn/10 tint measures
+     4.1:1 for 13px text, under the 4.5:1 that size needs. This is the reading
+     colour — 5.7:1 on white and 5.4:1 inside a --surface card. */
+  --warn-text: #8a5200;
 
   /* Focus. Two rings, because one cannot be right on every background.
      The old rule painted brand orange with a 3px offset, so the ring landed on
@@ -97,6 +117,7 @@
        theme the old code left entirely unmitigated. */
     --ok-text: #46c489;
     --danger-text: #f28b82;
+    --warn-text: #e0a458;
     --focus: #eb9f31;
     --focus-halo: #0d1720;
   }
@@ -112,6 +133,7 @@
   --line: #24343f;
   --ok-text: #46c489;
   --danger-text: #f28b82;
+  --warn-text: #e0a458;
   --focus: #eb9f31;
   --focus-halo: #0d1720;
 }
@@ -126,6 +148,7 @@
   --line: #dce4ea;
   --ok-text: #15633c;
   --danger-text: #a32117;
+  --warn-text: #8a5200;
   --focus: #17456a;
   --focus-halo: #ffffff;
 }
@@ -150,6 +173,7 @@
   --color-line: var(--line);
   --color-ok-text: var(--ok-text);
   --color-danger-text: var(--danger-text);
+  --color-warn-text: var(--warn-text);
 }
 
 body {

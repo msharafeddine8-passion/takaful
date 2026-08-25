@@ -180,8 +180,8 @@ export function AttendanceSheet({
                       className={`min-h-11 cursor-pointer rounded-full border-2 px-5 py-2.5 text-[0.9rem] font-bold transition-colors ${
                         mark === value
                           ? value === 'attended'
-                            ? 'border-ok bg-ok/15 text-ok-text dark:text-ok'
-                            : 'border-bad bg-bad/10 text-bad-text dark:text-bad'
+                            ? 'border-ok bg-ok/15 text-ok-text'
+                            : 'border-danger bg-danger/10 text-danger-text'
                           : 'border-line hover:bg-surface-2'
                       }`}
                     >
@@ -269,7 +269,7 @@ export function AttendanceSheet({
           </p>
         )}
         {state.error && !state.ok && (
-          <p role="alert" className="mb-3 rounded-xl border-2 border-bad bg-bad/10 p-4 text-[0.95rem] font-bold">
+          <p role="alert" className="mb-3 rounded-xl border-2 border-danger bg-danger/10 p-4 text-[0.95rem] font-bold">
             {att.errors[state.error] ?? att.errors.unavailable}
           </p>
         )}
@@ -287,8 +287,8 @@ export function AttendanceSheet({
 
 function Stat({ label, value, tone }: { label: string; value: number; tone?: 'ok' | 'bad' | 'warn' }) {
   const colour =
-    tone === 'ok' ? 'text-ok-text dark:text-ok'
-      : tone === 'bad' ? 'text-bad-text dark:text-bad'
+    tone === 'ok' ? 'text-ok-text'
+      : tone === 'bad' ? 'text-danger-text'
         : tone === 'warn' ? 'text-brand-orange-text dark:text-brand-orange'
           : '';
   return (

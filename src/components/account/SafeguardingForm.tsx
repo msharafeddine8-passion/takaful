@@ -87,7 +87,7 @@ export function SafeguardingForm({
           className="w-full rounded-xl border border-line bg-ground px-4 py-2.5 text-[0.95rem] outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/25"
         />
         {state.fields?.dateOfBirth && (
-          <span role="alert" className="mt-1.5 block text-[0.86rem] font-bold text-bad-text dark:text-bad">
+          <span role="alert" className="mt-1.5 block text-[0.86rem] font-bold text-danger-text">
             {errors[state.fields.dateOfBirth]}
           </span>
         )}
@@ -131,7 +131,7 @@ export function SafeguardingForm({
           <TextField name="guardianPhone" label={t.guardianPhone} type="tel" required defaultValue={keep('guardianPhone', record?.guardian_phone)} />
           <CheckField name="guardianConsent" label={t.guardianConsent} defaultChecked={ticked('guardianConsent')} />
           {state.fields?.guardian && (
-            <p role="alert" className="mt-1.5 text-[0.86rem] font-bold text-bad-text dark:text-bad">
+            <p role="alert" className="mt-1.5 text-[0.86rem] font-bold text-danger-text">
               {errors.guardianRequired}
             </p>
           )}
@@ -145,7 +145,7 @@ export function SafeguardingForm({
       <CheckField name="safeguarding" label={t.safeguarding} defaultChecked={ticked('safeguarding')} />
       <CheckField name="dataConsent" label={t.dataConsent} defaultChecked={ticked('dataConsent')} />
       {state.fields?.commitments && (
-        <p role="alert" className="mt-1.5 text-[0.86rem] font-bold text-bad-text dark:text-bad">
+        <p role="alert" className="mt-1.5 text-[0.86rem] font-bold text-danger-text">
           {errors.commitmentsRequired}
         </p>
       )}

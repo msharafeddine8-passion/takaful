@@ -164,7 +164,7 @@ export default async function StaffChallengesPage(props: PageProps<'/[lang]/staf
                       />
                       <button
                         type="submit"
-                        className="min-h-11 rounded-full border-2 border-bad px-5 py-2.5 text-[0.9rem] font-extrabold text-bad-text transition-colors hover:bg-bad/10 dark:text-bad"
+                        className="min-h-11 rounded-full border-2 border-danger px-5 py-2.5 text-[0.9rem] font-extrabold text-danger-text transition-colors hover:bg-danger/10"
                       >
                         {t.archive}
                       </button>

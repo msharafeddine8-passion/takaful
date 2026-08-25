@@ -56,7 +56,7 @@ export function ChallengeForm({
       <input type="hidden" name="lang" value={lang} />
 
       {state.error && (
-        <p role="alert" className="rounded-xl border-2 border-bad bg-bad/10 p-4 text-[0.95rem] font-bold">
+        <p role="alert" className="rounded-xl border-2 border-danger bg-danger/10 p-4 text-[0.95rem] font-bold">
           {t.errors[state.error]}
         </p>
       )}
