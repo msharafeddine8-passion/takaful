@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
 import { IBM_Plex_Sans_Arabic } from 'next/font/google';
 import '../globals.css';
@@ -9,6 +9,7 @@ import { headerStrings } from '@/components/header-strings';
 import { Footer } from '@/components/Footer';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { ServiceWorker } from '@/components/ServiceWorker';
 import { OrganizationLd } from '@/components/StructuredData';
 import { HERO_PHOTO } from '@/lib/photos';
 import { alternatesFor, SITE_URL } from '@/lib/seo';
@@ -24,6 +25,27 @@ const plexArabic = IBM_Plex_Sans_Arabic({
   display: 'swap',
 });
 
+/**
+ * The status-bar tint, and the two iOS settings that make an installed app
+ * look installed.
+ *
+ * A separate export because Next moved themeColor out of metadata: leaving it
+ * there builds without complaint and emits no tag at all, which is how a
+ * platform ends up with a manifest declaring a theme colour and a browser
+ * ignoring it.
+ *
+ * The two colours match the light and dark --ground in globals.css rather
+ * than the brand blue. On the phone the status bar sits directly above the
+ * page, and a blue bar over a white page reads as a piece of furniture that
+ * belongs to something else.
+ */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0d1720' },
+  ],
+};
+
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
 }
@@ -35,6 +57,19 @@ export async function generateMetadata(props: LayoutProps<'/[lang]'>): Promise<M
 
   return {
     metadataBase: new URL(SITE_URL),
+
+    /*
+     * iOS ignores the web manifest almost entirely. Without these three, a
+     * volunteer who adds the site to their home screen on an iPhone gets a
+     * shortcut that opens Safari with the address bar showing — which is a
+     * bookmark, not an app. 'default' rather than a translucent bar because
+     * translucent draws the page under the clock.
+     */
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: 'default',
+      title: 'تكافل',
+    },
     title: { default: dict.meta.siteName, template: `%s · ${dict.meta.siteName}` },
     description: dict.meta.description,
     openGraph: {
@@ -104,6 +139,8 @@ export default async function LangLayout(props: LayoutProps<'/[lang]'>) {
             include minors. */}
         <Analytics />
         <SpeedInsights />
+        {/* Registers after load, and only in production — see the component. */}
+        <ServiceWorker />
       </body>
     </html>
   );

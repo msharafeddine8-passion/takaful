@@ -72,6 +72,34 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+
+      /*
+       * The service worker must not be cached, and this is not a preference.
+       *
+       * A worker is only ever replaced when the browser fetches /sw.js and
+       * finds it byte-different. If a CDN is holding a copy, the browser gets
+       * the old bytes, decides nothing changed, and keeps running the previous
+       * worker — including its idea of what may be cached. A mistake in this
+       * file would then be pinned in place on every installed device with no
+       * way to push a correction. no-store is the escape hatch that keeps
+       * working.
+       */
+      {
+        source: '/sw.js',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate, no-store' },
+          { key: 'Service-Worker-Allowed', value: '/' },
+        ],
+      },
+
+      // Same reasoning, one step down: a stale offline page is a page that
+      // could outlive the wording somebody deliberately changed.
+      {
+        source: '/offline.html',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+        ],
+      },
     ];
   },
 };

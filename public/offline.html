@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لا يوجد اتصال · جمعية تكافل</title>
+<!--
+  A plain file with its own styles, and it has to be.
+
+  This page is served by the service worker when a navigation fails, which
+  means the network is gone. It cannot fetch a stylesheet, a font or a script,
+  so everything it needs is in this file. It is also why the type is set in a
+  system stack rather than the site's Arabic face: a webfont here would render
+  in whatever the phone falls back to anyway, and half a second of invisible
+  text first.
+
+  Both languages, one page. There is no way to know which locale the person
+  was heading for — the request never reached the server — and guessing would
+  show an English reader Arabic or the reverse at the exact moment they are
+  already frustrated.
+-->
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    background: #ffffff;
+    color: #12212e;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    line-height: 1.85;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0d1720; color: #e8eff4; }
+    .muted { color: #a9becd; }
+    .card { border-color: #24343f; }
+  }
+  .card {
+    max-width: 32rem;
+    border: 1px solid #dce4ea;
+    border-radius: 1rem;
+    padding: 2rem 1.75rem;
+    text-align: center;
+  }
+  .mark {
+    width: 64px; height: 64px; margin: 0 auto 1.25rem;
+    border: 7px solid #eb9f31; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mark span { width: 24px; height: 24px; border-radius: 50%; background: #205b8b; }
+  h1 { font-size: 1.35rem; margin: 0 0 .75rem; }
+  p { margin: 0 0 .5rem; }
+  .muted { color: #43596b; font-size: .95rem; }
+  .en { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #dce4ea; }
+  .en h2 { font-size: 1.05rem; margin: 0 0 .5rem; }
+  button {
+    margin-top: 1.5rem; min-height: 44px; padding: .7rem 1.6rem;
+    border: 0; border-radius: 999px; background: #205b8b; color: #fff;
+    font-size: 1rem; font-weight: 700; font-family: inherit; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="mark" aria-hidden="true"><span></span></div>
+
+    <h1>لا يوجد اتصال بالإنترنت</h1>
+    <p>لم نستطع الوصول إلى المنصّة. تحقّق من اتصالك وحاول مرة أخرى.</p>
+    <p class="muted">ساعاتك وشهاداتك وكل ما سجّلته محفوظ، ولا يتأثّر بانقطاع الاتصال.</p>
+
+    <div class="en" dir="ltr" lang="en">
+      <h2>No internet connection</h2>
+      <p>We could not reach the platform. Check your connection and try again.</p>
+      <p class="muted">Your hours, certificates and everything you have recorded are safe.</p>
+    </div>
+
+    <button type="button" onclick="location.reload()">أعد المحاولة · Try again</button>
+  </div>
+</body>
+</html>
