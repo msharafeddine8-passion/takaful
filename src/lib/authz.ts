@@ -28,7 +28,8 @@ export type Capability =
   | 'audit.read'
   | 'awards.decide'
   | 'programme.edit'
-  | 'programme.publish';
+  | 'programme.publish'
+  | 'practical.review';
 
 const GRANTS: Record<Capability, readonly Role[]> = {
   // Deciding who joins.
@@ -119,6 +120,38 @@ const GRANTS: Record<Capability, readonly Role[]> = {
    */
   'programme.edit': ['content_manager', 'instructor', 'program_admin', 'super_admin'],
   'programme.publish': ['program_admin', 'super_admin'],
+
+  /*
+   * Reading a learner's written work and saying whether it stands.
+   *
+   * Its own capability, because neither of the two candidates fits and the
+   * mismatch is in a different direction for each.
+   *
+   * `programme.edit` is the wrong ACT. It governs what a course says, and the
+   * role it exists for is `content_manager` — somebody who writes and revises
+   * prose. Judging whether one volunteer's risk assessment would keep children
+   * safe is a judgement about a person's work, not an edit to a document, and
+   * handing it to whoever may reword a paragraph is the same conflation this
+   * file already refuses between programme.edit and programme.publish.
+   *
+   * `hours.verify` is the right act — judging what a volunteer actually did,
+   * by a named person, with the same no-self-review rule and the same
+   * never-deleted record — and the wrong PEOPLE. It is held by supervisors and
+   * coordinators, and pointedly not by `instructor`, who is the person that
+   * teaches the course and therefore the only one who can tell whether this
+   * activity plan would survive contact with a Saturday morning.
+   *
+   * So: hours.verify's list unchanged, plus instructor. Nobody loses anything,
+   * and the person who taught the material may mark the work done for it.
+   */
+  'practical.review': [
+    'instructor',
+    'team_leader',
+    'field_supervisor',
+    'project_coordinator',
+    'program_admin',
+    'super_admin',
+  ],
 };
 
 export function can(user: SessionUser | null, capability: Capability): boolean {
@@ -145,11 +178,33 @@ export async function requireCapability(capability: Capability): Promise<Session
   return user as SessionUser;
 }
 
-/** True when the person has any reason to see the staff area at all. */
+/**
+ * True when the person has any reason to see the staff area at all.
+ *
+ * `practical.review` is in the list because it is the one capability an
+ * `instructor` holds that produces a queue somebody has to work through. An
+ * instructor could reach nothing under /staff before this, which was correct
+ * while there was nothing there for them; leaving them out now would mean a
+ * trainer with work waiting and no link to it.
+ *
+ * `programme.edit` is here for the same reason and one role later. It is the
+ * capability behind /staff/programme and /staff/learning, and its role
+ * `content_manager` held none of the four above — so the association could
+ * grant somebody the content manager role, and the platform would then meet
+ * them at the door of the staff area with "you do not have permission",
+ * hiding the two pages written for them and nothing else. A capability that
+ * opens a page nobody can navigate to is a capability that does not exist.
+ *
+ * The rule this list encodes: if holding a capability means there is a screen
+ * under /staff you are expected to use, you can see /staff. It does not decide
+ * what you may do once inside — every page checks its own.
+ */
 export function isStaff(user: SessionUser | null): boolean {
   return (
     can(user, 'applications.review') ||
     can(user, 'hours.verify') ||
-    can(user, 'members.manage')
+    can(user, 'members.manage') ||
+    can(user, 'practical.review') ||
+    can(user, 'programme.edit')
   );
 }

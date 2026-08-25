@@ -18,6 +18,21 @@ import 'server-only';
 function cell(value: unknown): string {
   if (value === null || value === undefined) return '';
 
+  /*
+   * A Date arriving here is a bug upstream, and this is only the backstop.
+   *
+   * Every query in api/export now hands its dates over as 'YYYY-MM-DD' text
+   * built by to_char in Beirut, because the round trip through a JS Date is
+   * where a calendar day goes missing: pg parses a DATE at the Node process's
+   * local midnight and toISOString reads it back in GMT, so the 1st of August
+   * exports as the 31st of July on any machine east of London. That is a
+   * spreadsheet reaching a donor with every date one day early, and nobody
+   * checks a date they did not doubt.
+   *
+   * Deliberately left in GMT rather than guessed into Beirut. Making the
+   * backstop clever would make a wrong value look right in the one place
+   * nobody would think to look.
+   */
   let text = value instanceof Date ? value.toISOString().slice(0, 10) : String(value);
 
   // Formula injection: the cell is data, and must stay data.

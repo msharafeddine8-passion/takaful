@@ -79,7 +79,7 @@ async function build(
                AS verified_minutes,
              (SELECT count(*) FROM certificates ct
                WHERE ct.user_id = u.id AND ct.revoked_at IS NULL)::INTEGER            AS certificates,
-             u.created_at::DATE AS joined
+             to_char(u.created_at AT TIME ZONE 'Asia/Beirut', 'YYYY-MM-DD') AS joined
         FROM users u JOIN profiles p ON p.user_id = u.id
        ORDER BY p.member_number NULLS LAST, u.created_at
     `);
@@ -99,8 +99,8 @@ async function build(
 
   if (kind === 'hours') {
     const rows = await query<Record<string, unknown>>(`
-      SELECT h.worked_on, p.full_name, h.minutes, h.status,
-             a.title_ar AS activity, vp.full_name AS verified_by, h.verified_at::DATE AS verified_on
+      SELECT to_char(h.worked_on, 'YYYY-MM-DD') AS worked_on, p.full_name, h.minutes, h.status,
+             a.title_ar AS activity, vp.full_name AS verified_by, to_char(h.verified_at AT TIME ZONE 'Asia/Beirut', 'YYYY-MM-DD') AS verified_on
         FROM hour_entries h
         JOIN profiles p ON p.user_id = h.user_id
         LEFT JOIN activities a ON a.id = h.activity_id
@@ -133,7 +133,7 @@ async function build(
               ROUND(COALESCE(att.minutes, 0) / 60.0, 2) AS hours,
               att.note,
               a.title_ar                                AS activity,
-              a.starts_at::DATE                         AS activity_date
+              to_char(a.starts_at AT TIME ZONE 'Asia/Beirut', 'YYYY-MM-DD') AS activity_date
          FROM activity_registrations r
          JOIN profiles p   ON p.user_id = r.user_id
          JOIN activities a ON a.id = r.activity_id
@@ -156,7 +156,7 @@ async function build(
   }
 
   const rows = await query<Record<string, unknown>>(`
-    SELECT a.title_ar, a.title_en, a.area, a.location, a.starts_at::DATE AS starts_on,
+    SELECT a.title_ar, a.title_en, a.area, a.location, to_char(a.starts_at AT TIME ZONE 'Asia/Beirut', 'YYYY-MM-DD') AS starts_on,
            a.capacity,
            (SELECT count(*) FROM activity_registrations r
              WHERE r.activity_id = a.id AND r.cancelled_at IS NULL)::INTEGER AS registered,

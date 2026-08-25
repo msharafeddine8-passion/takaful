@@ -14,6 +14,8 @@ import { formatDuration } from '@/lib/hours';
 import { challengeDictionaries } from '@/lib/dictionaries/challenges';
 import { recognitionAdmin } from '@/lib/dictionaries/recognition-admin';
 import { awardDictionaries } from '@/lib/dictionaries/awards';
+import { learningAnalytics } from '@/lib/dictionaries/learning-analytics';
+import { practical } from '@/lib/dictionaries/practical';
 
 export async function generateMetadata(props: PageProps<'/[lang]/staff'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -166,6 +168,22 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
                 header of src/lib/dictionaries/awards.ts. */}
             {awardDictionaries[lang].manageTitle}
           </Link>
+          {/*
+            The one link an `instructor` can follow. They hold neither
+            members.manage nor hours.verify, so before practical tasks existed
+            there was nothing under /staff for them at all — see the note on
+            isStaff() in lib/authz.ts.
+          */}
+          {can(user, 'practical.review') && (
+            <Link
+              href={`/${lang}/staff/practical`}
+              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {/* Its own dictionary module, like the links above — see the
+                  header of src/lib/dictionaries/practical.ts. */}
+              {practical(lang).goQueue}
+            </Link>
+          )}
           {can(user, 'members.manage') && (
             <Link
               href={`/${lang}/staff/journey`}
@@ -180,6 +198,18 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
               className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
             >
               {dict.account.reports.title}
+            </Link>
+          )}
+          {can(user, 'programme.edit') && (
+            <Link
+              href={`/${lang}/staff/learning`}
+              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {/* Its own dictionary module, like the links above. Gated on
+                  programme.edit rather than reports.read because the page is a
+                  list of things to go and rewrite — see the header of
+                  src/app/[lang]/staff/learning/page.tsx. */}
+              {learningAnalytics(lang).title}
             </Link>
           )}
           {can(user, 'audit.read') && (

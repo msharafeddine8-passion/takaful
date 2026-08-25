@@ -347,6 +347,29 @@ export type Account = {
     correctionOf: string;
     carriedOver: string;
     backToAccount: string;
+    /* The ledger, explained. Every string below exists because the table was
+     * showing a volunteer a number with nothing to read it by — see the header
+     * of lib/hours-ledger.ts. */
+    /** Says the ledger keeps everything, including what was taken back. */
+    historyLede: string;
+    /** How many entries a supervisor has not looked at yet. Five bands. */
+    awaiting: { zero: string; one: string; two: string; few: string; many: string };
+    /** What being verified is worth, beside the verified figure. */
+    verifiedNote: string;
+    /** Why the awaiting figure is not in the total yet. */
+    pendingNote: string;
+    /** Above the date of a carry-over: it is the end of a period, not a workday. */
+    countedUpToLabel: string;
+    carriedExplain: string;
+    correctionTitle: string;
+    /** On the duration of a reversing row, so a bare figure cannot read as a gain. */
+    removedLabel: string;
+    /** On the row a correction reversed, which stays in the ledger. */
+    supersededNote: string;
+    /** Attributes a sentence to the member of staff who wrote it, rather than
+     *  letting it stand as the site's verdict on the person reading it. */
+    staffNoteLabel: string;
+    yourNoteLabel: string;
   };
   profile: {
     title: string;
@@ -370,6 +393,24 @@ export type Account = {
     memberNumber: string;
     noMemberNumber: string;
     cardCta: string;
+    /* What each field is FOR. A box labelled "your interests" with nothing else
+     * said is a box nobody fills in, because nobody can tell whether anyone
+     * will ever read it. */
+    displayNameHint: string;
+    bioHint: string;
+    interestsHint: string;
+    skillsHint: string;
+    languagesHint: string;
+    /** The ring from profileCompleteness(), shown only while something is
+     *  missing. Keyed by the field names that function returns. */
+    completeness: {
+      title: string;
+      lede: string;
+      /** '{done} من {total}' — a fraction, not a percentage. */
+      count: string;
+      missingLabel: string;
+      fields: Record<'photo' | 'bio' | 'interests' | 'skills' | 'languages', string>;
+    };
   };
   password: {
     title: string;
@@ -425,6 +466,9 @@ export type Account = {
     myCertificates: string;
     myCertificatesLede: string;
     none: string;
+    /** Why a withdrawn certificate is still on the page. Nothing is deleted,
+     *  and a row that vanished would leave the holder unable to ask why. */
+    revokedKept: string;
     view: string;
     skills: string;
     learningTime: string;
@@ -987,6 +1031,27 @@ export type Account = {
     attended: string;
     noShow: string;
     awaitingAttendance: string;
+    /*
+     * What happened between this volunteer and this activity — one verdict per
+     * row, decided in lib/registration-view.ts. Four different things used to
+     * share two words here, and one of the pairings told somebody they had
+     * failed to attend an activity the association itself called off.
+     */
+    outcome: Record<
+      'calledOff' | 'withdrawn' | 'attended' | 'absenceRecorded'
+      | 'awaitingRecord' | 'registered' | 'waitlisted',
+      string
+    >;
+    /** Headings for the two lists that are not "upcoming" or "past". */
+    calledOffTitle: string;
+    withdrawnTitle: string;
+    /** Says in words that a called-off activity is not an absence. */
+    calledOffNote: string;
+    calledOffReason: string;
+    withdrawnNote: string;
+    awaitingRecordNote: string;
+    /** '{duration} counted for you' — the hours an attendance was worth. */
+    hoursCounted: string;
     manageTitle: string;
     manageLede: string;
     roster: string;
