@@ -2,12 +2,14 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { connection } from 'next/server';
-import { isLocale } from '@/lib/i18n';
+import { isLocale, type Locale } from '@/lib/i18n';
 import { getDictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section } from '@/components/ui';
 import { COURSES, coursesInLevel, electiveCourses, type Course } from '@/lib/courses';
 import { LEVELS } from '@/lib/programme/definition';
+import { challengeForLevel } from '@/lib/programme/level-challenge';
+import { challengeLevels } from '@/lib/dictionaries/challenge-levels';
 import { COURSE_CONTENT } from '@/lib/course-content';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
@@ -198,6 +200,19 @@ export default async function AcademyPage(props: PageProps<'/[lang]/academy'>) {
                   const done = user
                     ? inLevel.filter((c) => standingOf(c.slug) === 'completed').length
                     : null;
+                  /*
+                   * The decision run, offered only once the level is actually
+                   * finished — and offered, never required. It sits after the
+                   * courses rather than among them because it is not a seventh
+                   * course: nothing in it is marked, and a volunteer who never
+                   * opens it loses no certificate and no badge. Computed from
+                   * the passes already loaded above, so this adds no query to a
+                   * page that renders forty cards.
+                   */
+                  const runnable =
+                    user !== null
+                    && challengeForLevel(level.number) !== null
+                    && inLevel.every((c) => passed.has(c.slug));
                   return (
                     <section key={level.number} aria-label={level.title[lang]}>
                       <LevelHeading
@@ -208,6 +223,7 @@ export default async function AcademyPage(props: PageProps<'/[lang]/academy'>) {
                         t={t}
                       />
                       {grid(inLevel)}
+                      {runnable && <LevelRunLink lang={lang} level={level.number} />}
                     </section>
                   );
                 })}
@@ -246,5 +262,43 @@ export default async function AcademyPage(props: PageProps<'/[lang]/academy'>) {
         </Container>
       </Section>
     </>
+  );
+}
+
+/**
+ * The way into a level's decision run.
+ *
+ * Rendered only for a level the volunteer has already finished, so it is an
+ * offer rather than a step: nothing on the other side of this link is required
+ * for a certificate, a badge or a journey stage, and the card says so in the
+ * kicker rather than making somebody click to find out.
+ *
+ * Styled as a link rather than as a seventh course card on purpose — a card in
+ * the grid would read as another thing to complete, which is exactly what this
+ * is not.
+ */
+function LevelRunLink({ lang, level }: { lang: Locale; level: number }) {
+  const t = challengeLevels(lang);
+  return (
+    <Link
+      href={`/${lang}/academy/challenge/${level}` as Parameters<typeof Link>[0]['href']}
+      className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-brand-blue/30 bg-brand-blue/[0.04] p-5 transition-colors hover:bg-brand-blue/[0.08]"
+    >
+      <span className="text-[1.6rem]" aria-hidden>
+        🧭
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[0.78rem] font-extrabold tracking-[0.13em] text-brand-blue dark:text-sky-300">
+          {t.cardKicker}
+        </span>
+        <span className="mt-1 block font-extrabold">
+          {t.cardTitle.replace('{level}', String(level))}
+        </span>
+        <span className="mt-1 block text-[0.9rem] leading-relaxed text-ink-2">{t.cardBody}</span>
+      </span>
+      <span aria-hidden className="text-[1.2rem] font-extrabold text-brand-blue dark:text-brand-orange">
+        {lang === 'ar' ? '←' : '→'}
+      </span>
+    </Link>
   );
 }
