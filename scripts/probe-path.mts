@@ -545,7 +545,21 @@ try {
    */
   const callAt = submitSource.search(/\bawait\s+issueEarnedCredentials\s*\(/);
   const recomputeAt = submitSource.search(/\bawait\s+recomputeAchievements\s*\(/);
-  const guardAt = submitSource.search(/if\s*\(\s*graded\.passed\s*\)/);
+  /*
+   * Any condition beginning with graded.passed, not that one exact line.
+   *
+   * This read `if (graded.passed)` literally and went red the day the guard
+   * became `if (graded.passed && !awaitingPractical)` — a change that made the
+   * rule STRICTER, because a course carrying a practical task now holds its
+   * credential until a trainer has read the work. A probe that fails when the
+   * code becomes more careful is testing the typing rather than the rule, and
+   * the next person to find it red will believe the rule broke.
+   *
+   * The rule is: credentials are issued behind a graded.passed guard and never
+   * ahead of one. That is what these two searches establish, and a guard that
+   * narrows further still satisfies it.
+   */
+  const guardAt = submitSource.search(/if\s*\(\s*graded\.passed\b/);
   const enclosing = callAt === -1
     ? null
     : [...submitSource.slice(0, callAt).matchAll(/export async function (\w+)/g)].pop()?.[1] ?? null;
