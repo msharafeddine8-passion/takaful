@@ -22,6 +22,7 @@ import { issueHoursCertificateAction } from '@/lib/actions/certificates';
 import { ConfirmSubmit } from '@/components/staff/ConfirmSubmit';
 import { CarriedHoursForm, RecogniseCourseForm } from '@/components/staff/PriorCreditForms';
 import { COURSES } from '@/lib/courses';
+import { memberProfile } from '@/lib/dictionaries/member-profile';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -132,10 +133,21 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
           {formatDuration(minutes, lang)} · {t.membersPage.colHours}
         </p>
 
+        {/* The whole record, read-only, in one place. This page keeps the
+            buttons; the file answers the questions that used to take six pages
+            to answer, and it is linked from the top because that is where
+            somebody arrives already wondering. */}
+        <Link
+          href={`/${lang}/staff/members/${id}/profile`}
+          className="mt-4 inline-block rounded-full border border-line bg-surface px-5 py-2.5 text-[0.9rem] font-extrabold text-brand-blue hover:underline dark:text-brand-orange"
+        >
+          {memberProfile(lang).title} →
+        </Link>
+
         {/* The database refuses a self-grant, so saying so is honest rather
             than decorative: the buttons below genuinely would not work. */}
         {isSelf && (
-          <p className="mt-5 rounded-xl border border-amber-400 bg-amber-50 px-5 py-3.5 text-[0.93rem] text-ink-2 dark:border-amber-800 dark:bg-amber-950/30">
+          <p className="mt-5 rounded-xl border border-warn bg-warn/10 px-5 py-3.5 text-[0.93rem] text-ink-2">
             {mm.selfNote}
           </p>
         )}
@@ -232,7 +244,7 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
               <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3.5 py-1.5 text-[0.88rem] font-bold">
                 {r.role}
                 {r.role !== 'registered_user' && (
-                  <button type="submit" className="text-red-600 hover:underline dark:text-red-400">
+                  <button type="submit" className="text-danger-text hover:underline">
                     {mm.revokeRole}
                   </button>
                 )}
@@ -399,7 +411,7 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
                   {lang === 'ar' ? c.snapshot.titleAr : c.snapshot.titleEn}
                 </span>
                 {c.revoked_at && (
-                  <span className="ms-3 font-bold text-red-600 dark:text-red-400">{mm.revoked}</span>
+                  <span className="ms-3 font-bold text-danger-text">{mm.revoked}</span>
                 )}
               </li>
             ))}
@@ -459,7 +471,8 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
                 {entries.map((e) => (
                   <tr key={e.id} className="border-b border-line/60 last:border-0">
                     <td className="px-4 py-2.5 whitespace-nowrap text-ink-3" dir="ltr">
-                      {new Date(e.worked_on).toISOString().slice(0, 10)}
+                      {/* Text from the query, not a Date — see HourEntry.worked_on. */}
+                      {e.worked_on}
                     </td>
                     <td className="px-4 py-2.5 font-semibold">{formatDuration(e.minutes, lang)}</td>
                     <td className="px-4 py-2.5 text-ink-2">{e.status}</td>
