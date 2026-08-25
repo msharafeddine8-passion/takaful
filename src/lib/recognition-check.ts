@@ -8,36 +8,50 @@
  * system can be made to lie, and a rule that lives only inside a server action
  * is a rule nobody tests.
  *
- * The set of automatically-computed codes is passed in rather than imported,
- * which is what keeps this module free of `server-only`. The caller passes
- * `ACHIEVEMENTS.map((d) => d.code)`; probe-recognition passes its own list and
- * checks the rule, and probe-achievements already holds the definitions.
+ * ONE REFUSAL WAS REMOVED FROM HERE, and the reason matters more than the rule
+ * that replaced it.
+ *
+ * Granting by hand a badge the engine also computes used to be refused. The
+ * danger was real: the row went in, the volunteer was notified, and then a
+ * recompute weeks later found the figure short of the threshold and withdrew
+ * it — generic reason, from nobody, on an unrelated day. Refusing at the door
+ * was the only place to catch it.
+ *
+ * But refusing at the door left the association unable to do a thing it
+ * legitimately needs to do: honour somebody for work that predates the
+ * platform, or work no ledger recorded. So the fix moved to the root instead.
+ * The engine now skips any badge a person granted — see recomputeAchievements —
+ * so a hand-granted badge is stable whatever the figures say, and the refusal
+ * it needed is gone. A guard that stops people doing legitimate work is worth
+ * keeping only until the underlying danger can be removed.
  */
 
 export type Refusal =
-  | 'needBoth'
+  | 'needPerson'
+  | 'needBadge'
   | 'needReason'
-  | 'notYourself'
-  | 'ruleOwnsIt';
+  | 'notYourself';
 
 /** Long enough that somebody reading the audit log a year later learns something. */
 export const MIN_REASON = 10;
 
 export type Instruction = {
-  email: string;
-  code: string;
+  /** The account being acted on. Empty when the search found nobody. */
+  targetId: string;
+  /** One or more badge codes, chosen from the catalogue rather than typed. */
+  codes: readonly string[];
   reason: string;
   actorId: string;
-  targetId: string;
 };
 
-/** True when the automatic pass computes this code and would undo a manual grant. */
-export function ruleOwns(code: string, automaticCodes: readonly string[]): boolean {
-  return automaticCodes.includes(code.trim());
-}
-
 function shared(input: Instruction): Refusal | null {
-  if (!input.email.trim() || !input.code.trim()) return 'needBoth';
+  if (!input.targetId.trim()) return 'needPerson';
+  /*
+   * Blank codes are dropped before counting. A checkbox list posts nothing at
+   * all when none is ticked, but a hand-built request can post an empty string,
+   * and a badge with an empty code would be a row nothing can ever explain.
+   */
+  if (input.codes.filter((c) => c.trim()).length === 0) return 'needBadge';
   if (input.reason.trim().length < MIN_REASON) return 'needReason';
   /*
    * Self-acting is refused in both directions. Not because withdrawing your own
@@ -50,38 +64,29 @@ function shared(input: Instruction): Refusal | null {
   return null;
 }
 
-/**
- * Whether a by-hand grant may go ahead.
- *
- * The `ruleOwnsIt` refusal is the one that matters and the least obvious.
- * Granting, by hand, a badge the engine also computes appears to work: the row
- * is inserted, the volunteer is notified, the badge shows on their wall. Then
- * somebody verifies an hour, recomputeAchievements runs, finds that code below
- * its threshold, and withdraws it — with the engine's generic reason, from
- * nobody, on a day unconnected to anything. The volunteer sees a badge they
- * were given taken back for no stated cause.
- *
- * Refusing at the door is the only place this can be caught: by the time it
- * happens the two events are weeks apart and look unrelated.
- */
-export function checkGrant(
-  input: Instruction,
-  automaticCodes: readonly string[],
-): Refusal | null {
-  const first = shared(input);
-  if (first) return first;
-  if (ruleOwns(input.code, automaticCodes)) return 'ruleOwnsIt';
-  return null;
+/** Whether a by-hand grant of one or more badges may go ahead. */
+export function checkGrant(input: Instruction): Refusal | null {
+  return shared(input);
 }
 
 /**
  * Whether a withdrawal may go ahead.
  *
- * The same checks minus `ruleOwnsIt`, deliberately. Correcting a badge that
- * stands on data which turned out to be wrong is a real thing staff need to do,
- * and if the automatic pass restores it afterwards that means the figures
- * genuinely support it — the right outcome, not a surprise.
+ * The same checks. Correcting a badge that stands on data which turned out to
+ * be wrong is a real thing staff need to do, and if the figures still support
+ * it the next recompute restores it — the right outcome, not a surprise.
  */
 export function checkWithdraw(input: Instruction): Refusal | null {
   return shared(input);
+}
+
+/**
+ * The codes to act on, cleaned.
+ *
+ * Deduplicated because a form can post the same value twice and granting the
+ * same badge twice in one request would either fail on the unique index or
+ * write a second audit line for one decision.
+ */
+export function codesFrom(raw: readonly string[]): string[] {
+  return [...new Set(raw.map((c) => c.trim()).filter(Boolean))];
 }

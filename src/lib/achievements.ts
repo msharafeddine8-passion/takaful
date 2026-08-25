@@ -2,6 +2,7 @@ import 'server-only';
 import { query, transaction } from './db';
 import type { Locale } from './i18n';
 import { LEVEL_BADGES } from './programme/level-badges';
+import { inCirculation, retiredCodesFrom } from './badge-circulation';
 
 /**
  * Badges.
@@ -661,16 +662,54 @@ export async function recomputeAchievements(
   const revoked: string[] = [];
 
   await transaction(async (client) => {
-    const held = new Map(
-      (
-        await client.query<{ code: string; revoked_at: Date | null }>(
-          'SELECT code, revoked_at FROM achievements WHERE user_id = $1 FOR UPDATE',
-          [userId],
-        )
-      ).rows.map((r) => [r.code, r.revoked_at]),
+    const rows = (
+      await client.query<{ code: string; revoked_at: Date | null; automatic: boolean }>(
+        'SELECT code, revoked_at, automatic FROM achievements WHERE user_id = $1 FOR UPDATE',
+        [userId],
+      )
+    ).rows;
+    const held = new Map(rows.map((r) => [r.code, r.revoked_at]));
+
+    /*
+     * A badge a person granted is a badge this engine does not touch.
+     *
+     * The association gives a badge by hand for something the ledgers cannot
+     * see — years of work before the platform existed, a job nobody logged.
+     * Recomputing must not then look at the figures, find them short, and take
+     * it back: that would withdraw a decision a named person made, with a
+     * generic reason, weeks later, and the volunteer would have no way to tell
+     * why. The grant is not a claim about the ledger, so the ledger does not
+     * get a vote.
+     *
+     * Only rows still standing. A manual badge that was withdrawn by hand
+     * leaves the code free again, so somebody who later earns it honestly gets
+     * it from the engine in the ordinary way.
+     */
+    const byHand = new Set(
+      rows.filter((r) => !r.automatic && r.revoked_at === null).map((r) => r.code),
     );
 
-    for (const def of ACHIEVEMENTS) {
+    /*
+     * Badges out of circulation are dropped from this pass, NOT treated as
+     * unmet.
+     *
+     * That distinction is the whole of migration 039. Below, a definition whose
+     * figure has fallen short of its threshold is withdrawn — correct, it means
+     * the ledger changed. A retired badge sent down that same path would be
+     * withdrawn from every person holding it, with the engine's generic reason,
+     * on a day unconnected to anything they did. Removing the definition
+     * instead means nothing is granted and no row is touched.
+     */
+    const retired = retiredCodesFrom(
+      (
+        await client.query<{ code: string; lifted_at: Date | null }>(
+          'SELECT code, lifted_at FROM badge_retirements',
+        )
+      ).rows,
+    );
+
+    for (const def of inCirculation(ACHIEVEMENTS, retired)) {
+      if (byHand.has(def.code)) continue;
       const value = standing[def.kind];
       const qualifies = value >= def.threshold;
       const has = held.has(def.code);

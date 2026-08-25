@@ -29,6 +29,12 @@ export type RecognitionAdminStrings = {
   previewWithdraw: string;
   previewMore: string;
   emailLabel: string;
+  searchLabel: string;
+  search: string;
+  holdsCount: string;
+  holdsNothing: string;
+  holdsEverything: string;
+  chooseBadges: string;
   codeLabel: string;
   reasonLabel: string;
   grantTitle: string;
@@ -45,12 +51,20 @@ export type RecognitionAdminStrings = {
   colKind: string;
   colThreshold: string;
   colHolders: string;
+  colStatus: string;
+  retireTitle: string;
+  retireLede: string;
+  retire: string;
+  lift: string;
+  retiredBadge: string;
+  inCirculation: string;
   standingTitle: string;
   standingLede: string;
   logTitle: string;
   logLede: string;
   logEmpty: string;
   someone: string;
+  bySystem: string;
   actions: Record<string, string>;
   errors: Record<string, string>;
 };
@@ -80,13 +94,20 @@ export const recognitionAdminAr: RecognitionAdminStrings = {
   previewMore: 'و{n} غيرها لم تُعرض هنا.',
 
   emailLabel: 'بريد الحساب',
+  searchLabel: 'ابحث بالاسم أو البريد',
+  search: 'ابحث',
+  holdsCount: 'يحمل {n}',
+  holdsNothing: 'لا يحمل أي شارة يمكن سحبها.',
+  holdsEverything: 'يحمل كل الشارات المعرَّفة.',
+  chooseBadges: 'اختر شارة أو أكثر',
   codeLabel: 'رمز الشارة',
   reasonLabel: 'السبب',
 
   grantTitle: 'امنح شارة بقرار',
   grantLede:
-    'لما لا تستطيع القواعد رؤيته. تُسجَّل باسمك ومع سببك، وتظهر على أنها ممنوحة بقرار '
-    + 'لا محتسَبة. لا تقبل رمز شارة يملكها الحساب التلقائي — تلك تُمنح بإعادة الاحتساب.',
+    'ابحث عن الشخص، ثم اختر ما يستحقّه — واحدة أو أكثر بالمرّة نفسها. تُسجَّل باسمك ومع '
+    + 'سببك وتظهر على أنها ممنوحة بقرار لا محتسَبة، وإعادة الاحتساب لا تلمسها بعدها: '
+    + 'الشارة الممنوحة بقرار ليست ادّعاءً عن السجلّات، فلا رأي للسجلّات فيها.',
   grant: 'امنحها',
 
   withdrawTitle: 'اسحب شارة',
@@ -104,6 +125,18 @@ export const recognitionAdminAr: RecognitionAdminStrings = {
   colKind: 'يُقاس بـ',
   colThreshold: 'العتبة',
   colHolders: 'يحملها',
+  colStatus: 'الحالة',
+
+  retireTitle: 'سحب شارة من التداول',
+  retireLede:
+    'تتوقّف الشارة عن المنح لأي أحد جديد، ويبقى كل من يحملها حاملاً لها — هو فعل ما فعله، '
+    + 'وتراجُع الجمعية عن الشارة ليس ذنبه. لهذا لا تُعدَّل العتبات من هنا: العتبة هي تعريف '
+    + 'ما تكرّمه الجمعية، وخفضها من خانة يمنح الشارة بأثر رجعي لكل من تجاوز الخط الجديد، '
+    + 'ورفعها يسحبها ممّن نالها بجدارة تحت الخط القديم.',
+  retire: 'اسحبها من التداول',
+  lift: 'أعِدها إلى التداول',
+  retiredBadge: 'مسحوبة من التداول',
+  inCirculation: 'تُمنح',
 
   standingTitle: 'الصفات التي تُحتسب',
   standingLede:
@@ -118,6 +151,7 @@ export const recognitionAdminAr: RecognitionAdminStrings = {
     + 'يظهر في مكان الفعل.',
   logEmpty: 'لم يجرِ أي تعديل بعد.',
   someone: 'غير معروف',
+  bySystem: 'النظام',
   actions: {
     'achievement.granted': 'منح بقرار',
     'achievement.revoked': 'سحب',
@@ -127,6 +161,11 @@ export const recognitionAdminAr: RecognitionAdminStrings = {
 
   errors: {
     needEmail: 'أدخل بريد الحساب.',
+    needTerm: 'اكتب حرفين على الأقل للبحث.',
+    noMatches: 'لا أحد بهذا الاسم أو البريد.',
+    tooMany: 'النتائج أكثر من أن تُعرض. ابحث بشيء أضيق.',
+    needPerson: 'اختر الشخص أولاً.',
+    needBadge: 'اختر شارة واحدة على الأقل.',
     needBoth: 'أدخل البريد ورمز الشارة معاً.',
     needReason: 'اكتب سبباً يمكن مراجعته لاحقاً، لا كلمة واحدة.',
     noAccount: 'لا يوجد حساب بهذا البريد.',
@@ -136,6 +175,10 @@ export const recognitionAdminAr: RecognitionAdminStrings = {
     ruleOwnsIt:
       'هذه الشارة يحتسبها النظام تلقائياً. امنحها بإعادة الاحتساب لا يدوياً، '
       + 'وإلا سحبها أوّل احتساب تالٍ من دون أن ينتبه أحد.',
+    needCode: 'أدخل رمز الشارة.',
+    noSuchBadge: 'لا توجد شارة بهذا الرمز في القائمة المعرَّفة.',
+    alreadyRetired: 'هذه الشارة مسحوبة من التداول أصلاً.',
+    notRetired: 'هذه الشارة ليست مسحوبة من التداول.',
     unavailable: 'تعذّر التنفيذ. حاول مرة أخرى.',
   },
 };
@@ -167,14 +210,21 @@ export const recognitionAdminEn: RecognitionAdminStrings = {
   previewMore: 'and {n} more not listed here.',
 
   emailLabel: 'Account email',
+  searchLabel: 'Search by name or email',
+  search: 'Search',
+  holdsCount: 'Holds {n}',
+  holdsNothing: 'Holds no badge that could be withdrawn.',
+  holdsEverything: 'Holds every defined badge.',
+  chooseBadges: 'Choose one or more badges',
   codeLabel: 'Badge code',
   reasonLabel: 'Reason',
 
   grantTitle: 'Grant a badge by decision',
   grantLede:
-    'For what the rules cannot see. Recorded against your name and your reason, and shown '
-    + 'as granted rather than earned. It refuses a code the automatic pass owns — those are '
-    + 'granted by recomputing.',
+    'Search for the person, then pick what they are owed — one badge or several at once. '
+    + 'Recorded against your name and your reason and shown as granted rather than earned, '
+    + 'and the recompute leaves it alone afterwards: a badge given by decision is not a '
+    + 'claim about the ledgers, so the ledgers get no vote.',
   grant: 'Grant it',
 
   withdrawTitle: 'Withdraw a badge',
@@ -193,6 +243,20 @@ export const recognitionAdminEn: RecognitionAdminStrings = {
   colKind: 'Measured on',
   colThreshold: 'Threshold',
   colHolders: 'Held by',
+  colStatus: 'Status',
+
+  retireTitle: 'Take a badge out of circulation',
+  retireLede:
+    'The badge stops being granted to anybody new, and everybody who holds it goes on '
+    + 'holding it — they did the thing, and the association\x27s second thoughts about the '
+    + 'badge are not their fault. This is also why thresholds are not editable here: a '
+    + 'threshold is the definition of what the association honours, and lowering one from a '
+    + 'form grants the badge retroactively to everybody past the new line while raising one '
+    + 'withdraws it from people who earned it under the old.',
+  retire: 'Take it out of circulation',
+  lift: 'Put it back',
+  retiredBadge: 'Out of circulation',
+  inCirculation: 'Granted',
 
   standingTitle: 'Standings that count',
   standingLede:
@@ -208,6 +272,7 @@ export const recognitionAdminEn: RecognitionAdminStrings = {
     + 'people actually read is the one on the page where they did the thing.',
   logEmpty: 'Nothing has been changed yet.',
   someone: 'Unknown',
+  bySystem: 'The system',
   actions: {
     'achievement.granted': 'Granted by decision',
     'achievement.revoked': 'Withdrawn',
@@ -217,6 +282,11 @@ export const recognitionAdminEn: RecognitionAdminStrings = {
 
   errors: {
     needEmail: 'Enter the account email.',
+    needTerm: 'Type at least two characters to search.',
+    noMatches: 'Nobody by that name or email.',
+    tooMany: 'Too many matches to show. Search for something narrower.',
+    needPerson: 'Choose the person first.',
+    needBadge: 'Choose at least one badge.',
     needBoth: 'Enter both the email and the badge code.',
     needReason: 'Write a reason somebody could review later, not one word.',
     noAccount: 'No account with that email.',
@@ -226,6 +296,10 @@ export const recognitionAdminEn: RecognitionAdminStrings = {
     ruleOwnsIt:
       'That badge is worked out automatically. Grant it by recomputing rather than by hand, '
       + 'or the next recompute takes it back and nobody notices.',
+    needCode: 'Enter the badge code.',
+    noSuchBadge: 'No badge with that code is defined.',
+    alreadyRetired: 'That badge is already out of circulation.',
+    notRetired: 'That badge is not out of circulation.',
     unavailable: 'Could not complete. Try again.',
   },
 };

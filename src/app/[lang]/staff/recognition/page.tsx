@@ -14,7 +14,7 @@ import { formatDate } from '@/lib/when';
 import { VOLUNTEER_STANDING } from '@/lib/account-state';
 import { recognitionAdmin } from '@/lib/dictionaries/recognition-admin';
 import {
-  RecomputeOne, RecomputeAll, PreviewAll, GrantBadge, WithdrawBadge,
+  RecomputeOne, RecomputeAll, PreviewAll, GrantBadge, WithdrawBadge, BadgeCirculation,
 } from '@/components/staff/RecognitionForms';
 
 /**
@@ -99,6 +99,20 @@ export default async function StaffRecognitionPage(
     badgeStandings(), unexplainedCodes(), recentChanges(),
   ]);
 
+  /*
+   * The catalogue, flattened for the browser.
+   *
+   * achievements.ts is `server-only`, so the picker cannot import it — only the
+   * four fields a checkbox needs cross the boundary, translated here where the
+   * locale is already known.
+   */
+  const badgeChoices = standings.map((s) => ({
+    code: s.def.code,
+    title: s.def.title[lang],
+    icon: s.def.icon,
+    retired: s.retired !== null,
+  }));
+
   return (
     <Section>
       <Container className="max-w-4xl">
@@ -130,7 +144,7 @@ export default async function StaffRecognitionPage(
           <p className="mt-2 max-w-[62ch] text-[0.92rem] leading-relaxed text-ink-2">
             {t.grantLede}
           </p>
-          <GrantBadge lang={lang} t={t} />
+          <GrantBadge lang={lang} t={t} badges={badgeChoices} />
         </section>
 
         <section className="mt-6 rounded-2xl border border-line bg-surface p-6">
@@ -138,7 +152,15 @@ export default async function StaffRecognitionPage(
           <p className="mt-2 max-w-[62ch] text-[0.92rem] leading-relaxed text-ink-2">
             {t.withdrawLede}
           </p>
-          <WithdrawBadge lang={lang} t={t} />
+          <WithdrawBadge lang={lang} t={t} badges={badgeChoices} />
+        </section>
+
+        <section className="mt-6 rounded-2xl border border-line bg-surface p-6">
+          <h2 className="text-[1.05rem] font-extrabold">{t.retireTitle}</h2>
+          <p className="mt-2 max-w-[62ch] text-[0.92rem] leading-relaxed text-ink-2">
+            {t.retireLede}
+          </p>
+          <BadgeCirculation lang={lang} t={t} />
         </section>
 
         <section className="mt-9">
@@ -159,6 +181,7 @@ export default async function StaffRecognitionPage(
                   <th scope="col" className="px-4 py-3 text-start">{t.colKind}</th>
                   <th scope="col" className="px-4 py-3 text-start">{t.colThreshold}</th>
                   <th scope="col" className="px-4 py-3 text-start">{t.colHolders}</th>
+                  <th scope="col" className="px-4 py-3 text-start">{t.colStatus}</th>
                 </tr>
               </thead>
               <tbody>
@@ -187,6 +210,19 @@ export default async function StaffRecognitionPage(
                           {s.byHand > 0 && s.withdrawn > 0 && ' · '}
                           {s.withdrawn > 0 && `↩ ${s.withdrawn}`}
                         </span>
+                      )}
+                    </td>
+                    {/* The reason is shown, not just the state. A badge that
+                        stopped being granted with no account of why is the
+                        thing somebody will ask about a year from now. */}
+                    <td className="px-4 py-3 text-[0.85rem]">
+                      {s.retired ? (
+                        <>
+                          <span className="font-extrabold text-warn-text">{t.retiredBadge}</span>
+                          <span className="block text-ink-3" dir="auto">{s.retired.reason}</span>
+                        </>
+                      ) : (
+                        <span className="text-ink-3">{t.inCirculation}</span>
                       )}
                     </td>
                   </tr>
@@ -269,7 +305,14 @@ export default async function StaffRecognitionPage(
                     {formatDate(c.at, lang)}
                   </p>
                   <p className="mt-1 text-[0.92rem]">
-                    <span className="font-extrabold">{c.actor ?? t.someone}</span>
+                    {/* The system and an unknown person are different things.
+                        audit_logs.actor_id is documented as "NULL means the
+                        system", and rendering that as "unknown" made every
+                        automatic recognition read as though the platform had
+                        lost track of who acted. */}
+                    <span className="font-extrabold">
+                      {c.bySystem ? t.bySystem : (c.actor ?? t.someone)}
+                    </span>
                     {c.subject ? ` → ${c.subject}` : ''}
                     {c.code ? <span dir="ltr"> · {c.code}</span> : null}
                   </p>

@@ -6,19 +6,27 @@
  *
  *   - a reason nobody can review, which makes the audit log a wall of "fix"
  *   - somebody acting on their own record, which proves nothing about them
- *   - a by-hand grant of a code the engine computes, which the next recompute
- *     silently takes back weeks later with a reason from nobody
+ *   - acting on nobody, or on nothing, which writes a row that explains itself
+ *     to no one
  *
- * The third is the one worth a probe. It cannot be caught by testing: the grant
- * works, the volunteer is notified, the badge appears, and the withdrawal
- * happens on an unrelated day for an unrelated cause. Only the refusal at the
- * door prevents it, and only this holds the refusal.
+ * A FOURTH RULE USED TO LIVE HERE AND IS DELIBERATELY GONE.
+ *
+ * Granting by hand a badge the engine also computes was refused, because the
+ * next recompute would find the figure short and withdraw it — silently, weeks
+ * later, with a generic reason and no named person behind it. That refusal also
+ * stopped the association doing something it legitimately needs to do: honour
+ * work that predates the platform.
+ *
+ * So the fix moved to the root. recomputeAchievements now skips any badge a
+ * person granted, which makes a hand-granted badge stable whatever the figures
+ * say, and the refusal is no longer needed. The assertions below hold the new
+ * arrangement; probe-badge-circulation holds the engine's half.
  *
  * A PURE probe: no database, no network.
  */
 
 import {
-  checkGrant, checkWithdraw, ruleOwns, MIN_REASON,
+  checkGrant, checkWithdraw, codesFrom, MIN_REASON,
   type Instruction,
 } from '../src/lib/recognition-check.ts';
 
@@ -36,107 +44,98 @@ const eq = (what: string, got: unknown, want: unknown) =>
   check(what, Object.is(got, want),
     got === want ? '' : `got ${JSON.stringify(got)}, wanted ${JSON.stringify(want)}`);
 
-/*
- * Stand-ins for ACHIEVEMENTS.map(d => d.code). The real list cannot be imported
- * — achievements.ts is `server-only` — which is exactly why the check takes the
- * codes as an argument instead of reaching for them. probe-achievements holds
- * the definitions themselves.
- */
-const AUTOMATIC = ['first-hour', 'ten-hours', 'fifty-hours', 'first-course'];
-
 const ACTOR = 'actor-0000';
 const OTHER = 'person-9999';
 
 const good = (over: Partial<Instruction> = {}): Instruction => ({
-  email: 'someone@example.org',
-  code: 'office-support-2019',
-  reason: 'ساعدت في المكتب ثلاث سنوات قبل وجود المنصة.',
-  actorId: ACTOR,
   targetId: OTHER,
+  codes: ['first-hour'],
+  reason: 'ساعد في المكتب ثلاث سنوات قبل وجود المنصة.',
+  actorId: ACTOR,
   ...over,
 });
 
 /* ------------------------------------------------------------------ *
- * 1. What the automatic pass owns
+ * 1. Granting by hand
  * ------------------------------------------------------------------ */
-console.log('\n1. codes the engine computes');
+console.log('\n1. granting');
 
-check('a code in the list is recognised as the engine\'s',
-  ruleOwns('ten-hours', AUTOMATIC));
-check('a code outside it is not', !ruleOwns('office-support-2019', AUTOMATIC));
-check('surrounding space does not smuggle a code past the check',
-  ruleOwns('  ten-hours  ', AUTOMATIC));
-check('an empty list owns nothing', !ruleOwns('ten-hours', []));
-
-/* ------------------------------------------------------------------ *
- * 2. Granting by hand
- * ------------------------------------------------------------------ */
-console.log('\n2. granting');
-
-eq('a well-formed grant to somebody else is allowed',
-  checkGrant(good(), AUTOMATIC), null);
+eq('a well-formed grant to somebody else is allowed', checkGrant(good()), null);
 
 /*
- * THE ONE THAT MATTERS.
- *
- * Grant 'ten-hours' by hand to somebody with four hours logged and everything
- * looks right. Then an hour is verified for anybody at all, recomputeAchievements
- * runs over them, finds 240 minutes against a 600-minute threshold, and revokes
- * it with the engine's generic reason. The volunteer is told a badge they were
- * given has been taken away, weeks later, by nobody, for nothing they did.
+ * The rule that replaced the old refusal. A badge the engine computes may now
+ * be given by hand — that is the point of the change — and it is safe because
+ * the engine leaves manual rows alone. If this ever starts refusing again,
+ * either somebody reinstated the guard or the engine stopped honouring manual
+ * grants, and both are worth stopping the build for.
  */
-eq('a code the engine computes cannot be granted by hand',
-  checkGrant(good({ code: 'ten-hours' }), AUTOMATIC), 'ruleOwnsIt');
-eq('and padding the code does not get round it',
-  checkGrant(good({ code: ' ten-hours' }), AUTOMATIC), 'ruleOwnsIt');
+eq('a badge the engine computes may be granted by hand',
+  checkGrant(good({ codes: ['fifty-hours'] })), null);
 
-eq('a grant with no code is refused',
-  checkGrant(good({ code: '   ' }), AUTOMATIC), 'needBoth');
-eq('a grant with no email is refused',
-  checkGrant(good({ email: '' }), AUTOMATIC), 'needBoth');
+eq('several badges at once are allowed',
+  checkGrant(good({ codes: ['first-hour', 'ten-hours', 'first-course'] })), null);
+
+eq('a grant with nobody chosen is refused',
+  checkGrant(good({ targetId: '' })), 'needPerson');
+eq('and whitespace is not a person',
+  checkGrant(good({ targetId: '   ' })), 'needPerson');
+eq('a grant with no badge ticked is refused',
+  checkGrant(good({ codes: [] })), 'needBadge');
+/* A hand-built request can post an empty string where a checkbox posts
+ * nothing. A badge with an empty code would be a row nothing can explain. */
+eq('a blank code does not count as a badge',
+  checkGrant(good({ codes: ['', '  '] })), 'needBadge');
+
 eq('a one-word reason is refused',
-  checkGrant(good({ reason: 'تصحيح' }), AUTOMATIC), 'needReason');
+  checkGrant(good({ reason: 'تصحيح' })), 'needReason');
 eq('whitespace is not a reason',
-  checkGrant(good({ reason: ' '.repeat(40) }), AUTOMATIC), 'needReason');
+  checkGrant(good({ reason: ' '.repeat(40) })), 'needReason');
 eq('a reason exactly at the floor is accepted',
-  checkGrant(good({ reason: 'x'.repeat(MIN_REASON) }), AUTOMATIC), null);
+  checkGrant(good({ reason: 'x'.repeat(MIN_REASON) })), null);
 eq('one character short is not',
-  checkGrant(good({ reason: 'x'.repeat(MIN_REASON - 1) }), AUTOMATIC), 'needReason');
+  checkGrant(good({ reason: 'x'.repeat(MIN_REASON - 1) })), 'needReason');
 eq('nobody may grant themselves a badge',
-  checkGrant(good({ targetId: ACTOR }), AUTOMATIC), 'notYourself');
+  checkGrant(good({ targetId: ACTOR })), 'notYourself');
 
 /*
- * Order matters, and this is the assertion that holds it.
- *
- * `needBoth` and `needReason` are things the person can fix by typing.
- * `ruleOwnsIt` is a refusal of what they are trying to do. Reporting the
- * refusal first would have them correct the reason, press again, and only then
- * be told the whole attempt was never allowed.
+ * Order matters. Refusing "you picked nobody" before "your reason is short"
+ * means the person fixes the thing that actually blocked them first, rather
+ * than correcting the reason and being refused again for a different cause.
  */
-eq('a form fault is reported before the deeper refusal',
-  checkGrant(good({ code: 'ten-hours', reason: 'لا' }), AUTOMATIC), 'needReason');
+eq('the missing person is reported before the short reason',
+  checkGrant(good({ targetId: '', reason: 'لا' })), 'needPerson');
+eq('and the missing badge before the short reason',
+  checkGrant(good({ codes: [], reason: 'لا' })), 'needBadge');
 
 /* ------------------------------------------------------------------ *
- * 3. Withdrawing
+ * 2. Withdrawing
  * ------------------------------------------------------------------ */
-console.log('\n3. withdrawing');
+console.log('\n2. withdrawing');
 
 eq('a well-formed withdrawal is allowed', checkWithdraw(good()), null);
 eq('withdrawing still needs a reason',
   checkWithdraw(good({ reason: 'خطأ' })), 'needReason');
 eq('and still refuses self-action',
   checkWithdraw(good({ targetId: ACTOR })), 'notYourself');
+eq('and still needs at least one badge',
+  checkWithdraw(good({ codes: [] })), 'needBadge');
+eq('a badge the engine computes may be withdrawn by hand',
+  checkWithdraw(good({ codes: ['fifty-hours'] })), null);
 
-/*
- * Deliberately NOT symmetric with granting.
- *
- * A badge standing on figures that turned out to be wrong has to be
- * correctable, and that is precisely a rule-owned code. If the figures still
- * support it the next recompute restores it — which is the right answer, not a
- * surprise: it means the data says they earned it.
- */
-eq('a code the engine computes MAY be withdrawn by hand',
-  checkWithdraw(good({ code: 'ten-hours' })), null);
+/* ------------------------------------------------------------------ *
+ * 3. The codes that actually get acted on
+ * ------------------------------------------------------------------ */
+console.log('\n3. cleaning the chosen codes');
+
+eq('blanks are dropped', codesFrom(['first-hour', '', '  ']).join(), 'first-hour');
+eq('surrounding space is trimmed', codesFrom(['  ten-hours  ']).join(), 'ten-hours');
+/* A form can post the same value twice. Granting one badge twice in a request
+ * would either fail on the unique index or write two audit lines for one
+ * decision, and neither is what the person did. */
+eq('a code posted twice is acted on once',
+  codesFrom(['ten-hours', 'ten-hours']).join(), 'ten-hours');
+eq('order is preserved', codesFrom(['b', 'a', 'b']).join(), 'b,a');
+eq('nothing in, nothing out', codesFrom([]).length, 0);
 
 /* ------------------------------------------------------------------ */
 

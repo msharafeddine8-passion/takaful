@@ -45,10 +45,23 @@ export function formatDate(value: Date | string, lang: Locale): string {
 }
 
 /**
- * '2 ساعة و30 دقيقة' / '2 h 30 min'.
+ * «ساعتان ونصف» shaped properly, and '2 h 30 min'.
  *
- * Copied verbatim from src/lib/hours.ts, rounding and all, so that file can
- * re-export this one and nothing on screen changes.
+ * THIS WROTE UNGRAMMATICAL ARABIC ON MOST OF THE SITE.
+ *
+ * It was copied verbatim from src/lib/hours.ts, which used «{n} ساعة» for every
+ * count. Arabic does not count that way: it has five bands — nothing, one, a
+ * pair, a few (3–10) and many (11+) — and the noun changes shape in each.
+ * «2 ساعة» is wrong the way "2 hour" is wrong, and it was rendering on the
+ * membership card, the journey page, the dashboard, the honours board and the
+ * achievements page.
+ *
+ * There is a second formatDuration in src/lib/when.ts which always had this
+ * right. The two are NOT merged, because their contracts differ where it
+ * matters: this one keeps a sign, since an hours reversal is stored as negative
+ * minutes and the ledger has to show it, and it renders a zero rather than a
+ * dash, since a tile reading «0 دقيقة» is a figure while «—» is a gap. Merging
+ * them would silently change what the hours ledger prints for a correction.
  */
 export function formatDuration(minutes: number, lang: Locale): string {
   const sign = minutes < 0 ? '-' : '';
@@ -57,9 +70,17 @@ export function formatDuration(minutes: number, lang: Locale): string {
   const m = total % 60;
 
   if (lang === 'ar') {
-    if (h === 0) return `${sign}${m} دقيقة`;
-    if (m === 0) return `${sign}${h} ساعة`;
-    return `${sign}${h} ساعة و${m} دقيقة`;
+    /* countPhrase is not used here: it lives in when.ts, which this module must
+     * not depend on, and its zero form would hide the «0 دقيقة» this one has to
+     * keep. Same five bands, stated once. */
+    const band = (n: number, one: string, two: string, few: string, many: string) =>
+      n === 1 ? one : n === 2 ? two : n <= 10 ? `${n} ${few}` : `${n} ${many}`;
+    const hours = band(h, 'ساعة', 'ساعتان', 'ساعات', 'ساعة');
+    const mins = band(m, 'دقيقة', 'دقيقتان', 'دقائق', 'دقيقة');
+
+    if (h === 0) return `${sign}${m === 0 ? '0 دقيقة' : mins}`;
+    if (m === 0) return `${sign}${hours}`;
+    return `${sign}${hours} و${mins}`;
   }
 
   if (h === 0) return `${sign}${m} min`;

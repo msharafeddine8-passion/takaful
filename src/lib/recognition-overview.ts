@@ -12,6 +12,8 @@ import { ACHIEVEMENTS, standingFor, type AchievementDef } from './achievements';
 
 export type BadgeStanding = {
   def: AchievementDef;
+  /** Out of circulation: granted to nobody new, taken from nobody who holds it. */
+  retired: { reason: string; at: string } | null;
   /** Currently held — a withdrawn badge is not counted here. */
   held: number;
   /** Held once and withdrawn since. Worth seeing: a row that climbs is a bug. */
@@ -33,10 +35,26 @@ export async function badgeStandings(): Promise<BadgeStanding[]> {
   );
   const byCode = new Map(rows.map((r) => [r.code, r]));
 
+  /* Only the rows still in force. A lifted retirement is history — the table
+   * keeps it because a badge that stopped and restarted has a history — and
+   * reading it as current would show a badge as withdrawn from circulation
+   * months after somebody deliberately brought it back. */
+  const retired = new Map(
+    (
+      await query<{ code: string; reason: string; at: string; lifted_at: Date | null }>(
+        `SELECT code, retire_reason AS reason, to_char(retired_at,'YYYY-MM-DD') AS at, lifted_at
+           FROM badge_retirements`,
+      )
+    )
+      .filter((r) => r.lifted_at == null)
+      .map((r) => [r.code, { reason: r.reason, at: r.at }]),
+  );
+
   return ACHIEVEMENTS.map((def) => {
     const row = byCode.get(def.code);
     return {
       def,
+      retired: retired.get(def.code) ?? null,
       held: Number(row?.held ?? 0),
       withdrawn: Number(row?.withdrawn ?? 0),
       byHand: Number(row?.by_hand ?? 0),
@@ -124,6 +142,17 @@ export type RecognitionChange = {
   at: string;
   action: string;
   actor: string | null;
+  /**
+   * The line was written by the platform, not by a person.
+   *
+   * Distinct from `actor === null`, which this page used to render as
+   * "unknown". audit_logs.actor_id is documented in migration 001 as "NULL
+   * means the system", so every automatic recognition and every
+   * recomputed_all line was reading as though the platform had lost track of
+   * who did it — which is the one thing an audit log must never appear to have
+   * done.
+   */
+  bySystem: boolean;
   subject: string | null;
   code: string | null;
   reason: string | null;
@@ -131,12 +160,13 @@ export type RecognitionChange = {
 
 export async function recentChanges(limit = 25): Promise<RecognitionChange[]> {
   const rows = await query<{
-    at: string; action: string; actor: string | null;
+    at: string; action: string; actor: string | null; bySystem: boolean;
     subject: string | null; code: string | null; reason: string | null;
   }>(
     `SELECT a.created_at::TEXT              AS at,
             a.action,
             actor.full_name                 AS actor,
+            (a.actor_id IS NULL)            AS "bySystem",
             subject.full_name               AS subject,
             a.new_value ->> 'code'          AS code,
             a.reason
