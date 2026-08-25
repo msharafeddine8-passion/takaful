@@ -26,6 +26,7 @@ export type Capability =
   | 'members.manage'
   | 'reports.read'
   | 'audit.read'
+  | 'awards.decide'
   | 'programme.edit'
   | 'programme.publish';
 
@@ -62,6 +63,22 @@ const GRANTS: Record<Capability, readonly Role[]> = {
    * it can be re-scoped later without hunting for role checks.
    */
   'challenges.manage': ['project_coordinator', 'program_admin', 'super_admin'],
+
+  /*
+   * Choosing the volunteer of the month, and the other three.
+   *
+   * Narrower than challenges.manage on purpose, and narrower than the people
+   * who run the shortlist would like. Setting a shared goal is an announcement
+   * about what the association is asking for; naming one volunteer above four
+   * others is a judgement about people, and it belongs with the same
+   * leadership that advances somebody through the six stages.
+   *
+   * A field supervisor can see the shortlist through /staff and can argue for
+   * a name in the room. What they cannot do is be the record of who decided —
+   * and since recognition_awards.decided_by is NOT NULL and never deletable,
+   * that record is the whole point.
+   */
+  'awards.decide': ['program_admin', 'super_admin'],
 
   // Advancing someone through the six stages is a judgement about a person,
   // so it sits with programme leadership rather than field supervisors.

@@ -12,6 +12,8 @@ import { isDbConfigured } from '@/lib/db';
 import { overview } from '@/lib/admin';
 import { formatDuration } from '@/lib/hours';
 import { challengeDictionaries } from '@/lib/dictionaries/challenges';
+import { recognitionAdmin } from '@/lib/dictionaries/recognition-admin';
+import { awardDictionaries } from '@/lib/dictionaries/awards';
 
 export async function generateMetadata(props: PageProps<'/[lang]/staff'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -142,6 +144,28 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
               {challengeDictionaries[lang].manageTitle}
             </Link>
           )}
+          {can(user, 'members.manage') && (
+            <Link
+              href={`/${lang}/staff/recognition`}
+              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {/* Same reason as the challenges link above — its own dictionary
+                  module, not a splice into types.ts/ar.ts/en.ts. */}
+              {recognitionAdmin(lang).title}
+            </Link>
+          )}
+          {/* Deliberately not gated. The monthly shortlist is meant to be
+              argued over in a room, and a field supervisor who cannot press
+              the button can still say whose month it was. The decision forms
+              themselves are gated on awards.decide inside the page. */}
+          <Link
+            href={`/${lang}/staff/awards`}
+            className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+          >
+            {/* Its own dictionary module, like the two links above — see the
+                header of src/lib/dictionaries/awards.ts. */}
+            {awardDictionaries[lang].manageTitle}
+          </Link>
           {can(user, 'members.manage') && (
             <Link
               href={`/${lang}/staff/journey`}

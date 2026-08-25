@@ -11,6 +11,8 @@ import { isDbConfigured } from '@/lib/db';
 import { formatDuration } from '@/lib/format';
 import { credentialView } from '@/lib/credential-view';
 import { plural, type PluralForms } from '@/lib/dictionaries/lms';
+import { awardBadgeFor } from '@/lib/dictionaries/awards';
+import { leaderboardStrings } from '@/lib/dictionaries/leaderboard';
 import {
   recomputeAchievements,
   achievementHistory,
@@ -99,7 +101,21 @@ export default async function AchievementsPage(
         ) : (
           <ul className="mt-8 grid gap-4 sm:grid-cols-2">
             {live.map((a) => {
-              const def = achievementByCode(a.code);
+              /*
+               * The catalogue first, then the monthly awards.
+               *
+               * A badge like `award-volunteer-2026-08` is granted by a person
+               * deciding, not by the engine, so it is deliberately not in
+               * ACHIEVEMENTS — a recompute must never withdraw a decision. It
+               * still belongs on the wall of the volunteer who was chosen, and
+               * without this fallback it rendered as nothing at all: the
+               * catalogue does not know the code, and the branch below quietly
+               * returned null for the one badge somebody was told about.
+               *
+               * awardBadgeFor returns the same three fields this template
+               * reads, so neither module learns the other's internals.
+               */
+              const def = achievementByCode(a.code) ?? awardBadgeFor(a.code);
               if (!def) return null;
               return (
                 <li
@@ -186,7 +202,11 @@ export default async function AchievementsPage(
             </p>
             <ul className="mt-4 space-y-2">
               {withdrawn.map((a) => {
-                const def = achievementByCode(a.code);
+                // Same fallback as the live list above. A monthly award that
+                // was withdrawn has to be visible here for the same reason
+                // every other withdrawn badge is: history is part of the
+                // record, and a badge that vanishes makes the rest suspect.
+                const def = achievementByCode(a.code) ?? awardBadgeFor(a.code);
                 if (!def) return null;
                 /*
                  * The same presenter the map, /verify and /verify/[code] use,
@@ -220,6 +240,24 @@ export default async function AchievementsPage(
             </ul>
           </section>
         )}
+
+        {/*
+          * The way in to the impact boards.
+          *
+          * Here rather than in the account navigation because the nav's labels
+          * live in dictionaries/ar.ts and en.ts, and this feature carries its
+          * own strings on purpose — see the header of dictionaries/leaderboard.ts.
+          * A badge wall and a ranking answer the same question a volunteer is
+          * asking, so this is where somebody already is when they want it.
+          */}
+        <p className="mt-10 text-[0.95rem] text-ink-2">
+          <Link
+            href={`/${lang}/account/leaderboard` as Parameters<typeof Link>[0]['href']}
+            className="inline-flex min-h-11 items-center rounded-full border border-line px-5 font-extrabold transition-colors hover:border-brand-orange hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40"
+          >
+            {leaderboardStrings(lang).title}
+          </Link>
+        </p>
       </Container>
     </Section>
   );

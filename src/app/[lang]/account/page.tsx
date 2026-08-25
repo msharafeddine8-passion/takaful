@@ -28,6 +28,10 @@ import { cardStatusOf } from '@/lib/card-view';
 import { challengeBoard } from '@/lib/challenge-progress';
 import { ChallengePanel } from '@/components/account/ChallengePanel';
 import { challengeDictionaries } from '@/lib/dictionaries/challenges';
+import { runBirthdays, runMilestones } from '@/lib/milestones-data';
+import { BirthdayBanner } from '@/components/account/BirthdayBanner';
+import { milestoneDictionaries } from '@/lib/dictionaries/milestones';
+import { hidesPanel } from '@/lib/preferences';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -71,8 +75,36 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
 
+  /*
+   * The greetings and the milestones, before the rest of the page is gathered
+   * rather than alongside it.
+   *
+   * This is where they run, because there is no cron on this platform and a
+   * scheduled job that quietly stops is discovered by a volunteer saying
+   * nobody wished them a happy birthday. Both are idempotent against a primary
+   * key — see migration 037 — so running them on every render of every
+   * dashboard is safe by construction rather than by luck.
+   *
+   * Sequenced ahead of portalSummary so that the unread count the bell shows
+   * includes anything they have just been sent. Run in parallel with it, the
+   * count would be read before the notification was written and today's
+   * greeting would appear to arrive tomorrow.
+   *
+   * Both are caught. They are the kindest thing on the page and the least
+   * important: a failure here must never turn somebody's dashboard into an
+   * error, and the next render tries again.
+   */
+  const [birthdays] = await Promise.all([
+    runBirthdays(user.id).catch((error) => {
+      console.error('[account] birthdays', error);
+      return { names: [] as string[] };
+    }),
+    runMilestones(user.id).catch((error) => console.error('[account] milestones', error)),
+  ]);
+
   const [
     summary, application, account, rosterClaim, safeguarding, profile, photo, challenges,
+    preferences,
   ] = await Promise.all([
     portalSummary(user.id),
     queryOne<{ id: string; status: string; submitted_at: Date | null }>(
@@ -103,6 +135,12 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
      * that the private line can be worked out; nothing comes back that names
      * anybody, here or anywhere else. */
     challengeBoard(user.id),
+    /* What they asked not to hear about. Absence of a row means everything is
+     * on — migration 010 settled that, and four hundred accounts rely on it. */
+    queryOne<{ muted_topics: string[] | null }>(
+      'SELECT muted_topics FROM notification_preferences WHERE user_id = $1',
+      [user.id],
+    ),
   ]);
 
   const hasOpenApplication = application ? APPLICATION_OPEN.includes(application.status) : false;
@@ -190,6 +228,19 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
         )}
 
         {/*
+          * Whose day it is, on the day itself, and only for people who agreed
+          * to be named. Renders nothing on every other day of the year, and
+          * nothing for a volunteer who switched birthdays off.
+          *
+          * The names arriving here have already been through
+          * publicBirthdayIdentity: no minor is among them whatever they chose,
+          * and this page could not tell which of them is which if it tried.
+          */}
+        {!hidesPanel(preferences?.muted_topics, 'birthdays') && (
+          <BirthdayBanner t={milestoneDictionaries[lang]} names={birthdays.names} />
+        )}
+
+        {/*
           * One card, not five.
           *
           * This used to render a safeguarding banner, a roster-claim offer and
@@ -272,7 +323,13 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
           * Renders nothing at all when no challenge is running. An empty box
           * saying there is nothing to work towards makes the page look broken.
           */}
-        <ChallengePanel lang={lang} t={challengeDictionaries[lang]} cards={challenges} />
+        {/* Switched off on the settings page means switched off here. A
+            preference that visibly does nothing teaches somebody that their
+            preferences are decorative, and the next one they set they will not
+            believe. */}
+        {!hidesPanel(preferences?.muted_topics, 'challenges') && (
+          <ChallengePanel lang={lang} t={challengeDictionaries[lang]} cards={challenges} />
+        )}
 
         {summary.nextActivity && (
           <Panel title={p.upcomingTitle}>

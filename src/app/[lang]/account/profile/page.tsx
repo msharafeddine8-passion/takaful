@@ -16,6 +16,9 @@ import { VisibilityForm } from '@/components/account/VisibilityForm';
 import { removePhotoAction } from '@/lib/actions/profile';
 import { getRecognition } from '@/lib/dictionaries/recognition';
 import { visibilityFrom } from '@/lib/visibility';
+import { PreferencesForm } from '@/components/account/PreferencesForm';
+import { milestoneDictionaries } from '@/lib/dictionaries/milestones';
+import { topicsFrom } from '@/lib/preferences';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account/profile'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -52,7 +55,7 @@ export default async function ProfilePage(props: PageProps<'/[lang]/account/prof
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
 
-  const [profile, photo, volunteer] = await Promise.all([
+  const [profile, photo, volunteer, preferences] = await Promise.all([
     queryOne<{
       full_name: string; display_name: string | null; bio: string | null;
       interests: string | null; skills: string | null; languages: string | null;
@@ -75,6 +78,12 @@ export default async function ProfilePage(props: PageProps<'/[lang]/account/prof
       [user.id],
     ),
     isVolunteer(user.id),
+    /* Which subjects they switched off. No row is the ordinary case and means
+     * everything is on — see migration 010. */
+    queryOne<{ muted_topics: string[] | null }>(
+      'SELECT muted_topics FROM notification_preferences WHERE user_id = $1',
+      [user.id],
+    ),
   ]);
   if (!profile) notFound();
 
@@ -175,6 +184,30 @@ export default async function ProfilePage(props: PageProps<'/[lang]/account/prof
               birthdayGreetings: profile.birthday_greetings === true,
               everChosen: profile.visibility_chosen_at !== null,
             }}
+          />
+        </section>
+
+        {/*
+          * Directly after the visibility section, and deliberately not folded
+          * into it. They look alike because a volunteer should not have to
+          * learn two layouts, but they answer different questions: the one
+          * above is consent to be published, which the association may have to
+          * produce evidence of, and this is a preference about what arrives in
+          * this person's own bell. Saving one must never restamp the other —
+          * see the note at the head of lib/actions/preferences.ts.
+          */}
+        <section className="mt-5 rounded-2xl border border-line bg-surface p-6">
+          <h2 className="text-[0.8rem] font-bold tracking-[0.12em] text-ink-3">
+            {milestoneDictionaries[lang].preferences.title}
+          </h2>
+          <p className="mt-2 max-w-[52ch] text-[0.94rem] leading-relaxed text-ink-2">
+            {milestoneDictionaries[lang].preferences.lede}
+          </p>
+          <PreferencesForm
+            lang={lang}
+            t={milestoneDictionaries[lang].preferences}
+            errors={dict.account.errors}
+            muted={topicsFrom(preferences?.muted_topics)}
           />
         </section>
 

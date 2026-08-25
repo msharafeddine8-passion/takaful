@@ -2,6 +2,7 @@ import 'server-only';
 import { randomUUID } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { query, queryOne, execute } from './db';
+import { mutes } from './preferences';
 
 /**
  * Telling people what happened to them.
@@ -38,7 +39,18 @@ export type NotificationKind =
    * time somebody else logs an hour is not news, and the badge backfill sends
    * one message per person rather than one per badge.
    */
-  | 'badge.earned' | 'milestone.reached';
+  | 'badge.earned' | 'milestone.reached'
+  /*
+   * The private birthday greeting, added by migration 037 — to this union and
+   * to chk_notification_kind in the same change, which is the lesson above
+   * learned the other way round.
+   *
+   * It goes to one person, on their own day, once in a year, and its words
+   * contain no date and no age. Who may be NAMED to everybody else is a
+   * different question with a different answer: publicBirthdayIdentity in
+   * src/lib/visibility.ts, which this kind takes no part in.
+   */
+  | 'birthday.greeting';
 
 export type Notification = {
   id: string;
@@ -74,6 +86,26 @@ const ALWAYS_SEND: NotificationKind[] = [
 ];
 
 /**
+ * Both preference columns, read together.
+ *
+ * `muted_kinds` is the original, finer setting and people hold values in it
+ * from before the settings page existed; `muted_topics` is what that page
+ * writes — see migration 037 and src/lib/preferences.ts for why a subject
+ * outlives a kind name. Reading only one of the two would quietly re-enable
+ * something somebody had already switched off, which is the failure a
+ * preference system cannot afford: nobody goes back to check.
+ *
+ * A person with no row at all gets no row here, and `mutes` reads that as
+ * "nothing is muted" — absence means the defaults, exactly as migration 010
+ * intended.
+ */
+const PREFERENCES_SQL = `
+  SELECT muted_kinds AS muted, muted_topics AS topics
+    FROM notification_preferences
+   WHERE user_id = $1
+`;
+
+/**
  * Writes a notification inside a caller's transaction.
  *
  * Pass the client when the notification must live or die with the event —
@@ -82,11 +114,11 @@ const ALWAYS_SEND: NotificationKind[] = [
  */
 export async function notifyIn(client: PoolClient, input: NotifyInput): Promise<void> {
   if (!ALWAYS_SEND.includes(input.kind)) {
-    const { rows } = await client.query<{ muted: string[] }>(
-      'SELECT muted_kinds AS muted FROM notification_preferences WHERE user_id = $1',
+    const { rows } = await client.query<{ muted: string[]; topics: string[] }>(
+      PREFERENCES_SQL,
       [input.userId],
     );
-    if (rows[0]?.muted?.includes(input.kind)) return;
+    if (mutes(rows[0]?.muted, rows[0]?.topics, input.kind)) return;
   }
 
   await client.query(
@@ -104,11 +136,11 @@ export async function notifyIn(client: PoolClient, input: NotifyInput): Promise<
 /** Same thing outside a transaction, for events that stand alone. */
 export async function notify(input: NotifyInput): Promise<void> {
   if (!ALWAYS_SEND.includes(input.kind)) {
-    const pref = await queryOne<{ muted: string[] }>(
-      'SELECT muted_kinds AS muted FROM notification_preferences WHERE user_id = $1',
+    const pref = await queryOne<{ muted: string[]; topics: string[] }>(
+      PREFERENCES_SQL,
       [input.userId],
     );
-    if (pref?.muted?.includes(input.kind)) return;
+    if (mutes(pref?.muted, pref?.topics, input.kind)) return;
   }
 
   await execute(

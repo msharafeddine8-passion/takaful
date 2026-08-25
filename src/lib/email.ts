@@ -20,14 +20,34 @@ import { execute } from './db';
  * EMAIL_FROM to turn sending on. Without them nothing is sent and every
  * attempt is recorded as skipped, which is the honest state rather than a
  * silent success.
+ *
+ * A skip and a failure are also written to the log, not only to the table.
+ * The row is the record; the log line is what somebody sees when they go
+ * looking because a reset link never arrived, and the first place anybody
+ * looks is the platform log rather than a table they would have to query.
+ * Neither line carries the address — the delivery id is enough to find the
+ * row, and a log is a worse place to keep a volunteer's email than a table
+ * with access control on it.
  */
 
 const API = 'https://api.resend.com/emails';
 /** A slow provider must not hold a sign-up form open. */
 const TIMEOUT_MS = 8_000;
 
+/**
+ * Both, or neither. A key with no from-address fails at the provider with a
+ * validation error, and a from-address with no key fails at the first
+ * request — so half-configured is not a state worth having.
+ *
+ * Trimmed because an environment variable set to an empty string is set as
+ * far as `process.env` is concerned, and a blank key would turn a clear
+ * "not configured" into a 401 from Resend.
+ */
 export function isEmailConfigured(): boolean {
-  return Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM);
+  return (
+    (process.env.RESEND_API_KEY ?? '').trim().length > 0 &&
+    (process.env.EMAIL_FROM ?? '').trim().length > 0
+  );
 }
 
 export type SendInput = {
@@ -51,10 +71,12 @@ export async function sendEmail(input: SendInput): Promise<SendResult> {
   );
 
   if (!isEmailConfigured()) {
+    const reason = 'No email provider is configured (RESEND_API_KEY, EMAIL_FROM).';
     await execute(
       `UPDATE email_deliveries SET status = 'skipped', last_error = $2 WHERE id = $1`,
-      [id, 'No email provider is configured (RESEND_API_KEY, EMAIL_FROM).'],
+      [id, reason],
     );
+    console.error(`[email] not sent, delivery ${id}: ${reason}`);
     return { sent: false, reason: 'not_configured' };
   }
 
@@ -87,6 +109,7 @@ export async function sendEmail(input: SendInput): Promise<SendResult> {
           WHERE id = $1`,
         [id, `${response.status}: ${detail}`],
       );
+      console.error(`[email] provider refused, delivery ${id}: ${response.status} ${detail}`);
       return { sent: false, reason: 'failed' };
     }
 
@@ -105,6 +128,7 @@ export async function sendEmail(input: SendInput): Promise<SendResult> {
         WHERE id = $1`,
       [id, message.slice(0, 300)],
     );
+    console.error(`[email] send threw, delivery ${id}: ${message.slice(0, 300)}`);
     return { sent: false, reason: 'failed' };
   } finally {
     clearTimeout(timer);

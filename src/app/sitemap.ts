@@ -16,6 +16,14 @@ import { isDbConfigured, query } from '@/lib/db';
 
 const STATIC = [
   '', '/about', '/areas', '/academy', '/journey', '/projects', '/gallery', '/contact', '/resources',
+  /* The honours board. Listed because it is deliberately indexable: somebody
+   * who consented to public thanks consented to a public page, and a public
+   * page a search engine cannot find is a private page with extra steps. It
+   * names only people whose consent still permits it, re-resolved on every
+   * render — see src/app/[lang]/honours/page.tsx. If the association ever
+   * decides that consent is to its own site rather than to the open web, this
+   * entry comes out at the same time as the robots line on that page. */
+  '/honours',
 ];
 
 export const revalidate = 3600;

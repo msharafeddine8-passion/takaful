@@ -57,31 +57,47 @@ export type EnvReport = {
   missingOptional: string[];
 };
 
+function isSet(name: string): boolean {
+  // A variable set to whitespace is a variable somebody meant to set and did
+  // not. Treating it as present is how a provider key of " " reaches an API.
+  return (process.env[name] ?? '').trim().length > 0;
+}
+
 export function checkEnvironment(): EnvReport {
   const missingRequired: string[] = [];
   const missingOptional: string[] = [];
 
   for (const v of VARIABLES) {
-    if (process.env[v.name]) continue;
+    if (isSet(v.name)) continue;
     (v.required ? missingRequired : missingOptional).push(v.name);
   }
 
   return { missingRequired, missingOptional };
 }
 
-/** Prints the state once at start-up. Never throws. */
+/**
+ * Prints the state once at start-up. Never throws.
+ *
+ * Iterates VARIABLES rather than looking each name back up, so the reporting
+ * loop cannot assert that a lookup succeeded — there is no lookup. The two
+ * `find(...)!` calls this replaced were the only non-null assertions in
+ * `src/lib`, and the shape that needed them was the shape that made them
+ * unavoidable.
+ */
 export function reportEnvironment(): void {
   const { missingRequired, missingOptional } = checkEnvironment();
+  const missing = new Set([...missingRequired, ...missingOptional]);
 
-  for (const name of missingRequired) {
-    const v = VARIABLES.find((x) => x.name === name)!;
-    console.error(`[env] MISSING REQUIRED ${name} — ${v.effect}`);
+  for (const v of VARIABLES) {
+    if (!missing.has(v.name)) continue;
+    if (v.required) {
+      console.error(`[env] MISSING REQUIRED ${v.name} — ${v.effect}`);
+    } else {
+      console.warn(`[env] not set: ${v.name} — ${v.effect}`);
+    }
   }
-  for (const name of missingOptional) {
-    const v = VARIABLES.find((x) => x.name === name)!;
-    console.warn(`[env] not set: ${name} — ${v.effect}`);
-  }
-  if (missingRequired.length === 0 && missingOptional.length === 0) {
+
+  if (missing.size === 0) {
     console.log('[env] every variable is set.');
   }
 }

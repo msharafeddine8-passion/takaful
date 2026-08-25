@@ -326,38 +326,50 @@ function PersonCard({
 }
 
 /**
- * Where a photograph goes, and why one is not there yet.
+ * The photograph, or the initial.
  *
- * KNOWN GAP — the consent exists, the route to serve it does not.
- * `person.showPhoto` is decided properly: visibility.ts returns photo:true for
- * an adult who chose «اسمي وصورتي», and this page carries that answer
- * faithfully. What it cannot do is fetch the image. The only photo route in
- * this codebase is /api/photo/[userId], which refuses an anonymous request on
- * purpose — a photograph of a volunteer, many of whom are minors, is personal
- * data, and that route serves every account whether they consented or not.
+ * TWO INDEPENDENT ANSWERS TO THE SAME QUESTION, and that is the design rather
+ * than a duplication. `person.showPhoto` decides whether this page asks for an
+ * image; /api/public/photo/[userId] decides, from the database and on every
+ * request, whether to send one. Both go through consentFor in
+ * lib/continuity.ts, so they cannot disagree about a person — and the second
+ * one is what actually protects the photograph, because a URL is a request and
+ * not a permission. Anybody may type that address; only consent answers it.
  *
- * Pointing an <img> at it from a public page would render a broken image for
- * everybody who opted in, which is a worse outcome than a monogram and reads
- * to the volunteer as the association losing their picture. So the branch is
- * not written until there is somewhere for it to point.
+ * NOT /api/photo/[userId]. That route serves the holder and staff who manage
+ * members, asks nothing about consent, and refuses anonymous requests — so
+ * pointing this page at it would render a broken image for exactly the people
+ * who opted in, which reads to a volunteer as the association having lost
+ * their picture.
  *
- * WHAT HAS TO LAND FIRST: a public photo route that resolves the same consent
- * — publicIdentity(...).photo — server-side per request, rather than trusting
- * a URL. Then `showPhoto && photoVersion` becomes the condition on an <img>
- * here and nothing else on this page changes.
+ * The version is a cache-buster and never a permission: replacing a photograph
+ * changes it, so the new one appears at once instead of after the response's
+ * five minutes. Removing consent changes nothing in the URL, which is why the
+ * route holds the caching short rather than marking the bytes immutable.
  */
 function Portrait({ person }: { person: ContinuityPerson }) {
-  // The first character of the name, or nothing at all. aria-hidden because
-  // the name is already the heading beside it — a screen reader reading the
-  // initial first would announce the same letter twice.
+  // aria-hidden either way: the name is already the heading beside it, so an
+  // alt text or a spoken initial would announce the same person twice. The
+  // photograph is decoration here — it carries nothing the name does not.
   return (
     <div
       aria-hidden
       className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border border-line bg-surface-2"
     >
-      <span className="text-[1.15rem] font-extrabold text-ink-3">
-        {person.name ? [...person.name][0] : '·'}
-      </span>
+      {person.showPhoto && person.photoVersion ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={`/api/public/photo/${person.id}?v=${person.photoVersion}`}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <span className="text-[1.15rem] font-extrabold text-ink-3">
+          {person.name ? [...person.name][0] : '·'}
+        </span>
+      )}
     </div>
   );
 }
