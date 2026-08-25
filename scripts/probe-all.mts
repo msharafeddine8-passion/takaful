@@ -166,6 +166,16 @@ console.log(
 );
 
 let polluted = false;
+/*
+ * Only rows LEFT BEHIND fail the run.
+ *
+ * Both directions used to set `polluted`, so a run that tidied up after an
+ * earlier crashed probe exited 1 while printing "0 hole(s), 0 probe(s)
+ * failed" — red for having done the right thing. A suite that goes red for
+ * benign reasons is a suite people stop reading, and then the run with a real
+ * fault in it goes past unnoticed.
+ */
+let leftBehind = false;
 const after = await configSnapshot();
 if (before && after) {
   for (const table of CONFIG_TABLES) {
@@ -191,6 +201,7 @@ if (before && after) {
      * So the line now says what to check rather than what to conclude.
      */
     if (to > from) {
+      leftBehind = true;
       console.log(
         `\n  LEFT BEHIND  ${table}: ${from} before, ${to} after — a probe added ${to - from} ` +
           `row(s) and did not remove them. Run: npm run sweep`,
@@ -209,7 +220,7 @@ if (before && after) {
   console.log('\nCould not check configuration: no database.');
 }
 
-if (failed > 0 || holes > 0 || polluted) {
+if (failed > 0 || holes > 0 || leftBehind) {
   console.log('\nRun `npm run sweep` — a probe that failed may not have cleaned up after itself.');
 }
-process.exit(failed === 0 && holes === 0 && !polluted ? 0 : 1);
+process.exit(failed === 0 && holes === 0 && !leftBehind ? 0 : 1);
