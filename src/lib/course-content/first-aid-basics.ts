@@ -179,6 +179,174 @@ export const firstAidBasics: CourseContent = {
             en: 'The ambulance number, civil defence, and nearest hospital to wherever you usually work should be saved in your phone right now, and in every team member\'s phone — not only in the coordinator\'s. Searching for an emergency number during a real incident is the worst possible moment and the worst place for a search, and it is precisely what consumes the critical seconds that make the difference.',
           },
         },
+        /*
+         * Practice, not assessment.
+         *
+         * The five points above are the right five points and they are a list
+         * on a page. A real call is not a list: somebody answers, asks
+         * something you were not expecting, and the seconds you spend
+         * introducing yourself are seconds an ambulance is not moving. What
+         * this rehearses is the first sentence, which is the one nobody gets
+         * right the first time. Nothing here is marked — see the practice note
+         * in course-content/types.ts.
+         */
+        {
+          type: 'dialogue',
+          title: {
+            ar: 'سقطت مشاركة في ساحة خارجية وأصيبت برأسها. أنت من يتّصل',
+            en: 'A participant has fallen in an outdoor yard and hit her head. You are the one calling',
+          },
+          speaker: { ar: 'مشغّل الطوارئ', en: 'The emergency call handler' },
+          opening: { ar: 'الطوارئ، تفضّل.', en: 'Emergency services. Go ahead.' },
+          turns: [
+            {
+              replies: [
+                {
+                  text: {
+                    ar: 'أنا بساحة مدرسة الوردية، شارع رئيسي، جنب محطة البنزين. في بنت وقعت وعم تنزف من راسها.',
+                    en: 'I’m in the yard of the Wardieh school, on the main street, next to the petrol station. A girl has fallen and is bleeding from her head.',
+                  },
+                  says: {
+                    ar: 'وصلني الموقع. البنت واعية؟ عم تحكي معك؟',
+                    en: 'Location received. Is she conscious? Is she talking to you?',
+                  },
+                  note: {
+                    ar: 'الموقع أوّلاً، ثم ما حدث في جملة واحدة. لو انقطعت المكالمة الآن — وهذا يحدث — تستطيع سيارة الإسعاف أن تتحرّك. لا شيء آخر قلته يمكن تعويضه بهذه السهولة، ولا شيء آخر لا يستطيع أحد تخمينه.',
+                    en: 'Location first, then what happened in one sentence. If the call dropped right now — and it does — an ambulance could still move. Nothing else you said is this hard to replace, and nothing else is impossible for anybody to guess.',
+                  },
+                  best: true,
+                },
+                {
+                  text: {
+                    ar: 'بسرعة! في وحدة وقعت وعم تنزف من راسها والدم كتير!',
+                    en: 'Quickly! A girl has fallen and she’s bleeding from her head, there’s a lot of blood!',
+                  },
+                  says: {
+                    ar: 'حاضر. وين أنت؟ العنوان بالضبط.',
+                    en: 'Understood. Where are you? The exact address.',
+                  },
+                  note: {
+                    ar: 'لم تنتهِ المكالمة، لكنّك أنفقت أوّل جملة على ما يستطيع المشغّل أن ينتظره ولم تعطه ما لا يستطيع أحد أن يخمّنه. المشغّل مدرَّب فسألك، لكن لو انقطع الخطّ في هذه اللحظة لما كان في يده شيء يفعله.',
+                    en: 'The call did not end, but you spent your first sentence on what the handler could have waited for and gave him nothing that nobody else can supply. He is trained, so he asked — but had the line dropped at that moment there would have been nothing he could do.',
+                  },
+                },
+                {
+                  text: {
+                    ar: 'مرحبا، أنا متطوّع بجمعية تكافل وعنّا اليوم نشاط للأطفال، وصار معنا موقف...',
+                    en: 'Hello, I’m a volunteer with the Takaful association and we’re running a children’s activity today, and something has happened…',
+                  },
+                  says: {
+                    ar: '(يقاطع) وين أنت؟',
+                    en: '(cutting in) Where are you?',
+                  },
+                  note: {
+                    ar: 'التعريف بنفسك مهذّب وليس معلومة يحتاجها أحد الآن. مشغّل الطوارئ لا يقيّم مَن أنت، يقيّم أين يرسل السيارة — وقد قاطعك لهذا السبب بالضبط.',
+                    en: 'Introducing yourself is polite and is not information anybody needs right now. The handler is not assessing who you are, he is deciding where to send a vehicle — which is exactly why he cut in.',
+                  },
+                },
+              ],
+            },
+            {
+              replies: [
+                {
+                  text: {
+                    ar: 'واعية وعم تحكي. في جرح فوق حاجبها عم ينزف. عمرها تقريباً أربعتعش سنة، وهي وحدها المصابة.',
+                    en: 'She’s conscious and talking. There’s a cut above her eyebrow that’s bleeding. She’s about fourteen, and she’s the only one hurt.',
+                  },
+                  says: {
+                    ar: 'تمام. السيارة طالعة. ضلّك ع الخطّ معي.',
+                    en: 'Good. A vehicle is on its way. Stay on the line with me.',
+                  },
+                  note: {
+                    ar: 'واعية، تتنفّس، تتكلّم، مكان النزف، العمر تقريباً، وعدد المصابين. هذه هي الصورة التي يبني عليها المشغّل قراره — ولاحظ أنّك لم تشخّص شيئاً ولم تخمّن، قلت ما تراه فقط.',
+                    en: 'Conscious, breathing, talking, where the bleeding is, roughly how old, and how many are hurt. That is the picture the handler makes his decision on — and notice you diagnosed nothing and guessed at nothing, you said only what you can see.',
+                  },
+                  best: true,
+                },
+                {
+                  text: {
+                    ar: 'ما بعرف، أنا واقف بعيد عنها شوي.',
+                    en: 'I don’t know, I’m standing a little way off from her.',
+                  },
+                  says: {
+                    ar: 'قرّب منها ولا تسكّر، وقلّي شو عم تشوف.',
+                    en: 'Move closer to her and don’t hang up. Tell me what you can see.',
+                  },
+                  note: {
+                    ar: 'أنت عينا المشغّل في المكان، ولا أحد غيرك يستطيع أن يخبره بشيء. الاتصال من بعيد يجعل المكالمة أطول ويحرم المصابة من التقييم الوحيد المتاح لها الآن.',
+                    en: 'You are the handler’s eyes at the scene and nobody else can tell him anything. Calling from a distance makes the call longer and deprives the casualty of the only assessment available to her right now.',
+                  },
+                },
+                {
+                  text: {
+                    ar: 'شلناها ونقلناها ع الظلّ وحطّينا شي تحت راسها، وعم نحاول نوقّف النزف.',
+                    en: 'We lifted her and carried her into the shade and put something under her head, and we’re trying to stop the bleeding.',
+                  },
+                  says: {
+                    ar: 'ما تحرّكوها بعد. خلّوها متل ما هي ولا تعطوها شي تشربه.',
+                    en: 'Don’t move her again. Leave her as she is and don’t give her anything to drink.',
+                  },
+                  note: {
+                    ar: 'نقل مصاب في الرأس أو الرقبة قبل وصول المسعف قد يحوّل إصابة إلى إصابة دائمة. الوحدة الرابعة تتناول هذا بالتفصيل — والمهمّ هنا أنّك قلته للمشغّل بدل أن تخفيه، فاستطاع أن يوقفكم قبل أن تكرّروه.',
+                    en: 'Moving somebody with a head or neck injury before the paramedic arrives can turn an injury into a permanent one. Module 4 covers this — what matters here is that you told the handler rather than hiding it, so he could stop you before you did it again.',
+                  },
+                },
+              ],
+            },
+            {
+              replies: [
+                {
+                  text: {
+                    ar: 'تمام، رح ضلّ ع الخطّ. رقمي هوّي اللي عم تشوفه، وأنا جنبها.',
+                    en: 'Alright, I’ll stay on the line. My number is the one you can see, and I’m next to her.',
+                  },
+                  says: {
+                    ar: 'منيح. خلّي حدا يفتح البوّابة ويستنّى السيارة عالشارع.',
+                    en: 'Good. Have somebody open the gate and wait for the vehicle on the street.',
+                  },
+                  note: {
+                    ar: 'البقاء على الخطّ ليس مجاملة: المشغّل يوجّهك حتى وصول السيارة، وإن تغيّر وضع المصابة فهو أوّل من يعرف. وطلبه الأخير هو الشيء الذي ينسى الناس فعله — سيارة تدور حول المبنى تبحث عن المدخل تخسر دقائق.',
+                    en: 'Staying on the line is not a courtesy: the handler talks you through it until the vehicle arrives, and if her condition changes he is the first to know. His last instruction is the thing people forget — a vehicle circling a building looking for the entrance loses minutes.',
+                  },
+                  best: true,
+                },
+                {
+                  text: {
+                    ar: 'تمام، شكراً. (تُقفل الخطّ)',
+                    en: 'Alright, thank you. (ends the call)',
+                  },
+                  says: {
+                    ar: '—',
+                    en: '—',
+                  },
+                  note: {
+                    ar: 'انتهت المكالمة قبل أن يقول لك المشغّل أن تُنهيها. ما خسرته: التوجيه حتى وصول السيارة، والقدرة على إبلاغه إن ساء وضعها، ووسيلة اتصاله بك إن لم يجد السائق المكان. إنهاء المكالمة قرار المشغّل لا قرارك.',
+                    en: 'The call ended before the handler told you to end it. What you lost: guidance until the vehicle arrives, the ability to tell him if she deteriorates, and his way of reaching you if the driver cannot find the place. Ending the call is the handler’s decision, not yours.',
+                  },
+                  ends: true,
+                },
+                {
+                  text: {
+                    ar: 'رح تركها شوي وروح استنّى السيارة عالشارع.',
+                    en: 'I’ll leave her for a moment and go and wait for the vehicle on the street.',
+                  },
+                  says: {
+                    ar: 'لا تتركها. خلّي حدا تاني ينزل عالشارع.',
+                    en: 'Don’t leave her. Send somebody else down to the street.',
+                  },
+                  note: {
+                    ar: 'الفكرة صحيحة والمنفّذ خطأ. استقبال السيارة يوفّر دقائق فعلاً، لكنّه مهمّة شخص آخر — وقد تعلّمت في هذه الوحدة كيف تُسندها: باسم محدّد وبصوت مسموع.',
+                    en: 'The idea is right and the person is wrong. Meeting the vehicle genuinely saves minutes, but it is somebody else’s task — and this module has already shown you how to hand it over: a specific name, said out loud.',
+                  },
+                },
+              ],
+            },
+          ],
+          afterword: {
+            ar: 'الفرق بين مكالمة جيّدة وأخرى ليس الهدوء ولا الفصاحة — هو ترتيب أوّل جملة. الموقع أوّلاً لأنّه الشيء الوحيد الذي لا يستطيع أحد تخمينه ولا تعويضه، ثم ما جرى، ثم من وكم وكيف حاله. وآخر المكالمة ليس لك: تبقى على الخطّ حتى يقول المشغّل إنّه انتهى.',
+            en: 'What separates a good call from a bad one is not calm and not fluency — it is the order of the first sentence. Location first, because it is the one thing nobody can guess and nothing else can replace, then what happened, then who and how many and how they are. And the end of the call is not yours: you stay on the line until the handler says it is over.',
+          },
+        },
         {
           type: 'quiz',
           id: 'fab-q2',

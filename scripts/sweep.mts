@@ -109,7 +109,21 @@ const references = [
   'DELETE FROM audit_logs WHERE actor_id = $1',
   'DELETE FROM membership_status_history WHERE user_id = $1 OR changed_by = $1',
   'DELETE FROM user_journey_assignments WHERE user_id = $1 OR assigned_by = $1',
-  'DELETE FROM activities WHERE created_by = $1',
+  /*
+   * Both columns, and this is not belt-and-braces.
+   *
+   * The sweep deleted activities by created_by only, and activities.led_by is
+   * a second reference to users with ON DELETE RESTRICT. A probe that made a
+   * supervisor and put them in charge of an activity therefore left a row the
+   * sweep could not remove and an account it could not delete — and the sweep
+   * reported the failure in a line nobody read.
+   *
+   * That is not merely untidy. probe-portal died mid-run on a dropped
+   * connection and left "يوم ميداني / Field day" in production: published,
+   * open for registration, three days out, among eleven real activities. A
+   * volunteer could have signed up for a day that does not exist.
+   */
+  'DELETE FROM activities WHERE created_by = $1 OR led_by = $1',
   'DELETE FROM profiles WHERE user_id = $1',
 ];
 

@@ -225,6 +225,94 @@ export const meetingsAndFacilitation: CourseContent = {
             en: 'A neutral facilitator is not an absent one. Neutrality means not favouring a particular opinion — not avoiding initiative. An effective facilitator intervenes constantly: stops drift off topic, reframes misunderstandings, names the tension that is blocking the discussion from moving forward. An absent facilitator is not neutral — they are leaving the space for whoever fills it.',
           },
         },
+        /*
+         * Practice, not assessment.
+         *
+         * The two lists above are a vocabulary of facilitation moves, and a
+         * vocabulary is not the skill. What a facilitator actually does in the
+         * room is diagnose — this silence is not that silence, and the move
+         * that answers one makes the other worse. Pairing them is the closest
+         * a page can get to that, and it costs no marks.
+         */
+        {
+          type: 'match',
+          prompt: {
+            ar: 'صِل كلّ ما يحدث في الغرفة بالتدخّل الذي يعالجه. لكلّ حالة تدخّل واحد يناسبها — والتدخّل الصحيح في المكان الخطأ يزيد المشكلة.',
+            en: 'Pair each thing that happens in a room with the intervention that answers it. Each has one that fits — and the right move in the wrong place makes things worse.',
+          },
+          pairs: [
+            {
+              left: {
+                ar: 'شخص واحد تكلّم في كلّ بند ومداخلاته تطول، ولا أحد يقاطعه',
+                en: 'One person has spoken on every item at length, and nobody interrupts',
+              },
+              right: {
+                ar: 'قاعدة زمنية يُتّفق عليها قبل النقاش وتنطبق على الجميع بمن فيهم أنت',
+                en: 'A time rule agreed before the discussion, applying to everyone including you',
+              },
+              because: {
+                ar: 'القاعدة المتّفق عليها مسبقاً ليست عقوبة لأحد بعينه، وهذا ما يجعل تطبيقها ممكناً بلا توتّر. أمّا مقاطعته باسمه في اللحظة فتُنشئ خصماً وتُسكته لبقيّة الاجتماع.',
+                en: 'A rule agreed in advance is not a punishment aimed at one person, which is what makes applying it possible without tension. Cutting him off by name in the moment makes an adversary and silences him for the rest of the meeting.',
+              },
+            },
+            {
+              left: {
+                ar: 'ثلاثة لم يتكلّموا، ولا تعرف إن كانوا موافقين أم ساكتين',
+                en: 'Three people have not spoken, and you cannot tell agreement from silence',
+              },
+              right: {
+                ar: 'جولة دورية: جملة واحدة من كلّ شخص على هذا البند',
+                en: 'A round: one sentence from each person on this item',
+              },
+              because: {
+                ar: 'الجولة تجعل الكلام هو الوضع الافتراضي بدل أن يكون مبادرةً يدفع ثمنها من يبدأ، ولا يستطيع أحد إغراقها. والدعوة العامّة «في تعليقات تانية؟» يملؤها من يملأ الغرفة أصلاً.',
+                en: 'A round makes speaking the default rather than an initiative the first person pays for, and nobody can flood it. A general invitation — “any other comments?” — is filled by whoever already fills the room.',
+              },
+            },
+            {
+              left: {
+                ar: 'النقاش انزلق من البند إلى موضوع آخر مهمّ لكنّه ليس هذا',
+                en: 'The discussion has slid from the item to another topic — an important one, but not this one',
+              },
+              right: {
+                ar: 'تسمية الانحراف، وتدوين الموضوع في قائمة منفصلة أمام الغرفة، والعودة',
+                en: 'Naming the drift, writing the topic on a separate list in front of the room, and returning',
+              },
+              because: {
+                ar: 'التدوين أمام الغرفة هو ما يجعل العودة مقبولة: صاحب الموضوع يرى أنّه لم يُهمَل بل أُجّل. وقطعه بلا تدوين يُقرأ كرفض للموضوع نفسه.',
+                en: 'Writing it down in front of the room is what makes the return acceptable: whoever raised it sees that it was deferred rather than dismissed. Cutting it off without recording it reads as a rejection of the topic itself.',
+              },
+            },
+            {
+              left: {
+                ar: 'أنت من ييسّر النقاش، وأنت أيضاً من سيعرض الأرقام في الجزء الثاني',
+                en: 'You are facilitating, and you are also the one presenting the numbers in the second half',
+              },
+              right: {
+                ar: 'الإفصاح للغرفة عن الدورين، والقول بصوت مسموع متى تنتقل من أحدهما إلى الآخر',
+                en: 'Declaring both roles to the room, and saying out loud when you move from one to the other',
+              },
+              because: {
+                ar: 'الدوران لا يتعارضان إذا كانا معلومين. ما يُفسد النقاش هو أن يسمع الحاضرون رأي صاحب المحتوى وهم يظنّون أنّهم يسمعون ملخّص الميسّر.',
+                en: 'The two roles do not conflict once they are known. What corrupts a discussion is a room hearing the content owner’s opinion while believing it is hearing the facilitator’s summary.',
+              },
+            },
+            {
+              left: {
+                ar: 'توتّر واضح بين شخصين يشلّ النقاش، ولا أحد يذكره',
+                en: 'Visible tension between two people is stalling the discussion, and nobody mentions it',
+              },
+              right: {
+                ar: 'تسمية ما تراه بحذر، وسؤال الغرفة إن كان يستحقّ وقتاً منفصلاً',
+                en: 'Naming what you can see, carefully, and asking the room whether it needs separate time',
+              },
+              because: {
+                ar: 'التوتّر الذي لا يُسمّى يبقى يوجّه النقاش من تحت الطاولة. وتسميته سؤالاً للغرفة لا حكماً على شخصين هو ما يجعلها ممكنة: أنت تصف ما تراه، ولا تُعلن من على حقّ.',
+                en: 'Tension that is not named goes on steering the discussion from under the table. Naming it as a question to the room rather than a verdict on two people is what makes it possible: you describe what you can see and you do not announce who is right.',
+              },
+            },
+          ],
+        },
         {
           type: 'quiz',
           id: 'mf-q2',
@@ -312,6 +400,177 @@ export const meetingsAndFacilitation: CourseContent = {
           content: {
             ar: 'الاجتماع الذي تسيطر عليه شخصية واحدة يُنتج قرارات بمدخلات محدودة، وغالباً التزاماً أقلّ من باقي الفريق. الناس لا يلتزمون بقرارات يشعرون أن أحداً اتّخذها نيابةً عنهم. الاستماع لا يعني التباطؤ — يعني أن القرار الذي تصل إليه بعد سماع الغرفة أقوى وأكثر واقعية من الذي تصل إليه بعد سماع صوت واحد.',
             en: 'A meeting dominated by one personality produces decisions with limited input, and usually less commitment from the rest of the team. People do not honour decisions they feel were made by someone on their behalf. Listening is not slowing down — it means the decision you reach after hearing the room is stronger and more realistic than the one you reach after hearing one voice.',
+          },
+        },
+        /*
+         * Practice, not assessment.
+         *
+         * A dialogue rather than a scenario, because a room does not hand a
+         * facilitator one decision. The move that redirects a dominant speaker
+         * works, and then he asks to finish one more point, and then the room
+         * goes quiet — and each of those is a fresh decision the first one
+         * bought you. A single-choice question cannot show that the cost of a
+         * public correction arrives two minutes later.
+         */
+        {
+          type: 'dialogue',
+          title: {
+            ar: 'البند الثالث من أربعة. كريم تكلّم في كلّ بند، وثلاثة لم يتكلّموا بعد',
+            en: 'The third item of four. Karim has spoken on every one, and three people have not spoken at all',
+          },
+          speaker: { ar: 'كريم، عضو في الفريق', en: 'Karim, a team member' },
+          opening: {
+            ar: '(يكمل) ونحنا السنة الماضية جرّبنا نفس الشي وما زبط، ولهيك أنا رأيي إنّو...',
+            en: '(continuing) And last year we tried exactly this and it didn’t work, so my view is that…',
+          },
+          turns: [
+            {
+              replies: [
+                {
+                  text: {
+                    ar: '(حين يتوقّف) شكراً كريم. في حدا ما سمعنا صوتو بعد ع هالبند؟',
+                    en: '(when he pauses) Thank you, Karim. Is there anyone whose voice we haven’t heard yet on this item?',
+                  },
+                  says: {
+                    ar: '(يتوقّف) ماشي. بس خلّيني كمّل نقطة وحدة بس.',
+                    en: '(stops) Sure. Just let me finish one more point.',
+                  },
+                  note: {
+                    ar: 'شكرٌ ثم تحويل للدور، بلا اسم وبلا لوم. لاحظ أنّ التدخّل نجح ولم يُنهِ المشكلة — وهذا هو الوضع الطبيعي: أنت اشتريت لحظةً، وما ستفعله بها هو القرار التالي.',
+                    en: 'Thanks, then a redirect — no name attached and no reproach. Notice that the move worked and did not end the problem, which is the normal case: you bought a moment, and what you do with it is the next decision.',
+                  },
+                  best: true,
+                },
+                {
+                  text: {
+                    ar: '(تقاطعه) كريم، خلص، عطي غيرك مجال.',
+                    en: '(cutting in) Karim, that’s enough. Give someone else a chance.',
+                  },
+                  says: {
+                    ar: '(يصمت ويسند ظهره إلى الخلف) ماشي. ما بحكي.',
+                    en: '(goes quiet and sits back) Fine. I won’t speak.',
+                  },
+                  note: {
+                    ar: 'انتهت المحادثة هنا، وليس لأنّ الغرفة صارت أفضل. المقاطعة باسمه أمام الجميع أسكتته لبقيّة الاجتماع وأسكتت معه من رأى ما حدث وقرّر ألّا يعرّض نفسه له. مهمّة الميسّر ليست إسكات أحد بل تحويل الدور.',
+                    en: 'The conversation ended here, and not because the room got better. Cutting him off by name in front of everyone silenced him for the rest of the meeting, and silenced with him anyone who watched it happen and decided not to risk the same. The facilitator’s job is not to silence anybody, it is to redirect.',
+                  },
+                  ends: true,
+                },
+                {
+                  text: {
+                    ar: '(تنتظر حتى ينتهي) في تعليقات تانية ع هالبند؟',
+                    en: '(waiting until he finishes) Any other comments on this item?',
+                  },
+                  says: {
+                    ar: '(يكمل) آه، وفي نقطة تانية كمان لازم نذكرها...',
+                    en: '(carrying on) Yes, and there’s another point we should mention…',
+                  },
+                  note: {
+                    ar: 'الدعوة المفتوحة يملؤها من يملأ الغرفة أصلاً. من لم يتكلّم بعد لم يمتنع لأنّه لم يُدعَ — امتنع لأنّ الدخول مكلف، والسؤال العامّ لا يخفّض تكلفته.',
+                    en: 'An open invitation is filled by whoever already fills the room. The people who have not spoken did not stay quiet for want of an invitation — they stayed quiet because entering is costly, and a general question does not lower the cost.',
+                  },
+                },
+              ],
+            },
+            {
+              replies: [
+                {
+                  text: {
+                    ar: 'خلّينا نتّفق ع قاعدة للكلّ: كلّ مداخلة دقيقتين وبعدها بفتح المجال. عم طبّقها ع الكلّ وع حالي كمان. موافقين؟',
+                    en: 'Let’s agree a rule for everyone: two minutes per contribution, then I open the floor. It applies to all of us, me included. Agreed?',
+                  },
+                  says: {
+                    ar: '(يومئ) ماشي، هيك أعدل.',
+                    en: '(nods) Fine, that’s fairer.',
+                  },
+                  note: {
+                    ar: 'القاعدة التي تشمل الميسّر نفسه هي التي يقبلها من ستُطبَّق عليه. ولاحظ أنّك لم تقل «إنت عم تطوّل» — قلت «هيك منمشي»، فصار الأمر عقداً جماعياً بدل أن يكون حكماً على شخص.',
+                    en: 'A rule that includes the facilitator is the one the person it will be applied to accepts. And notice you did not say “you are going on” — you said “this is how we will run it”, which makes it a collective contract rather than a verdict on a person.',
+                  },
+                  best: true,
+                },
+                {
+                  text: {
+                    ar: 'تفضّل كمّل.',
+                    en: 'Go ahead, finish.',
+                  },
+                  says: {
+                    ar: '(يتكلّم ثلاث دقائق أخرى) ...ولهيك برأيي منأجّل البند كلّو.',
+                    en: '(speaks for another three minutes) …so in my view we should postpone the whole item.',
+                  },
+                  note: {
+                    ar: 'ما خسرته ليس ثلاث دقائق — بل ما تعلّمته الغرفة: أنّ الدعوة إلى الكلام تُلغى بطلب، وأنّ الجولة التي وعدت بها ليست ملزِمة. ومن لم يتكلّم بعد سمع ذلك أيضاً.',
+                    en: 'What you lost is not three minutes — it is what the room learned: that an invitation to others can be cancelled on request, and that the round you promised is not binding. The people who have not spoken heard that too.',
+                  },
+                },
+                {
+                  text: {
+                    ar: 'كريم، إنت عم تسيطر عالاجتماع.',
+                    en: 'Karim, you’re dominating this meeting.',
+                  },
+                  says: {
+                    ar: '(يحمرّ وجهه) طيّب. أنا ساكت من هلّق ورايح.',
+                    en: '(flushes) Right. I’ll say nothing from now on.',
+                  },
+                  note: {
+                    ar: 'انتهت المحادثة هنا. الوصف صحيح والصياغة تحكم على الشخص لا على السلوك، وفي غرفة أمام زملائه. الجملة نفسها تصلح إن قيلت للجميع كقاعدة، أو له وحده بعد الاجتماع.',
+                    en: 'The observation is accurate and the sentence judges the person rather than the behaviour, in a room, in front of his colleagues. The same content works said to everyone as a rule, or to him alone after the meeting.',
+                  },
+                  ends: true,
+                },
+              ],
+            },
+            {
+              replies: [
+                {
+                  text: {
+                    ar: 'منعمل جولة: كلّ واحد جملة وحدة ع هالبند، ومنبلّش من هون. ومين ما بدّو يزيد شي بيقول «مرّر».',
+                    en: 'We’ll do a round: one sentence each on this item, starting here. Anyone with nothing to add says “pass”.',
+                  },
+                  says: {
+                    ar: '(ينتظر دوره) تمام.',
+                    en: '(waits his turn) Fine.',
+                  },
+                  note: {
+                    ar: 'الجولة تنقل عبء البدء من الفرد إلى العملية. و«مرّر» ليست تفصيلاً: من دونها تتحوّل الجولة إلى إلزام بالكلام أمام الجميع، وهو بالضبط ما يجعل الصامت يصمت.',
+                    en: 'A round moves the burden of going first off the individual and onto the process. And “pass” is not a detail: without it the round becomes an obligation to speak in front of everyone, which is precisely what keeps a quiet person quiet.',
+                  },
+                  best: true,
+                },
+                {
+                  text: {
+                    ar: 'طيّب، ما في حدا عندو شي؟ يعني كلّنا متّفقين.',
+                    en: 'Alright — nobody has anything? So we’re all agreed.',
+                  },
+                  says: {
+                    ar: '(يهزّ رأسه) اي، متّفقين.',
+                    en: '(nods) Yes, agreed.',
+                  },
+                  note: {
+                    ar: 'قراءة الصمت اتّفاقاً هي الخطأ الذي تُبنى عليه قرارات لا يلتزم بها أحد. الصمت في هذه الغرفة له أربعة أسباب على الأقلّ — وأنت سجّلت أحدها وحده وأقفلت البند.',
+                    en: 'Reading silence as agreement is the error that decisions nobody honours are built on. The silence in this room has at least four causes — and you recorded one of them and closed the item.',
+                  },
+                },
+                {
+                  text: {
+                    ar: 'سناء، إنتِ شو رأيِك؟',
+                    en: 'Sana, what do you think?',
+                  },
+                  says: {
+                    ar: '(ينظر نحوها)',
+                    en: '(looks over at her)',
+                  },
+                  note: {
+                    ar: 'توجيه السؤال فجأةً إلى شخص صامت أمام الجميع يضعه في اختبار لم يطلبه، وقد يكون صمته لأنّ الكلام في هذه الغرفة مكلف عليه. الجولة تصل إلى سناء أيضاً، لكنّها تصل إليها كإجراء يشمل الجميع.',
+                    en: 'Springing a question on a quiet person in front of everybody puts them in a test they did not ask for, and their silence may be precisely because speaking in this room is costly for them. A round reaches Sana too, but it reaches her as a procedure that applies to everyone.',
+                  },
+                },
+              ],
+            },
+          ],
+          afterword: {
+            ar: 'لم يكن كريم سيّئ النيّة في أيّ لحظة من هذا الحوار، ولم يكن أحد الثلاثة موافقاً. والفرق بين المسارين لم يكن في شدّة التدخّل بل في من كان موجَّهاً إليه: التدخّلات التي نجحت كانت قواعد للغرفة كلّها، والتي أغلقت الحديث كانت أحكاماً على شخص أمام زملائه.',
+            en: 'Karim was not acting in bad faith at any point in this conversation, and none of the three quiet people was agreeing. What separated the two paths was not how firm the intervention was but who it was addressed to: the moves that worked were rules for the whole room, and the ones that closed the conversation were verdicts on a person in front of his colleagues.',
           },
         },
         {
@@ -420,6 +679,71 @@ export const meetingsAndFacilitation: CourseContent = {
           content: {
             ar: 'إذا وصل الوقت المحدّد وأنتم لا تزالون تناقشون بدون خلاصة، الخيار هو: إمّا تمديد الاجتماع بموافقة الجميع لاتخاذ القرار، أو تأجيل البند لاجتماع منفصل بوضوح — لا إغلاق الاجتماع والاكتفاء بإحساس أن الأمر «سينحلّ». المهام التي تُسجَّل أثناء الاجتماع أمام أصحابها تُنجز؛ التي تُكتَب بعده في ملخّص لم يُقرَّ في الغرفة غالباً ما تُناقَش مرة أخرى في الاجتماع القادم.',
             en: 'If the allotted time arrives and you are still discussing without a conclusion, the choice is: extend the meeting with everyone\'s agreement to reach the decision, or explicitly postpone the item to a separate meeting — not close the meeting with a feeling that "it will work out." Tasks recorded during the meeting in front of their owners get done; those written afterwards in a summary that was not confirmed in the room usually get discussed again at the next meeting.',
+          },
+        },
+        /*
+         * Practice, not assessment.
+         *
+         * The grid above names the three parts of a usable action item and a
+         * reader will agree with all three. Then they write «متابعة موضوع
+         * القاعة — الفريق اللوجستي — هذا الأسبوع» in the minutes, because each
+         * of those three feels like an answer to the question above it.
+         * Assembling one part at a time is what makes visible which part a
+         * reader keeps leaving vague, and it costs no marks.
+         */
+        {
+          type: 'build',
+          prompt: {
+            ar: 'اجتمعتم واتّفقتم على أن تُحجز القاعة بساعات أطول لنشاط الشهر القادم. ركّب بند المهمّة كما يُكتب في المحضر.',
+            en: 'The meeting agreed that the hall should be booked for longer hours for next month’s activity. Assemble the action item as it goes into the minutes.',
+          },
+          slots: [
+            {
+              label: { ar: 'ماذا', en: 'What' },
+              options: [
+                {
+                  ar: 'مراجعة عقد القاعة وتعديل ساعات الاستخدام إلى ما بعد الخامسة',
+                  en: 'Review the hall contract and extend the booked hours past five',
+                },
+                { ar: 'المتابعة مع القاعة', en: 'Follow up with the hall' },
+                { ar: 'الاهتمام بموضوع القاعة', en: 'Take care of the hall question' },
+                { ar: 'التنسيق بخصوص ساعات القاعة', en: 'Coordinate regarding the hall hours' },
+              ],
+              because: {
+                ar: 'الثلاثة الأخرى تصف الانشغال بالموضوع لا الفعل المطلوب: «متابعة» و«اهتمام» و«تنسيق» لا يمكن لأحد أن يقول إنّها أُنجزت أو لم تُنجَز. الفعل المكتوب يذكر ما يُغيَّر بالضبط، فيصير السؤال عنه لاحقاً سؤالاً عن واقعة لا عن انطباع.',
+                en: 'The other three describe attending to the topic rather than the action: “follow up”, “take care of” and “coordinate” cannot be said to have been done or not done. The written action names exactly what changes, which turns the later question about it into a question about a fact rather than an impression.',
+              },
+            },
+            {
+              label: { ar: 'من', en: 'Who' },
+              options: [
+                { ar: 'سناء الحاج', en: 'Sana El-Hajj' },
+                { ar: 'الفريق اللوجستي', en: 'The logistics team' },
+                { ar: 'سناء أو مروان', en: 'Sana or Marwan' },
+                { ar: 'من يستطيع منّا', en: 'Whoever among us is able' },
+              ],
+              because: {
+                ar: 'اسم واحد لا قائمة ولا صيغة اختيار. «الفريق» لا يفعل شيئاً، و«سناء أو مروان» تعني أنّ كلّاً منهما سيفترض أنّ الآخر تولّاها. وحين يتقاسم اثنان مهمّةً فعلاً، واحدٌ مسؤول والآخر يدعم — ويُكتب المسؤول.',
+                en: 'One name, not a list and not an either-or. “The team” does nothing, and “Sana or Marwan” means each of them assumes the other has it. When two people genuinely share a task, one is responsible and the other supports — and it is the responsible one who goes in the minutes.',
+              },
+            },
+            {
+              label: { ar: 'متى', en: 'By when' },
+              options: [
+                { ar: 'قبل الخميس ١٢ آذار', en: 'Before Thursday 12 March' },
+                { ar: 'هذا الأسبوع', en: 'This week' },
+                { ar: 'قبل النشاط', en: 'Before the activity' },
+                { ar: 'في أقرب وقت', en: 'As soon as possible' },
+              ],
+              because: {
+                ar: 'تاريخ محدّد. «هذا الأسبوع» يتغيّر معناه بحسب اليوم الذي تُقرأ فيه، و«قبل النشاط» يجعل الموعد النهائي هو اللحظة التي يصير فيها التأخّر غير قابل للإصلاح. والتاريخ الذي يُتّفق عليه في الغرفة أقوى من الذي يُرسَل لاحقاً.',
+                en: 'A specific date. “This week” changes meaning with the day it is read on, and “before the activity” sets the deadline at the moment when being late can no longer be fixed. And a date agreed in the room is stronger than one sent afterwards.',
+              },
+            },
+          ],
+          afterword: {
+            ar: 'بند المهمّة الصالح يجيب عن ثلاثة أسئلة في سطر واحد، وقيمته أنّ متابعته لا تحتاج إلى مواجهة: تسأل سناء يوم الأربعاء عن شيء متّفق عليه ومكتوب، لا عن شيء تظنّ أنّها تولّته. أضعف الأجزاء الثلاثة عادةً هو «ماذا» — لأنّ «المتابعة» تبدو فعلاً وهي في الحقيقة اسم لغياب الفعل.',
+            en: 'A usable action item answers three questions in one line, and its value is that following it up needs no confrontation: on Wednesday you ask Sana about something agreed and written, not about something you think she took on. The weakest of the three parts is usually “what” — because “follow up” looks like an action and is in fact a name for the absence of one.',
           },
         },
         {

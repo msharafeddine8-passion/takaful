@@ -290,6 +290,178 @@ export const workingWithChildren: CourseContent = {
               : 'This organisation has not yet named a child safeguarding focal point. Do not treat this course as sufficient until it has.',
           },
         },
+        /*
+         * Practice, not assessment.
+         *
+         * The seven steps above are correct, and a volunteer can agree with
+         * every one of them and still promise secrecy in the room — because
+         * what a frightened child asks for is a promise, and the kind answer
+         * is yes. A list cannot rehearse saying no to that. This can, and it
+         * costs no marks; see the practice note in course-content/types.ts.
+         */
+        {
+          type: 'dialogue',
+          title: {
+            ar: 'بعد النشاط، ينتظر رامي حتى يخرج الباقون',
+            en: 'After the activity, Rami waits until the others have gone',
+          },
+          speaker: { ar: 'رامي، ١١ سنة', en: 'Rami, 11' },
+          opening: {
+            ar: '(بصوت واطي وعينيه على الأرض) بابا بيضربني لما بيزعل. بس ما تقول لحدا، بوعدني.',
+            en: '(quietly, looking at the floor) Dad hits me when he gets angry. But don’t tell anyone. Promise me.',
+          },
+          turns: [
+            {
+              replies: [
+                {
+                  text: {
+                    ar: 'ما تخاف يا رامي، هيدا بيضلّ بيناتنا. ما بقول لحدا.',
+                    en: 'Don’t worry, Rami. This stays between us. I won’t tell anyone.',
+                  },
+                  says: {
+                    ar: '(يرتاح كتفاه) طيّب. تكرم.',
+                    en: '(his shoulders drop) Okay. Thanks.',
+                  },
+                  note: {
+                    ar: 'انتهت المحادثة هنا لأنّك أغلقتها بوعد لا تستطيع الوفاء به. أنت ملزَم بالإبلاغ، وستُبلّغ، وسيعرف رامي ذلك بعد يوم أو يومين — فيتعلّم أنّ الكبار يَعِدون ثم لا يفون، وهو الدرس الذي يجعله يصمت في المرّة القادمة. الجملة الصحيحة تعطيه ما يستطيع أحد أن يعطيه فعلاً: «رح ساعدك، ورح خبّر شخص مسؤول بيقدر يحميك».',
+                    en: 'The conversation ended here because you closed it with a promise you cannot keep. You are required to report, you will report, and Rami will find that out within a day or two — learning that adults promise and then do not deliver, which is the lesson that keeps him quiet next time. The right sentence offers him what somebody can actually give: “I will help you, and I will tell one responsible person who can protect you.”',
+                  },
+                  ends: true,
+                },
+                {
+                  text: {
+                    ar: 'كيف بيضربك؟ بإيدو ولّا بشي تاني؟ وكم مرّة صار هيك؟',
+                    en: 'How does he hit you? With his hand or with something? And how many times has it happened?',
+                  },
+                  says: {
+                    ar: '(ينكمش ويشيح بنظره) ما بعرف... يمكن ما قصدت شي. خلص، نسيت.',
+                    en: '(shrinks back and looks away) I don’t know… maybe I didn’t mean anything. Forget it.',
+                  },
+                  note: {
+                    ar: 'انتهت المحادثة هنا لأنّك بدأت تحقيقاً. الأسئلة التفصيلية تضع الطفل في موضع المُتَّهَم لا المحميّ فتدفعه إلى التراجع — وتراجُعه لا يعني أنّ شيئاً لم يحدث، يعني أنّك أقفلت الباب. ولو أكمل، كانت أسئلتك ستوجّه إجابته وتُفسد أيّ إجراء رسميّ لاحق.',
+                    en: 'The conversation ended here because you started an investigation. Detailed questions put a child in the position of the accused rather than the protected, and push them to retract — and a retraction does not mean nothing happened, it means you shut the door. Even had he continued, your questions would have led his answer and damaged any later formal process.',
+                  },
+                  ends: true,
+                },
+                {
+                  text: {
+                    ar: 'سمعتك يا رامي، وشكراً إنّك حكيتلي. ما فيني وعدك إنّي ما بقول لحدا — بس فيني وعدك إنّي رح ساعدك، ورح خبّر شخص واحد شغلتو يحميك.',
+                    en: 'I heard you, Rami, and thank you for telling me. I can’t promise not to tell anyone — but I can promise I’ll help you, and that I’ll tell one person whose job is to protect you.',
+                  },
+                  says: {
+                    ar: '(يرفع نظره لأوّل مرّة) رح تخبّر بابا؟',
+                    en: '(looks up for the first time) Are you going to tell my dad?',
+                  },
+                  note: {
+                    ar: 'هذا هو الردّ: تسمع، وتشكره، وترفض الوعد بالسرّية صراحةً، وتضع مكانه وعداً تستطيع الوفاء به. ولاحظ أنّه رفع نظره — الطفل لا يحتاج منك سرّاً، يحتاج أن يعرف ماذا سيحدث.',
+                    en: 'This is the reply: you hear him, you thank him, you refuse the promise of secrecy out loud, and you put a promise you can keep in its place. Notice that he looked up — a child does not need a secret from you, he needs to know what happens next.',
+                  },
+                  best: true,
+                },
+              ],
+            },
+            {
+              replies: [
+                {
+                  text: {
+                    ar: 'لأ، ولا حدا. بس أنا وياك.',
+                    en: 'No. Nobody. Just you and me.',
+                  },
+                  says: {
+                    ar: '(يهزّ رأسه) طيّب.',
+                    en: '(nods) Okay.',
+                  },
+                  note: {
+                    ar: 'انتهت المحادثة هنا. «رح تخبّر بابا؟» ليس طلباً للسرّية — هو سؤال عن الأمان، وهو أوّل سؤال يطرحه منذ بدأ الكلام. الردّ عليه بوعد جديد يعيدك إلى الخطأ نفسه بعد أن كنت قد تجاوزته.',
+                    en: '“Are you going to tell my dad?” is not a request for secrecy — it is a question about safety, and it is the first question he has asked since he started talking. Answering it with a fresh promise walks you back into the mistake you had just avoided.',
+                  },
+                  ends: true,
+                },
+                {
+                  text: {
+                    ar: 'هيدا مش قراري لحالي. الشخص اللي رح خبّرو شغلتو يحميك، وهوّي بيقرّر شو الخطوة الجاي — وأنا رح خبّرك شو عملت.',
+                    en: 'That isn’t mine alone to decide. The person I’ll tell has protecting you as their job, and they decide what happens next — and I’ll tell you what I did.',
+                  },
+                  says: {
+                    ar: '(بعد صمت) طيّب. بس ما بدّي حدا من الشباب يعرف.',
+                    en: '(after a pause) Okay. But I don’t want any of the other kids to know.',
+                  },
+                  note: {
+                    ar: 'لم تَعِد بما لا تملكه ولم تتركه في الظلام. «ما بعرف» وحدها كانت ستكون صادقة وقاسية؛ وإضافة «رح خبّرك شو عملت» هي ما يجعل الصدق محتمَلاً بالنسبة إليه.',
+                    en: 'You did not promise what is not yours to give, and you did not leave him in the dark. “I don’t know” alone would have been honest and cold; adding “I’ll tell you what I did” is what makes the honesty bearable for him.',
+                  },
+                  best: true,
+                },
+                {
+                  text: {
+                    ar: 'الأحسن نحكي مع بابا سوا ونسمع منّو كمان.',
+                    en: 'It would be best if we talked to your dad together and heard his side.',
+                  },
+                  says: {
+                    ar: '(يقف) ما بدّي احكي بعد.',
+                    en: '(stands up) I don’t want to talk any more.',
+                  },
+                  note: {
+                    ar: 'انتهت المحادثة هنا، وهذا أخطر خيار في الصفحة. مواجهة من يُشتبه بأنّه أساء — أو حتى إعلامه — تُعرّض الطفل لخطر مباشر فور عودته إلى البيت، وليست خطوةً يملكها متطوّع أصلاً. الطريق واحد: مسؤول الحماية، في اليوم نفسه.',
+                    en: 'This is the most dangerous option on the page. Confronting — or even informing — the person suspected of causing harm puts the child at direct risk the moment he goes home, and it is not a step a volunteer owns in the first place. There is one route: the safeguarding focal point, the same day.',
+                  },
+                  ends: true,
+                },
+              ],
+            },
+            {
+              replies: [
+                {
+                  text: {
+                    ar: 'ولا واحد فيهم رح يعرف. رح كتب شو حكيتلي بحرفو، وبس مسؤول الحماية رح يقراه.',
+                    en: 'Not one of them will know. I’ll write down what you told me in your own words, and only the safeguarding focal point will read it.',
+                  },
+                  says: {
+                    ar: '(يومئ) تمام.',
+                    en: '(nods) Alright.',
+                  },
+                  note: {
+                    ar: 'هذا وعدٌ تستطيع الوفاء به، وهو الفرق بينه وبين الوعد الأوّل. السرّية داخل القناة الرسمية شيء تملكه؛ السرّية عن القناة نفسها ليست لك. وذكرُ أنّك ستكتب كلامه بحرفه ليس تفصيلاً إدارياً — هو ما يمنع روايته من أن تتغيّر في كل مرّة تُنقل فيها.',
+                    en: 'This is a promise you can keep, and that is what separates it from the first one. Confidentiality inside the formal channel is yours to give; confidentiality from the channel is not. And saying that you will write his words verbatim is not an administrative detail — it is what stops his account changing every time it is passed on.',
+                  },
+                  best: true,
+                },
+                {
+                  text: {
+                    ar: 'ما فيني وعدك بشي.',
+                    en: 'I can’t promise you anything.',
+                  },
+                  says: {
+                    ar: '(ينظر إلى الأرض من جديد) ماشي.',
+                    en: '(looks back at the floor) Fine.',
+                  },
+                  note: {
+                    ar: 'صادق، وأشدّ ممّا يلزم. رفض الوعد بالسرّية لا يعني رفض كلّ طمأنة: أن تقول له من سيقرأ ما ستكتبه ومن لن يقرأه معلومةٌ صحيحة وفي وسعك أن تعطيها، والامتناع عنها يتركه يتخيّل الأسوأ.',
+                    en: 'Honest, and stricter than it needs to be. Refusing the promise of secrecy does not mean refusing all reassurance: telling him who will read what you write and who will not is true and within your power to say, and withholding it leaves him to imagine the worst.',
+                  },
+                },
+                {
+                  text: {
+                    ar: 'بس لو حكيت لرفقاتك يمكن يساعدوك.',
+                    en: 'Though if you told your friends, maybe they could help you.',
+                  },
+                  says: {
+                    ar: '(بسرعة) لأ! ما تقلّن.',
+                    en: '(quickly) No! Don’t tell them.',
+                  },
+                  note: {
+                    ar: 'الخبر يسير في قناة واحدة: مسؤول الحماية. أيّ توسيع للدائرة — بين الأطفال أو بين المتطوّعين — يصل عاجلاً أو آجلاً إلى البيت، وقد يصل إلى من أساء إليه.',
+                    en: 'The information travels through one channel: the safeguarding focal point. Any widening of the circle — among the children or among the volunteers — reaches the home sooner or later, and may reach the person who hurt him.',
+                  },
+                },
+              ],
+            },
+          ],
+          afterword: {
+            ar: 'ثلاثة أدوار، وثلاث لحظات كان يمكن أن ينتهي فيها الحديث: الوعد بالسرّية، والسؤال التفصيلي، ومواجهة الأهل. لا واحد منها يبدو خطأً وأنت تقوله — كلّها تبدو لطفاً أو حرصاً أو حسماً. والمشترك بين الردود الصحيحة أنّ كلاً منها كان أقلّ راحةً لك وأكثر أماناً له: تقول الحقيقة عمّا ستفعله، ثم تفعله في اليوم نفسه.',
+            en: 'Three turns, and three moments where the conversation could have ended: the promise of secrecy, the detailed question, and going to the parent. None of them feels like a mistake as you say it — each feels like kindness, or care, or decisiveness. What the right replies have in common is that each was less comfortable for you and safer for him: you tell the truth about what you are going to do, and then you do it the same day.',
+          },
+        },
         {
           type: 'quiz',
           id: 'c4q3',

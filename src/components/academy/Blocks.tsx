@@ -3,6 +3,10 @@ import { OrderBlock } from '@/components/academy/practice/OrderBlock';
 import { SortBlock } from '@/components/academy/practice/SortBlock';
 import { ScenarioBlock } from '@/components/academy/practice/ScenarioBlock';
 import { RevealBlock } from '@/components/academy/practice/RevealBlock';
+import { MatchBlock } from '@/components/academy/practice/MatchBlock';
+import { ReviewBlock } from '@/components/academy/practice/ReviewBlock';
+import { DialogueBlock } from '@/components/academy/practice/DialogueBlock';
+import { BuildBlock } from '@/components/academy/practice/BuildBlock';
 import type { Block } from '@/lib/course-content/types';
 import type { Locale } from '@/lib/i18n';
 
@@ -201,6 +205,73 @@ export function renderBlock(block: Block, lang: Locale, key: number, quiz: QuizC
           lang={lang}
           prompt={block.prompt[lang]}
           answer={block.answer[lang]}
+        />
+      );
+
+    case 'match':
+      return (
+        <MatchBlock
+          key={key}
+          lang={lang}
+          prompt={block.prompt[lang]}
+          pairs={block.pairs.map((p) => ({
+            left: p.left[lang],
+            right: p.right[lang],
+            because: p.because[lang],
+          }))}
+        />
+      );
+
+    case 'review':
+      return (
+        <ReviewBlock
+          key={key}
+          lang={lang}
+          prompt={block.prompt[lang]}
+          docTitle={block.docTitle[lang]}
+          lines={block.lines.map((l) => ({
+            label: l.label[lang],
+            text: l.text[lang],
+            wrong: l.wrong,
+            note: l.note[lang],
+          }))}
+          afterword={block.afterword[lang]}
+        />
+      );
+
+    case 'dialogue':
+      return (
+        <DialogueBlock
+          key={key}
+          lang={lang}
+          title={block.title[lang]}
+          speaker={block.speaker[lang]}
+          opening={block.opening[lang]}
+          turns={block.turns.map((turn) => ({
+            replies: turn.replies.map((r) => ({
+              text: r.text[lang],
+              says: r.says[lang],
+              note: r.note[lang],
+              ends: r.ends,
+              best: r.best,
+            })),
+          }))}
+          afterword={block.afterword[lang]}
+        />
+      );
+
+    case 'build':
+      return (
+        <BuildBlock
+          key={key}
+          lang={lang}
+          prompt={block.prompt[lang]}
+          slots={block.slots.map((s) => ({
+            label: s.label[lang],
+            options: s.options.map((o) => o[lang]),
+            because: s.because[lang],
+          }))}
+          afterword={block.afterword[lang]}
         />
       );
   }

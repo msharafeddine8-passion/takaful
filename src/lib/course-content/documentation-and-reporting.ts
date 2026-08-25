@@ -481,6 +481,137 @@ export const documentationAndReporting: CourseContent = {
             en: 'The names of other children with nothing to do with the incident, health or family details the reader does not need in order to act, photographs unless specifically requested, and your view of anyone’s character. The rule: every piece of information in the report has to answer the question "and what does the reader do with this?". Anything that does not is a disclosure with no reason behind it.',
           },
         },
+        /*
+         * Practice, not assessment.
+         *
+         * Everything else in this course asks the reader to judge a sentence
+         * somebody has already isolated for them. A real report arrives whole,
+         * mostly correct, and nobody says how much of it is not — and the line
+         * that carries a child's home address sits between the date and the
+         * quotation looking exactly as unremarkable as they do. Noticing is
+         * the skill, and it cannot be practised on a sentence held up on its
+         * own. Nothing here is marked.
+         */
+        {
+          type: 'review',
+          prompt: {
+            ar: 'هذا تقرير حادث كما كُتب فعلاً. أربعة من أسطره لا تمرّ — علّم ما تراه ثم انظر ما فات.',
+            en: 'This is an incident report as it was actually written. Four of its lines do not pass — flag what you see, then look at what was missed.',
+          },
+          docTitle: {
+            ar: 'تقرير حادث — نشاط الأحد، مركز الحيّ',
+            en: 'Incident report — Sunday activity, neighbourhood centre',
+          },
+          lines: [
+            {
+              label: { ar: 'التاريخ والوقت والمكان', en: 'Date, time and place' },
+              text: {
+                ar: 'الأحد ٩ منه، الساعة ١١:٢٠، الدرج الداخلي في مركز الحيّ.',
+                en: 'Sunday the 9th, 11:20, the internal staircase at the neighbourhood centre.',
+              },
+              note: {
+                ar: 'سليم: ثلاثة أشياء يستطيع أيّ شخص أن يتحقّق منها، ومكان محدّد لا «في المركز».',
+                en: 'Sound: three things anybody can check, and a specific place rather than “at the centre”.',
+              },
+            },
+            {
+              label: { ar: 'من كان حاضراً', en: 'Who was present' },
+              text: {
+                ar: 'المتطوّعون: أنا، ومروان صعب، ورنا خليل. المشاركون: ١٤ طفلاً.',
+                en: 'Volunteers: myself, Marwan Saab, Rana Khalil. Participants: 14 children.',
+              },
+              note: {
+                ar: 'سليم، ولاحظ الفرق: المتطوّعون بأسمائهم لأنّهم من يمكن سؤالهم، والأطفال بعدد لأنّ أسماءهم ليست ممّا يحتاجه القارئ.',
+                en: 'Sound, and notice the difference: the volunteers by name because they are who can be asked, and the children as a count because their names are not what the reader needs.',
+              },
+            },
+            {
+              label: { ar: 'ما جرى', en: 'What happened' },
+              text: {
+                ar: 'سقط الطفل حسن مراد (١٠ سنوات، مدرسة الوردية، ساكن في بناية أبو خليل، الطابق الثالث) عن آخر أربع درجات وارتطم كتفه بالجدار.',
+                en: 'The child Hassan Mrad (10, Wardieh school, resident at the Abu Khalil building, third floor) fell down the last four steps and struck his shoulder against the wall.',
+              },
+              wrong: true,
+              note: {
+                ar: 'لا يمرّ. الاسم وحده قد يلزم؛ المدرسة والعنوان والطابق لا يخدمان أيّ قرار يُتّخذ بناءً على هذا التقرير، وهي بالضبط ما يجعل تسريبه خطراً. القاعدة: ما لا يحتاجه القارئ ليقرّر لا يُكتب.',
+                en: 'Does not pass. The name alone may be needed; the school, the address and the floor serve no decision that will be taken on this report, and they are precisely what makes a leak of it dangerous. The rule: what the reader does not need in order to decide does not go in.',
+              },
+            },
+            {
+              label: { ar: 'ما جرى — تكملة', en: 'What happened — continued' },
+              text: {
+                ar: 'كان يركض على الدرج رغم التنبيه، وهو دائماً غير منضبط ولا يسمع الكلام.',
+                en: 'He was running on the stairs despite being warned, and he is always undisciplined and never listens.',
+              },
+              wrong: true,
+              note: {
+                ar: 'لا يمرّ. «كان يركض رغم التنبيه» واقعة. «دائماً غير منضبط» حكم على شخص لا وصف لحادث — ولا يزيد فهم القارئ شيئاً، لكنّه ينقل اللوم من الدرج إلى الطفل قبل أن يقرأ أحد السطر الذي يقول إنّ الدرج بلا درابزين.',
+                en: 'Does not pass. “He was running despite being warned” is a fact. “Always undisciplined” is a verdict on a person rather than a description of an incident — it adds nothing to the reader’s understanding and moves the blame from the staircase to the child before anybody reaches the line saying the staircase has no rail.',
+              },
+            },
+            {
+              label: { ar: 'ما قيل', en: 'What was said' },
+              text: {
+                ar: 'قال حسن: «كنت نازل بسرعة وما شفت الدرجة». وقالت رنا: «سمعت الصوت وكنت في القاعة».',
+                en: 'Hassan said: “I was going down fast and I didn’t see the step.” Rana said: “I heard the noise and I was in the hall.”',
+              },
+              note: {
+                ar: 'سليم: منقول حرفياً، بين علامتَي اقتباس، ومنسوب إلى قائله. الواقعة هنا أنّ هذا قيل، لا أنّه صحيح — وهذا ما يجعل كتابته آمنة.',
+                en: 'Sound: verbatim, in quotation marks, attributed. The fact here is that this was said, not that it is true — which is what makes writing it safe.',
+              },
+            },
+            {
+              label: { ar: 'ما فعلته', en: 'What I did' },
+              text: {
+                ar: 'أوقفت النشاط، وبقيت معه حتى هدأ، واتّصلت بوالدته الساعة ١١:٣٥، وأبلغت منسّقة المركز.',
+                en: 'I stopped the activity, stayed with him until he settled, called his mother at 11:35, and informed the centre coordinator.',
+              },
+              note: {
+                ar: 'سليم، ومع توقيت. «اتّصلت بوالدته» وحدها تترك سؤالاً مفتوحاً عن متى — وهو أوّل ما يُسأل عنه إن اشتكى أحد لاحقاً من التأخّر.',
+                en: 'Sound, and with a time on it. “I called his mother” alone leaves the question of when — and when is the first thing asked if anybody later complains of delay.',
+              },
+            },
+            {
+              label: { ar: 'ملاحظتي', en: 'My observation' },
+              text: {
+                ar: 'ملاحظتي: الدرج بلا درابزين وإضاءته ضعيفة، ورأيي أنّ هذا يتكرّر إن بقي كما هو.',
+                en: 'My observation: the staircase has no handrail and is poorly lit, and my view is that this will happen again if it stays as it is.',
+              },
+              note: {
+                ar: 'سليم لأنّه مُعلَّم. الرأي لا يُحذف من التقرير — يُوضع في سطر يقول إنّه رأي ومَن صاحبه، فيستطيع القارئ أن يزن الواقعة والانطباع كلّاً على حدة.',
+                en: 'Sound because it is labelled. An opinion is not deleted from a report — it goes on a line that says it is one and whose it is, so the reader can weigh the fact and the impression separately.',
+              },
+            },
+            {
+              label: { ar: 'إلى من أُرسل', en: 'Where it was sent' },
+              text: {
+                ar: 'أُرسل مساء الأحد إلى مجموعة المتطوّعين على واتساب ليطّلع الجميع.',
+                en: 'Sent on Sunday evening to the volunteers’ WhatsApp group so everyone would see it.',
+              },
+              wrong: true,
+              note: {
+                ar: 'لا يمرّ. تقرير يحمل اسم طفل وعنوانه أُرسل إلى مجموعة يقرأها من لا تعرف ولا يمكن حذفه من أجهزتهم. الوجهة ليست تفصيلاً إدارياً في تقرير حادث — هي نصف التقرير.',
+                en: 'Does not pass. A report carrying a child’s name and address was sent to a group read by people you do not know and cannot be deleted from their devices. The destination is not an administrative detail on an incident report — it is half of it.',
+              },
+            },
+            {
+              label: { ar: 'الخلاصة', en: 'Conclusion' },
+              text: {
+                ar: 'الحادث بسيط ولا يستدعي متابعة.',
+                en: 'A minor incident, no follow-up required.',
+              },
+              wrong: true,
+              note: {
+                ar: 'لا يمرّ. قرار ما إذا كان الحادث يستدعي متابعة ليس قرار من كتب التقرير، وكتابته كخلاصة يوجّه قراءة من سيقرّر فعلاً. وظيفة التقرير أن يصف ما جرى بحيث يستطيع غيرك أن يقرّر.',
+                en: 'Does not pass. Whether an incident needs following up is not the writer’s decision, and putting it as a conclusion steers the reading of whoever will actually decide. A report’s job is to describe what happened well enough for somebody else to decide.',
+              },
+            },
+          ],
+          afterword: {
+            ar: 'الأسطر الأربعة التي لا تمرّ لم يكتبها متطوّع مهمل — كتبها متطوّع أراد أن يكون التقرير كاملاً ومفيداً وسريع الوصول. العنوان كُتب ليكون واضحاً، والحكم كُتب ليشرح، والمجموعة اختيرت ليصل الخبر، والخلاصة كُتبت لتوفّر وقت القارئ. وكلّ واحدة منها فعلت شيئاً آخر: كشفت بيانات، ونقلت اللوم، وسرّبت التقرير، وأخذت قراراً ليس لصاحبه.',
+            en: 'The four lines that do not pass were not written by a careless volunteer — they were written by one trying to make the report complete, useful and quick to circulate. The address was written to be clear, the judgement to explain, the group chosen so the news would arrive, the conclusion to save the reader time. Each of them did something else instead: exposed data, moved the blame, leaked the report, and took a decision that was not the writer’s to take.',
+          },
+        },
         {
           type: 'quiz',
           id: 'dr-q4',

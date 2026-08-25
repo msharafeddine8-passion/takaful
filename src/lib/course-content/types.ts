@@ -72,7 +72,117 @@ export type Block =
    * A prompt with the answer behind a press. Having to try first is most of
    * what makes it stay, and it costs one button.
    */
-  | { type: 'reveal'; prompt: L; answer: L };
+  | { type: 'reveal'; prompt: L; answer: L }
+  /**
+   * Pair each item with the one thing it goes with.
+   *
+   * Not `sort` with more buckets. A bucket takes many items and the reader
+   * classifies; here every right belongs to exactly one left, so knowing three
+   * of four should tell you the fourth and a misplaced pair costs two. That is
+   * the shape of a term against its definition and of a problem against the
+   * move that answers it, neither of which is a classification.
+   */
+  | {
+      type: 'match';
+      prompt: L;
+      /**
+       * Authored already paired: pairs[i].left goes with pairs[i].right. The
+       * reader is given the rights in a different order, and the rows in
+       * another again, so neither list can be read off against the other.
+       */
+      pairs: { left: L; right: L; because: L }[];
+    }
+  /**
+   * A document somebody filed, and what is wrong with it.
+   *
+   * The exercise the reporting and safeguarding courses could not have. `sort`
+   * asks the reader to classify every item, which tells them how many there
+   * are of each kind before they start. Reviewing a form is the opposite job:
+   * most of it is fine, nobody says how much is not, and the skill is noticing
+   * at all. A report that names a child is not a wrong answer among four — it
+   * is a line that reads perfectly normally until somebody looks.
+   *
+   * Every line carries a note, the sound ones included, because "this line is
+   * fine" is a thing a reader can be wrong about in both directions.
+   */
+  | {
+      type: 'review';
+      prompt: L;
+      /** What the document is, as it would be headed on paper. */
+      docTitle: L;
+      /**
+       * In the order the form has them, and deliberately not shuffled: a form
+       * whose fields move about is not a form, and the position of a line is
+       * part of what makes it look unremarkable.
+       */
+      lines: { label: L; text: L; wrong?: boolean; note: L }[];
+      /** What the whole document was trying to teach. Shown after marking. */
+      afterword: L;
+    }
+  /**
+   * A conversation, turn by turn: what you say changes what you hear next.
+   *
+   * `scenario` stops after one move, which is the wrong shape for the moment
+   * this curriculum most needs practised. A child disclosing, somebody in
+   * acute distress, a participant taking over a room — none of those is
+   * decided by a single reply. The second thing you say is only available
+   * because of the first, and the commonest failure is a reply that sounds
+   * kind and closes the conversation.
+   *
+   * So a reply may end it. That is not a punishment; it is what would have
+   * happened, and being shown the transcript stopping is the teaching.
+   */
+  | {
+      type: 'dialogue';
+      title: L;
+      /** Who the reader is talking to, named on their lines. */
+      speaker: L;
+      /** What they say before the reader has said anything. */
+      opening: L;
+      /**
+       * One entry per turn, in order. The context for a turn is whatever the
+       * previous reply drew out of the other person, so the branch is in what
+       * is said back rather than in which turn comes next — a tree of turns
+       * would let an author write a node nothing reaches, and an unreachable
+       * node is invisible in review.
+       */
+      turns: {
+        replies: {
+          text: L;
+          /** What they say back to this. */
+          says: L;
+          /** Why, said to the reader rather than in the character's voice. */
+          note: L;
+          /** This reply closes the conversation. */
+          ends?: boolean;
+          /** What the association would say. At most one per turn. */
+          best?: boolean;
+        }[];
+      }[];
+      afterword: L;
+    }
+  /**
+   * Build the entry out of its parts, one choice per part.
+   *
+   * Everything else here asks the reader to judge something already written.
+   * This asks them to produce it, which is the actual job in the courses that
+   * end in a document: an action item is not right or wrong as a whole, it is
+   * missing an owner or missing a date. Slotting it together makes visible
+   * which part a reader keeps leaving vague.
+   */
+  | {
+      type: 'build';
+      prompt: L;
+      slots: {
+        label: L;
+        /** The right one first — the reader is given them shuffled. */
+        options: L[];
+        /** Why that one, and what the others were missing. */
+        because: L;
+      }[];
+      /** The finished thing, said in prose. Shown once it is assembled right. */
+      afterword: L;
+    };
 
 export type Module = {
   id: string;
