@@ -295,6 +295,7 @@ export const en: Dictionary = {
       activities: 'My activities',
       hours: 'My hours',
       achievements: 'My achievements',
+      leaderboard: 'Impact boards',
       certificates: 'My certificates',
       card: 'My card',
       notifications: 'Notifications',

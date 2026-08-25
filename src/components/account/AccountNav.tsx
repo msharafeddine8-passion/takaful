@@ -22,7 +22,7 @@ import type { Dictionary } from '@/lib/dictionaries';
 
 export type NavKey =
   | 'dashboard' | 'journey' | 'learning' | 'activities' | 'hours'
-  | 'achievements' | 'certificates' | 'card' | 'notifications'
+  | 'achievements' | 'leaderboard' | 'certificates' | 'card' | 'notifications'
   | 'profile' | 'safeguarding';
 
 type Item = { key: NavKey; href: string; label: string };
@@ -66,6 +66,17 @@ export function accountNav(lang: Locale, dict: Dictionary): {
         title: n.groupWhatIEarned,
         items: [
           { key: 'achievements', href: at('/achievements'), label: n.achievements },
+          /*
+           * Next to the badges, not with the activities.
+           *
+           * It was reachable only from a link at the foot of the achievements
+           * page, which is the same as not existing: nobody hunts for a page
+           * they have never been told about. It sits under "what I have earned"
+           * because that is the question the boards answer — the reader's own
+           * standing — and not under "what I do", which is where somebody would
+           * put it if they thought of it as a scoreboard.
+           */
+          { key: 'leaderboard', href: at('/leaderboard'), label: n.leaderboard },
           { key: 'certificates', href: at('/certificates'), label: n.certificates },
           { key: 'card', href: at('/card'), label: n.card },
         ],

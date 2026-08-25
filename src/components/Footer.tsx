@@ -2,13 +2,31 @@ import Link from 'next/link';
 import { Logo } from './Logo';
 import type { Locale } from '@/lib/i18n';
 import type { Dictionary } from '@/lib/dictionaries';
+import { awardDictionaries } from '@/lib/dictionaries/awards';
+import { continuityStrings } from '@/lib/dictionaries/continuity';
 
 export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
+  /*
+   * The honours board and the continuity page go here.
+   *
+   * Both were reachable only by typing the URL — the honours board was linked
+   * from nowhere at all, and the continuity page only from itself. A page that
+   * thanks people by name and cannot be found is worse than no page: the
+   * association believes it has said thank you and nobody has read it.
+   *
+   * The footer rather than the header because the header already carries nine
+   * items and these are things somebody goes looking for once, not on the way
+   * to something else. Their own titles are used as the labels — both are
+   * already short enough to be one, which is the only reason a page title may
+   * double as a navigation label here.
+   */
   const org = [
     { href: `/${lang}/about`, label: dict.nav.about },
     { href: `/${lang}/areas`, label: dict.nav.areas },
     { href: `/${lang}/projects`, label: dict.nav.projects },
     { href: `/${lang}/gallery`, label: dict.nav.gallery },
+    { href: `/${lang}/honours`, label: awardDictionaries[lang].title },
+    { href: `/${lang}/continuity`, label: continuityStrings(lang).title },
   ];
   const vol = [
     { href: `/${lang}/academy`, label: dict.nav.academy },

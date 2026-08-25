@@ -295,6 +295,7 @@ export const ar: Dictionary = {
       activities: 'أنشطتي',
       hours: 'ساعاتي',
       achievements: 'إنجازاتي',
+      leaderboard: 'لوحات الأثر',
       certificates: 'شهاداتي',
       card: 'بطاقتي',
       notifications: 'إشعاراتي',

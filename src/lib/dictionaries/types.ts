@@ -177,6 +177,7 @@ export type Account = {
     activities: string;
     hours: string;
     achievements: string;
+    leaderboard: string;
     certificates: string;
     card: string;
     notifications: string;

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { connection } from 'next/server';
 import { isLocale, type Locale } from '@/lib/i18n';
@@ -234,6 +235,16 @@ export default async function StaffAwardsPage(props: PageProps<'/[lang]/staff/aw
           })()}
         </section>
       </div>
+
+      {/* Where the decision ends up. Whoever chooses a name should be one tap
+          from the page the association's visitors read, because that page — not
+          this one — is what the choice actually was. */}
+      <Link
+        href={`/${lang}/honours`}
+        className="mt-9 inline-block font-bold text-brand-blue hover:underline dark:text-brand-orange"
+      >
+        {t.title} →
+      </Link>
     </Frame>
   );
 }
