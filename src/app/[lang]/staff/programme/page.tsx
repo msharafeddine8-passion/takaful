@@ -8,6 +8,7 @@ import { Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { can } from '@/lib/authz';
 import { isDbConfigured, query } from '@/lib/db';
+import { COURSE_CONTENT } from '@/lib/course-content';
 import { CourseEditor } from '@/components/staff/CourseEditor';
 
 export async function generateMetadata(
@@ -90,7 +91,30 @@ export default async function ProgrammePage(props: PageProps<'/[lang]/staff/prog
     groups.get(key)!.rows.push(row);
   }
 
-  const written = rows.filter((r) => Number(r.module_count) > 0).length;
+  /*
+   * A course is written if the modules table has it OR the authored content
+   * does, and the second half is currently doing all the work.
+   *
+   * The modules and lessons tables are EMPTY in the live database. Migration
+   * 017 created them and the seed that would fill them has never been written
+   * — seed-programme.mts writes courses and levels and stops. Meanwhile all 41
+   * courses are authored in COURSE_CONTENT and 131 module reads are recorded
+   * against ids only that file defines.
+   *
+   * So this page was telling a programme manager "0 / 41 written" about a
+   * platform where every course is written and people are reading them. That
+   * is worse than an empty page: it is a confident wrong answer on the one
+   * screen whose job is to say what still needs doing.
+   *
+   * src/lib/programme/standing.ts has had this fallback since the learner
+   * dashboard hit the same wall — it just never reached here. Both can go the
+   * day the tables are actually seeded; the falsy check will stop firing on
+   * its own.
+   */
+  const isWritten = (slug: string, moduleCount: string) =>
+    Number(moduleCount) > 0 || (COURSE_CONTENT[slug]?.modules.length ?? 0) > 0;
+
+  const written = rows.filter((r) => isWritten(r.slug, r.module_count)).length;
   const published = rows.filter((r) => r.status === 'published').length;
   const unreviewed = rows.filter((r) => r.reviewed_at === null).length;
 
@@ -136,7 +160,7 @@ export default async function ProgrammePage(props: PageProps<'/[lang]/staff/prog
                       minutes: row.minutes,
                       passMark: row.pass_mark,
                       version: row.content_version,
-                      hasContent: Number(row.module_count) > 0,
+                      hasContent: isWritten(row.slug, row.module_count),
                       reviewedAt: row.reviewed_at
                         ? new Date(row.reviewed_at).toISOString().slice(0, 10)
                         : null,
