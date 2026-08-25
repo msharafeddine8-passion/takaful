@@ -198,6 +198,24 @@ export function otherTasksOf(f: AccountFacts): StepKey[] {
 }
 
 /**
+ * Interests, skills and languages as a list.
+ *
+ * They are one free-text column each, typed by a person into a single box, and
+ * profileCompleteness wants arrays. Both commas are accepted: the Arabic «،» is
+ * what an Arabic keyboard produces and is what most of these fields actually
+ * contain, so splitting on the Latin one alone read a whole list as one item —
+ * which still counts as filled in, but produced nonsense anywhere the items are
+ * shown separately.
+ */
+export function listFrom(value: string | null | undefined): string[] {
+  if (!value) return [];
+  return value
+    .split(/[,،؛;\n]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+/**
  * How complete the profile is, as a fraction of the fields that are worth
  * filling in. Shown only when something is genuinely missing — a ring at 100%
  * is decoration, and a prompt to complete something already complete is noise.

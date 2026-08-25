@@ -9,11 +9,25 @@ import { query, queryOne } from './db';
  * because someone computed a total somewhere else - so don't.
  */
 
-export type HourStatus = 'pending' | 'verified' | 'rejected' | 'corrected';
+/* Declared in lib/hours-ledger.ts and re-exported, not declared twice. That
+ * module is pure and this one is `server-only`, so a second declaration here
+ * would be the copy a probe cannot reach and therefore the copy that drifts. */
+export type { HourStatus } from './hours-ledger';
+import type { HourStatus } from './hours-ledger';
 
 export type HourEntry = {
   id: string;
-  worked_on: Date;
+  /**
+   * 'YYYY-MM-DD', as text and never as a Date.
+   *
+   * `worked_on` is a DATE — a day somebody wrote down, carrying no time and no
+   * zone. Handed to pg it arrives as a Date at the *server's* local midnight,
+   * and every render of it in this repository was
+   * `new Date(x).toISOString().slice(0, 10)`, which reads that back in GMT: on
+   * any machine east of London the day comes out one earlier. Text in, text
+   * out, and there is no instant for a zone to be wrong about.
+   */
+  worked_on: string;
   minutes: number;
   note: string | null;
   status: HourStatus;
@@ -54,9 +68,28 @@ export async function pendingMinutes(userId: string): Promise<number> {
   return row ? Number.parseInt(row.minutes, 10) : 0;
 }
 
+/**
+ * How many entries are sitting with a supervisor, not how long they add up to.
+ *
+ * A duration on its own does not answer the question somebody actually has,
+ * which is whether anybody has looked yet. Counted over the whole ledger rather
+ * than over the fifty rows the page lists, so the sentence cannot quietly
+ * disagree with the figure beside it.
+ */
+export async function pendingEntryCount(userId: string): Promise<number> {
+  const row = await queryOne<{ n: string }>(
+    `SELECT count(*)::BIGINT AS n
+       FROM hour_entries WHERE user_id = $1 AND status = 'pending'`,
+    [userId],
+  );
+  return row ? Number.parseInt(row.n, 10) : 0;
+}
+
 export async function entriesFor(userId: string, limit = 50): Promise<HourEntry[]> {
   return query<HourEntry>(
-    `SELECT h.id, h.worked_on, h.minutes, h.note, h.status, h.carried_over,
+    /* to_char, not the DATE itself — see the note on HourEntry.worked_on. */
+    `SELECT h.id, to_char(h.worked_on, 'YYYY-MM-DD') AS worked_on,
+            h.minutes, h.note, h.status, h.carried_over,
             a.title_ar AS activity_title_ar, a.title_en AS activity_title_en,
             h.verified_at, h.reject_reason, h.corrects_id
        FROM hour_entries h
@@ -76,7 +109,9 @@ export type PendingReview = HourEntry & {
 /** The verification queue, oldest first: nobody should wait longer than anyone else. */
 export async function awaitingVerification(limit = 100): Promise<PendingReview[]> {
   return query<PendingReview>(
-    `SELECT h.id, h.user_id, p.full_name, h.worked_on, h.minutes, h.note, h.status,
+    `SELECT h.id, h.user_id, p.full_name,
+            to_char(h.worked_on, 'YYYY-MM-DD') AS worked_on,
+            h.minutes, h.note, h.status, h.carried_over,
             a.title_ar AS activity_title_ar, a.title_en AS activity_title_en,
             h.verified_at, h.reject_reason, h.corrects_id
        FROM hour_entries h

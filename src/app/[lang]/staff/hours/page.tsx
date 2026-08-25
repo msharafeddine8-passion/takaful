@@ -83,7 +83,10 @@ export default async function StaffHoursPage(props: PageProps<'/[lang]/staff/hou
                 <div className="flex flex-wrap items-baseline justify-between gap-3">
                   <h2 className="text-[1.05rem] font-extrabold">{e.full_name}</h2>
                   <p className="text-[0.85rem] text-ink-3" dir="ltr">
-                    {new Date(e.worked_on).toISOString().slice(0, 10)}
+                    {/* Already 'YYYY-MM-DD' text from the query — see the note on
+                        HourEntry.worked_on. Rebuilding a Date from a bare DATE
+                        read it back in GMT and showed the day before. */}
+                    {e.worked_on}
                   </p>
                 </div>
 

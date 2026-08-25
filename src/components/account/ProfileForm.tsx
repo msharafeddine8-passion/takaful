@@ -45,35 +45,80 @@ export function ProfileForm({
         <input id="fullName" name="fullName" required defaultValue={values.fullName} className={input} />
       </FieldShell>
 
-      <FieldShell label={t.displayName} htmlFor="displayName">
-        <input id="displayName" name="displayName" defaultValue={values.displayName} className={input} />
+      {/*
+        * Every optional field now says who reads it and what it is used for.
+        *
+        * They were five bare labels. A box headed «اهتماماتك» with nothing else
+        * beside it is a box nobody fills in — not because people are unwilling
+        * but because there is no way to tell whether anyone will ever look, and
+        * writing into a void is the least appealing thing a form can ask for.
+        * These are the fields the completeness ring counts, so an unexplained
+        * one is also a prompt the reader cannot act on.
+        */}
+      <FieldShell label={t.displayName} htmlFor="displayName" hint={t.displayNameHint}>
+        <input
+          id="displayName"
+          name="displayName"
+          defaultValue={values.displayName}
+          aria-describedby="displayName-hint"
+          className={input}
+        />
       </FieldShell>
 
-      <FieldShell label={t.bio} htmlFor="bio">
-        <textarea id="bio" name="bio" rows={3} defaultValue={values.bio} className={input} />
+      <FieldShell label={t.bio} htmlFor="bio" hint={t.bioHint}>
+        <textarea
+          id="bio"
+          name="bio"
+          rows={3}
+          defaultValue={values.bio}
+          aria-describedby="bio-hint"
+          className={input}
+        />
       </FieldShell>
 
       <div className="grid gap-x-5 sm:grid-cols-2">
-        <FieldShell label={t.interests} htmlFor="interests">
-          <input id="interests" name="interests" defaultValue={values.interests} className={input} />
+        <FieldShell label={t.interests} htmlFor="interests" hint={t.interestsHint}>
+          <input
+            id="interests"
+            name="interests"
+            defaultValue={values.interests}
+            aria-describedby="interests-hint"
+            className={input}
+          />
         </FieldShell>
-        <FieldShell label={t.skills} htmlFor="skills">
-          <input id="skills" name="skills" defaultValue={values.skills} className={input} />
+        <FieldShell label={t.skills} htmlFor="skills" hint={t.skillsHint}>
+          <input
+            id="skills"
+            name="skills"
+            defaultValue={values.skills}
+            aria-describedby="skills-hint"
+            className={input}
+          />
         </FieldShell>
       </div>
 
-      <FieldShell label={t.languages} htmlFor="languages">
-        <input id="languages" name="languages" defaultValue={values.languages} className={input} />
+      <FieldShell label={t.languages} htmlFor="languages" hint={t.languagesHint}>
+        <input
+          id="languages"
+          name="languages"
+          defaultValue={values.languages}
+          aria-describedby="languages-hint"
+          className={input}
+        />
       </FieldShell>
 
+      {/* Tokens, not a fourth pair of raw reds and greens. danger-text and
+          ok-text are the reading colours measured against their own tint, and
+          they flip with the site's theme toggle — a `dark:` variant is a
+          prefers-color-scheme query and ignores it. See globals.css. */}
       {state.error && (
-        <p role="alert" className="mb-4 rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-[0.92rem] font-semibold text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
+        <p role="alert" className="mb-4 rounded-xl border border-danger/40 bg-danger/10 px-4 py-3 text-[0.92rem] font-semibold text-danger-text">
           {errors[state.error]}
         </p>
       )}
 
       {saved && (
-        <p role="status" className="mb-4 text-[0.93rem] font-bold text-emerald-700 dark:text-emerald-400">
+        <p role="status" className="mb-4 text-[0.93rem] font-bold text-ok-text">
           {t.saved}
         </p>
       )}

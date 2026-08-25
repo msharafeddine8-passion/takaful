@@ -67,12 +67,23 @@ export type MyActivityRow = OpportunityRow & {
   registration_status: string;
   attended: boolean | null;
   attended_minutes: number | null;
+  /*
+   * The association's own cancellation, which this query did not ask for.
+   *
+   * Without it /account/activities could not tell an activity that was called
+   * off from one somebody failed to attend, and drew both as an absence. The
+   * reason comes with it because a cancellation the volunteer is not given a
+   * reason for is the association going quiet on them.
+   */
+  cancelled_at: Date | null;
+  cancel_reason: string | null;
 };
 
 export async function myActivities(userId: string): Promise<MyActivityRow[]> {
   return query<MyActivityRow>(
     `SELECT a.id, a.title_ar, a.title_en, a.description_ar, a.description_en,
             a.location, a.starts_at, a.ends_at, a.capacity, a.min_stage,
+            a.cancelled_at, a.cancel_reason,
             p.taken, p.waiting,
             r.status AS registration_status,
             r.status AS my_status,

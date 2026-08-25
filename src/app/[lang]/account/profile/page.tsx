@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { connection } from 'next/server';
-import { isLocale } from '@/lib/i18n';
-import { getDictionary } from '@/lib/dictionaries';
+import { isLocale, type Locale } from '@/lib/i18n';
+import { getDictionary, type Dictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
@@ -19,6 +19,11 @@ import { visibilityFrom } from '@/lib/visibility';
 import { PreferencesForm } from '@/components/account/PreferencesForm';
 import { milestoneDictionaries } from '@/lib/dictionaries/milestones';
 import { topicsFrom } from '@/lib/preferences';
+/* The ring's arithmetic already existed and nothing had ever called it. Reused
+ * rather than reimplemented here: a second copy is the one that disagrees with
+ * probe-account-state about what "complete" means. */
+import { listFrom, profileCompleteness } from '@/lib/account-state';
+import { ProgressRing } from '@/components/lms/ProgressRing';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account/profile'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -87,6 +92,22 @@ export default async function ProfilePage(props: PageProps<'/[lang]/account/prof
   ]);
   if (!profile) notFound();
 
+  /*
+   * How much of the profile is filled in.
+   *
+   * The three list fields are one free-text box each, so they are split before
+   * they get here — a blank box and a box holding only spaces both have to
+   * count as missing, which is what listFrom and profileCompleteness between
+   * them already decide.
+   */
+  const filled = profileCompleteness({
+    photoRef: photo?.version ?? null,
+    bio: profile.bio,
+    interests: listFrom(profile.interests),
+    skills: listFrom(profile.skills),
+    languages: listFrom(profile.languages),
+  });
+
   return (
     <Section>
       <Container className="max-w-2xl">
@@ -95,6 +116,24 @@ export default async function ProfilePage(props: PageProps<'/[lang]/account/prof
           {t.title}
         </h1>
         <p className="mt-3 text-[1.02rem] leading-relaxed text-ink-2">{t.lede}</p>
+
+        {/*
+          * Shown only while something is genuinely missing.
+          *
+          * A ring sitting at five of five is decoration, and a card headed
+          * "complete your profile" above a complete profile teaches somebody
+          * that this site nags regardless — after which they stop reading the
+          * prompts that do mean something.
+          */}
+        {filled.missing.length > 0 && (
+          <CompletenessRing
+            lang={lang}
+            done={filled.done}
+            total={filled.total}
+            missing={filled.missing}
+            t={t}
+          />
+        )}
 
         <section className="mt-8 rounded-2xl border border-line bg-surface p-6">
           <h2 className="mb-4 text-[0.8rem] font-bold tracking-[0.12em] text-ink-3">{t.photo}</h2>
@@ -108,7 +147,10 @@ export default async function ProfilePage(props: PageProps<'/[lang]/account/prof
           {photo && (
             <form action={removePhotoAction} className="mt-4">
               <input type="hidden" name="lang" value={lang} />
-              <button type="submit" className="text-[0.88rem] font-bold text-red-600 hover:underline dark:text-red-400">
+              {/* danger-text, not red-600 with a dark: variant. The token already
+                  flips with the theme *and* with the site's own toggle, which a
+                  prefers-color-scheme variant ignores. */}
+              <button type="submit" className="min-h-11 text-[0.88rem] font-bold text-danger-text hover:underline">
                 {t.photoRemove}
               </button>
             </form>
@@ -219,5 +261,72 @@ export default async function ProfilePage(props: PageProps<'/[lang]/account/prof
         </Link>
       </Container>
     </Section>
+  );
+}
+
+/**
+ * How much of the profile is filled in, and what is left.
+ *
+ * A ring rather than a bar because it is a small whole out of a small whole —
+ * five things, not a percentage of an unbounded quantity — and because "three
+ * of five" is a sentence and "60%" is not. Both are given: the fraction inside
+ * the ring for the eye, and the missing fields named underneath, because a
+ * progress indicator that will not say what is missing is a scolding rather
+ * than a prompt.
+ */
+function CompletenessRing({
+  lang, done, total, missing, t,
+}: {
+  lang: Locale;
+  done: number;
+  total: number;
+  missing: string[];
+  t: Dictionary['account']['profile'];
+}) {
+  const count = t.completeness.count
+    .replace('{done}', String(done))
+    .replace('{total}', String(total));
+
+  return (
+    <section className="mt-6 flex items-center gap-5 rounded-2xl border border-line bg-surface p-5">
+      {/*
+        * The map's ring, not a second one drawn here.
+        *
+        * It already carries the two things a hand-rolled SVG gets wrong: a
+        * required label with aria-valuetext, so the figure is never left to the
+        * arc alone, and an arc mirrored under Arabic so it grows in the
+        * reading direction rather than backwards.
+        */}
+      <div className="shrink-0">
+        <ProgressRing
+          lang={lang}
+          percent={total > 0 ? (done / total) * 100 : 0}
+          label={t.completeness.title}
+          valueText={count}
+          size="sm"
+        >
+          {/* dir="ltr": "3/5" is a ratio, not prose, and mirrors wrongly under
+              the page's own dir="rtl". */}
+          <span dir="ltr">{done}/{total}</span>
+        </ProgressRing>
+      </div>
+
+      <div>
+        <h2 className="text-[1rem] font-extrabold">{t.completeness.title}</h2>
+        <p className="mt-1 max-w-[46ch] text-[0.92rem] leading-relaxed text-ink-2">
+          {t.completeness.lede}
+        </p>
+        {/* Named, not counted. "2 fields missing" sends somebody hunting. */}
+        <p className="mt-1.5 text-[0.9rem] leading-relaxed text-ink-3">
+          <span className="font-bold">{t.completeness.missingLabel}: </span>
+          {missing
+            .map((field) => t.completeness.fields[field as keyof typeof t.completeness.fields])
+            .filter(Boolean)
+            /* Arabic's own comma. «الصورة, النبذة» with a Latin comma sits on
+               the wrong side of the word and reads as a typo in Arabic. */
+            .join(lang === 'ar' ? '، ' : ', ')}
+        </p>
+      </div>
+    </section>
   );
 }

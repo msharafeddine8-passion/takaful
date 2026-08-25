@@ -15,7 +15,7 @@
  */
 
 import {
-  audienceOf, nextStepOf, otherTasksOf, profileCompleteness,
+  audienceOf, nextStepOf, otherTasksOf, profileCompleteness, listFrom,
   type AccountFacts,
 } from '../src/lib/account-state.ts';
 
@@ -187,6 +187,26 @@ check('an empty array does not count as filled in',
   profileCompleteness({ ...empty, skills: [] }).done === 0);
 check('whitespace is not a bio',
   profileCompleteness({ ...empty, bio: '   ' }).done === 0);
+
+/*
+ * The ring is now on the profile page, and the three list fields it counts are
+ * one free-text box each in the database. So the splitter is part of the same
+ * answer: if it disagreed with this function about what "filled in" means, the
+ * ring would sit at four of five above a form that looks complete.
+ */
+eq('a comma-separated list splits', listFrom('إسعاف, قيادة, تصميم').length, 3);
+/* The Arabic comma is what an Arabic keyboard produces and what most of these
+ * fields actually contain. Splitting on the Latin one alone read a whole list
+ * as a single item. */
+eq('and so does one written with the Arabic comma', listFrom('إسعاف، قيادة، تصميم').length, 3);
+eq('an empty box is an empty list', listFrom('').length, 0);
+eq('a box of spaces and commas is too', listFrom('  ,  ، ').length, 0);
+eq('a missing column is an empty list', listFrom(null).length, 0);
+check('items come back trimmed', listFrom(' إسعاف , قيادة ').every((s) => s === s.trim()));
+check('a box of whitespace does not complete the profile',
+  profileCompleteness({ ...empty, interests: listFrom('  ,  ') }).done === 0);
+check('and a real list does',
+  profileCompleteness({ ...empty, interests: listFrom('أطفال، بيئة') }).done === 1);
 
 /* ------------------------------------------------------------------ */
 
