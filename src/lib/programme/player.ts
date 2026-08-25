@@ -26,7 +26,7 @@
  * content — it is where an attempt gets submitted — and it only exists for a
  * course that asks questions. Several of the electives ask none.
  */
-export type UnitKind = 'module' | 'assessment';
+export type UnitKind = 'module' | 'assessment' | 'practical';
 
 export type Unit = {
   id: string;
@@ -54,18 +54,39 @@ export type Unit = {
  */
 export const ASSESSMENT_ID = '_finish';
 
+/**
+ * The practical screen, when a course sets written work — see
+ * lib/programme/practical.ts. Underscored for the same reason as above, and
+ * protected by the same assertion: no authored module id starts with one.
+ */
+export const PRACTICAL_ID = '_practical';
+
+/**
+ * `hasPractical` is optional, so every existing call site keeps the units it
+ * always had. A course that sets no written work — which is nearly all of them
+ * — produces exactly the list it produced before the screen existed.
+ *
+ * The practical sits BEFORE the assessment. It is part of finishing the
+ * course, and putting it after would mean the reader pressed "complete the
+ * course", saw a score and then found there was still something to write.
+ */
 export function unitsOf({
   moduleIds,
   hasQuestions,
+  hasPractical = false,
 }: {
   moduleIds: string[];
   hasQuestions: boolean;
+  hasPractical?: boolean;
 }): Unit[] {
   const units: Unit[] = moduleIds.map((id, i) => ({
     id,
     kind: 'module' as const,
     position: i + 1,
   }));
+  if (hasPractical) {
+    units.push({ id: PRACTICAL_ID, kind: 'practical', position: units.length + 1 });
+  }
   if (hasQuestions) {
     units.push({ id: ASSESSMENT_ID, kind: 'assessment', position: units.length + 1 });
   }
@@ -124,11 +145,22 @@ export function unitStates(
   readIds: readonly string[],
   currentId: string,
   passed: boolean,
+  /**
+   * The practical is 'done' only once a trainer has accepted it — not when it
+   * has been submitted. A tick beside work that is still sitting in somebody's
+   * queue tells the learner the course is finished, and they find out it is
+   * not when the certificate does not arrive. Optional, so the calls that
+   * predate written work are unchanged.
+   */
+  practicalApproved = false,
 ): Map<string, UnitState> {
   const read = new Set(readIds);
   const out = new Map<string, UnitState>();
   for (const u of units) {
-    const done = u.kind === 'assessment' ? passed : read.has(u.id);
+    const done =
+      u.kind === 'assessment' ? passed
+        : u.kind === 'practical' ? practicalApproved
+          : read.has(u.id);
     out.set(u.id, u.id === currentId ? 'current' : done ? 'done' : 'ahead');
   }
   return out;

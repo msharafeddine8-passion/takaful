@@ -53,6 +53,46 @@ export const fieldSafety: CourseContent = {
     'Core Humanitarian Standard on Quality and Accountability (2024 edition)',
   ],
 
+  /*
+   * The course is built around one claim — that the useful work happens before
+   * the activity, on a sheet of paper — and six multiple-choice questions
+   * cannot test whether somebody can produce that sheet. This is the part of
+   * Field Safety a radio button was never going to reach.
+   *
+   * Declaring it changes nothing for anybody who has already sat this course:
+   * courseFingerprint hashes the module ids and the quiz questions, and a
+   * practical task is neither. See lib/programme/practical.ts.
+   */
+  practical: {
+    id: 'fs-risk-note',
+    title: {
+      ar: 'تقييم مخاطر لنشاط حقيقي',
+      en: 'A risk assessment for a real activity',
+    },
+    brief: {
+      ar: 'اختر نشاطاً تعرفه — يوم ترفيهي لأطفال، توزيع مساعدات، تنظيف حيّ — واكتب تقييم المخاطر الذي كنت ستكتبه قبل أن يبدأ.\n\nسمِّ النشاط والمكان وعدد المشاركين المتوقّع، ثمّ اذكر ثلاثة مخاطر على الأقلّ. لكلّ خطر: ما هو، ومن قد يتضرّر منه، وما الإجراء الذي يقلّله ومن يتولّاه بالاسم أو بالدور.\n\nأنهِ بخطّة الطوارئ: نقطة التجمّع، ومسؤول السلامة، وكيف يتواصل الفريق إن انقطعت الشبكة.',
+      en: 'Pick an activity you know — a play day for children, a distribution, a neighbourhood clean-up — and write the risk assessment you would have written before it began.\n\nName the activity, the venue and the number of participants you expect, then set out at least three risks. For each: what it is, who could be harmed by it, and the action that reduces it together with who carries that action out, by name or by role.\n\nFinish with the emergency plan: the assembly point, the safety lead, and how the team reaches one another if the phone network drops.',
+    },
+    looksLike: {
+      ar: [
+        'نشاط محدّد بمكانه وعدد مشاركيه، لا نشاط عامّ',
+        'ثلاثة مخاطر على الأقلّ، ومع كلّ خطر من قد يتضرّر منه',
+        'إجراء لكلّ خطر، ومسؤول باسمه أو بدوره — لا «ينتبه الجميع»',
+        'نقطة تجمّع يعرفها المشاركون قبل أن يبدأ النشاط',
+        'حالة واحدة على الأقلّ تقول فيها إنّ هذا خارج دور المتطوّع، ومن يُستدعى لها',
+      ],
+      en: [
+        'A specific activity, with its venue and how many people, not a general one',
+        'At least three risks, each with who could be harmed by it',
+        'An action for every risk, and an owner named or by role — not "everyone stays alert"',
+        'An assembly point participants know before the activity starts',
+        'At least one situation you say is outside a volunteer role, and who is called instead',
+      ],
+    },
+    minChars: 400,
+    maxChars: 6000,
+  },
+
   modules: [
     // ---------------------------------------------------------------- 1
     {

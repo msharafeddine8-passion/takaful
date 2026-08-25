@@ -14,6 +14,8 @@ import {
 } from '@/lib/academy';
 import { recomputeAchievements } from '@/lib/achievements';
 import { issueEarnedCredentials } from '@/lib/programme/credentials';
+import { practicalTaskFor, courseOutcome } from '@/lib/programme/practical';
+import { historyFor, holdsCourseCredential } from '@/lib/practical-submissions';
 import { isLocale, type Locale } from '@/lib/i18n';
 
 /**
@@ -78,7 +80,24 @@ export async function answerQuestionAction(
 // ------------------------------------------------------------------ finishing
 
 export type CompleteResult =
-  | { ok: true; score: number; passed: boolean; certificateCode: string | null }
+  | {
+      ok: true;
+      score: number;
+      passed: boolean;
+      certificateCode: string | null;
+      /**
+       * The paper is passed and the course also asks for written work that no
+       * trainer has accepted yet, so the certificate is owed but not issued.
+       *
+       * Its own flag rather than an absent certificateCode, which already
+       * means three other things — a course sat before certificates existed, a
+       * credential that failed to mint, a learner who already held one. The
+       * finish screen has to tell this case apart from those, because it is
+       * the only one where the answer is "somebody is reading it" rather than
+       * "check your certificates page".
+       */
+      awaitingPractical: boolean;
+    }
   | {
       ok: false;
       reason: 'unauthenticated' | 'unknown_course' | 'no_questions' | 'no_attempt' | 'db';
@@ -108,7 +127,35 @@ export async function completeCourseAction(
 
   let certificateCode: string | null = null;
 
-  if (graded.passed) {
+  /*
+   * The last gate: written work, on the courses that ask for it.
+   *
+   * Deliberately AFTER submitAttempt. The score is recorded, `passed` is
+   * written, gate.ts unlocks the next level from exactly the row it always
+   * did, and the ledger says what the learner actually scored. Nothing about
+   * the paper changes. What waits is the paper certificate.
+   *
+   * courseOutcome() returns complete for the thirty-eight courses that set no
+   * task, which is the whole of the behaviour that existed before this, and
+   * for anybody who already holds the credential — a task added to a course
+   * next month must not put last March's volunteers back in a queue.
+   */
+  const task = practicalTaskFor(slug);
+  let awaitingPractical = false;
+  if (graded.passed && task) {
+    const [history, held] = await Promise.all([
+      historyFor(user.id, slug),
+      holdsCourseCredential(user.id, slug),
+    ]);
+    awaitingPractical = !courseOutcome({
+      task,
+      paperPassed: true,
+      history,
+      alreadyCertified: held,
+    }).complete;
+  }
+
+  if (graded.passed && !awaitingPractical) {
     try {
       certificateCode = await ensureCourseCertificate(user.id, slug, user.fullName);
     } catch {
@@ -152,7 +199,12 @@ export async function completeCourseAction(
     action: graded.passed ? 'course.passed' : 'course.attempted',
     targetType: 'course',
     targetId: slug,
-    newValue: { score: graded.score, passMark: passMarkFor(slug), answered: graded.answered },
+    newValue: {
+      score: graded.score,
+      passMark: passMarkFor(slug),
+      answered: graded.answered,
+      ...(awaitingPractical ? { awaitingPractical: true } : {}),
+    },
   });
 
   revalidatePath(`/${locale}/account`);
@@ -160,7 +212,13 @@ export async function completeCourseAction(
    * course path on its own leaves the contents list inside the player still
    * showing the assessment unfinished after it has been passed. */
   revalidatePath(`/${locale}/academy/${slug}`, 'layout');
-  return { ok: true, score: graded.score, passed: graded.passed, certificateCode };
+  return {
+    ok: true,
+    score: graded.score,
+    passed: graded.passed,
+    certificateCode,
+    awaitingPractical,
+  };
 }
 
 // ------------------------------------------------------------------- reading

@@ -82,6 +82,47 @@ export type Module = {
   blocks: Block[];
 };
 
+/**
+ * ---------------------------------------------------------------- practical
+ *
+ * Work the learner writes and a trainer reads.
+ *
+ * A course-level field rather than a block, and that is the whole design. It
+ * is not part of any module, it carries no `correct`, and questionsIn()
+ * cannot see it — so declaring one on a course volunteers have already sat
+ * changes no score, moves no fingerprint and invalidates no certificate.
+ * courseFingerprint() hashes the slug, the pass mark, the module ids and the
+ * quiz questions; a practical task is none of those, and probe-practical
+ * asserts that across the whole catalogue rather than trusting this comment.
+ *
+ * Text only. There is no attachment field here and no upload path behind it —
+ * see the header of migration 041 for why a file store is a different and much
+ * larger decision than this one.
+ */
+export type PracticalTask = {
+  /**
+   * Stable for the life of the task; it keys every submission ever made
+   * against it. Rewording the brief is free. Changing this id orphans the work
+   * of everybody who has already done it.
+   */
+  id: string;
+  title: L;
+  /** What to produce, in words. The whole instruction. */
+  brief: L;
+  /**
+   * What the trainer will look for, said plainly and in advance.
+   *
+   * Not a mark scheme — nothing here is scored. It exists so a learner is not
+   * guessing, and so two trainers reading two submissions are reading them
+   * against the same thing.
+   */
+  looksLike: LList;
+  /** Shortest useful answer, in characters. Below this it is not the thing. */
+  minChars: number;
+  /** The ceiling. A textarea with no limit is a row nobody can read. */
+  maxChars: number;
+};
+
 export type CourseContent = {
   slug: string;
   level: number;
@@ -92,4 +133,6 @@ export type CourseContent = {
   outcomes: LList;
   modules: Module[];
   sources: string[];
+  /** Optional, and absent from almost every course. See PracticalTask. */
+  practical?: PracticalTask;
 };

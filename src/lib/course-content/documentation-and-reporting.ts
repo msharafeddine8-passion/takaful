@@ -47,6 +47,45 @@ export const documentationAndReporting: CourseContent = {
     'International Child Safeguarding Standards — Keeping Children Safe',
   ],
 
+  /*
+   * A course about writing that could not ask anybody to write. The whole
+   * distinction it teaches — a fact against an interpretation — is invisible
+   * in a multiple-choice question, because the four options are already
+   * written by somebody who knows which is which.
+   *
+   * Additive: no fingerprint moves and no certificate is affected. See
+   * lib/programme/practical.ts.
+   */
+  practical: {
+    id: 'dr-minutes',
+    title: {
+      ar: 'محضر اجتماع يمكن العمل به',
+      en: 'Minutes somebody can act on',
+    },
+    brief: {
+      ar: 'اكتب محضر اجتماع فريق حضرته أو تتخيّله: جلسة تحضير لنشاط قادم.\n\nابدأ بتاريخ الاجتماع ومن حضره. ثمّ سجّل ما جرى بحيث يفهمه شخص لم يكن في الغرفة: القرارات التي اتُّخذت، والمهامّ التي خرجت منها ومن يتولّى كلّاً منها وموعدها، وما أُجّل ولماذا أُجّل.\n\nافصل الواقعة عن الرأي. إن كان في المحضر تفسير فقل إنّه تفسير ومن قاله. ولا تضع فيه بيانات شخصيّة لا يحتاجها من سيقرأه.',
+      en: 'Write the minutes of a team meeting you attended or can picture: a session planning an upcoming activity.\n\nStart with the date and who was there. Then record what happened so that somebody who was not in the room can follow it: the decisions taken, the actions that came out of them with an owner and a date for each, and what was deferred and why.\n\nKeep facts apart from interpretations. Where the minutes carry an interpretation, say that it is one and whose it is. And put no personal data in them that the reader does not need.',
+    },
+    looksLike: {
+      ar: [
+        'تاريخ الاجتماع وأسماء من حضروا',
+        'قرار مكتوب كقرار، لا كوصف للنقاش الذي دار حوله',
+        'كلّ مهمّة ولها صاحب وموعد',
+        'ما أُجّل، ولماذا أُجّل',
+        'لا بيانات شخصيّة زائدة عن حاجة من سيقرأ المحضر',
+      ],
+      en: [
+        'The date of the meeting and who attended',
+        'A decision written as a decision, not as the discussion around it',
+        'Every action with an owner and a date',
+        'What was deferred, and why it was',
+        'No personal data beyond what the reader of the minutes needs',
+      ],
+    },
+    minChars: 350,
+    maxChars: 6000,
+  },
+
   modules: [
     // ---------------------------------------------------------------- 1
     {

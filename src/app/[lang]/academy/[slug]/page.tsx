@@ -25,7 +25,10 @@ import {
 } from '@/components/academy/parts';
 import { decideAccess } from '@/lib/programme/access';
 import { CourseLocked } from '@/components/academy/CourseLocked';
-import { unitsOf, resumeUnitId, ASSESSMENT_ID } from '@/lib/programme/player';
+import { unitsOf, resumeUnitId, ASSESSMENT_ID, PRACTICAL_ID } from '@/lib/programme/player';
+import { practicalTaskFor, practicalState } from '@/lib/programme/practical';
+import { historyFor } from '@/lib/practical-submissions';
+import { practical } from '@/lib/dictionaries/practical';
 
 /*
  * The course, described. The course itself is at ./learn/[unit].
@@ -123,10 +126,17 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
    * Where this volunteer stands, worked out once and used by the hero, the
    * contents list and the call to action — so the three cannot disagree.
    */
-  const [readModules, passed] = await Promise.all([
+  const task = practicalTaskFor(slug);
+  const [readModules, passed, practicalHistory] = await Promise.all([
     user ? completedModules(user.id, slug) : Promise.resolve([] as string[]),
     user ? passedCourseSlugs(user.id) : Promise.resolve(new Set<string>()),
+    /* Only for the handful of courses that set written work, and only for
+     * somebody who could have done any. An extra query on every course page
+     * to answer "no" for thirty-eight of them is a page that gets slower
+     * because of a feature it does not use. */
+    user && task ? historyFor(user.id, slug) : Promise.resolve([]),
   ]);
+  const practicalDone = practicalState(practicalHistory) === 'approved';
   const eligibility = gate;
   const modulesRead = readModules.length;
   const hasPassed = passed.has(slug);
@@ -150,6 +160,7 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
   const units = unitsOf({
     moduleIds: course.modules.map((m) => m.id),
     hasQuestions: questionCount > 0,
+    hasPractical: task !== null,
   });
   const resumeId = resumeUnitId(units, readModules);
   const enterHref = `/${lang}/academy/${slug}/learn${resumeId ? `/${resumeId}` : ''}`;
@@ -431,6 +442,38 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
                 );
               })}
 
+              {/* Written work is a step the reader takes too, and the same
+                  argument applies to it as to the assessment below: a course
+                  whose contents list stops at the last module looks finished
+                  one step early. The tick follows a trainer's acceptance, not
+                  a submission — see unitStates() in lib/programme/player.ts
+                  for why those are not the same thing. */}
+              {task && (
+                <li>
+                  <Link
+                    href={`/${lang}/academy/${slug}/learn/${PRACTICAL_ID}` as Parameters<typeof Link>[0]['href']}
+                    className="flex items-center gap-3 rounded-xl border border-line p-3.5 transition-colors hover:bg-surface-2"
+                  >
+                    <span
+                      className={`grid h-9 w-9 shrink-0 place-items-center rounded-full text-[0.9rem] font-extrabold ${
+                        practicalDone ? 'bg-ok text-white' : 'border border-line text-ink-3'
+                      }`}
+                      aria-hidden
+                    >
+                      {practicalDone ? '✓' : course.modules.length + 1}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-bold leading-snug">
+                        {practical(lang).screenTitle}
+                      </span>
+                      <span className="mt-0.5 block text-[0.82rem] text-ink-3">
+                        {task.title[lang]}
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              )}
+
               {/* The assessment is a step the reader takes, so it belongs in
                   the list they are counting. Leaving it out made a seven
                   module course look finished at the seventh. */}
@@ -446,7 +489,10 @@ export default async function CoursePage(props: PageProps<'/[lang]/academy/[slug
                       }`}
                       aria-hidden
                     >
-                      {hasPassed ? '✓' : course.modules.length + 1}
+                      {/* Counted after the practical row above, when there is
+                          one. Two rows both numbered 8 is the sort of thing
+                          nobody reports and everybody notices. */}
+                      {hasPassed ? '✓' : course.modules.length + (task ? 2 : 1)}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block font-bold leading-snug">{a.player.assessmentTitle}</span>

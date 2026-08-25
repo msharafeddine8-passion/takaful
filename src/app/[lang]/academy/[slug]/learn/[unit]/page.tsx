@@ -31,9 +31,20 @@ import {
   unitStates,
   unitProgress,
   ASSESSMENT_ID,
+  PRACTICAL_ID,
   type Unit,
   type UnitState,
 } from '@/lib/programme/player';
+import {
+  practicalTaskFor,
+  practicalState,
+  mayResubmit,
+  newestFirst,
+  type Attempt as PracticalAttempt,
+} from '@/lib/programme/practical';
+import { historyFor } from '@/lib/practical-submissions';
+import { practical } from '@/lib/dictionaries/practical';
+import { PracticalPanel } from '@/components/academy/PracticalPanel';
 
 /**
  * One unit of a course, on its own screen.
@@ -98,9 +109,17 @@ export async function generateMetadata(
 
   const mod = course.modules.find((m) => m.id === unit);
   const dict = getDictionary(lang);
+  /* The two screens that are not modules name themselves. Falling through to
+     the assessment title for both would put "Assessment" in the tab of the
+     practical screen, which is the one place a reader checks to tell two open
+     tabs of the same course apart. */
+  const notAModule =
+    unit === PRACTICAL_ID
+      ? practical(lang).screenTitle
+      : dict.account.academy.player.assessmentTitle;
   const title = mod
     ? `${mod.title[lang]} — ${course.title[lang]}`
-    : `${dict.account.academy.player.assessmentTitle} — ${course.title[lang]}`;
+    : `${notAModule} — ${course.title[lang]}`;
   return {
     title,
     description: mod ? mod.lede[lang] : course.lede[lang],
@@ -161,9 +180,11 @@ export default async function UnitPage(
   }
 
   const questions = questionsIn(slug);
+  const task = practicalTaskFor(slug);
   const units = unitsOf({
     moduleIds: course.modules.map((m) => m.id),
     hasQuestions: questions.length > 0,
+    hasPractical: task !== null,
   });
   const unit = findUnit(units, unitId);
   /* An id that is not a unit of this course is a 404, not a silent fallback
@@ -182,18 +203,24 @@ export default async function UnitPage(
   let attempt: Attempt | null = null;
   let readModules: string[] = [];
   let passed = false;
+  /* Empty for a signed-out reader and for the great majority of courses,
+   * which set no written work at all. */
+  let practicalHistory: PracticalAttempt[] = [];
   if (user) {
-    const [at, read, done] = await Promise.all([
+    const [at, read, done, written] = await Promise.all([
       isApproved && questions.length > 0
         ? startOrResumeAttempt(user.id, slug)
         : Promise.resolve(null),
       completedModules(user.id, slug),
       passedCourseSlugs(user.id),
+      task ? historyFor(user.id, slug) : Promise.resolve([]),
     ]);
     attempt = at;
     readModules = read;
     passed = done.has(slug);
+    practicalHistory = written;
   }
+  const practicalNow = practicalState(practicalHistory);
 
   const quizContext: QuizContext = { slug, order: {}, previous: {} };
   if (attempt) {
@@ -211,7 +238,7 @@ export default async function UnitPage(
   }
 
   const { prev, next } = neighbours(units, unit.id);
-  const states = unitStates(units, readModules, unit.id, passed);
+  const states = unitStates(units, readModules, unit.id, passed, practicalNow === 'approved');
   const progress = unitProgress(units, readModules);
   const href = (u: Unit) => `/${lang}/academy/${slug}/learn/${u.id}`;
 
@@ -222,6 +249,7 @@ export default async function UnitPage(
       course={course}
       lang={lang}
       p={p}
+      practicalTitle={practical(lang).screenTitle}
       href={href}
     />
   );
@@ -252,9 +280,11 @@ export default async function UnitPage(
             <span className="ms-auto shrink-0 text-[0.85rem] font-bold text-ink-3" dir="auto">
               {unit.kind === 'assessment'
                 ? p.assessmentTitle
-                : p.unitOf
-                    .replace('{n}', String(unit.position))
-                    .replace('{total}', String(course.modules.length))}
+                : unit.kind === 'practical'
+                  ? practical(lang).screenTitle
+                  : p.unitOf
+                      .replace('{n}', String(unit.position))
+                      .replace('{total}', String(course.modules.length))}
             </span>
           </div>
 
@@ -296,6 +326,33 @@ export default async function UnitPage(
                   {mod.lede[lang]}
                 </p>
                 {mod.blocks.map((b, bi) => renderBlock(b, lang, bi, quizContext))}
+              </>
+            ) : unit.kind === 'practical' && task ? (
+              <>
+                <h1 className="text-[clamp(1.5rem,1.2rem+1.4vw,2.1rem)] font-extrabold leading-tight tracking-tight">
+                  {practical(lang).screenTitle}
+                </h1>
+                <p className="mb-8 mt-3 max-w-[64ch] text-[1.05rem] leading-relaxed text-ink-2">
+                  {practical(lang).screenLede}
+                </p>
+                {/*
+                 * Newest attempt first, ordered by attempt number on the way
+                 * in. The learner opening this screen after a rejection wants
+                 * the note they were just given, not the first thing they
+                 * wrote three weeks ago.
+                 */}
+                <PracticalPanel
+                  lang={lang}
+                  slug={slug}
+                  t={practical(lang)}
+                  title={task.title[lang]}
+                  brief={task.brief[lang]}
+                  looksLike={task.looksLike[lang]}
+                  state={practicalNow}
+                  history={newestFirst(practicalHistory)}
+                  canWrite={mayResubmit(practicalHistory)}
+                  signedIn={Boolean(user)}
+                />
               </>
             ) : (
               <>
@@ -369,6 +426,7 @@ function UnitList({
   course,
   lang,
   p,
+  practicalTitle,
   href,
 }: {
   units: Unit[];
@@ -376,6 +434,9 @@ function UnitList({
   course: (typeof COURSE_CONTENT)[string];
   lang: Locale;
   p: Dictionary['account']['academy']['player'];
+  /* Passed in rather than read from `p`, because the practical strings live in
+     their own dictionary module — see src/lib/dictionaries/practical.ts. */
+  practicalTitle: string;
   href: (u: Unit) => string;
 }) {
   const label: Record<UnitState, string> = {
@@ -390,7 +451,9 @@ function UnitList({
         const title =
           u.id === ASSESSMENT_ID
             ? p.assessmentTitle
-            : (course.modules.find((m) => m.id === u.id)?.title[lang] ?? u.id);
+            : u.id === PRACTICAL_ID
+              ? practicalTitle
+              : (course.modules.find((m) => m.id === u.id)?.title[lang] ?? u.id);
         return (
           <li key={u.id}>
             <Link

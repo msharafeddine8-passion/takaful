@@ -53,6 +53,44 @@ export const eventsManagement: CourseContent = {
     'Sphere Handbook — Humanitarian Standards in Humanitarian Response (2018)',
   ],
 
+  /*
+   * The through-line of the course is that a safe event is built in a room
+   * without participants, on paper, weeks earlier. So the assessment that
+   * matches it is the paper — not four options about the paper.
+   *
+   * Additive: no fingerprint moves and no certificate is affected. See
+   * lib/programme/practical.ts.
+   */
+  practical: {
+    id: 'em-run-of-show',
+    title: {
+      ar: 'خطّة فعاليّة مع Run of Show وخطّة بديلة',
+      en: 'An event plan with a run of show and a fallback',
+    },
+    brief: {
+      ar: 'خطّط فعاليّة مدّتها نصف يوم.\n\nاكتب من هم المشاركون وكم عددهم، والمكان ولماذا اخترته، وأدوار الفريق ومن يقوم بكلّ دور. ثمّ اكتب Run of Show بالساعة: ماذا يحدث، ومن يقوده.\n\nاذكر صراحةً كيف يصل شخص ذو إعاقة حركيّة إلى كلّ جزء من الفعاليّة — من وصوله إلى المكان حتّى دورة المياه — وكيف يُحمى الأطفال في التسجيل وفي التصوير.\n\nأنهِ بخطّة بديلة لأمرين قد يتغيّران في اليوم نفسه.',
+      en: 'Plan a half-day event.\n\nWrite down who the participants are and how many, the venue and why you chose it, and the team roles with a person against each. Then write the run of show hour by hour: what happens, and who leads it.\n\nSay explicitly how somebody with a mobility impairment reaches every part of it — from arriving at the venue to the toilet — and how children are protected in registration and in photography.\n\nFinish with a fallback for two things that could change on the day itself.',
+    },
+    looksLike: {
+      ar: [
+        'جمهور محدّد بعدده، لا «الناس»',
+        'أدوار مسندة إلى أشخاص، لا قائمة مهامّ بلا أصحاب',
+        'Run of Show فيه ساعات، لا عناوين',
+        'الوصول لذوي الإعاقة داخل تصميم الفعاليّة لا مضافاً في آخرها',
+        'خطّة بديلة لأمرين محدّدين، لا جملة «سنتصرّف»',
+      ],
+      en: [
+        'A defined audience with a number in it, not "people"',
+        'Roles held by people, not a task list with nobody against it',
+        'A run of show with hours in it, not headings',
+        'Disability access inside the design of the event rather than added at the end',
+        'A fallback for two specific things, not "we will manage"',
+      ],
+    },
+    minChars: 450,
+    maxChars: 8000,
+  },
+
   modules: [
     // ---------------------------------------------------------------- 1
     {

@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useCourseProgress } from './CourseProgress';
 import { completeCourseAction, type CompleteResult } from '@/lib/actions/courses';
 import { countPhrase } from '@/lib/when';
+import { practical } from '@/lib/dictionaries/practical';
+import { PRACTICAL_ID } from '@/lib/programme/player';
 import type { Locale } from '@/lib/i18n';
 
 const UI = {
@@ -140,7 +142,7 @@ export function CourseFinish({
         result.reason !== 'no_attempt' && (
           <p
             role="alert"
-            className="mt-4 text-[0.96rem] font-semibold text-red-600 dark:text-red-400"
+            className="mt-4 text-[0.96rem] font-semibold text-danger-text"
           >
             {t.error}
           </p>
@@ -149,7 +151,7 @@ export function CourseFinish({
       {result?.ok && (
         <div className="mt-4">
           {result.passed ? (
-            <p className="text-[1.1rem] font-extrabold text-emerald-700 dark:text-emerald-400">
+            <p className="text-[1.1rem] font-extrabold text-ok-text">
               {t.passed(result.score)}
             </p>
           ) : (
@@ -165,6 +167,29 @@ export function CourseFinish({
                 {result.certificateCode}
               </span>
             </p>
+          )}
+
+          {/*
+           * Passed the paper, and a trainer still has the written work.
+           *
+           * Said here rather than left to silence. Without it the learner sees
+           * "Passed with 90%" and no certificate line, which reads as the
+           * certificate having failed to arrive — and the support message that
+           * follows costs somebody an afternoon to answer with "it is being
+           * read". The link goes straight to the screen that shows where it is.
+           */}
+          {result.awaitingPractical && (
+            <div className="mt-3 rounded-xl border border-warn/40 bg-warn/[0.09] p-4">
+              <p className="text-[0.95rem] leading-relaxed text-warn-text">
+                {practical(lang).holdingCertificate}
+              </p>
+              <Link
+                href={`/${lang}/academy/${slug}/learn/${PRACTICAL_ID}`}
+                className="mt-2 inline-block text-[0.93rem] font-extrabold text-brand-blue hover:underline dark:text-brand-orange"
+              >
+                {practical(lang).goToPractical} →
+              </Link>
+            </div>
           )}
 
           <div className="mt-4 flex flex-wrap items-center gap-4">

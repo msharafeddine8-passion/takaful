@@ -7,6 +7,7 @@ import { isDbConfigured } from '@/lib/db';
 import { currentUser } from '@/lib/auth';
 import { completedModules, questionsIn } from '@/lib/academy';
 import { unitsOf, resumeUnitId } from '@/lib/programme/player';
+import { practicalTaskFor } from '@/lib/programme/practical';
 
 /**
  * "Open the course" — without saying which part.
@@ -40,6 +41,7 @@ export default async function LearnEntry(props: PageProps<'/[lang]/academy/[slug
   const units = unitsOf({
     moduleIds: course.modules.map((m) => m.id),
     hasQuestions: questionsIn(slug).length > 0,
+    hasPractical: practicalTaskFor(slug) !== null,
   });
   const target = resumeUnitId(units, read);
 
