@@ -10,7 +10,8 @@ import {
   recordReview,
 } from '@/lib/practical-submissions';
 import { practicalTaskFor, type Decision } from '@/lib/programme/practical';
-import type { PracticalStrings } from '@/lib/dictionaries/practical';
+import { practicalDictionaries, type PracticalStrings } from '@/lib/dictionaries/practical';
+import { notify } from '@/lib/notify';
 
 /**
  * Sending work in, and judging it.
@@ -153,6 +154,39 @@ export async function reviewPracticalAction(formData: FormData): Promise<void> {
      */
     reason: decision === 'changes_requested' ? feedback.trim() : undefined,
     newValue: { courseSlug: result.courseSlug },
+  });
+
+  /*
+   * The learner is told, whichever way it went.
+   *
+   * Without this the only way to find out a trainer had read your work was to
+   * open the course page and look — so the people who check are told and the
+   * people who assume no news means no verdict wait for a message that was
+   * never coming.
+   *
+   * Both languages are written into the row, as every notification here is;
+   * which one a reader sees is decided when it is rendered, not when it is
+   * sent, because a person can change their language afterwards.
+   *
+   * The trainer's feedback is NOT copied in. It lives on the submission,
+   * where it sits beside the work it is about — a paragraph about somebody's
+   * writing, lifted out of its context into a notification list, is a harder
+   * thing to read and a second copy of their words to keep correct.
+   */
+  const t = practicalDictionaries;
+  await notify({
+    userId: result.learnerId,
+    kind: 'practical.reviewed',
+    titleAr: decision === 'approved' ? t.ar.notifyApprovedTitle : t.ar.notifyReturnedTitle,
+    titleEn: decision === 'approved' ? t.en.notifyApprovedTitle : t.en.notifyReturnedTitle,
+    bodyAr: decision === 'approved' ? t.ar.notifyApprovedBody : t.ar.notifyReturnedBody,
+    bodyEn: decision === 'approved' ? t.en.notifyApprovedBody : t.en.notifyReturnedBody,
+    link: `/academy/${result.courseSlug}`,
+  }).catch((error) => {
+    /* A notification that fails must not undo a review that succeeded. The
+     * verdict is already written and audited; losing the message is a smaller
+     * harm than a trainer pressing the button twice because it looked broken. */
+    console.error('[practical] could not notify', result.learnerId, error);
   });
 
   revalidatePath(`/${lang}/staff/practical`);

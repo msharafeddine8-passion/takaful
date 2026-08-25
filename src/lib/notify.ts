@@ -50,7 +50,15 @@ export type NotificationKind =
    * different question with a different answer: publicBirthdayIdentity in
    * src/lib/visibility.ts, which this kind takes no part in.
    */
-  | 'birthday.greeting';
+  | 'birthday.greeting'
+  /*
+   * A trainer has read a practical submission, whichever way it went.
+   *
+   * One kind and not two. The mute list works by kind, and separating approved
+   * from returned would let somebody switch off the bad news and keep the good
+   * — not a setting anybody should be offered about their own assessed work.
+   */
+  | 'practical.reviewed';
 
 export type Notification = {
   id: string;
@@ -83,6 +91,10 @@ type NotifyInput = {
 const ALWAYS_SEND: NotificationKind[] = [
   'application.accepted', 'application.waitlisted', 'application.rejected',
   'hours.rejected', 'hours.corrected', 'stage.unlocked', 'certificate.issued',
+  /* Beside hours.rejected, and for the same reason: work sent back is
+   * something the person has to act on, and silence would be read as
+   * approval. */
+  'practical.reviewed',
 ];
 
 /**

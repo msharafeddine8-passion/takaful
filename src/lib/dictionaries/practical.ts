@@ -111,6 +111,21 @@ export type PracticalStrings = {
   ownWorkHidden: string;
   forbidden: string;
   goQueue: string;
+
+  /*
+   * The notification, in both languages, written into the row when a trainer
+   * decides. Which one a reader sees is settled at render time — somebody can
+   * change their language after the message was sent.
+   *
+   * The bodies carry no feedback text. That lives on the submission beside the
+   * work it is about, and a paragraph about somebody's writing lifted out of
+   * its context is both harder to read and a second copy of a trainer's words
+   * to keep correct.
+   */
+  notifyApprovedTitle: string;
+  notifyApprovedBody: string;
+  notifyReturnedTitle: string;
+  notifyReturnedBody: string;
 };
 
 export const practicalAr: PracticalStrings = {
@@ -186,6 +201,15 @@ export const practicalAr: PracticalStrings = {
   ownWorkHidden: 'أعمالك أنت لا تظهر هنا؛ يراجعها غيرك.',
   forbidden: 'هذه الصفحة ليست ضمن صلاحيّاتك.',
   goQueue: 'المهامّ العمليّة',
+
+  notifyApprovedTitle: 'اعتُمدت مهمّتك العمليّة',
+  notifyApprovedBody:
+    'قرأ مدرّب ما كتبته واعتمده. شهادة الدورة صارت في طريقها إليك.',
+  /* «يحتاج إلى إضافة» لا «مرفوض». العمل رجع ليكتمل، والصياغة تقول ذلك: من قرأه
+     يريده أن ينجح، ولم يحكم عليه. */
+  notifyReturnedTitle: 'عادت إليك مهمّتك العمليّة',
+  notifyReturnedBody:
+    'قرأ مدرّب ما كتبته وكتب لك ما يحتاج إلى إضافة. افتح الدورة لتقرأ ملاحظته وترسل نسخة جديدة.',
 };
 
 export const practicalEn: PracticalStrings = {
@@ -264,6 +288,15 @@ export const practicalEn: PracticalStrings = {
   ownWorkHidden: 'Your own work is not listed here; somebody else reviews it.',
   forbidden: 'This page is not within your capabilities.',
   goQueue: 'Practical tasks',
+
+  notifyApprovedTitle: 'Your practical work was accepted',
+  notifyApprovedBody:
+    'A trainer has read what you wrote and accepted it. Your course certificate is on its way.',
+  /* "Come back to you", not "rejected". The work returned to be finished, and
+     the wording says so: the person who read it wants it to succeed. */
+  notifyReturnedTitle: 'Your practical work has come back to you',
+  notifyReturnedBody:
+    'A trainer has read what you wrote and noted what still needs adding. Open the course to read their note and send a new version.',
 };
 
 export const practicalDictionaries: Record<PracticalLocale, PracticalStrings> = {
