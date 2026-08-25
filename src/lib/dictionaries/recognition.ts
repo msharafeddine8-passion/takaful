@@ -62,7 +62,9 @@ export type RecognitionStrings = {
 
 export const recognitionAr: RecognitionStrings = {
   title: 'ظهورك في الصفحات العامة',
-  lede: 'أنت من يقرّر ما إذا كان اسمك يظهر في صفحات التقدير ولوائح المتطوّعين، وبأيّ قدر. لا يُنشر شيء ما لم تختره بنفسك، ويمكنك تغيير اختيارك متى شئت.',
+  lede: 'أنت من يقرّر ما إذا كان اسمك يظهر في صفحات التقدير ولوائح المتطوّعين، وبأيّ قدر. '
+    + 'تعتبر الجمعية الظهور هو الحال المعتاد لمن تطوّع معها، فإن لم تختر شيئاً هنا فاسمك '
+    + 'يظهر — ويمكنك إخفاءه في أيّ وقت، ويسري ذلك فوراً.',
   choiceLegend: 'ما الذي يمكن للصفحات العامة أن تُظهره عنك؟',
   hidden: 'لا تُظهرني في اللوائح العامة',
   hiddenHint: 'لا يظهر اسمك ولا صورتك في أيّ صفحة عامة.',
@@ -70,10 +72,10 @@ export const recognitionAr: RecognitionStrings = {
   displayNameHint: 'يظهر اسم الظهور المكتوب في ملفّك، من دون صورة. وإن تركته فارغًا فلن تظهر.',
   nameAndPhoto: 'أظهر اسمي وصورتي',
   nameAndPhotoHint: 'يظهر اسمك الكامل مع صورة ملفّك في صفحات التقدير.',
-  neverChosen: 'لم تختر بعد، ونحن نعتبرك حتى الآن ممّن لا يرغبون بالظهور.',
+  neverChosen: 'لم تختر بعد، والجمعية تعتبرك حتى الآن ممّن لا مانع لديهم من الظهور. اختيارك يعلو على هذا.',
   birthdayTitle: 'تهنئة عيد الميلاد',
   birthday: 'أرحّب بتلقّي تهنئة في عيد ميلادي',
-  birthdayHint: 'مُطفأة ما لم تُشغّلها، ويمكنك إطفاؤها في أيّ وقت.',
+  birthdayHint: 'مُشغّلة ما لم تُطفئها، ويمكنك إطفاؤها في أيّ وقت. لا يُذكر تاريخ ميلادك ولا عمرك.',
   safeguardingNote: 'تُطبّق الجمعية قواعد حماية الأطفال على كلّ صفحة عامة، ولذلك قد لا يظهر بعض الحسابات فيها حتى لو اختار أصحابها الظهور.',
   ownStandingNote: 'مهما كان اختيارك هنا، تبقى ساعاتك ونقاطك وموقعك بين المتطوّعين ظاهرة لك في حسابك.',
   save: 'حفظ الاختيار',
@@ -82,7 +84,10 @@ export const recognitionAr: RecognitionStrings = {
 
 export const recognitionEn: RecognitionStrings = {
   title: 'How you appear on public pages',
-  lede: 'You decide whether your name appears on recognition pages and volunteer listings, and how much of it. Nothing is published unless you choose it, and you can change your mind at any time.',
+  lede: 'You decide whether your name appears on recognition pages and volunteer listings, '
+    + 'and how much of it. The association treats appearing as the ordinary state for '
+    + 'somebody who volunteers with it, so if you choose nothing here your name is shown — '
+    + 'and you can hide it at any time, with immediate effect.',
   choiceLegend: 'What may public pages show about you?',
   hidden: 'Do not show me in public listings',
   hiddenHint: 'Neither your name nor your photograph appears on any public page.',
@@ -90,10 +95,10 @@ export const recognitionEn: RecognitionStrings = {
   displayNameHint: 'The display name from your profile, with no photograph. If you leave it blank, you will not appear.',
   nameAndPhoto: 'Show my name and photograph',
   nameAndPhotoHint: 'Your full name and your profile photograph appear on recognition pages.',
-  neverChosen: 'You have not chosen yet, so for now we treat you as someone who would rather not appear.',
+  neverChosen: 'You have not chosen yet, so for now the association treats you as somebody who does not mind appearing. Your own choice overrides that.',
   birthdayTitle: 'Birthday greetings',
   birthday: 'I would like a greeting on my birthday',
-  birthdayHint: 'Off unless you turn it on, and you can turn it off again whenever you like.',
+  birthdayHint: 'On unless you switch it off, and you can switch it off whenever you like. Neither your date of birth nor your age is ever mentioned.',
   safeguardingNote: 'The association applies its child protection rules to every public page, so some accounts do not appear there even when their owners have asked to.',
   ownStandingNote: 'Whatever you choose here, your own hours, points and standing among the volunteers stay visible to you in your account.',
   save: 'Save choice',
