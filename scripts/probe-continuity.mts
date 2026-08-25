@@ -471,9 +471,19 @@ check('so are the submit button and the clear link',
   'one shared select class, the button, the link');
 check('the grid starts at one column and widens',
   /grid[\s\S]{0,60}sm:grid-cols-2/.test(code));
-check('the card sets every figure in the reader\'s own digits',
+/*
+ * The reason here changed; the check did not, and that is worth saying rather
+ * than quietly leaving a stale sentence behind.
+ *
+ * It used to be that formatNumber gave Arabic-Indic digits while formatDuration
+ * gave Latin, so mixing them on one card put two scripts side by side.
+ * formatNumber is Latin in both languages now and that clash is gone. One
+ * function for every figure on the card is still what keeps them consistent the
+ * next time somebody changes their mind about digits.
+ */
+check('the card sets every figure through one formatter',
   !/formatDuration/.test(code) && (code.match(/formatNumber\(/g) ?? []).length >= 4,
-  'formatDuration returns Latin digits and would sit beside Arabic-Indic ones');
+  'one function for all four figures, so they cannot drift apart');
 check('a figure of zero is not printed beside somebody being thanked',
   /\{!!person\.hours &&/.test(code) && /\{!!person\.activities &&/.test(code) &&
   /\{!!person\.certificates &&/.test(code));

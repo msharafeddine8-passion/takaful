@@ -101,10 +101,27 @@ export function formatPercent(n: number, lang: Locale): string {
 }
 
 /**
- * A count in the reader's digits — '٣' / '3'. Useful inside a template like
- * 'تبقّى {n} من الدورات', where a Latin digit in Arabic prose reads as a
- * foreign body even though it is legible.
+ * A count, in Latin digits, in both languages — '1,234'.
+ *
+ * THIS USED TO RETURN ARABIC-INDIC DIGITS IN ARABIC, and the argument for that
+ * was a real one: a Latin digit inside Arabic prose like «تبقّى {n} من الدورات»
+ * reads as a foreign body even though it is perfectly legible.
+ *
+ * The trouble was that it was the only thing on the site doing it. Every date
+ * and every duration is Latin — see the note at the top of when.ts, which
+ * decided it deliberately and for a sturdier reason: the association's own
+ * paperwork, its ID cards and the keypad on a volunteer's phone all use Latin
+ * digits, and a figure on this platform is copied onto paper more often than it
+ * is read aloud. So a single screen showed «50 ساعة» beside «١٬٢٣٤ نقطة»,
+ * which does not read as a considered choice — it reads as two pages stitched
+ * together, and it makes the two numbers look like they came from different
+ * systems.
+ *
+ * One vocabulary, and the one with the reason behind it. The grouping is
+ * en-GB's in both languages too: ar-LB with Latin digits groups as 1.234.567,
+ * and a dot where an English reader expects a decimal point is a worse problem
+ * than the one being solved.
  */
-export function formatNumber(n: number, lang: Locale): string {
-  return new Intl.NumberFormat(lang === 'ar' ? 'ar-LB-u-nu-arab' : 'en-GB').format(n);
+export function formatNumber(n: number, _lang: Locale): string {
+  return new Intl.NumberFormat('en-GB').format(n);
 }

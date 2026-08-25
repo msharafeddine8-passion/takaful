@@ -13,6 +13,10 @@
  * matters, and this probe holds both differences as well as the grammar,
  * because the obvious "cleanup" later is to delete one of them.
  *
+ * It also holds the numeral policy, settled in the same pass: Latin digits in
+ * both languages, everywhere, because formatNumber was the only thing on the
+ * site using Arabic-Indic ones.
+ *
  * A PURE probe: no database, no network.
  */
 
@@ -81,30 +85,31 @@ eq('hours and minutes', formatDuration(150, 'en'), '2 h 30 min');
 eq('whole hours', formatDuration(120, 'en'), '2 h');
 eq('minutes alone', formatDuration(45, 'en'), '45 min');
 
-console.log('\n5. numerals — a disagreement this probe records rather than settles');
+console.log('\n5. numerals — one vocabulary across the site');
 
 /*
- * TWO POLICIES, BOTH DELIBERATE, ON THE SAME PAGE.
+ * Latin digits everywhere, in both languages.
  *
- * when.ts opens by saying digits stay Latin on purpose, because the
- * association's own paperwork and ID cards use Latin digits — and both
- * formatDuration implementations follow it. formatNumber does the opposite on
- * purpose too, and says why: a Latin digit inside Arabic prose like «تبقّى {n}
- * من الدورات» reads as a foreign body.
+ * formatNumber used to return Arabic-Indic digits in Arabic, on a reasonable
+ * ground: a Latin digit inside Arabic prose reads as a foreign body. It was
+ * the only thing on the site doing it. Every date and every duration is Latin,
+ * decided at the top of when.ts for a sturdier reason — the association's own
+ * paperwork, its ID cards and the keypad on a volunteer's phone all use Latin
+ * digits, and a figure here is copied onto paper more often than read aloud.
  *
- * Each is defensible alone. Together they put «50 ساعة» beside «١٬٢٣٤ نقطة» on
- * one screen, which is the look of two pages stitched together — and
- * probe-continuity already carries a check that exists only because of this
- * split.
- *
- * Asserted as it actually is, not as either side would like it. Somebody has to
- * choose, and that is a design decision for the association rather than a thing
- * to slip into a formatter — but until then this stops it changing by accident
- * in one place and not the other.
+ * So one screen showed «50 ساعة» beside «١٬٢٣٤ نقطة», which does not read as a
+ * considered choice — it reads as two pages stitched together. This holds the
+ * settled answer in both directions, so it cannot drift back in one place and
+ * not the other.
  */
 eq('durations use Latin digits', formatDuration(3000, 'ar'), '50 ساعة');
-check('while counts use Arabic-Indic', /[٠-٩]/.test(formatNumber(1234, 'ar')),
-  formatNumber(1234, 'ar'));
+eq('and so do counts, in Arabic', formatNumber(1234, 'ar'), '1,234');
+eq('and in English', formatNumber(1234, 'en'), '1,234');
+check('no Arabic-Indic digit survives in any formatted figure',
+  !/[٠-٩]/.test(formatNumber(1234567, 'ar') + formatDuration(3000, 'ar')));
+/* ar-LB with Latin digits groups as 1.234.567, and a dot where an English
+ * reader expects a decimal point is worse than the problem it solves. */
+eq('grouped with commas, not dots', formatNumber(1234567, 'ar'), '1,234,567');
 
 /* ------------------------------------------------------------------ */
 
