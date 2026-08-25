@@ -26,15 +26,6 @@ await c.query(`
     applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`);
 
-const lock = await c.query<{ locked: boolean }>('SELECT pg_try_advisory_lock($1) AS locked', [
-  LOCK_KEY,
-]);
-if (!lock.rows[0]?.locked) {
-  console.error('Another process holds the migration lock. Nothing applied.');
-  await c.end();
-  process.exit(1);
-}
-
 const applied = new Set(
   (await c.query<{ filename: string }>('SELECT filename FROM schema_migrations')).rows.map(
     (r) => r.filename,
@@ -53,6 +44,36 @@ for (const filename of pending) {
   process.stdout.write(`applying ${filename} ... `);
   await c.query('BEGIN');
   try {
+    /*
+     * The lock is taken inside the transaction, per file, and released by the
+     * COMMIT or ROLLBACK — see the long note in src/lib/migrate.ts. The short
+     * version: DATABASE_URL is Neon's pooler, PgBouncer in transaction mode,
+     * where a session-level advisory lock is taken on one server connection
+     * and unlocked on another. The lock survived, on a pooled connection that
+     * went back to serving page queries, and every later migration run found
+     * it held and applied nothing.
+     */
+    const lock = await c.query<{ locked: boolean }>(
+      'SELECT pg_try_advisory_xact_lock($1) AS locked',
+      [LOCK_KEY],
+    );
+    if (!lock.rows[0]?.locked) {
+      await c.query('ROLLBACK');
+      console.log('SKIPPED');
+      console.error('  Another process holds the migration lock. Nothing applied.');
+      failed = true;
+      break;
+    }
+    // Asked again inside the lock: another instance may have applied this file
+    // since the pending list was read, which is the collision the lock is for.
+    const already = await c.query('SELECT 1 FROM schema_migrations WHERE filename = $1', [
+      filename,
+    ]);
+    if (already.rowCount) {
+      await c.query('ROLLBACK');
+      console.log('already applied elsewhere');
+      continue;
+    }
     await c.query(sql);
     await c.query('INSERT INTO schema_migrations (filename) VALUES ($1)', [filename]);
     await c.query('COMMIT');
@@ -68,6 +89,5 @@ for (const filename of pending) {
   }
 }
 
-await c.query('SELECT pg_advisory_unlock($1)', [LOCK_KEY]).catch(() => {});
 await c.end();
 process.exit(failed ? 1 : 0);

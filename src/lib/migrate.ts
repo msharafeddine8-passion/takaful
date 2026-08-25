@@ -102,53 +102,89 @@ async function applyMigrations(): Promise<void> {
       )
     `);
 
-    // Two instances starting at once must not apply the same file twice.
-    // try_ rather than the blocking form: if someone else is migrating,
-    // there is nothing useful for this instance to wait around for.
-    const lock = await client.query<{ locked: boolean }>(
-      'SELECT pg_try_advisory_lock($1) AS locked',
-      [LOCK_KEY],
+    const applied = new Set(
+      (
+        await client.query<{ filename: string }>('SELECT filename FROM schema_migrations')
+      ).rows.map((r) => r.filename),
     );
-    if (!lock.rows[0]?.locked) {
-      console.warn('[migrate] Another instance holds the migration lock, skipping.');
+    const pending = await pendingFiles(applied);
+
+    if (pending.length === 0) {
+      console.log('[migrate] Schema is up to date.');
       return;
     }
 
-    try {
-      const applied = new Set(
-        (
-          await client.query<{ filename: string }>('SELECT filename FROM schema_migrations')
-        ).rows.map((r) => r.filename),
-      );
-      const pending = await pendingFiles(applied);
+    for (const filename of pending) {
+      const sql = await readFile(path.join(process.cwd(), MIGRATIONS_DIR, filename), 'utf8');
 
-      if (pending.length === 0) {
-        console.log('[migrate] Schema is up to date.');
-        return;
-      }
-
-      for (const filename of pending) {
-        const sql = await readFile(path.join(process.cwd(), MIGRATIONS_DIR, filename), 'utf8');
-        console.log(`[migrate] Applying ${filename}`);
-
-        // Postgres runs DDL transactionally, so a file that fails halfway
-        // leaves nothing behind, unlike MySQL, where it would have.
-        await client.query('BEGIN');
-        try {
-          await client.query(sql);
-          await client.query('INSERT INTO schema_migrations (filename) VALUES ($1)', [filename]);
-          await client.query('COMMIT');
-        } catch (error) {
-          await client.query('ROLLBACK').catch(() => {});
-          throw error;
+      /*
+       * ONE TRANSACTION PER FILE, AND THE LOCK LIVES INSIDE IT.
+       *
+       * This used to take one session-level pg_try_advisory_lock around the
+       * whole run and release it in a finally. That is correct against a
+       * Postgres you are talking to directly, and wrong against this one:
+       * DATABASE_URL points at Neon's pooler, which is PgBouncer in
+       * transaction mode. Every statement may land on a different server
+       * connection.
+       *
+       * So the lock was taken on one server connection and the unlock was sent
+       * down another, where it did nothing but return false. The lock stayed —
+       * on a connection that went straight back into the pool and carried on
+       * serving ordinary page queries while holding it. Every later migration
+       * run then found the lock held and skipped, which on this project means
+       * every deploy silently ships code whose schema never arrived. It
+       * happened twice; the second time the holder had been idle for four
+       * minutes with a certificates query as its last statement.
+       *
+       * pg_try_advisory_xact_lock cannot leak, because Postgres releases it at
+       * COMMIT or ROLLBACK whatever the pooler does with the connection
+       * afterwards. Per file rather than per run because a transaction-scoped
+       * lock cannot outlive its transaction, and the guarantee that actually
+       * matters is the narrow one: two instances must never apply the same
+       * file twice.
+       *
+       * DDL is transactional in Postgres, so a file that fails halfway leaves
+       * nothing behind. A migration needing CREATE INDEX CONCURRENTLY cannot
+       * be written here at all — that was already true, and 016 says so.
+       */
+      await client.query('BEGIN');
+      try {
+        const lock = await client.query<{ locked: boolean }>(
+          'SELECT pg_try_advisory_xact_lock($1) AS locked',
+          [LOCK_KEY],
+        );
+        if (!lock.rows[0]?.locked) {
+          await client.query('ROLLBACK');
+          console.warn('[migrate] Another instance holds the migration lock, skipping.');
+          return;
         }
 
-        console.log(`[migrate] Applied ${filename}.`);
+        /*
+         * Asked again inside the lock. The pending list was read before it,
+         * and between the two another instance may have applied this very
+         * file — which is precisely the collision the lock exists to prevent
+         * and which the outer read cannot see.
+         */
+        const already = await client.query(
+          'SELECT 1 FROM schema_migrations WHERE filename = $1',
+          [filename],
+        );
+        if (already.rowCount) {
+          await client.query('ROLLBACK');
+          console.log(`[migrate] ${filename} was applied by another instance.`);
+          continue;
+        }
+
+        console.log(`[migrate] Applying ${filename}`);
+        await client.query(sql);
+        await client.query('INSERT INTO schema_migrations (filename) VALUES ($1)', [filename]);
+        await client.query('COMMIT');
+      } catch (error) {
+        await client.query('ROLLBACK').catch(() => {});
+        throw error;
       }
-    } finally {
-      // Best effort: the lock is tied to this session and Postgres drops it
-      // when the connection goes away regardless.
-      await client.query('SELECT pg_advisory_unlock($1)', [LOCK_KEY]).catch(() => {});
+
+      console.log(`[migrate] Applied ${filename}.`);
     }
   } finally {
     // end() can wait on a socket that is already hung, and by this point the
