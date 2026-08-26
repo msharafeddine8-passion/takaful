@@ -150,7 +150,16 @@ CREATE TABLE IF NOT EXISTS volunteer_roles (
 );
 
 -- One person's roles, newest first — the timeline query, and the common one.
--- NULLS FIRST because a current role has no end date and belongs at the top.
+--
+-- `is_current DESC` is what puts current roles at the top; the NULLS LAST is
+-- about started_on, so a role whose start nobody recorded sorts to the bottom
+-- of the past rather than the top of it.
+--
+-- (This comment claimed NULLS FIRST "because a current role has no end date"
+-- when it was written, which described neither this index nor any sensible
+-- one — the null being ordered here is a START date. The SQL was right and the
+-- sentence was wrong; corrected rather than preserved, because it was never
+-- true of anything.)
 CREATE INDEX IF NOT EXISTS idx_vr_person
   ON volunteer_roles (user_id, is_current DESC, started_on DESC NULLS LAST)
   WHERE archived_at IS NULL;
