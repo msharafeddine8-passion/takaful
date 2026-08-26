@@ -16,6 +16,11 @@ import { isDbConfigured, query } from '@/lib/db';
 
 const STATIC = [
   '', '/about', '/areas', '/academy', '/journey', '/projects', '/gallery', '/contact', '/resources',
+  /* The partners page. Listed even while no partner has been published, because
+   * with nothing recorded that page IS «كن شريكًا» — an invitation addressed to
+   * organisations who do not know the association yet, which is precisely the
+   * page worth being findable. It gains a list later without changing address. */
+  '/partners',
   /* The honours board. Listed because it is deliberately indexable: somebody
    * who consented to public thanks consented to a public page, and a public
    * page a search engine cannot find is a private page with extra steps. It

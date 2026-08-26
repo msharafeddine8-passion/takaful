@@ -4,6 +4,7 @@ import type { Locale } from '@/lib/i18n';
 import type { Dictionary } from '@/lib/dictionaries';
 import { awardDictionaries } from '@/lib/dictionaries/awards';
 import { continuityStrings } from '@/lib/dictionaries/continuity';
+import { partners as partnerStrings } from '@/lib/dictionaries/partners';
 
 export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
   /*
@@ -24,6 +25,22 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
     { href: `/${lang}/about`, label: dict.nav.about },
     { href: `/${lang}/areas`, label: dict.nav.areas },
     { href: `/${lang}/projects`, label: dict.nav.projects },
+    /*
+     * «شركاؤنا», next to the projects it is about.
+     *
+     * The footer and not the header, and that is a decision rather than a
+     * default. The header comment above the nav array says the nine links plus
+     * the actions already overflow anything narrower than xl; a tenth would push
+     * the whole bar into the burger on desktop, which is a real cost to every
+     * page on the site for one page most visitors reach at most once.
+     *
+     * Its own title is the label, exactly as the honours board's and the
+     * continuity page's are — which is also why no `nav` key was added to
+     * dictionaries/types.ts, ar.ts or en.ts for this feature. «شركاؤنا» is
+     * already short enough to be a navigation label, which is the only reason a
+     * page title may double as one here.
+     */
+    { href: `/${lang}/partners`, label: partnerStrings(lang).title },
     { href: `/${lang}/gallery`, label: dict.nav.gallery },
     { href: `/${lang}/honours`, label: awardDictionaries[lang].title },
     { href: `/${lang}/continuity`, label: continuityStrings(lang).title },

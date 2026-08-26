@@ -263,21 +263,26 @@ export default async function PassportPage(props: { params: Promise<{ lang: stri
             </div>
 
             {/*
-              * The line the whole feature turns on, above the record rather
-              * than beneath it. A reader who gets three lines into this
-              * document has already been told what it is not.
+              * What this sheet is, said calmly and once.
+              *
+              * It was a warning-coloured block denying that the association
+              * stood behind any of this. The association overruled that and
+              * was right: the hours were verified by a supervisor, the
+              * certificates issued in its name, the roles written by its own
+              * staff. A caution-tinted box around its own record made the
+              * association look unsure of it.
               */}
             <section
-              aria-labelledby="passport-disclaimer"
-              className="passport-block mt-6 rounded-xl border border-warn-text/45 bg-warn/10 p-4 sm:p-5"
+              aria-labelledby="passport-issued"
+              className="passport-block mt-6 rounded-xl border border-line bg-surface-2 p-4 sm:p-5"
             >
               <h2
-                id="passport-disclaimer"
-                className="text-[0.95rem] font-extrabold text-warn-text"
+                id="passport-issued"
+                className="text-[0.95rem] font-extrabold text-brand-blue dark:text-sky-300"
               >
-                {t.notACertificateTitle}
+                {t.issuedTitle}
               </h2>
-              <p className="mt-2 text-[0.92rem] leading-relaxed text-ink">{t.notACertificate}</p>
+              <p className="mt-2 text-[0.92rem] leading-relaxed text-ink">{t.issuedBody}</p>
               <p className="mt-2 text-[0.88rem] leading-relaxed text-ink-2">{t.verifyHint}</p>
               {/* Its own line and its own direction. A URL reordered by the
                   bidi algorithm mid-sentence is a URL nobody can type. */}
@@ -575,11 +580,11 @@ export default async function PassportPage(props: { params: Promise<{ lang: stri
                 {t.contactLabel}: <span dir="ltr">{ORG.email}</span>{' '}
                 <span aria-hidden>·</span> <span dir="ltr">{ORG.phone}</span>
               </p>
-              {/* The disclaimer's own title, once more at the foot. Somebody
-                  reading only the last page of a two-page printout still meets
-                  it, and the sentence costs one line. */}
+              {/* Where the sheet came from, once more at the foot, so a reader
+                  holding only the last page of a two-page printout still knows
+                  whose record this is. */}
               <p className="mt-1.5 text-[0.82rem] font-bold leading-relaxed text-ink-2">
-                {t.notACertificateTitle}
+                {t.issuedTitle}
               </p>
             </div>
           </article>
