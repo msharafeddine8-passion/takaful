@@ -1,6 +1,19 @@
 import Link from 'next/link';
 import type { Locale } from '@/lib/i18n';
 import type { Dictionary } from '@/lib/dictionaries';
+/*
+ * The passport's label comes from its own dictionary rather than from
+ * dict.account.nav.
+ *
+ * Every other label here is `n.something`, because those namespaces were folded
+ * into ar.ts / en.ts / types.ts long ago. The passport carries its own strings
+ * on purpose — see the head of lib/dictionaries/passport.ts — and adding one
+ * key to three files edited in lockstep by other work, to render one word, is
+ * the conflict that module exists to avoid. Importing the one string is the
+ * cheaper half of that trade, and folding the namespace in later removes this
+ * import along with the module.
+ */
+import { passportStrings } from '@/lib/dictionaries/passport';
 
 /**
  * Getting around the account, without a wall of identical buttons.
@@ -22,8 +35,8 @@ import type { Dictionary } from '@/lib/dictionaries';
 
 export type NavKey =
   | 'dashboard' | 'journey' | 'learning' | 'activities' | 'hours'
-  | 'achievements' | 'leaderboard' | 'certificates' | 'card' | 'notifications'
-  | 'profile' | 'safeguarding';
+  | 'achievements' | 'leaderboard' | 'certificates' | 'card' | 'passport'
+  | 'notifications' | 'profile' | 'safeguarding';
 
 type Item = { key: NavKey; href: string; label: string };
 
@@ -79,6 +92,18 @@ export function accountNav(lang: Locale, dict: Dictionary): {
           { key: 'leaderboard', href: at('/leaderboard'), label: n.leaderboard },
           { key: 'certificates', href: at('/certificates'), label: n.certificates },
           { key: 'card', href: at('/card'), label: n.card },
+          /*
+           * With the card and the certificates, and last of the four.
+           *
+           * It belongs beside them because all three are things a volunteer
+           * takes away with them onto paper, and somebody looking for "the
+           * thing I attach to an application" looks where the card already is.
+           * It comes after them rather than before because it is a summary OF
+           * the other two — a reader who has not yet found their certificates
+           * should meet those first, so that the passport's own line about not
+           * being one of them has something to point at.
+           */
+          { key: 'passport', href: at('/passport'), label: passportStrings(lang).navLabel },
         ],
       },
       {
