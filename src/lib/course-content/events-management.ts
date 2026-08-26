@@ -164,6 +164,156 @@ export const eventsManagement: CourseContent = {
           ],
         },
         {
+          type: 'budget',
+          prompt: {
+            ar: 'يوم مفتوح لسبعين مشاركاً، وميزانيته ستّمئة دولار لا تُزاد. اختر ما تشتريه واترك ما تستغني عنه.',
+            en: 'An open day for seventy participants, with a budget of six hundred dollars and no more. Choose what you buy and leave out what you can do without.',
+          },
+          limit: 600,
+          unit: {
+            ar: { zero: 'لا شيء', one: 'دولار واحد', two: 'دولاران', few: '{n} دولارات', many: '{n} دولاراً' },
+            en: { zero: 'nothing', one: 'one dollar', two: 'two dollars', few: '{n} dollars', many: '{n} dollars' },
+          },
+          options: [
+            {
+              text: {
+                ar: 'قاعة تتّسع للسبعين مع مخرج ثانٍ ومرافق صحّية كافية',
+                en: 'A hall that holds seventy, with a second exit and enough facilities',
+              },
+              cost: 220,
+              take: true,
+              because: {
+                ar: 'أكبر بند في القائمة، وأوّل ما يحاول الناس تصغيره. القاعة الأصغر بمئة وستّين دولاراً تعني كراسيَ في الممرّات ومخرجاً واحداً، أي أنّك وفّرت ستّين دولاراً على حساب زمن الإخلاء.',
+                en: 'The largest line on the list, and the first one people try to shrink. The smaller hall at a hundred and sixty means chairs in the aisles and a single exit, which is sixty dollars saved against the time it takes to get everybody out.',
+              },
+            },
+            {
+              text: {
+                ar: 'نقل ذهاباً وإياباً لمن لا تصله المواصلات العامّة، بينها سيّارة تتّسع لكرسيّ متحرّك',
+                en: 'Return transport for those the public network does not reach, including one vehicle that takes a wheelchair',
+              },
+              cost: 120,
+              take: true,
+              because: {
+                ar: 'الفعالية التي لا يستطيع جزء من جمهورها الوصول إليها ليست فعالية لسبعين بل لمن يسكن قريباً. وهذا البند يُقصّ عادةً لأنّ غيابه لا يظهر في القاعة: من لم يصل لا يشتكي، ولا يُحصى.',
+                en: 'An event a part of its audience cannot reach is not an event for seventy, it is an event for whoever lives nearby. This line gets cut because its absence is invisible in the room: the people who did not arrive do not complain, and do not get counted.',
+              },
+            },
+            {
+              text: {
+                ar: 'حقيبة إسعافات أوّلية كاملة، ومتطوّع مدرَّب على استخدامها',
+                en: 'A complete first-aid kit and a volunteer trained to use it',
+              },
+              cost: 40,
+              take: true,
+              because: {
+                ar: 'أربعون دولاراً هي أرخص ما تشتريه هنا وأقلّه احتمالاً للاستعمال، وهذا بالذات سبب سقوطه عادةً: البنود التي يُرجى ألّا تُستعمل تبدو دائماً قابلة للتأجيل إلى الفعالية القادمة.',
+                en: 'Forty dollars is the cheapest thing here and the least likely to be used, which is exactly why it usually falls: the lines you hope never to touch always look like something the next event can carry instead.',
+              },
+            },
+            {
+              text: {
+                ar: 'ماء وطعام خفيف لسبعين مشاركاً ولفريق العمل',
+                en: 'Water and light food for seventy participants and for the team',
+              },
+              cost: 90,
+              take: true,
+              because: {
+                ar: 'يوم كامل بلا ماء ليس تقشّفاً بل خطر على من يصوم أو يتناول دواءً أو يأتي من بعيد. ولاحظ أنّ الفريق داخل العدد: المتطوّع الذي لم يأكل منذ الصباح يرتكب في الرابعة أخطاءً لم يكن ليرتكبها في العاشرة.',
+                en: 'A whole day without water is not thrift, it is a risk to anyone fasting, on medication, or travelling from far. Note that the team is inside the count: a volunteer who has not eaten since morning makes mistakes at four that they would not have made at ten.',
+              },
+            },
+            {
+              text: {
+                ar: 'مترجم بلغة الإشارة لجلستَي الافتتاح والختام',
+                en: 'A sign language interpreter for the opening and closing sessions',
+              },
+              cost: 60,
+              take: true,
+              because: {
+                ar: 'إن كان بين المسجّلين من يحتاجه فهذا ليس بنداً تكميلياً بل شرط حضورهم أصلاً. والاستمارة التي تسأل عن الاحتياجات بصياغة مفتوحة تُطرح لهذا السبب: لتعرف قبل أن تُقفل الميزانية لا بعدها.',
+                en: 'If somebody on the register needs it, this is not an extra, it is the condition of their attending at all. The registration form asks about needs in open wording for exactly this reason: so that you know before the budget closes rather than after.',
+              },
+            },
+            {
+              text: {
+                ar: 'احتياطيّ غير مخصّص لما لا يُتوقّع في اليوم نفسه',
+                en: 'An unallocated reserve for whatever the day itself throws up',
+              },
+              cost: 50,
+              take: true,
+              because: {
+                ar: 'البند الوحيد هنا الذي لا يشتري شيئاً بعينه، وأوّل ما يُشطب لأنّه لا يُرى في اليوم. وحين يتعطّل المصعد أو تتأخّر الحافلة، الميزانية التي لا احتياطيّ فيها تدفع من بند الطعام أو لا تدفع.',
+                en: 'The only line here that buys nothing in particular, and the first to be struck out because it cannot be seen on the day. When the lift fails or the bus is late, a budget with no reserve pays out of the food line or does not pay at all.',
+              },
+            },
+            {
+              text: {
+                ar: 'لافتة كبيرة بشعار الجمعية على واجهة القاعة',
+                en: 'A large banner with the association\'s logo across the front of the hall',
+              },
+              cost: 70,
+              take: false,
+              because: {
+                ar: 'اللافتة تجعل الفعالية تبدو منظّمة في الصور ولا تجعلها منظّمة. وسبعون دولاراً هي النقل تقريباً، أي أنّ ثمنها الحقيقيّ ليس سبعين دولاراً بل عدد من لم يصل.',
+                en: 'The banner makes the event look organised in photographs; it does not make it organised. Seventy dollars is roughly the transport line, so its real price is not seventy dollars but the number of people who did not arrive.',
+              },
+            },
+            {
+              text: {
+                ar: 'مصوّر محترف يغطّي اليوم كلّه',
+                en: 'A professional photographer covering the whole day',
+              },
+              cost: 100,
+              take: false,
+              because: {
+                ar: 'التغطية المصوّرة حاجة حقيقية للجمعية، لكنّها حاجة الجمعية لا حاجة المشاركين، ومئة دولار منها ستّون للترجمة وأربعون للإسعافات. متطوّع بهاتف وقائمة بما يلزم تصويره يفي بالغرض في يوم كهذا.',
+                en: 'Photographic coverage is a genuine need, but it is the association\'s need rather than the participants\', and a hundred dollars is sixty for the interpreter and forty for the kit. A volunteer with a phone and a list of what to capture does the job on a day like this.',
+              },
+            },
+            {
+              text: {
+                ar: 'شهادات مطبوعة على ورق مقوّى بأسماء المشاركين',
+                en: 'Certificates printed on card with the participants\' names',
+              },
+              cost: 45,
+              take: false,
+              because: {
+                ar: 'الشهادة تُرسل بالبريد الإلكترونيّ بعد أيّام بلا كلفة تُذكر، والتأجيل هنا لا يُفقد المشارك شيئاً. وهذا هو الشكل السليم للتأجيل: ما يمكن فعله لاحقاً بالجودة نفسها.',
+                en: 'A certificate can be emailed a few days later at almost no cost, and deferring it costs the participant nothing. This is what a fair deferral looks like: something that can be done later to the same standard.',
+              },
+            },
+            {
+              text: {
+                ar: 'هدايا تذكارية صغيرة لكلّ مشارك',
+                en: 'A small memento for every participant',
+              },
+              cost: 80,
+              take: false,
+              because: {
+                ar: 'ثمانون دولاراً لشيء يُحمل إلى البيت ويُنسى. والسؤال الذي يفرز هذا البند عن غيره: هل غيابه يمنع أحداً من المشاركة، أم يجعل المشاركة أقلّ لطفاً؟ الثاني يُؤجَّل، والأوّل لا.',
+                en: 'Eighty dollars for something carried home and forgotten. The question that separates this line from the others: does its absence stop anybody taking part, or does it only make taking part less pleasant? The second can wait; the first cannot.',
+              },
+            },
+            {
+              text: {
+                ar: 'مكبّر صوت إضافيّ مستأجَر لخارج القاعة',
+                en: 'An extra hired speaker for outside the hall',
+              },
+              cost: 35,
+              take: false,
+              because: {
+                ar: 'أرخص بند في القائمة كلّها، وأرخص من حقيبة الإسعافات بخمسة دولارات — ومع ذلك يسقط وتبقى الحقيبة. لو كان الاختيار بالثمن وحده لجاء ترتيبه الأوّل، وهذا ما يجعل الثمن مؤشّراً رديئاً على الأولوية.',
+                en: 'The cheapest line on the whole list, and five dollars cheaper than the first-aid kit — and it goes while the kit stays. Chosen by price alone it would have been first in the queue, which is what makes price a poor guide to priority.',
+              },
+            },
+          ],
+          afterword: {
+            ar: 'ما بقي يبلغ خمسمئة وثمانين دولاراً من ستّمئة، وما سقط ثلاثمئة وثلاثين. البنود التي نجت تشترك في صفة واحدة: غيابها يمنع أحداً من الحضور أو يعرّضه للأذى. والبنود التي سقطت تشترك في صفة واحدة أيضاً: غيابها يجعل اليوم أقلّ لمعاناً ولا يُخرج منه أحداً. والترتيب بالثمن يقلب هذا كلّه — أرخص ما في القائمة سقط، وأربعون دولاراً من الإسعافات بقيت.',
+            en: 'What survives comes to five hundred and eighty dollars of six hundred, and what goes comes to three hundred and thirty. The lines that survived share one property: without them somebody cannot attend, or is put at risk. The lines that went share one too: without them the day is less polished and nobody is shut out of it. Ordering by price inverts all of it — the cheapest thing on the list went, and the forty-dollar first-aid kit stayed.',
+          },
+        },
+        {
           type: 'quiz',
           id: 'em-q1',
           label: { ar: 'قرارك', en: 'Your decision' },

@@ -206,6 +206,79 @@ export function reviewTally(
   return out;
 }
 
+export type BudgetTally = {
+  /** What the chosen set costs. */
+  spent: number;
+  /** What is left of the limit. Negative once the reader has overcommitted. */
+  remaining: number;
+  /** Committed more than there was. */
+  over: boolean;
+  /** How many the reader took, right or wrong. */
+  taken: number;
+  /** Taken, and it earns its place. */
+  kept: number;
+  /** Taken, and it could have waited. */
+  padded: number;
+  /** Left out, and it could not be. */
+  cut: number;
+  /** How many earn their place — what a whole answer would have kept. */
+  needed: number;
+  total: number;
+};
+
+/**
+ * What a reader chose to fund, what it cost, and what that cost them.
+ *
+ * The arithmetic reviewTally does, plus the one thing a document review has no
+ * equivalent of: a total, and a line it can cross. Every other exercise here
+ * lets the reader be right about every item independently — a sort has no
+ * limit on how much a bucket holds, and a match that pairs all four correctly
+ * costs nothing. Spending is the case where being right about one thing is
+ * paid for by being wrong about another, and that only shows up in a sum.
+ *
+ * `over` is reported and not prevented. A component that refused the last tick
+ * would teach that overcommitting is impossible, which is the opposite of what
+ * every association learns the hard way; the reader is allowed to promise more
+ * than there is and is then shown by how much.
+ *
+ * Three failures rather than one, and they are not added together for the same
+ * reason reviewTally keeps its four apart. Cutting the first-aid kit is not the
+ * same mistake as paying for the banner, and a single "4 out of 7" would hide
+ * which of them happened.
+ */
+export function budgetTally(
+  taken: Readonly<Record<number, boolean>>,
+  options: readonly { cost: number; take: boolean }[],
+  limit: number,
+): BudgetTally {
+  const out: BudgetTally = {
+    spent: 0,
+    remaining: limit,
+    over: false,
+    taken: 0,
+    kept: 0,
+    padded: 0,
+    cut: 0,
+    needed: 0,
+    total: options.length,
+  };
+  options.forEach((option, i) => {
+    const chosen = taken[i] === true;
+    if (option.take) out.needed += 1;
+    if (chosen) {
+      out.spent += option.cost;
+      out.taken += 1;
+      if (option.take) out.kept += 1;
+      else out.padded += 1;
+    } else if (option.take) {
+      out.cut += 1;
+    }
+  });
+  out.remaining = limit - out.spent;
+  out.over = out.spent > limit;
+  return out;
+}
+
 /**
  * Where a conversation goes after a reply, or null when it is over.
  *

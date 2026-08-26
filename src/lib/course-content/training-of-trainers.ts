@@ -362,6 +362,156 @@ export const trainingOfTrainers: CourseContent = {
           },
         },
         {
+          type: 'budget',
+          prompt: {
+            ar: 'أمامك ساعتان لتدريب متطوّعين على توثيق زيارات الحقل، ولا شيء غيرهما. اختر ما يدخل الجلسة، واترك الباقي.',
+            en: 'You have two hours to train volunteers on documenting field visits, and nothing beyond them. Choose what goes into the session and leave the rest out.',
+          },
+          limit: 120,
+          unit: {
+            ar: { zero: 'لا شيء', one: 'دقيقة واحدة', two: 'دقيقتان', few: '{n} دقائق', many: '{n} دقيقة' },
+            en: { zero: 'nothing', one: 'one minute', two: 'two minutes', few: '{n} minutes', many: '{n} minutes' },
+          },
+          options: [
+            {
+              text: {
+                ar: 'افتتاح يقول ما الذي سيصير المشارك قادراً على فعله حين يخرج',
+                en: 'An opening that says what the participant will be able to do when they walk out',
+              },
+              cost: 5,
+              take: true,
+              because: {
+                ar: 'خمس دقائق تشتري لك الجلسة كلّها: المشارك الذي يعرف إلى أين تمضي به يحتمل نشاطاً لا يفهم غايته في لحظته، والذي لا يعرف ينسحب ذهنياً عند أوّل تمرين يبدو له بلا معنى.',
+                en: 'Five minutes that buy you the whole session: a participant who knows where they are being taken will sit through an activity whose purpose is not obvious in the moment, and one who does not know checks out at the first exercise that looks pointless.',
+              },
+            },
+            {
+              text: {
+                ar: 'تنشيط الخبرة السابقة: ماذا يوثّق كلّ منهم اليوم فعلاً، وأين يتعثّر',
+                en: 'Activating what they already do: what each of them actually documents today, and where it goes wrong',
+              },
+              cost: 15,
+              take: true,
+              because: {
+                ar: 'هذا ليس تمهيداً بل جمع بيانات. ربع الساعة هذه تخبرك أين المشكلة الحقيقية عند هذه المجموعة بالذات، فتضبط النشاط الأساسي على ما سمعته بدل أن تدرّبهم على ما افترضته وأنت تكتب الخطة.',
+                en: 'This is not a warm-up, it is data collection. The quarter of an hour tells you where the real difficulty sits for this particular group, so you can tune the core activity to what you heard rather than train them on what you assumed while writing the plan.',
+              },
+            },
+            {
+              text: {
+                ar: 'النشاط الأساسي: سيناريو زيارة حقيقية يملؤون فيه النموذج بأيديهم',
+                en: 'The core activity: a real visit scenario in which they fill in the form themselves',
+              },
+              cost: 40,
+              take: true,
+              because: {
+                ar: 'هذا هو التدريب، وما عداه محيط به. الهدف أن يعرفوا كيف يملؤون النموذج، والطريقة الوحيدة لبلوغه أن يملؤوه — وأربعون دقيقة هي أقلّ ما يكفي لأن يكتب أحدهم ويقرأ ما كتبه ثمّ يعيد الكتابة.',
+                en: 'This is the training and everything else surrounds it. The objective is that they know how to fill in the form, and the only route to it is filling it in — and forty minutes is the least that lets somebody write, read back what they wrote, and then write it again.',
+              },
+            },
+            {
+              text: {
+                ar: 'مناقشة ما كتبوه: تُقرأ ثلاثة نماذج ويُسأل عن الفرق بينها',
+                en: 'Discussing what they wrote: three of the forms are read out and the group is asked what separates them',
+              },
+              cost: 25,
+              take: true,
+              because: {
+                ar: 'التمرين وحده يُنتج ممارسةً لا معياراً. المناقشة هي التي تحوّل «هكذا كتبتُ أنا» إلى «هكذا يُكتب»، وحذفها يترك كلّ واحد بقناعته الأولى وقد صار الآن أشدّ ثقةً بها لأنّه تمرّن عليها.',
+                en: 'The exercise on its own produces practice but no standard. The discussion is what turns "this is how I wrote it" into "this is how it is written", and cutting it leaves everyone with the conviction they arrived with, now held more firmly because they have rehearsed it.',
+              },
+            },
+            {
+              text: {
+                ar: 'الانتقال بين الأنشطة وتوزيع الأوراق وإعادة ترتيب الطاولات',
+                en: 'Moving between activities, handing out papers and putting the tables back',
+              },
+              cost: 10,
+              take: true,
+              because: {
+                ar: 'هذا الوقت يُنفَق سواء كتبته في الخطة أو لم تكتبه، والفرق أنّه إن لم يكن مكتوباً فسيُؤخذ من النشاط الذي يليه. الخطط التي تنهار في الغرفة هي عادةً الخطط التي جمعت الأنشطة ونسيت المسافات بينها.',
+                en: 'This time is spent whether or not you wrote it into the plan, and the difference is that if it is not written it will be taken out of whatever comes next. The plans that fall apart in the room are usually the ones that added up the activities and forgot the gaps between them.',
+              },
+            },
+            {
+              text: {
+                ar: 'استراحة معلنة في منتصف الجلسة، بوقت بدء ووقت عودة',
+                en: 'An announced break at the halfway point, with a start time and a return time',
+              },
+              cost: 10,
+              take: true,
+              because: {
+                ar: 'ساعتان بلا استراحة ليستا ساعتين من الانتباه، بل ساعة ونصفاً من الانتباه ونصف ساعة من الحضور الشكلي. والاستراحة المعلنة بوقتَيها تعود في موعدها؛ أمّا «خذوا خمس دقائق» فتصير خمس عشرة في كلّ مرّة.',
+                en: 'Two hours without a break are not two hours of attention; they are ninety minutes of attention and thirty of being in the room. A break announced with both its times comes back on time, where "take five minutes" turns into fifteen every time.',
+              },
+            },
+            {
+              text: {
+                ar: 'الإغلاق: ماذا سيفعل كلّ واحد على نحو مختلف في زيارته القادمة',
+                en: 'The close: what each of them will do differently on their next visit',
+              },
+              cost: 10,
+              take: true,
+              because: {
+                ar: 'الجلسة التي تنتهي حين ينتهي الوقت تنتهي في الغرفة. الالتزام الذي يُقال بصوت مسموع أمام الآخرين هو الجسر الوحيد بين الجلسة والزيارة القادمة، وهو أرخص عشر دقائق في الخطة كلّها.',
+                en: 'A session that ends when the time runs out ends in the room. A commitment said out loud in front of the others is the only bridge between the session and the next field visit, and it is the cheapest ten minutes in the whole plan.',
+              },
+            },
+            {
+              text: {
+                ar: 'تعريف بالجمعية وتاريخها ومشاريعها بالشرائح',
+                en: 'An introduction to the association, its history and its projects, with slides',
+              },
+              cost: 15,
+              take: false,
+              because: {
+                ar: 'هؤلاء متطوّعون في الجمعية أصلاً؛ التعريف يُطمئن المدرّب ولا يضيف إلى المشارك شيئاً. وحين يُقتطع ربع الساعة من نشاط أو من مناقشة، تكون قد استبدلت بمهارةٍ تقديماً.',
+                en: 'These are already volunteers with the association; the introduction reassures the trainer and adds nothing for the participant. When that quarter of an hour comes out of an activity or a discussion, you have traded a skill for a preamble.',
+              },
+            },
+            {
+              text: {
+                ar: 'لعبة تعارف طويلة يتحرّك فيها الجميع في أرجاء الغرفة',
+                en: 'A long icebreaker game with everybody moving around the room',
+              },
+              cost: 20,
+              take: false,
+              because: {
+                ar: 'المجموعة تعرف بعضها، والدفء الذي تشتريه اللعبة يشتريه تنشيط الخبرة السابقة بلا ثمن لأنّه يُنطق الناس عن عملهم. وعشرون دقيقة هي نصف النشاط الأساسي تقريباً، وهذا ثمن باهظ لأجل جوّ الغرفة.',
+                en: 'The group already knows each other, and the warmth the game buys is bought for nothing by activating their prior experience, which gets people talking about their own work. Twenty minutes is roughly half the core activity, which is a steep price for the mood of the room.',
+              },
+            },
+            {
+              text: {
+                ar: 'محاضرة عن أهمية التوثيق وأثره على جودة البيانات وثقة المموّلين',
+                en: 'A lecture on why documentation matters and its effect on data quality and donor confidence',
+              },
+              cost: 20,
+              take: false,
+              because: {
+                ar: 'لا أحد في الغرفة يعارض أهمية التوثيق؛ مشكلتهم أنّهم لا يعرفون كيف يُكتب سطر صالح. والإقناع بشيء مقتنَع به سلفاً هو أكثر ما يُنفَق عليه وقت التدريب بلا عائد.',
+                en: 'Nobody in the room disputes that documentation matters; their problem is that they do not know how a usable line gets written. Persuading people of something they already accept is the single largest waste of training time there is.',
+              },
+            },
+            {
+              text: {
+                ar: 'قراءة استبيان الرضا بنداً بنداً وتعبئته في الغرفة',
+                en: 'Reading the satisfaction survey out item by item and filling it in together in the room',
+              },
+              cost: 10,
+              take: false,
+              because: {
+                ar: 'الاستبيان يوزَّع ويُملأ في دقيقتين بلا قراءة جماعية، وهو أضعف مستويات التقييم أصلاً. وهو أرخص من كلّ ما أُبقي عليه هنا — وهذا بالذات ما يجعل الاختيار بالسعر وحده دليلاً رديئاً.',
+                en: 'The survey is handed out and filled in within two minutes without being read aloud, and it is the weakest level of evaluation to begin with. It is also cheaper than everything kept here — which is precisely what makes choosing by price alone a poor guide.',
+              },
+            },
+          ],
+          afterword: {
+            ar: 'ما بقي يبلغ مئةً وخمس عشرة دقيقة من مئة وعشرين، والخمس الباقية بلا خطّة عن قصد. الجلسة المملوءة إلى آخر دقيقة تنهار عند أوّل سؤال طويل، وعندها تُؤخذ الدقائق الناقصة من المناقشة والإغلاق — أي من آخر نشاطين وأثمنهما. ولاحظ أنّ أرخص ما تُرك، وهو الاستبيان، أرخص من كلّ ما أُبقي عليه: لو كان الاختيار بالسعر لبقي الاستبيان وسقطت المناقشة.',
+            en: 'What survives comes to a hundred and fifteen minutes of a hundred and twenty, and the five left over have nothing planned against them on purpose. A session filled to the last minute collapses at the first long question, and the missing minutes then come out of the discussion and the close — the last two activities, and the two most valuable. Notice too that the cheapest thing dropped, the survey, is cheaper than everything kept: had the choosing been done by price, the survey would have stayed and the discussion would have gone.',
+          },
+        },
+        {
           type: 'quiz',
           id: 'tot-q4',
           label: { ar: 'قرارك بالميدان', en: 'Your call in the field' },

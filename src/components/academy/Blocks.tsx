@@ -7,6 +7,8 @@ import { MatchBlock } from '@/components/academy/practice/MatchBlock';
 import { ReviewBlock } from '@/components/academy/practice/ReviewBlock';
 import { DialogueBlock } from '@/components/academy/practice/DialogueBlock';
 import { BuildBlock } from '@/components/academy/practice/BuildBlock';
+import { BudgetBlock } from '@/components/academy/practice/BudgetBlock';
+import { ConsequenceBlock } from '@/components/academy/practice/ConsequenceBlock';
 import type { Block } from '@/lib/course-content/types';
 import type { Locale } from '@/lib/i18n';
 
@@ -271,6 +273,41 @@ export function renderBlock(block: Block, lang: Locale, key: number, quiz: QuizC
             options: s.options.map((o) => o[lang]),
             because: s.because[lang],
           }))}
+          afterword={block.afterword[lang]}
+        />
+      );
+
+    case 'budget':
+      return (
+        <BudgetBlock
+          key={key}
+          lang={lang}
+          prompt={block.prompt[lang]}
+          limit={block.limit}
+          unit={block.unit[lang]}
+          options={block.options.map((o) => ({
+            text: o.text[lang],
+            cost: o.cost,
+            take: o.take,
+            because: o.because[lang],
+          }))}
+          afterword={block.afterword[lang]}
+        />
+      );
+
+    case 'consequence':
+      return (
+        <ConsequenceBlock
+          key={key}
+          lang={lang}
+          title={block.title[lang]}
+          situation={block.situation[lang]}
+          decisions={block.decisions.map((d) => ({
+            moment: d.moment[lang],
+            question: d.question[lang],
+            choices: d.choices.map((c) => ({ text: c.text[lang], later: c.later[lang] })),
+          }))}
+          when={block.when[lang]}
           afterword={block.afterword[lang]}
         />
       );

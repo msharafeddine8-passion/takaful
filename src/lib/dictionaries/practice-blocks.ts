@@ -13,9 +13,10 @@
  *
  * ── COUNTED NOUNS ──────────────────────────────────────────────────────────
  *
- * Four counts reach a screen: pairs left to make, pairs in the wrong place,
- * parts left to choose, and what a reader found and missed in a document.
- * Arabic inflects the counted noun in bands, so «2 أزواج» and «3 زوج» are both
+ * Several counts reach a screen: pairs left to make, pairs in the wrong place,
+ * parts left to choose, what a reader found and missed in a document, what
+ * survived a budget and what did not, and how many decisions came back. Arabic
+ * inflects the counted noun in bands, so «2 أزواج» and «3 زوج» are both
  * wrong. Every count here is `CountForms` and the component passes it to
  * countPhrase() in lib/when.ts — bands zero / one / two / few (3–10) / many
  * (11+), and only the last two carry {n}, because «زوجان» does not want a
@@ -104,6 +105,55 @@ export type PracticeBlockStrings = {
     assembled: string;
     afterwordHeading: string;
   };
+  budget: {
+    kicker: string;
+    /**
+     * The running sum, in one line: {n} committed of {limit}.
+     *
+     * One string rather than three labels beside three numerals, because a
+     * screen reader reading a status region reads it as a sentence, and
+     * "committed 40 of 60 dollars" is one. Three separate figures are three
+     * announcements with nothing saying how they relate.
+     *
+     * {limit} arrives already carrying its unit, inflected — «60 دولاراً»,
+     * «ستّة متطوّعين» — because the unit is authored per block and Arabic
+     * reshapes it with the number. Only {limit} does; {n} is a bare numeral
+     * beside it, so the unit is not said twice in one short sentence.
+     */
+    spent: string;
+    /** {n} carries the unit here, since nothing else in the line does. */
+    remaining: string;
+    /** Replaces `remaining` the moment the sum crosses the line. */
+    over: string;
+    check: string;
+    again: string;
+    /** The four things that can have happened to a candidate. */
+    kept: string;
+    padded: string;
+    cut: string;
+    spared: string;
+    keptCount: CountForms;
+    cutCount: CountForms;
+    paddedCount: CountForms;
+    afterwordHeading: string;
+  };
+  consequence: {
+    kicker: string;
+    /**
+     * Said before the first decision, because a reader who presses a button
+     * and gets nothing back assumes the page is broken. Here it is the design.
+     */
+    noFeedback: string;
+    step: string;
+    /** The heading over the decisions already taken, still unanswered. */
+    decided: string;
+    /** The two things a decision turns out to have been. */
+    paid: string;
+    free: string;
+    costs: CountForms;
+    restart: string;
+    afterwordHeading: string;
+  };
 };
 
 const ar: PracticeBlockStrings = {
@@ -187,6 +237,57 @@ const ar: PracticeBlockStrings = {
     assembled: 'ما ركّبته',
     afterwordHeading: 'لماذا هذه الصيغة',
   },
+  budget: {
+    kicker: 'ما لديك لا يكفي لكلّ شيء',
+    spent: 'التزمت بـ {n} من {limit}',
+    remaining: 'بقي لك {n}',
+    over: 'تجاوزت ما لديك بـ {n}',
+    check: 'أغلِق القائمة',
+    again: 'ابدأ من جديد',
+    kept: 'أبقيته، وهو ممّا لا يُستغنى عنه',
+    padded: 'أخذته، وكان في وسعه أن ينتظر',
+    cut: 'تركته، ولم يكن ممّا يُترك',
+    spared: 'تركته، وهذا هو الصواب',
+    keptCount: {
+      zero: 'لم تُبقِ شيئاً ممّا يلزم',
+      one: 'أبقيت بنداً واحداً ممّا يلزم',
+      two: 'أبقيت بندين ممّا يلزم',
+      few: 'أبقيت {n} بنود ممّا يلزم',
+      many: 'أبقيت {n} بنداً ممّا يلزم',
+    },
+    cutCount: {
+      zero: 'ولم يسقط منك بند لازم',
+      one: 'وأسقطت بنداً لازماً',
+      two: 'وأسقطت بندين لازمين',
+      few: 'وأسقطت {n} بنود لازمة',
+      many: 'وأسقطت {n} بنداً لازماً',
+    },
+    paddedCount: {
+      zero: 'ولم تصرف على ما كان ينتظر',
+      one: 'وصرفت على بند كان في وسعه أن ينتظر',
+      two: 'وصرفت على بندين كان في وسعهما أن ينتظرا',
+      few: 'وصرفت على {n} بنود كان في وسعها أن تنتظر',
+      many: 'وصرفت على {n} بنداً كان في وسعه أن ينتظر',
+    },
+    afterwordHeading: 'ما الذي بقي، ولماذا هو بالذات',
+  },
+  consequence: {
+    kicker: 'قرارات اليوم، وحسابها بعد حين',
+    noFeedback: 'لن تعرف ما فعله أيّ قرار قبل أن تتّخذها كلّها.',
+    step: 'القرار {n} من {total}',
+    decided: 'ما قرّرته',
+    paid: 'هنا وصل الحساب',
+    free: 'هذا القرار لم يطالبك بشيء',
+    costs: {
+      zero: 'لم يعد عليك شيء',
+      one: 'قرار واحد عاد عليك',
+      two: 'قراران عادا عليك',
+      few: '{n} قرارات عادت عليك',
+      many: '{n} قراراً عاد عليك',
+    },
+    restart: 'ابدأ من جديد',
+    afterwordHeading: 'ما الذي كان في وسعك تفاديه',
+  },
 };
 
 const en: PracticeBlockStrings = {
@@ -269,6 +370,57 @@ const en: PracticeBlockStrings = {
     wrong: 'This part is missing something',
     assembled: 'What you built',
     afterwordHeading: 'Why it is written this way',
+  },
+  budget: {
+    kicker: 'What you have will not cover everything',
+    spent: 'Committed {n} of {limit}',
+    remaining: '{n} left to spend',
+    over: 'Over what you have by {n}',
+    check: 'Close the list',
+    again: 'Start over',
+    kept: 'You kept it, and it is not one to lose',
+    padded: 'You took it, and it could have waited',
+    cut: 'You left it out, and it was not one to leave',
+    spared: 'You left it out, and that was right',
+    keptCount: {
+      zero: 'You kept none of what has to stay',
+      one: 'You kept one of the items that has to stay',
+      two: 'You kept two of the items that have to stay',
+      few: 'You kept {n} of the items that have to stay',
+      many: 'You kept {n} of the items that have to stay',
+    },
+    cutCount: {
+      zero: 'and dropped nothing that had to stay',
+      one: 'and dropped one that had to stay',
+      two: 'and dropped two that had to stay',
+      few: 'and dropped {n} that had to stay',
+      many: 'and dropped {n} that had to stay',
+    },
+    paddedCount: {
+      zero: 'and spent on nothing that could have waited',
+      one: 'and spent on one that could have waited',
+      two: 'and spent on two that could have waited',
+      few: 'and spent on {n} that could have waited',
+      many: 'and spent on {n} that could have waited',
+    },
+    afterwordHeading: 'What survived, and why that and not the rest',
+  },
+  consequence: {
+    kicker: 'Decisions now, the bill later',
+    noFeedback: 'You will not find out what any decision did until you have made them all.',
+    step: 'Decision {n} of {total}',
+    decided: 'What you decided',
+    paid: 'This is where the bill came',
+    free: 'This decision asked nothing of you',
+    costs: {
+      zero: 'Nothing came back to you',
+      one: 'One decision came back to you',
+      two: 'Two decisions came back to you',
+      few: '{n} decisions came back to you',
+      many: '{n} decisions came back to you',
+    },
+    restart: 'Start over',
+    afterwordHeading: 'What could have been avoided',
   },
 };
 

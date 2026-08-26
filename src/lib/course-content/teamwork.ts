@@ -530,6 +530,144 @@ export const teamwork: CourseContent = {
           },
         },
         {
+          type: 'consequence',
+          title: {
+            ar: 'أسبوع عاديّ تماماً',
+            en: 'An entirely ordinary week',
+          },
+          situation: {
+            ar: 'أنت على ملفّ الحيّ منذ سنة، وتغادر الفريق بعد ثلاثة أسابيع. ثلاثة قرارات صغيرة تنتظرك هذا الأسبوع، ولا واحد منها يبدو قراراً وأنت تتّخذه.',
+            en: 'You have carried the neighbourhood file for a year, and you leave the team in three weeks. Three small decisions are waiting for you this week, and not one of them looks like a decision while you are making it.',
+          },
+          decisions: [
+            {
+              moment: { ar: 'الاثنين — وصلك تكليف نشاط السبت', en: 'Monday — the brief for Saturday’s activity arrives' },
+              question: {
+                ar: 'وصلتك رسالة فيها دورك في نشاط السبت وما يلزمه. متى تفتحها؟',
+                en: 'A message has arrived with your role in Saturday’s activity and what it needs. When do you open it?',
+              },
+              choices: [
+                {
+                  text: {
+                    ar: 'تفتحها الآن، وتسأل في مجموعة الفريق عمّا ليس واضحاً فيها',
+                    en: 'Open it now, and ask in the team group about anything in it that is not clear',
+                  },
+                  later: {
+                    ar: 'كان الدور يحتاج صندوق أدوات ليس في المستودع. سؤالك يوم الاثنين أعطى المنسّقة أربعة أيّام لتدبيره، فوصل الصندوق صباح السبت ولم يعرف أحد أنّ شيئاً كاد ينقص.',
+                    en: 'The role needed a toolbox that was not in the store. Your Monday question gave the coordinator four days to find one, so it arrived on Saturday morning and nobody knew anything had nearly been missing.',
+                  },
+                },
+                {
+                  text: {
+                    ar: 'تفتحها ليلة الجمعة، حيث يكون الوقت أهدأ وأنت أكثر تركيزاً',
+                    en: 'Open it on Friday night, when things are quieter and you can concentrate',
+                  },
+                  later: {
+                    ar: 'ليلة الجمعة اكتشفت أنّ دورك يحتاج موادّ ليست عندك والمحلّات مغلقة. حضرت السبت بنصف ما يلزم وأكملت بما وجدته، وكان الفرق ظاهراً للأطفال قبل أن يكون ظاهراً لأحد من الفريق.',
+                    en: 'On Friday night you found that your role needed materials you did not have and the shops were shut. You turned up on Saturday with half of what was needed and improvised the rest, and the difference was visible to the children before it was visible to anyone on the team.',
+                  },
+                },
+                {
+                  text: {
+                    ar: 'تقرأ سطر العنوان وتكتفي به — الدور سيُشرح في الموقع كالعادة',
+                    en: 'Read the subject line and leave it there — the role gets explained on site as it always does',
+                  },
+                  later: {
+                    ar: 'شُرح في الموقع فعلاً، في عشر دقائق والأطفال يدخلون. ما التقطته في تلك الدقائق كان أقلّ بكثير ممّا كنت ستعرفه لو قرأت الرسالة يوم وصولها، والمنسّقة شرحت لك بدل أن تستقبل.',
+                    en: 'It was explained on site, in ten minutes with the children already coming in. What you caught in those minutes was far less than you would have known had you read the message the day it arrived, and the coordinator spent them briefing you instead of receiving people.',
+                  },
+                },
+              ],
+            },
+            {
+              moment: { ar: 'الأربعاء — علمت أنّك مسافر السبت', en: 'Wednesday — you learn you have to travel on Saturday' },
+              question: {
+                ar: 'دورك في السبت محجوز باسمك، وقد صار سفرك مؤكّداً. متى تقول؟',
+                en: 'Saturday’s role is booked in your name, and your travel has just become certain. When do you say so?',
+              },
+              choices: [
+                {
+                  text: {
+                    ar: 'اليوم، وتقول ما هو دورك بالضبط وما الذي يحتاجه من يحلّ محلّك',
+                    en: 'Today, saying exactly what your role is and what whoever replaces you will need',
+                  },
+                  later: {
+                    ar: 'ثلاثة أيّام كانت تكفي: أُعيد توزيع الدور في مكالمتين، وحضر السبت متطوّع يعرف ماذا يفعل ولديه ما يلزمه. لم يلاحظ أحد من الأهالي أنّ أحداً تغيّر.',
+                    en: 'Three days were enough: the role was redistributed in two phone calls, and on Saturday a volunteer turned up who knew what to do and had what he needed. None of the families noticed that anybody had changed.',
+                  },
+                },
+                {
+                  text: {
+                    ar: 'تنتظر إلى الجمعة، فقد يتأجّل السفر ولا داعي لإقلاق أحد بلا سبب',
+                    en: 'Wait until Friday — the trip may yet be postponed, and there is no sense worrying anybody for nothing',
+                  },
+                  later: {
+                    ar: 'لم يتأجّل. ليلة الجمعة كان أمام المنسّقة اسم واحد متاح لا يعرف دورك، فتولّاه وهو يسأل. المجموعة الأولى انتظرت خمساً وعشرين دقيقة في الشمس، وهو وقت لم يكن ليُدفع لو قلت يوم الأربعاء.',
+                    en: 'It was not postponed. On Friday night the coordinator had exactly one name available and he did not know your role, so he took it on while asking his way through it. The first group waited twenty-five minutes in the sun, which is time nobody would have paid had you said so on Wednesday.',
+                  },
+                },
+                {
+                  text: {
+                    ar: 'تعتذر صباح السبت برسالة تشرح فيها الظرف بوضوح',
+                    en: 'Apologise on Saturday morning with a message explaining the situation clearly',
+                  },
+                  later: {
+                    ar: 'وصلت الرسالة والأهالي واقفون عند الباب. الغياب المُعلَن قبل ثلاثة أيّام يُخطَّط حوله، والمُعلَن في صباحه لا يُخطَّط حوله إطلاقاً — والفرق بين الحالتين ليس في مقدار ما أعطيته بل في وقت قولك.',
+                    en: 'The message arrived with families already at the door. An absence announced three days ahead gets planned around; one announced on the morning cannot be planned around at all — and the difference between the two is not how much you gave but when you said it.',
+                  },
+                },
+              ],
+            },
+            {
+              moment: { ar: 'الخميس — ريما ستأخذ ملفّ الحيّ بعدك', en: 'Thursday — Rima is taking over the neighbourhood file' },
+              question: {
+                ar: 'ما تعرفه عن الحيّ ليس مكتوباً في أيّ مكان. متى تسلّمه؟',
+                en: 'What you know about the neighbourhood is written down nowhere. When do you hand it on?',
+              },
+              choices: [
+                {
+                  text: {
+                    ar: 'تجلسان اليوم وتكتبان ورقة واحدة: الأرقام، ومن يُرجَع إليه، والعائلات التي تحتاج انتباهاً خاصاً',
+                    en: 'Sit down today and write one page together: the numbers, who to go to, and the families that need particular care',
+                  },
+                  later: {
+                    ar: 'بعد ثلاثة أسابيع احتاجت ريما مسؤول القاعة ليلة الجمعة، فوجدت الاسم والرقم على الورقة واتّصلت. النشاط لم يتأخّر، ولم يعرف أحد في الجمعية أنّ شيئاً كاد يتعطّل.',
+                    en: 'Three weeks later Rima needed the hall keeper on a Friday night, found the name and the number on the page, and rang him. The activity was not delayed, and nobody in the association knew that anything had nearly gone wrong.',
+                  },
+                },
+                {
+                  text: {
+                    ar: 'تخبرها أنّك متاح على الهاتف لأيّ سؤال بعد مغادرتك',
+                    en: 'Tell her you are on the end of a phone for any question after you have gone',
+                  },
+                  later: {
+                    ar: 'اتّصلت بك ثلاث مرّات في الأسبوع الأوّل ثمّ توقّفت، لأنّ من يتّصل بشخص غادر يشعر أنّه يُثقل عليه. الأسئلة لم تنتهِ، بل توقّف طرحها — وصارت تُجاب بالتخمين.',
+                    en: 'She rang you three times in the first week and then stopped, because ringing somebody who has left feels like an imposition. The questions did not run out; they stopped being asked, and started being answered by guesswork.',
+                  },
+                },
+                {
+                  text: {
+                    ar: 'تسلّمها كلّ شيء في آخر يوم لك، حين تكون قد أنهيت ما عداه',
+                    en: 'Hand everything over on your last day, once you have finished everything else',
+                  },
+                  later: {
+                    ar: 'آخر يوم كان وداعاً وصوراً وثلاث مكالمات، وما سُلّم فيه كان عشرين دقيقة من أسماء لم تُكتب. بعد شهرين لم يبقَ منها في ذاكرة ريما إلّا اسمان، وأحدهما بغير رقم.',
+                    en: 'The last day was goodbyes, photographs and three phone calls, and what got handed over was twenty minutes of names that nobody wrote down. Two months on, two of them were left in Rima’s memory, and one of those without a number.',
+                  },
+                },
+              ],
+            },
+          ],
+          when: {
+            ar: 'ما عاد إليك من ذلك، في الأسابيع التي تلت',
+            en: 'What came back to you, in the weeks that followed',
+          },
+          afterword: {
+            ar: 'القرارات الثلاثة تشترك في شيء واحد: لا واحد منها كان بين صواب وخطأ، بل بين الآن وبعد قليل. وكلّ خيار مؤجَّل هنا كان له سبب وجيه في لحظته — الوقت أهدأ ليلة الجمعة، وقد يتأجّل السفر، وآخر يوم أنسب للتسليم. الثمن لم يظهر في اللحظة التي دُفع فيها، بل بعد أيّام أو أسابيع، وعلى شخص آخر غالباً: المنسّقة التي شرحت بدل أن تستقبل، والمتطوّع الذي تولّى دوراً لا يعرفه، وريما التي تُجيب بالتخمين. وهذا بالذات ما يجعل هذه القرارات تتكرّر: من يدفع ليس من قرّر.',
+            en: 'The three decisions share one thing: not one of them was between right and wrong — each was between now and shortly. And every deferral here had a good reason at the time: it is quieter on Friday night, the trip might still be called off, the last day is the natural moment to hand over. The price did not appear when it was incurred but days or weeks later, and usually to somebody else: the coordinator who spent the opening briefing you, the volunteer who took on a role he did not know, Rima answering by guesswork. That is exactly why these decisions keep being made — the person who pays is not the person who chose.',
+          },
+        },
+        {
           type: 'quiz',
           id: 'c3q6',
           label: { ar: 'سيناريو ميداني', en: 'Field scenario' },

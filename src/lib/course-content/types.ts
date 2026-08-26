@@ -3,6 +3,27 @@ import type { Locale } from '../i18n';
 export type L = Record<Locale, string>;
 export type LList = Record<Locale, string[]>;
 
+/**
+ * A unit of measure, in the five shapes Arabic makes a counted noun take.
+ *
+ * «2 دولار» and «3 دولاراً» are both wrong, and a `budget` block puts a figure
+ * with its unit on the screen a dozen times over — beside every option, in the
+ * running total, and again in what is left. countPhrase() in lib/when.ts picks
+ * the shape; this is what an author hands it.
+ *
+ * Declared here rather than imported from the dictionary because it describes
+ * authored content and not chrome, and because course content must not start
+ * depending on a UI module. It is the same five bands either way, and
+ * countPhrase takes it structurally.
+ *
+ * English fills all five too. Most of them are the same string there, and
+ * writing them out is cheaper than a special case that only one language uses.
+ */
+export type CountedUnit = Record<
+  Locale,
+  { zero: string; one: string; two: string; few: string; many: string }
+>;
+
 export type Block =
   | { type: 'text'; content: L }
   | { type: 'list'; items: LList }
@@ -181,6 +202,86 @@ export type Block =
         because: L;
       }[];
       /** The finished thing, said in prose. Shown once it is assembled right. */
+      afterword: L;
+    }
+  /**
+   * There is not enough. Decide what goes.
+   *
+   * The one thing none of the eight above can put in front of a reader, and it
+   * is the constraint this association actually works under. A `sort` has no
+   * scarcity in it — every bucket holds as many items as you like, so being
+   * right about one item costs nothing anywhere else, and a reader can mark
+   * everything essential and be told they did well. A `build` is a choice per
+   * slot with no total. Here the items compete: the kit and the transport and
+   * the banner are each defensible on their own, the money is not, and the
+   * lesson is which one a volunteer protects when the sum will not close.
+   *
+   * The reader is allowed to overcommit. Refusing the tick that crosses the
+   * line would teach that it cannot happen, which is not what anybody's first
+   * budget taught them.
+   */
+  | {
+      type: 'budget';
+      prompt: L;
+      /** How much there is. A whole number, in `unit`. */
+      limit: number;
+      /** What the figures are counted in — dollars, volunteers, hours. */
+      unit: CountedUnit;
+      /**
+       * Every candidate, with what it costs and whether it survives the cut.
+       *
+       * Three things must hold or the exercise is not one, and probe-practice-
+       * blocks asserts all three: the whole list must cost more than the limit,
+       * or nothing has to be given up; the kept set must fit inside it, or the
+       * reader is being asked to solve something with no answer; and something
+       * left out must cost less than something kept, or "take the cheap ones"
+       * wins without reading a word.
+       */
+      options: { text: L; cost: number; take: boolean; because: L }[];
+      /** What the surviving list adds up to, said in prose. Shown after. */
+      afterword: L;
+    }
+  /**
+   * Decisions now. The bill weeks later.
+   *
+   * `scenario` answers on the same press and `dialogue` answers in the next
+   * line, and both are right for what they cover. Neither can hold the failure
+   * that fills this curriculum's incident reports: the booking nobody
+   * confirmed in writing, the promise nobody diarised, the handover skipped
+   * because the day was long. Every one of those felt fine at the time. That
+   * is not incidental to them — it is the entire reason they keep happening,
+   * and an exercise that says "wrong" as the button goes down has quietly
+   * removed the thing being taught.
+   *
+   * So nothing is revealed until every decision is made, and then all of them
+   * are answered at once.
+   */
+  | {
+      type: 'consequence';
+      title: L;
+      /** The situation, before anything has been decided. */
+      situation: L;
+      /**
+       * In the order they come up. Three at least — with two, the reader can
+       * see which one the story is about before making either.
+       */
+      decisions: {
+        /** When and where this is being decided. "Tuesday, at the hall." */
+        moment: L;
+        question: L;
+        /**
+         * The one that sends no bill is authored first, and the reader is
+         * given them shuffled — see shuffleAnswers in lib/practice.ts for why
+         * an answer that is merely shuffled is not shuffled enough.
+         */
+        choices: {
+          text: L;
+          /** What this turned into, told when the bill arrives and not before. */
+          later: L;
+        }[];
+      }[];
+      /** How long afterwards the bill arrives. "Three weeks later." */
+      when: L;
       afterword: L;
     };
 

@@ -1,9 +1,9 @@
 /*
- * The four block types added after the first practice set: match, review,
- * dialogue and build.
+ * Every block type added after the first practice set: match, review, dialogue,
+ * build, and then budget and consequence.
  *
  * probe-practice holds the ground the original four stand on. This one holds
- * the same ground for the new four and then holds three things that only apply
+ * the same ground for the rest and then holds several things that only apply
  * to them.
  *
  * ── THE ONE THAT COSTS SOMEBODY A CERTIFICATE ──────────────────────────────
@@ -30,6 +30,18 @@
  * whose every first-turn reply ends the conversation makes turns two and three
  * unreachable, and an author reading the file cannot see it.
  *
+ * A budget has three of its own, and all three are arithmetic an author cannot
+ * do by eye across eleven lines. If the whole list fits inside the limit,
+ * nothing has to be given up and the exercise is a checklist. If the surviving
+ * set does not fit, there is no answer and every reader is told they overspent.
+ * And if everything kept is dearer than everything dropped, sorting by price
+ * wins without reading a word — which is the exact habit the block exists to
+ * break.
+ *
+ * A consequence has one: a decision offering two choices is a decision whose
+ * costless option is always the second button, because shuffleAnswers on a
+ * pair can only swap it.
+ *
  * ── AND THE TWO RULES THAT ARE NOT ABOUT THE CONTENT ───────────────────────
  *
  * A drag-only interaction excludes a part of the people this platform exists
@@ -48,6 +60,7 @@ import {
   shuffleAnswers,
   pickProgress,
   reviewTally,
+  budgetTally,
   nextTurn,
 } from '../src/lib/practice.ts';
 import { COURSE_CONTENT } from '../src/lib/course-content/index.ts';
@@ -62,8 +75,8 @@ function check(what: string, passed: boolean, detail: unknown = ''): void {
   console.log(`  ${passed ? 'ok      ' : 'HOLE    '} ${line}`);
 }
 
-/** The four this probe is about. The original four are probe-practice's job. */
-const ADDED = ['match', 'review', 'dialogue', 'build'] as const;
+/** The ones this probe is about. The original four are probe-practice's job. */
+const ADDED = ['match', 'review', 'dialogue', 'build', 'budget', 'consequence'] as const;
 type Added = (typeof ADDED)[number];
 
 /** Every practice type, old and new — nothing in this list may be marked. */
@@ -85,6 +98,8 @@ const matches = of('match');
 const reviews = of('review');
 const dialogues = of('dialogue');
 const builds = of('build');
+const budgets = of('budget');
+const consequences = of('consequence');
 
 const both = (v: L): boolean => Boolean(v?.ar) && Boolean(v?.en);
 /** Authored in one language and pasted into the other reads as translated. */
@@ -156,6 +171,25 @@ console.log('\n3. the fingerprint does not move — and a control that says it c
     { type: 'review', prompt: say('p'), docTitle: say('d'), lines: [{ label: say('l'), text: say('t'), wrong: true, note: say('n') }], afterword: say('a') },
     { type: 'dialogue', title: say('t'), speaker: say('s'), opening: say('o'), turns: [{ replies: [{ text: say('r'), says: say('s'), note: say('n') }] }], afterword: say('a') },
     { type: 'build', prompt: say('p'), slots: [{ label: say('l'), options: [say('a'), say('b')], because: say('c') }], afterword: say('a') },
+    {
+      type: 'budget',
+      prompt: say('p'),
+      limit: 10,
+      unit: {
+        ar: { zero: 'z', one: 'o', two: 't', few: '{n} f', many: '{n} m' },
+        en: { zero: 'z', one: 'o', two: 't', few: '{n} f', many: '{n} m' },
+      },
+      options: [{ text: say('t'), cost: 6, take: true, because: say('c') }],
+      afterword: say('a'),
+    },
+    {
+      type: 'consequence',
+      title: say('t'),
+      situation: say('s'),
+      decisions: [{ moment: say('m'), question: say('q'), choices: [{ text: say('c'), later: say('l') }] }],
+      when: say('w'),
+      afterword: say('a'),
+    },
   ];
   let movedByAdding = 0;
   for (const [, course] of courses) {
@@ -343,9 +377,69 @@ console.log('\n7. where a conversation goes next');
   check('a turn past the end does not wrap round', nextTurn(9, 3, false) === null);
 }
 
-console.log('\n8. what the catalogue actually contains');
+console.log('\n8. what a budget costs, and what being wrong about it costs');
 {
-  console.log(`  (${matches.length} match, ${reviews.length} review, ${dialogues.length} dialogue, ${builds.length} build)`);
+  /*
+   * The line and the two sides of it. `over` is a strict comparison on purpose:
+   * a reader who commits exactly what there is has not overspent, and a >= here
+   * would tell them they had.
+   */
+  const opts = [
+    { cost: 4, take: true },
+    { cost: 3, take: true },
+    { cost: 5, take: false },
+    { cost: 2, take: false },
+  ];
+  check('nothing taken spends nothing', budgetTally({}, opts, 10).spent === 0);
+  check('and leaves the whole limit', budgetTally({}, opts, 10).remaining === 10);
+  check('and is not over', budgetTally({}, opts, 10).over === false);
+  check('a tick spends its own cost', budgetTally({ 0: true }, opts, 10).spent === 4);
+  check('spending exactly the limit is not over', budgetTally({ 0: true, 2: true }, opts, 9).over === false,
+    'a reader who commits what there is has not overspent');
+  check('one unit past it is', budgetTally({ 0: true, 2: true }, opts, 8).over === true);
+  check('and what is left goes negative rather than to zero',
+    budgetTally({ 0: true, 2: true }, opts, 8).remaining === -1,
+    'a floor at zero would hide how far past the line the reader went');
+  check('a tick on something worth keeping is kept',
+    budgetTally({ 0: true }, opts, 10).kept === 1);
+  check('a tick on something that could wait is padding, not a miss', (() => {
+    const t = budgetTally({ 2: true }, opts, 10);
+    return t.padded === 1 && t.cut === 2 && t.kept === 0;
+  })(), 'paying for the banner and dropping the kit are not the same mistake and are never added up');
+  check('leaving out something that had to stay is a cut',
+    budgetTally({ 1: true }, opts, 10).cut === 1);
+  check('leaving out something that could wait costs nothing at all', (() => {
+    const t = budgetTally({ 0: true, 1: true }, opts, 10);
+    return t.cut === 0 && t.padded === 0 && t.kept === 2;
+  })());
+  check('what had to stay is counted whatever the reader did',
+    budgetTally({}, opts, 10).needed === 2 && budgetTally({ 0: true, 1: true }, opts, 10).needed === 2);
+  check('kept plus cut is always what had to stay', (() => {
+    const attempts: Record<number, boolean>[] = [
+      {}, { 0: true }, { 2: true }, { 0: true, 1: true, 2: true, 3: true },
+    ];
+    return attempts.every((a) => {
+      const t = budgetTally(a, opts, 10);
+      return t.kept + t.cut === t.needed;
+    });
+  })());
+  check('and kept plus padded is always what was taken', (() => {
+    const t = budgetTally({ 0: true, 2: true }, opts, 10);
+    return t.kept + t.padded === t.taken;
+  })());
+  check('a tick set false is not a tick', budgetTally({ 0: false }, opts, 10).taken === 0);
+  check('a tick for an option that does not exist is ignored',
+    budgetTally({ 9: true }, opts, 10).spent === 0,
+    'state keyed by index outlives the list the moment an author deletes a line');
+  check('an empty list spends nothing and is not over', (() => {
+    const t = budgetTally({}, [], 5);
+    return t.spent === 0 && t.over === false && t.total === 0;
+  })());
+}
+
+console.log('\n9. what the catalogue actually contains');
+{
+  console.log(`  (${matches.length} match, ${reviews.length} review, ${dialogues.length} dialogue, ${builds.length} build, ${budgets.length} budget, ${consequences.length} consequence)`);
 
   // ---- match
   check('every matching exercise has enough pairs to be one',
@@ -424,9 +518,96 @@ console.log('\n8. what the catalogue actually contains');
     builds.every((p) => p.block.slots.every((s) => s.because.ar.length > 20 && s.because.en.length > 20)));
   check('every build says what the finished thing is',
     builds.every((p) => p.block.afterword.ar.length > 40 && p.block.afterword.en.length > 40));
+
+  // ---- budget
+  const spendOf = (o: readonly { cost: number; take: boolean }[], keep: boolean) =>
+    o.filter((x) => x.take === keep).reduce((sum, x) => sum + x.cost, 0);
+
+  check('every budget offers enough candidates to be a decision',
+    budgets.every((p) => p.block.options.length >= 5), 'four lines is a shopping list');
+  check('nothing can be bought with a limit that is not a positive whole number',
+    budgets.every((p) => Number.isInteger(p.block.limit) && p.block.limit > 0));
+  check('every cost is a positive whole number',
+    budgets.every((p) => p.block.options.every((o) => Number.isInteger(o.cost) && o.cost > 0)),
+    'a free line is always taken, and a fractional one turns the exercise into an argument about rounding');
+  check('no single line costs more than there is',
+    budgets.every((p) => p.block.options.every((o) => o.cost <= p.block.limit)),
+    'an option nobody could ever afford is not a choice, it is scenery');
+  check('THE WHOLE LIST COSTS MORE THAN THERE IS',
+    budgets.every((p) => spendOf(p.block.options, true) + spendOf(p.block.options, false) > p.block.limit),
+    'if everything fits, nothing has to be given up and this is a checklist');
+  check('AND WHAT SURVIVES FITS INSIDE IT',
+    budgets.every((p) => spendOf(p.block.options, true) <= p.block.limit),
+    'an exercise whose own answer overspends tells every reader they got it wrong');
+  check('AND SOMETHING DROPPED IS CHEAPER THAN SOMETHING KEPT',
+    budgets.every((p) => {
+      const kept = p.block.options.filter((o) => o.take).map((o) => o.cost);
+      const gone = p.block.options.filter((o) => !o.take).map((o) => o.cost);
+      return gone.length > 0 && kept.length > 0 && Math.min(...gone) < Math.max(...kept);
+    }),
+    'otherwise sorting by price wins without reading a word, which is the habit this block exists to break');
+  check('every budget both keeps something and drops something',
+    budgets.every((p) => p.block.options.some((o) => o.take) && p.block.options.some((o) => !o.take)));
+  check('no two lines read the same',
+    budgets.every((p) => {
+      const texts = p.block.options.map((o) => o.text.ar);
+      return new Set(texts).size === texts.length;
+    }));
+  check('every line explains itself in both languages, kept or dropped',
+    budgets.every((p) => p.block.options.every((o) => o.because.ar.length > 20 && o.because.en.length > 20)),
+    'a reader told only that they overspent still does not know which line to cut');
+  check('every unit carries all five counted forms in both languages',
+    budgets.every((p) => (['ar', 'en'] as const).every((lang) =>
+      (['zero', 'one', 'two', 'few', 'many'] as const).every((band) => p.block.unit[lang][band].length > 0))),
+    'Arabic reshapes a counted noun in bands and the figure appears a dozen times per block');
+  check('and only the bands that take a numeral carry one',
+    budgets.every((p) => (['ar', 'en'] as const).every((lang) => {
+      const u = p.block.unit[lang];
+      return u.few.includes('{n}') && u.many.includes('{n}')
+        && !u.zero.includes('{n}') && !u.one.includes('{n}') && !u.two.includes('{n}');
+    })),
+    'countPhrase only substitutes into few and many — «دولاران» does not want a numeral in front of it');
+  check('every budget says what survived and why',
+    budgets.every((p) => p.block.afterword.ar.length > 40 && p.block.afterword.en.length > 40));
+
+  // ---- consequence
+  check('every consequence runs at least three decisions',
+    consequences.every((p) => p.block.decisions.length >= 3),
+    'with two, the reader can see which one the story is about before making either');
+  check('EVERY DECISION OFFERS AT LEAST THREE CHOICES',
+    consequences.every((p) => p.block.decisions.every((d) => d.choices.length >= 3)),
+    'shuffleAnswers on a pair can only swap it, so the costless option would be the second button every time');
+  check('every choice says what it turned into, in both languages',
+    consequences.every((p) => p.block.decisions.every((d) =>
+      d.choices.every((c) => c.later.ar.length > 20 && c.later.en.length > 20))),
+    'the delayed cost is the whole teaching; a choice with no later is a scenario with the outcome deleted');
+  check('no two choices in a decision read the same',
+    consequences.every((p) => p.block.decisions.every((d) => {
+      const texts = d.choices.map((c) => c.text.ar);
+      return new Set(texts).size === texts.length;
+    })));
+  check('and no two of them turn into the same thing',
+    consequences.every((p) => p.block.decisions.every((d) => {
+      const laters = d.choices.map((c) => c.later.ar);
+      return new Set(laters).size === laters.length;
+    })), 'two choices with one outcome are one choice wearing two labels');
+  check('the costless choice is not reliably the longest one on offer',
+    consequences.every((p) => !p.block.decisions.every((d) =>
+      d.choices.every((c, i) => i === 0 || c.text.ar.length <= d.choices[0].text.ar.length))),
+    'an answer that is always the fullest sentence is readable without being read');
+  check('nor reliably the shortest',
+    consequences.every((p) => !p.block.decisions.every((d) =>
+      d.choices.every((c, i) => i === 0 || c.text.ar.length >= d.choices[0].text.ar.length))));
+  check('every decision says when it is being taken',
+    consequences.every((p) => p.block.decisions.every((d) => both(d.moment) && both(d.question))),
+    'a decision with no moment attached to it is not delayed, it is abstract');
+  check('every consequence says how long afterwards the bill came',
+    consequences.every((p) => both(p.block.when) && both(p.block.situation)));
+  check('every consequence says what could have been avoided',
+    consequences.every((p) => p.block.afterword.ar.length > 40 && p.block.afterword.en.length > 40));
 }
 
-console.log('\n9. both languages, everywhere');
+console.log('\n10. both languages, everywhere');
 {
   const missing: string[] = [];
   const at = (f: { slug: string; mod: string; block: Block }) => `${f.slug}/${f.mod}/${f.block.type}`;
@@ -458,14 +639,33 @@ console.log('\n9. both languages, everywhere');
       for (const o of s.options) want(`${at(p)} option`, o);
     }
   }
+  for (const p of budgets) {
+    want(at(p), p.block.prompt);
+    want(`${at(p)} afterword`, p.block.afterword);
+    for (const o of p.block.options) want(`${at(p)} option`, o.text);
+  }
+  for (const p of consequences) {
+    want(at(p), p.block.title);
+    want(`${at(p)} situation`, p.block.situation);
+    want(`${at(p)} when`, p.block.when);
+    want(`${at(p)} afterword`, p.block.afterword);
+    for (const d of p.block.decisions) {
+      want(`${at(p)} moment`, d.moment);
+      want(`${at(p)} question`, d.question);
+      for (const c of d.choices) want(`${at(p)} choice`, c.text);
+    }
+  }
   check('nothing is left untranslated', missing.length === 0,
     missing.slice(0, 4).join(' | ') || `${found.length} blocks checked`);
 }
 
-console.log('\n10. the components themselves');
+console.log('\n11. the components themselves');
 {
   const dir = 'src/components/academy/practice';
-  const files = ['MatchBlock', 'ReviewBlock', 'DialogueBlock', 'BuildBlock'];
+  const files = [
+    'MatchBlock', 'ReviewBlock', 'DialogueBlock', 'BuildBlock',
+    'BudgetBlock', 'ConsequenceBlock',
+  ];
   /*
    * Comments stripped before any of the checks below run, because the place a
    * banned token most legitimately appears is the comment forbidding it. Every
