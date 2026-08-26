@@ -143,7 +143,24 @@ const SQL = `
              AND reg.status <> 'cancelled'
              AND a.cancelled_at IS NULL
              AND aa.attended
-             AND ${IN_WINDOW(REGISTRATION_DAY)})::INTEGER AS turned_up,
+             /*
+              * QUOTED, AND THE QUOTES ARE THE WHOLE POINT.
+              *
+              * This read AS turned_up, while LeaderboardRow declares
+              * turnedUp. Postgres folds an unquoted alias to lower case, pg
+              * camel-cases nothing, and there is no mapping layer — so
+              * row.turnedUp was undefined on every row, int() turned it into 0,
+              * the rate came out 0 for everybody, and the board drops anyone
+              * whose rate is not above zero. The reliability board was empty in
+              * production and looked like a board nobody had qualified for.
+              *
+              * The probe could not see it. Its fixtures are built from
+              * LeaderboardRow, so they match the type the code expects rather
+              * than the shape the query returns — ninety-four assertions passing
+              * over a figure that never arrives. The resolved column above is lower case
+              * on both sides, which is why only one of the two broke.
+              */
+             AND ${IN_WINDOW(REGISTRATION_DAY)})::INTEGER AS "turnedUp",
 
          /* The ledger, and the only place a point is read from. earned_on is
           * the day the person earned it rather than the day the row was
