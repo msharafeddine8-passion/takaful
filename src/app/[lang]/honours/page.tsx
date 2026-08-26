@@ -41,6 +41,36 @@ import {
  * NO USER ID REACHES THIS FILE. `AwardRecord` and `PublicAward` have no field
  * for one, so nothing here can put an identifier in a link, a key or a data
  * attribute however this page is later edited.
+ *
+ * ── AND THAT IS WHY THERE ARE NO ROLE CHIPS ON THIS PAGE ───────────────────
+ *
+ * The volunteer roles now appear beside the badges on /continuity, and this
+ * page was considered for the same treatment and deliberately left out. Three
+ * reasons, any one of which would be enough:
+ *
+ *   A ROLE NEEDS AN IDENTITY TO HANG ON. rolesFor() is keyed by user id, so
+ *   putting chips here means either carrying an id into this file or widening
+ *   PublicAward to hold the titles. The first destroys the guarantee above
+ *   outright. The second is checked: scripts/probe-recognition-awards.mts
+ *   asserts the exact key set PublicAward publishes, on the argument that the
+ *   alarm has to go off when somebody widens the shape without meaning to. It
+ *   is doing its job, and the right response to it is not to edit the probe.
+ *
+ *   THE ARITHMETIC IS WORSE HERE THAN ANYWHERE ELSE. /continuity names forty
+ *   people at once; this page names one person per award per month, under a
+ *   heading saying which month. «رئيسة لجنة الإعلام» beside a chosen name on a
+ *   page of forty is a narrowing; on a card that already stands alone it is an
+ *   identification, and the minor rule in lib/visibility.ts is not the only
+ *   consent it would walk through.
+ *
+ *   AND ONE OF THE FOUR AWARDS HAS NO PERSON AT ALL. The team award names a
+ *   committee, and a committee holds no roles. A chip row that renders on three
+ *   cards in four is a feature that looks broken on the fourth.
+ *
+ * If the association ever does want them here, the change is to resolve the
+ * titles inside lib/awards-data.ts — where the id already is and where consent
+ * is already asked — and to widen PublicAward and its probe together, on
+ * purpose, in one commit that says so.
  */
 
 export async function generateMetadata(

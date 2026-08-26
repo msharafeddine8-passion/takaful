@@ -59,8 +59,8 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'ابن القرار على الأدلّة والمهمة المؤسّسية: أيّ الخيارين يُحقّق أكبر أثر على المستفيدين بالموارد المتاحة — وإن خالف تفضيل المانح ناقشه بالأرقام', en: 'Build the decision on evidence and institutional mission: which option achieves the greatest impact on beneficiaries with available resources — and if it contradicts the funder\'s preference, discuss it with data' },
-            { ar: 'وافق المانح لأن فقدانه يعني فقدان الموارد الكافية للتعمّق أيضاً', en: 'Agree with the funder because losing them means losing resources for deepening too' },
-            { ar: 'وافق الفريق الميداني لأنهم أعلم بالواقع', en: 'Agree with the field team because they know the reality best' },
+            { ar: 'وافق المانح لأن فقدانه يعني فقدان الموارد الكافية للتعمّق أيضاً — توسّع مموَّل خير من تعمّق بلا ميزانية، ويمكن العودة إلى التعمّق في الدورة التمويلية القادمة حين يتحسّن موقعك التفاوضي', en: 'Agree with the funder because losing them means losing resources for deepening too — a funded expansion beats an unfunded intention, and you can return to deepening in the next funding cycle once your negotiating position is stronger' },
+            { ar: 'وافق الفريق الميداني لأنهم أعلم بالواقع، فمن يرى الأسر كل أسبوع يعرف أين الحاجة أعمق، والقرار الأقرب إلى الميدان هو الأصحّ حين تتعارض الآراء', en: 'Agree with the field team because they know the reality best — whoever sees the families every week knows where the need runs deepest, and the decision closest to the field is the sound one when views conflict' },
           ],
           correct: 0,
           feedback: {
@@ -97,8 +97,8 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'يمكن أن يكون كلاهما — يتوقّف على ما إذا كانت احتياجات المستفيدين تستوجب توسيع العرض أم لا. الحوار مع الشريك أولاً لفهم الدافع', en: 'It can be both — it depends on whether beneficiary needs warrant expanded services. Dialogue with the partner first to understand the motivation' },
-            { ar: 'تهديد واضح يستوجب اتّخاذ موقف تنافسي وتعزيز حضورك في المنطقة', en: 'A clear threat requiring a competitive stance and strengthening your presence in the area' },
-            { ar: 'فرصة ممتازة للتوسّع المشترك — كلّما زاد المزوّدون قلّت الفجوات', en: 'An excellent opportunity for joint expansion — the more providers, the fewer gaps' },
+            { ar: 'تهديد واضح يستوجب اتّخاذ موقف تنافسي وتعزيز حضورك في المنطقة قبل أن يستقرّ الشريك في خدماتك، فالمانحون يموّلون من يصل أولاً إلى الحاجة', en: 'A clear threat requiring a competitive stance and strengthening your presence in the area before the partner settles into your services — funders finance whoever reaches the need first' },
+            { ar: 'فرصة ممتازة للتوسّع المشترك — كلّما زاد المزوّدون قلّت الفجوات، فوقّع معه اتفاق تقاسم خدمات قبل أن تسأله عن سبب توسّعه', en: 'An excellent opportunity for joint expansion — the more providers, the fewer gaps, so sign a service-sharing agreement with them before asking why they expanded' },
           ],
           correct: 0,
           feedback: {
@@ -120,8 +120,8 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'قيّم أسباب ضعف النقل: هل كان الدعم اللاحق كافياً؟ هل أُتيحت فرص التطبيق؟ دور المدرّب لا ينتهي بالتسليم بل يشمل المتابعة ودعم نقل التعلّم', en: 'Assess the reasons for weak transfer: was follow-up support adequate? Were application opportunities created? The trainer\'s role does not end with delivery — it includes follow-through and learning-transfer support' },
-            { ar: 'اقبل النتيجة — نجاح تدريب المدرّبين يعتمد على إرادة المتدرّبين أنفسهم', en: 'Accept the result — training-of-trainers success depends on the trainees\' own will' },
-            { ar: 'ألغِ منهجية تدريب المدرّبين وارجع إلى التدريب المباشر فقط', en: 'Cancel the training-of-trainers methodology and revert to direct training only' },
+            { ar: 'اقبل النتيجة — نجاح تدريب المدرّبين يعتمد على إرادة المتدرّبين أنفسهم، وثلاث منظّمات من أربع لم تُطبّق لأنها لم تجعل التدريب أولوية، والمدرّب محقّ في أن المسؤولية تنتقل إليهم عند انتهاء التسليم', en: 'Accept the result — training-of-trainers success depends on the trainees\' own will; three of the four did not apply it because they never made it a priority, and the trainer is right that responsibility passes to them at the point of delivery' },
+            { ar: 'ألغِ منهجية تدريب المدرّبين وارجع إلى التدريب المباشر فقط، فنسبة تطبيق واحدة من أربع لا تبرّر كلفة إعداد المدرّبين ومتابعتهم ستّة أشهر', en: 'Cancel the training-of-trainers methodology and revert to direct training only — a one-in-four application rate does not justify the cost of preparing trainers and following them for six months' },
           ],
           correct: 0,
           feedback: {
@@ -143,8 +143,8 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'الآن — ثمانية عشر شهراً هي أمد الانتقال نفسه لا هامش احتياطي. ابدأ فوراً برسم خريطة الأدوار والأنظمة والشراكات التي يمكن إبقاؤها وتلك التي تحتاج دعم خروج', en: 'Now — eighteen months is the transition timeline itself, not a buffer. Begin immediately by mapping which roles, systems, and partnerships can survive and which need exit support' },
-            { ar: 'بعد اثني عشر شهراً حين يصبح الوضع أوضح', en: 'In twelve months when the situation becomes clearer' },
-            { ar: 'بعد تحديد التمويل البديل أولاً — التخطيط قبل ذلك يُحبط الفريق', en: 'After identifying alternative funding first — planning before that demoralises the team' },
+            { ar: 'بعد اثني عشر شهراً حين يصبح الوضع أوضح، فستّة أشهر تكفي لتنفيذ انتقال منظّم، والتخطيط اليوم يقوم على فرضيات عن أدوار وشراكات قد تتغيّر كلّها قبل ذلك الحين فيُهدر الجهد على سيناريوهات لا تقع', en: 'In twelve months when the situation becomes clearer — six months is enough to run an orderly transition, and planning today rests on assumptions about roles and partnerships that may all change before then, wasting effort on scenarios that never arrive' },
+            { ar: 'بعد تحديد التمويل البديل أولاً — التخطيط قبل ذلك يُحبط الفريق ويدفع أفضل موظّفيك إلى البحث عن عمل آخر قبل أوانه', en: 'After identifying alternative funding first — planning before that demoralises the team and pushes your best staff to look elsewhere prematurely' },
           ],
           correct: 0,
           feedback: {
@@ -182,8 +182,8 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'ارفض باحترام وأسرع في إنجاز الاتفاقية — الصرف دون عقد يُعرّضك لمخاطر قانونية وتدقيقية خطيرة', en: 'Decline respectfully and expedite completing the agreement — disbursement without a contract exposes you to serious legal and audit risks' },
-            { ar: 'قبل الأموال بإيصال مؤقّت ووقّع الاتفاقية لاحقاً', en: 'Accept the funds with a temporary receipt and sign the agreement later' },
-            { ar: 'استشر المحامي أولاً وإن لم يردّ في يومين وافق', en: 'Consult the lawyer first and if no reply within two days, agree' },
+            { ar: 'قبل الأموال بإيصال مؤقّت ووقّع الاتفاقية لاحقاً، واحفظها في حساب مقيّد حتى التوقيع', en: 'Accept the funds with a temporary receipt and sign the agreement later, holding them in a restricted account until signature' },
+            { ar: 'استشر المحامي أولاً وإن لم يردّ في يومين وافق، فنافذة المانح لا تنتظر', en: 'Consult the lawyer first and if no reply within two days, agree — the funder\'s window will not wait' },
           ],
           correct: 0,
           feedback: {
@@ -201,8 +201,8 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'تحدَّث مع الرئيس بشكل خاص: وضّح الإشكال الهيكلي بلغة بناءة واتّفقا على آلية للتواصل تحترم الصلاحيات', en: 'Speak with the chair privately: explain the structural problem in constructive language and agree on a communication mechanism that respects authorities' },
-            { ar: 'أبلغ المجلس كاملاً فوراً لوضع حدٍّ للتدخّل', en: 'Inform the full board immediately to put a stop to the interference' },
-            { ar: 'اقبل الوضع لأن رئيس المجلس له صلاحية أعلى', en: 'Accept the situation because the board chair has higher authority' },
+            { ar: 'أبلغ المجلس كاملاً فوراً لوضع حدٍّ للتدخّل، فتجاوز الصلاحيات مسألة حوكمة لا خلاف شخصي', en: 'Inform the full board immediately to put a stop to the interference — bypassing authority is a governance matter, not a personal disagreement' },
+            { ar: 'اقبل الوضع لأن رئيس المجلس له صلاحية أعلى، ولأن الاعتراض في بداية ولايتك يُكلّفك دعمه', en: 'Accept the situation because the board chair has higher authority, and objecting early in your tenure costs you his support' },
           ],
           correct: 0,
           feedback: {
@@ -220,8 +220,8 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'وثّق الواقعة، أبلّغ مجلس الإدارة، ابحث عن حلّ للاتفاقية المُبرَمة، وعالج مسألة التفويض مع الموظّف بإجراء رسمي', en: 'Document the incident, notify the board, find a resolution for the concluded agreement, and address the authorisation issue with the employee through a formal procedure' },
-            { ar: 'دعها تمر هذه المرة وأصدر تذكيراً بسياسة التفويض لكل الفريق', en: 'Let it pass this time and issue a reminder about the authorisation policy to the whole team' },
-            { ar: 'أنهِ عقد الموظّف فوراً كرسالة رادعة', en: 'Terminate the employee\'s contract immediately as a deterrent message' },
+            { ar: 'دعها تمر هذه المرة وأصدر تذكيراً بسياسة التفويض لكل الفريق، فالنيّة كانت لمصلحة الجمعية والعقوبة تُثبّط المبادرة في فريق يعتمد على سرعة القرار', en: 'Let it pass this time and issue a reminder about the authorisation policy to the whole team — the intent served the organisation, and punishment discourages initiative in a team that depends on quick decisions' },
+            { ar: 'أنهِ عقد الموظّف فوراً كرسالة رادعة، فتجاوز التفويض بعشرين ألف دولار يُفقد الثقة ولا يُصلحه إجراء تأديبي أخفّ', en: 'Terminate the employee\'s contract immediately as a deterrent message — a $20,000 authorisation breach destroys trust and no lighter disciplinary step repairs it' },
           ],
           correct: 0,
           feedback: {
@@ -243,8 +243,8 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'اتّبع إجراء الشكاوى الرسمي بصرف النظر عن هوية المشكوّ عليه — حماية مُقدّم الشكوى تستوجب أن تُعالَج شكاوى أعضاء المجلس عبر مسار لا يعود إلى شبكة المتّهم', en: 'Follow the formal complaints procedure regardless of who the complaint is against — whistleblower protection requires that complaints about board members go through a process that does not loop back through the accused party\'s network' },
-            { ar: 'تعامل مع الأمر بتكتّم كما طلب الرئيس — تريد تجنّب توتّر غير ضروري في المجلس', en: 'Handle it discreetly as the chair requested — you want to avoid unnecessary board tension' },
-            { ar: 'أبلّغ المجلس كاملاً فوراً دون أي تحقيق أوّلي', en: 'Notify the full board immediately without any preliminary investigation' },
+            { ar: 'تعامل مع الأمر بتكتّم كما طلب الرئيس — تريد تجنّب توتّر غير ضروري في المجلس، ويمكنك الاستماع إلى الموظّف ومعالجة الأمر داخلياً دون أن يتحوّل إلى ملفّ رسمي يضرّ بالجميع ومُقدّم الشكوى منهم', en: 'Handle it discreetly as the chair requested — you want to avoid unnecessary board tension, and you can hear the staff member out and settle it internally without it becoming a formal file that damages everyone involved, the complainant included' },
+            { ar: 'أبلّغ المجلس كاملاً فوراً دون أي تحقيق أوّلي، فالشفافية الكاملة أمام المجلس أهمّ من حماية عضو من اتّهام قد يكون صحيحاً', en: 'Notify the full board immediately without any preliminary investigation — full transparency before the board matters more than shielding a member from an accusation that may well be true' },
           ],
           correct: 0,
           feedback: {

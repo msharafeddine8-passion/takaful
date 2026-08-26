@@ -102,6 +102,8 @@ export type Dictionary = {
     heldOnSheet: string;
     whyHeld: string;
     printHint: string;
+    /** Shown under the sheet on a screen narrower than the paper itself. */
+    sheetPanHint: string;
     notFound: string;
   };
   account: Account;
@@ -219,10 +221,22 @@ export type Account = {
     activities: { zero: string; one: string; two: string; few: string; many: string };
     certificates: { zero: string; one: string; two: string; few: string; many: string };
   };
-  /** The fork at the front door: volunteer, or here for the courses. */
+  /**
+   * The three doors at the front: someone starting out, someone the association
+   * already has on its roster, and someone here for the courses only.
+   *
+   * The `newVolunteer*` set came last and sits first on the page. There were two
+   * doors for a while, and a person who had never volunteered had neither of
+   * them — so they took the roster door, the search found nothing, and the first
+   * thing the association said to its newest volunteer was that it did not know
+   * them.
+   */
   chooser: {
     title: string;
     lede: string;
+    newVolunteerTitle: string;
+    newVolunteerBody: string;
+    newVolunteerLede: string;
     volunteerTitle: string;
     volunteerBody: string;
     volunteerLede: string;
@@ -685,10 +699,24 @@ export type Account = {
     electivesLede: string;
     /** Replaces the level number on an elective's card. */
     electiveWord: string;
-    /** Course card + hero */
+    /**
+     * The course card's single badge, one word per access state. See
+     * `programme/access.ts:badgeFor` — the card wears exactly one of these and
+     * the line underneath it says the same thing in a sentence.
+     */
     statusAvailable: string;
     statusSoon: string;
     statusDraft: string;
+    /** Shut until earlier courses are passed. */
+    statusLocked: string;
+    /** Open, but not to somebody without an account. */
+    statusSignIn: string;
+    /** The sentence under a locked badge. Carries {course}: the one in the way. */
+    lockedAfter: string;
+    /** Under a sign-in badge on a course that cannot be read at all yet. */
+    signInToOpen: string;
+    /** Under a sign-in badge on a course that can be read, but not credited. */
+    readableNoCredit: string;
     notStarted: string;
     inProgress: string;
     completed: string;

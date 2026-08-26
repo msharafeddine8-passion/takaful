@@ -5,7 +5,7 @@ import { connection } from 'next/server';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { getDictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
-import { Container, Section, Kicker } from '@/components/ui';
+import { Arrow, Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
 import { formatDuration } from '@/lib/format';
@@ -13,6 +13,7 @@ import { credentialView } from '@/lib/credential-view';
 import { plural, type PluralForms } from '@/lib/dictionaries/lms';
 import { awardBadgeFor } from '@/lib/dictionaries/awards';
 import { leaderboardStrings } from '@/lib/dictionaries/leaderboard';
+import { emptyStates } from '@/lib/dictionaries/empty-states';
 import {
   recomputeAchievements,
   achievementHistory,
@@ -69,6 +70,7 @@ export default async function AchievementsPage(
   if (!isLocale(lang)) notFound();
   const dict = getDictionary(lang);
   const t = dict.account.achievements;
+  const nothing = emptyStates(lang).achievements;
 
   if (!isDbConfigured()) {
     return (
@@ -132,15 +134,29 @@ export default async function AchievementsPage(
         />
 
         {live.length === 0 ? (
+          /*
+           * A wall with nothing on it, said as a mechanism rather than as a
+           * score. «لم تحصل على أي إنجاز بعد» makes the emptiness a property of
+           * the reader; this names the three things that grant a badge and says
+           * they arrive without being asked for.
+           *
+           * The «القادم» list below is left exactly as it is and is the reason
+           * this sentence can stay short: for somebody with no badges it is
+           * already a list of what the first ones take, each with its own bar
+           * at the bottom. Those bars sitting at zero are honest — they are
+           * counters that climb, and reading «باقي {n}» is worth more than a
+           * second paragraph here.
+           */
           <div className="mt-8">
-            <p className="rounded-xl border border-line bg-surface-2 px-5 py-4 leading-relaxed text-ink-2">
-              {t.empty}
+            <p className="max-w-[70ch] rounded-xl border border-line bg-surface-2 px-5 py-4 leading-relaxed text-ink-2">
+              {nothing.never}
             </p>
             <Link
               href={`/${lang}/opportunities`}
-              className="mt-4 inline-block rounded-full bg-brand-orange px-6 py-3 text-[0.95rem] font-extrabold text-[#241503] hover:bg-brand-orange-dark"
+              className="mt-4 inline-flex min-h-11 items-center font-bold text-brand-blue hover:underline dark:text-brand-orange"
             >
-              {t.emptyCta} →
+              {nothing.browse}
+              <Arrow lang={lang} />
             </Link>
           </div>
         ) : (

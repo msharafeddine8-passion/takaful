@@ -63,6 +63,19 @@ export default async function TemplatePage(props: PageProps<'/[lang]/resources/[
         * the last one — the signature.
         */}
       <style>{`
+        /*
+         * The sheet holds its paper width, so the column around it is what
+         * decides whether there is anything to scroll. Asked as a container
+         * query rather than guessed at a breakpoint: a landscape sheet is
+         * 297mm and does not fit this column on any screen, a portrait one
+         * fits from about 834px up, and a hint that appears when it is untrue
+         * is how people learn to stop reading hints.
+         */
+        .sheet-container { container-type: inline-size; }
+        @container (min-width: ${template.orientation === 'landscape' ? '297mm' : '210mm'}) {
+          .sheet-pan-hint { display: none; }
+        }
+
         @media print {
           header, footer, .no-print { display: none !important; }
           @page { size: ${template.orientation === 'landscape' ? 'A4 landscape' : 'A4 portrait'}; margin: 0; }
@@ -80,6 +93,14 @@ export default async function TemplatePage(props: PageProps<'/[lang]/resources/[
           .template-sheet {
             width: ${template.orientation === 'landscape' ? '297mm' : '210mm'} !important;
             max-width: none !important;
+            /*
+             * The sheet carries a min-width of its own paper size so it stays
+             * at printed scale on a phone instead of shrinking to 3px type.
+             * Cleared here so the width above is the only thing deciding what
+             * the printer gets — the two agree today, and this is what keeps
+             * them agreeing if either ever changes.
+             */
+            min-width: 0 !important;
             margin: 0 !important;
             box-shadow: none !important;
             border: 0 !important;
@@ -149,9 +170,35 @@ export default async function TemplatePage(props: PageProps<'/[lang]/resources/[
           </div>
 
           {!held && (
-            <div className="mt-8 overflow-hidden rounded-xl border border-line shadow-sm print:mt-0 print:rounded-none print:border-0 print:shadow-none">
-              <TemplateSheet template={template} lang={lang} siteName={dict.meta.siteName} />
-            </div>
+            <>
+              {/*
+                * The sheet is a fixed piece of paper and this is the window
+                * onto it.
+                *
+                * It used to be `overflow-hidden`, which was fine while the
+                * sheet was whatever width the column happened to be — and that
+                * was the bug: everything on the sheet is sized as a fraction of
+                * its own width, so on a phone the labels came out at 3px. The
+                * sheet now holds its paper width, and what changes on a narrow
+                * screen is this box, which pans across it.
+                *
+                * Focusable and named, because a region that only scrolls with a
+                * finger or a trackpad is not reachable by keyboard at all.
+                */}
+              <div
+                role="group"
+                tabIndex={0}
+                aria-label={pick(template.title, lang)}
+                className="mt-8 overflow-x-auto rounded-xl border border-line shadow-sm print:mt-0 print:overflow-visible print:rounded-none print:border-0 print:shadow-none"
+              >
+                <TemplateSheet template={template} lang={lang} siteName={dict.meta.siteName} />
+              </div>
+              {/* Hidden by the container query above wherever the whole sheet
+                  already fits, so it only ever says something true. */}
+              <p className="sheet-pan-hint no-print mt-3 text-[0.84rem] text-ink-3">
+                {t.sheetPanHint}
+              </p>
+            </>
           )}
         </Container>
       </Section>

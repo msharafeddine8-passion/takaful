@@ -77,8 +77,8 @@ export const levelThreeChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تكتب المقترح فوراً — عندك رأي واضح من المجتمع وعليك احترام طلب المنسّق',
-              en: 'Write the proposal immediately — you have a clear community view and must respect the coordinator\'s request',
+              ar: 'تكتب المقترح فوراً — عندك رأي واضح من المجتمع، والمنسّق أدرى بالمنطقة منك، وأي تأخير قد يفوّت موعد التمويل الذي لن يتكرّر هذا العام',
+              en: 'Write the proposal immediately — you have a clear community view, the coordinator knows the area better than you, and any delay risks missing a funding window that will not come again this year',
             },
             {
               ar: 'تشرح للمنسّق أن خمسة أشخاص من معارفك لا يمثّلون المجتمع المستهدف، وتطلب يومين إضافيين لمقابلة فئات أخرى على الأقل قبل أي مقترح',

@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import type { Locale } from '@/lib/i18n';
 import type { Dictionary } from '@/lib/dictionaries';
-import { DIFFICULTY_LABEL, type Course, type CourseStatus } from '@/lib/courses';
+import { DIFFICULTY_LABEL, courseBySlug, type Course } from '@/lib/courses';
 import type { LevelDef } from '@/lib/programme/definition';
+import { badgeFor, type AccessDecision } from '@/lib/programme/access';
 
 /**
  * The academy's shared pieces.
@@ -40,24 +41,47 @@ const STANDING_TONE: Record<Standing, string> = {
   completed: 'bg-ok/15 text-ok',
 };
 
-const STATUS_TONE: Record<CourseStatus, string> = {
+/**
+ * The one badge a card is allowed to wear.
+ *
+ * It used to be the catalogue's publication status, which answers a question
+ * nobody was asking: whether the content had been written. Every course has
+ * been written, so all forty-one cards said «متاحة» — including the
+ * thirty-seven that then printed «هذه الدورة مقفلة» three lines below and
+ * offered «ابدأ الدورة» three lines below that. Three statements, one card, and
+ * at most one of them true.
+ *
+ * `badgeFor` is the mapping, and it lives beside the decision it reads so the
+ * card cannot answer a different question from the page it opens.
+ */
+type Badge = ReturnType<typeof badgeFor>;
+
+const BADGE_TONE: Record<Badge, string> = {
   available: 'bg-brand-orange text-[#241503]',
-  draft: 'bg-brand-blue text-white',
+  signIn: 'bg-brand-blue text-white',
+  locked: 'border border-line bg-surface-2 text-ink-3',
   soon: 'border border-line bg-surface-2 text-ink-3',
 };
 
-export function StatusBadge({
-  status,
+function badgeLabel(badge: Badge, t: Dictionary['account']['academy']): string {
+  switch (badge) {
+    case 'available': return t.statusAvailable;
+    case 'signIn': return t.statusSignIn;
+    case 'locked': return t.statusLocked;
+    case 'soon': return t.statusSoon;
+  }
+}
+
+export function AccessBadge({
+  badge,
   t,
 }: {
-  status: CourseStatus;
+  badge: Badge;
   t: Dictionary['account']['academy'];
 }) {
-  const label =
-    status === 'available' ? t.statusAvailable : status === 'draft' ? t.statusDraft : t.statusSoon;
   return (
-    <span className={`rounded-full px-3 py-1 text-[0.82rem] font-extrabold ${STATUS_TONE[status]}`}>
-      {label}
+    <span className={`rounded-full px-3 py-1 text-[0.82rem] font-extrabold ${BADGE_TONE[badge]}`}>
+      {badgeLabel(badge, t)}
     </span>
   );
 }
@@ -163,46 +187,110 @@ export function SecondaryAction({
   );
 }
 
-/** A course card for the index. */
+/**
+ * The sentence under the badge, saying the same thing the badge says.
+ *
+ * Derived from the one decision rather than computed beside it, which is the
+ * whole point: there is no combination of inputs that produces «متاحة» over a
+ * padlock, because both come from the same `access`.
+ *
+ * Named, not counted — the blocking course is the thing a volunteer can act on,
+ * exactly as the refusal page does it. Null when the badge already says
+ * everything: an open course needs no explanation, and neither does one whose
+ * content is not written.
+ */
+function reasonFor(
+  access: AccessDecision,
+  course: Course,
+  lang: Locale,
+  passed: ReadonlySet<string>,
+  t: Dictionary['account']['academy'],
+): string | null {
+  switch (access.state) {
+    case 'public':
+    case 'preview_only':
+      return null;
+    case 'login_required':
+      /* Two different sentences behind one state. The orientation and the
+       * electives are readable without an account and only the certificate
+       * needs one; a path course is not readable at all. Telling a reader they
+       * cannot open something they can open is the same class of lie as the
+       * badge this replaces. */
+      return access.canRead ? t.readableNoCredit : t.signInToOpen;
+    case 'prerequisite_locked': {
+      const blocker = course.requires.find((slug) => !passed.has(slug));
+      const target = blocker ? courseBySlug(blocker) : undefined;
+      return target
+        ? t.lockedAfter.replace('{course}', target.title[lang])
+        : t.lockedTitle;
+    }
+    case 'staff_only':
+      return t.lockedTitle;
+  }
+}
+
+/**
+ * A course card for the index.
+ *
+ * Takes the decision, not the ingredients. Badge, reason and call to action are
+ * three renderings of `access`, so the card cannot contradict itself and cannot
+ * contradict the page behind it — both read the same `decideAccess`.
+ */
 export function CourseCard({
   lang,
   t,
   course,
   standing,
   percent,
-  locked,
+  access,
+  passed,
 }: {
   lang: Locale;
   t: Dictionary['account']['academy'];
   course: Course;
   standing: Standing;
   percent: number | null;
-  locked: boolean;
+  access: AccessDecision;
+  /** What this visitor has passed, for naming the course in the way. */
+  passed: ReadonlySet<string>;
 }) {
-  const openable = course.status === 'available';
+  const badge = badgeFor(access.state);
+  const reason = reasonFor(access, course, lang, passed, t);
+  /* Openable and reachable are not the same thing. A locked card still opens
+   * its page, because that page names what stands in the way and links to it —
+   * a wall with a door in it. A card with no content behind it opens nothing. */
+  const reachable = access.state !== 'preview_only' && access.state !== 'staff_only';
 
   const body = (
     <article
       className={`flex h-full flex-col rounded-2xl border p-5 transition-colors sm:p-6 ${
-        openable
-          ? 'border-line bg-surface hover:border-brand-orange'
-          : 'border-dashed border-line bg-surface/60'
-      }`}
+        access.canRead ? 'border-line bg-surface' : 'border-dashed border-line bg-surface/60'
+      } ${reachable ? 'hover:border-brand-orange' : ''}`}
     >
       <div className="flex items-start gap-3">
         <span className="text-[1.7rem] leading-none" aria-hidden>
           {course.icon}
         </span>
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-          <StatusBadge status={course.status} t={t} />
-          {openable && standing !== 'not-started' && <StandingBadge standing={standing} t={t} />}
+          <AccessBadge badge={badge} t={t} />
+          {access.canRead && standing !== 'not-started' && (
+            <StandingBadge standing={standing} t={t} />
+          )}
         </div>
       </div>
 
-      <h3 className={`mt-3 text-[1.12rem] font-extrabold leading-snug ${openable ? '' : 'text-ink-2'}`}>
+      <h3
+        className={`mt-3 text-[1.12rem] font-extrabold leading-snug ${
+          access.canRead ? '' : 'text-ink-2'
+        }`}
+      >
         {course.title[lang]}
       </h3>
-      <p className={`mt-2 text-[0.93rem] leading-relaxed ${openable ? 'text-ink-2' : 'text-ink-3'}`}>
+      <p
+        className={`mt-2 text-[0.93rem] leading-relaxed ${
+          access.canRead ? 'text-ink-2' : 'text-ink-3'
+        }`}
+      >
         {course.summary[lang]}
       </p>
 
@@ -216,7 +304,7 @@ export function CourseCard({
         </span>
       </div>
 
-      {openable && percent !== null && percent > 0 && (
+      {access.canRead && percent !== null && percent > 0 && (
         <div className="mt-4">
           <ProgressBar
             percent={percent}
@@ -226,11 +314,28 @@ export function CourseCard({
         </div>
       )}
 
-      {locked && (
-        <p className="mt-3 text-[0.82rem] font-bold text-ink-3">🔒 {t.lockedTitle}</p>
+      {reason && (
+        /* The padlock only where the door is actually shut. On a course that
+         * can be read without an account it would say the opposite of the
+         * sentence beside it. */
+        <p
+          className={`text-[0.82rem] font-bold text-ink-3 ${
+            access.canRead ? 'mt-3' : 'mt-auto pt-4'
+          }`}
+        >
+          {!access.canRead && (
+            <span aria-hidden className="me-1.5">
+              🔒
+            </span>
+          )}
+          {reason}
+        </p>
       )}
 
-      {openable && (
+      {/* Offered only where it can be taken. Inviting somebody to start a
+          course the server will refuse is the contradiction that made this
+          card worth rewriting. */}
+      {access.canRead && (
         <span className="mt-auto pt-4 text-[0.9rem] font-extrabold text-brand-orange-text dark:text-brand-orange">
           {standing === 'completed' ? t.review : standing === 'in-progress' ? t.resume : t.start} →
         </span>
@@ -238,7 +343,7 @@ export function CourseCard({
     </article>
   );
 
-  return openable ? (
+  return reachable ? (
     <Link href={`/${lang}/academy/${course.slug}` as Parameters<typeof Link>[0]['href']} className="h-full">
       {body}
     </Link>

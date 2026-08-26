@@ -108,12 +108,18 @@ export const digitalBasics: CourseContent = {
           },
           options: [
             { ar: 'تقرير.docx', en: 'report.docx' },
-            { ar: 'تقرير نهائي معدّل ٢ (نسخة أخيرة).docx', en: 'final report edited 2 (last version).docx' },
+            {
+              ar: 'تقرير نهائي معدّل ٢ (نسخة أخيرة بعد ملاحظات القائد).docx',
+              en: 'final report edited 2 (last version after the lead’s notes).docx',
+            },
             {
               ar: '2026-03-15_توزيع-غذائي_طرابلس_تقرير.docx',
               en: '2026-03-15_food-distribution_tripoli_report.docx',
             },
-            { ar: 'تقرير محمد.docx', en: 'mohamad report.docx' },
+            {
+              ar: 'تقرير محمد عن نشاط الأسبوع الماضي.docx',
+              en: 'mohamad report on last week’s activity.docx',
+            },
           ],
           correct: 2,
           feedback: {
@@ -174,18 +180,21 @@ export const digitalBasics: CourseContent = {
           },
           options: [
             {
-              ar: 'تراجعها وترد عليه، فالأمر عاجل والقائمة قصيرة',
-              en: 'Review it and reply — it is urgent and the list is short',
+              ar: 'تراجعها وترد عليه، فالأمر عاجل والقائمة قصيرة، وهو زميل في الفريق يصل أصلاً إلى القائمة نفسها',
+              en: 'Review it and reply — it is urgent, the list is short, and he is a teammate who already has access to the same list',
             },
             {
-              ar: 'تراجعها ثم تحذف الصورة من هاتفك',
-              en: 'Review it, then delete the image from your phone',
+              ar: 'تراجعها ثم تحذف الصورة من هاتفك فور الانتهاء حتى لا تبقى نسخة عندك',
+              en: 'Review it, then delete the image from your phone as soon as you finish so no copy stays with you',
             },
             {
               ar: 'تنبّهه أن هذه بيانات لا تُرسَل هكذا، وتطلب مراجعتها عبر القناة الرسمية، وتحذف الصورة',
               en: 'Tell him this data must not be sent this way, ask to review it through the official channel, and delete the image',
             },
-            { ar: 'تتجاهل الرسالة', en: 'Ignore the message' },
+            {
+              ar: 'تتجاهل الرسالة ولا ترد، فالمسؤولية على من أرسلها لا عليك',
+              en: 'Ignore the message and do not reply — the responsibility sits with whoever sent it, not with you',
+            },
           ],
           correct: 2,
           feedback: {
@@ -249,15 +258,21 @@ export const digitalBasics: CourseContent = {
           },
           options: [
             {
-              ar: 'تردّ فوراً بالحقائق التي تعرفها لأنك كنت حاضراً',
-              en: 'Reply at once with the facts you know — you were there',
+              ar: 'تردّ فوراً بالحقائق التي تعرفها لأنك كنت حاضراً، والصمت ساعةً واحدة سيُقرأ اعترافاً بالتقصير',
+              en: 'Reply at once with the facts you know — you were there, and an hour of silence will be read as admitting fault',
             },
             {
               ar: 'تنقل الأمر إلى القائد أو الإدارة، ولا تردّ باسم المنظمة من حسابك',
               en: 'Escalate to the lead or management, and do not respond in the organisation’s name from your account',
             },
-            { ar: 'تشارك الخبر مع تعليق ساخر', en: 'Share the post with a sarcastic comment' },
-            { ar: 'تتجاهل تماماً ولا تخبر أحداً', en: 'Ignore it completely and tell no one' },
+            {
+              ar: 'تشارك الخبر مع تعليق ساخر ليرى متابعوك كم هو بعيد عن الواقع',
+              en: 'Share the post with a sarcastic comment so your followers see how far from reality it is',
+            },
+            {
+              ar: 'تتجاهل تماماً ولا تخبر أحداً، فمثل هذه المنشورات تهدأ وحدها خلال يوم أو يومين',
+              en: 'Ignore it completely and tell no one — posts like this die down on their own within a day or two',
+            },
           ],
           correct: 1,
           feedback: {
@@ -336,20 +351,20 @@ export const digitalBasics: CourseContent = {
           },
           options: [
             {
-              ar: 'تتركها في معرض صور هاتفك حتى تحتاجها',
-              en: 'Leave them in your phone’s photo gallery until you need them',
+              ar: 'تتركها في معرض صور هاتفك حتى تحتاجها، فالهاتف مقفل بكلمة سرّ',
+              en: 'Leave them in your phone’s photo gallery until you need them — the phone is locked with a passcode',
             },
             {
-              ar: 'ترسلها في مجموعة الفريق ليراها الجميع',
-              en: 'Send them to the team group so everyone can see',
+              ar: 'ترسلها في مجموعة الفريق ليراها الجميع، حتى لا يضطر أحد إلى طلبها منك لاحقاً',
+              en: 'Send them to the team group so everyone can see, so nobody has to come asking you for them later',
             },
             {
               ar: 'ترفعها إلى المكان المشترك باسم يحمل التاريخ والنشاط، ثم تحذفها من هاتفك',
               en: 'Upload them to the shared place with a name carrying the date and activity, then delete them from your phone',
             },
             {
-              ar: 'تحتفظ بها في هاتفك وترسل نسخة للقائد فقط',
-              en: 'Keep them on your phone and send a copy to the lead only',
+              ar: 'تحتفظ بها في هاتفك وترسل نسخة للقائد فقط، فتبقى البيانات عند شخصين يعرف كلاهما ما فيها',
+              en: 'Keep them on your phone and send a copy to the lead only, so the data stays with two people who both know what is in it',
             },
           ],
           correct: 2,
@@ -417,20 +432,20 @@ export const digitalBasics: CourseContent = {
           },
           options: [
             {
-              ar: 'ثلاثة ملفات منفصلة، ملفّ لكل نشاط، بأسماء مختلفة الصيغة',
-              en: 'Three separate files, one per activity, named in different styles',
+              ar: 'ثلاثة ملفات منفصلة، ملفّ لكل نشاط، بأسماء مختلفة الصيغة، ليملك مسؤول كل نشاط ملفّه',
+              en: 'Three separate files, one per activity, named in different styles, so each activity lead owns their own file',
             },
             {
               ar: 'ملفّ واحد، صفّ لكل حضور، وأعمدة: التاريخ، النشاط، الاسم، العائلة، الدقائق',
               en: 'One file, one row per attendance, with columns: date, activity, first name, family name, minutes',
             },
             {
-              ar: 'ملفّ واحد، ورقة لكل نشاط، وكل ورقة بترتيب أعمدة مختلف',
-              en: 'One file, a tab per activity, each tab with a different column order',
+              ar: 'ملفّ واحد، ورقة لكل نشاط، وكل ورقة بترتيب أعمدة يناسب من يملأها',
+              en: 'One file, a tab per activity, each tab ordering its columns to suit whoever fills it in',
             },
             {
-              ar: 'ملفّ واحد فيه جدول لكل أسبوع مع عناوين مدموجة فوق كل جدول',
-              en: 'One file with a table per week and merged headings above each table',
+              ar: 'ملفّ واحد فيه جدول لكل أسبوع مع عناوين مدموجة فوق كل جدول ليقرأ الشهر بوضوح عند الطباعة والتعليق',
+              en: 'One file with a table per week and merged headings above each table so the month prints clearly for the noticeboard',
             },
           ],
           correct: 1,

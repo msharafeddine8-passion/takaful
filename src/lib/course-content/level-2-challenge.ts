@@ -93,8 +93,8 @@ export const levelTwoChallenge: CourseContent = {
           },
           options: [
             { ar: 'الخطر: بوّابة حادّة | الاحتمال: متوقّع | الأثر: جسيم | الإجراء: لفّها بقماش مؤقتاً وتحديد المسؤول', en: 'Risk: sharp gate | Likelihood: probable | Impact: serious | Action: wrap temporarily and assign responsible person' },
-            { ar: 'الخطر: معدات خطرة | لا إجراء لأن الأطفال سيتجنّبونها تلقائياً', en: 'Risk: dangerous equipment | No action because children will naturally avoid it' },
-            { ar: 'الخطر: بوّابة | الاحتمال: ممكن | الإجراء: تنبيه شفهي للمتطوّعين', en: 'Risk: gate | Likelihood: possible | Action: verbal warning to volunteers' },
+            { ar: 'الخطر: معدات خطرة | الاحتمال: بعيد | لا إجراء لازم لأن الأطفال سيتجنّبون الحواف الحادّة من تلقاء أنفسهم', en: 'Risk: dangerous equipment | Likelihood: remote | No action needed because children will naturally avoid sharp edges on their own' },
+            { ar: 'الخطر: بوّابة | الاحتمال: ممكن | الإجراء: تنبيه شفهي للمتطوّعين في اجتماع الصباح', en: 'Risk: gate | Likelihood: possible | Action: verbal warning to volunteers at the morning briefing' },
           ],
           correct: 0,
           feedback: {
@@ -113,7 +113,7 @@ export const levelTwoChallenge: CourseContent = {
           options: [
             { ar: 'ترفض التبكير وتُكمل التحضير حتى تضمن السلامة قبل وصول الأطفال', en: 'Decline the early start and complete preparation until safety is assured before children arrive' },
             { ar: 'توافق لأن رضا الفريق مهم وبقية المهام ستنتهي بعد البداية', en: 'Agree because team morale matters and remaining tasks can finish after starting' },
-            { ar: 'تسأل الأطفال ما يريدون', en: 'Ask the children what they prefer' },
+            { ar: 'تسأل الأطفال عند وصولهم إن كانوا يفضّلون البدء مبكراً', en: 'Ask the children as they arrive whether they would rather start early' },
           ],
           correct: 0,
           feedback: {
@@ -151,8 +151,8 @@ export const levelTwoChallenge: CourseContent = {
           },
           options: [
             { ar: 'تطلب إيقاف النشر حتى التحقّق من توافر موافقات النشر الرقمي لكل طفل في الصور', en: 'Ask to halt posting until digital publication consent is confirmed for every child in the photos' },
-            { ar: 'توافق لأن الأطفال يبتسمون وهذا يعني الرضا الضمني', en: 'Agree because the children are smiling, which implies implicit consent' },
-            { ar: 'تطلب تمييع الوجوه في التطبيق ثم النشر', en: 'Ask to blur faces in an app then post' },
+            { ar: 'توافق لأن الأطفال يبتسمون، والابتسامة أمام الكاميرا رضا ضمني', en: 'Agree because the children are smiling, and a smile for the camera is implicit consent' },
+            { ar: 'تطلب تمييع الوجوه في التطبيق قبل النشر، فلا يعود أي طفل معروفاً وتبقى الصورة مفيدة للجمعية', en: 'Ask to blur the faces in an app before posting, so no child is identifiable and the photo still helps the association' },
           ],
           correct: 0,
           feedback: {
@@ -170,8 +170,8 @@ export const levelTwoChallenge: CourseContent = {
           },
           options: [
             { ar: 'تُقيّم سلامة المكان، تطمئن الطفل، وتستدعي شخصاً مدرّباً إن احتجت', en: 'Assess the scene\'s safety, reassure the child, and call a trained person if needed' },
-            { ar: 'تنقل الطفل فوراً لمكان أكثر راحة', en: 'Move the child immediately to a more comfortable place' },
-            { ar: 'تتصل بالوالدين أولاً وتنتظر توجيهاتهم', en: 'Call the parents first and wait for their instructions' },
+            { ar: 'تنقل الطفل فوراً إلى مكان أكثر راحة بعيداً عن الأطفال', en: 'Move the child immediately to a more comfortable spot away from the others' },
+            { ar: 'تتصل بالوالدين أولاً وتنتظر توجيهاتهم فهم أدرى بحالته', en: 'Call the parents first and wait for their guidance — they know his history best' },
           ],
           correct: 0,
           feedback: {
@@ -189,8 +189,8 @@ export const levelTwoChallenge: CourseContent = {
           },
           options: [
             { ar: 'الوقت والمكان وما جرى بالضبط دون تفسير أو رأي، واسم من قدّم المساعدة', en: 'Time, location, exactly what happened without interpretation or opinion, and the name of whoever helped' },
-            { ar: 'ملاحظة مختصرة: "طفل كدم ركبته، تمّت معالجته"', en: 'A brief note: "child bruised knee, treated"' },
-            { ar: 'تصف الحادث من وجهة نظرك وتضيف ما كان يمكن تجنّبه', en: 'Describe the incident from your perspective and add what could have been avoided' },
+            { ar: 'ملاحظة مختصرة: "طفل كدم ركبته، تمّت معالجته وعاد إلى النشاط"', en: 'A brief note: "child bruised knee, treated and returned to the activity"' },
+            { ar: 'تصف الحادث من وجهة نظرك وتضيف ما كان يمكن تجنّبه لو كان المتطوّعون أكثر انتباهاً', en: 'Describe the incident from your perspective and add what could have been avoided if the volunteers had been paying closer attention' },
           ],
           correct: 0,
           feedback: {
@@ -228,8 +228,8 @@ export const levelTwoChallenge: CourseContent = {
           },
           options: [
             { ar: 'اتصل بالإسعاف فوراً وأبعد الأطفال الآخرين بهدوء مع إبلاغ أحمد', en: 'Call emergency services immediately and calmly move other children away while alerting Ahmed' },
-            { ar: 'ابحث في هاتفك عن أعراض الحساسية الشديدة قبل الاتصال', en: 'Search your phone for severe allergy symptoms before calling' },
-            { ar: 'أعطها ماءً واطلب منها التنفّس ببطء', en: 'Give her water and ask her to breathe slowly' },
+            { ar: 'ابحث في هاتفك عن أعراض الحساسية الشديدة قبل الاتصال لتصف حالتها بدقّة', en: 'Search your phone for severe allergy symptoms before calling, so you can describe her condition accurately' },
+            { ar: 'أعطها ماءً واطلب منها التنفّس ببطء حتى تهدأ', en: 'Give her water and ask her to breathe slowly until she calms down' },
           ],
           correct: 0,
           feedback: {
@@ -247,8 +247,8 @@ export const levelTwoChallenge: CourseContent = {
           },
           options: [
             { ar: 'ترفض: لا يجوز لمتطوّع إعطاء أدوية لطفل ليس طفله — انتظر المختص', en: 'Refuse: a volunteer must not administer medication to a child who is not their own — wait for a trained responder' },
-            { ar: 'توافق إن كان الدواء معروفاً وغير منتهي الصلاحية', en: 'Agree if the medicine is known and not expired' },
-            { ar: 'تسأل الطفلة إن كانت تريد الدواء', en: 'Ask the girl if she wants the medicine' },
+            { ar: 'توافق إن كان الدواء معروفاً وغير منتهي الصلاحية، وكان المتطوّع قد أعطى الدواء نفسه لابنه مرات كثيرة من قبل', en: 'Agree if the medicine is known and not expired, and the volunteer has given the very same one to his own child many times before' },
+            { ar: 'تسأل الطفلة إن كانت تريد الدواء وتتركها تقرّر بنفسها', en: 'Ask the girl if she wants the medicine and let her decide for herself' },
           ],
           correct: 0,
           feedback: {
@@ -266,8 +266,8 @@ export const levelTwoChallenge: CourseContent = {
           },
           options: [
             { ar: 'التسلسل الزمني الكامل، ما جرى، من تصرّف وكيف، وما نتجت عنه القرارات', en: 'The full chronological sequence, what happened, who acted and how, and what the decisions led to' },
-            { ar: 'ملاحظة أن الطفلة بخير الآن وأن الأمر انتهى', en: 'A note that the girl is fine now and the matter is resolved' },
-            { ar: 'تقرير مختصر مع اقتراح لتحسين خطة الطوارئ', en: 'A brief report with a suggestion to improve the emergency plan' },
+            { ar: 'ملاحظة أن الطفلة بخير الآن وأن الأمر انتهى، ولا داعي لإقلاق المشرف بالتفاصيل', en: 'A note that the girl is fine now and the matter is resolved, with no need to trouble the supervisor with details' },
+            { ar: 'تقرير مختصر مع اقتراح لتحسين خطة الطوارئ في النشاط القادم', en: 'A brief report with a suggestion for improving the emergency plan next time' },
           ],
           correct: 0,
           feedback: {
@@ -305,8 +305,8 @@ export const levelTwoChallenge: CourseContent = {
           },
           options: [
             { ar: 'نعم، تسجّل ما جرى بالوقائع دون أحكام شخصية، لأن التقرير للتعلّم لا للعقاب', en: 'Yes, you record what happened in facts without personal judgements, because the report is for learning not punishment' },
-            { ar: 'لا، تحمي زميلك وتُبلّغ عن الحادث دون تسمية أحد', en: 'No, you protect your colleague and report the incident without naming anyone' },
-            { ar: 'نعم، وتضيف رأيك في عدم كفاءته', en: 'Yes, and you add your opinion about his incompetence' },
+            { ar: 'لا، تحمي زميلك وتُبلّغ عن الحادث دون تسمية أحد، فتسميته ستكسر ثقة الفريق ببعضه', en: 'No, you protect your colleague and report the incident without naming anyone, because naming him will break the team\'s trust in each other' },
+            { ar: 'نعم، وتضيف رأيك في عدم كفاءته حتى لا يُسند إليه دور مماثل مرة أخرى', en: 'Yes, and you add your opinion about his incompetence so he is not given a similar role again' },
           ],
           correct: 0,
           feedback: {
@@ -324,8 +324,8 @@ export const levelTwoChallenge: CourseContent = {
           },
           options: [
             { ar: 'الصور تنتظر التحقّق من موافقات النشر — النجاح لا يُبيح نشر صورة طفل بلا إذن', en: 'Photos wait until publication consent is verified — success does not authorise posting a child\'s photo without permission' },
-            { ar: 'توافق لرفع معنويات الفريق بعد يوم صعب', en: 'Agree to boost team morale after a hard day' },
-            { ar: 'تقترح نشر الصور على الحساب الشخصي فقط', en: 'Suggest posting only on personal accounts' },
+            { ar: 'توافق لرفع معنويات الفريق بعد يوم صعب — الفريق يستحقّها، وأي صورة يعترض عليها الأهل تُحذف فور اعتراضهم', en: 'Agree to boost team morale after a hard day — the team earned it, and any photo a parent objects to can be taken down as soon as they say so' },
+            { ar: 'تقترح نشر الصور على الحساب الشخصي فقط، فمتابعوه قليلون والوصول محدود', en: 'Suggest posting the photos only on personal accounts, where the audience is small and the reach is limited' },
           ],
           correct: 0,
           feedback: {
@@ -344,7 +344,7 @@ export const levelTwoChallenge: CourseContent = {
           options: [
             { ar: 'تُرفَع على مجلد مشترك آمن بصلاحيات محدودة، لا على مجموعة واتساب الجماعية', en: 'Uploaded to a shared folder with limited access, not to a group WhatsApp' },
             { ar: 'تُحفظ على هاتفك الشخصي لأنه المكان الأأمن', en: 'Saved on your personal phone because it is the safest place' },
-            { ar: 'تُرسَل لكل أعضاء الفريق بالبريد الإلكتروني للمراجعة', en: 'Sent to all team members by email for review' },
+            { ar: 'تُرسَل لكل أعضاء الفريق بالبريد الإلكتروني للمراجعة والحفظ', en: 'Sent to all team members by email for review and safekeeping' },
           ],
           correct: 0,
           feedback: {

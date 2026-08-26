@@ -360,20 +360,20 @@ export const emotionalIntelligence: CourseContent = {
           },
           options: [
             {
-              ar: '«هذا غير مقبول — يجب أن تعرف مدى أهمية تسجيل الحضور»',
-              en: '"This is not acceptable — you should know how important attendance registration is"',
+              ar: '«هذا غير مقبول — يجب أن تعرف مدى أهمية تسجيل الحضور للتقرير وللتمويل»',
+              en: '"This is not acceptable — you should know how important attendance registration is for the report and for the funding"',
             },
             {
               ar: '«شكراً لأمانتك. ما الذي أدّى إلى نسيان التسجيل هذه المرّة وكيف نتجنّبه في المرّات القادمة؟»',
               en: '"Thank you for being honest. What led to registration being missed this time and how do we prevent it going forward?"',
             },
             {
-              ar: '«لا بأس — هذه مجرّد تفاصيل إدارية لا تؤثّر على العمل الحقيقي»',
-              en: '"No worries — these are just administrative details that don\'t affect the real work"',
+              ar: '«لا بأس — هذه مجرّد تفاصيل إدارية لا تؤثّر على العمل الحقيقي، وسنكمل التقرير من ذاكرة الحاضرين»',
+              en: '"No worries — these are just administrative details that don\'t affect the real work, and we will complete the report from what people remember"',
             },
             {
-              ar: '«سنتكلّم في هذا الأمر بيني وبينك بعد انتهاء الاجتماع»',
-              en: '"We will discuss this matter between you and me after the meeting ends"',
+              ar: '«سنتكلّم في هذا الأمر بيني وبينك بعد انتهاء الاجتماع حتى لا نأخذ من وقت الفريق»',
+              en: '"We will discuss this matter between you and me after the meeting ends so we do not take up the team\'s time"',
             },
           ],
           correct: 1,
@@ -473,20 +473,20 @@ export const emotionalIntelligence: CourseContent = {
           },
           options: [
             {
-              ar: '«آسف إن كنتَ زعلتَ — ما كانت قصدي أوقفك، كنت متحمّساً جداً للنقاش»',
-              en: '"Sorry if you were upset — I did not mean to stop you, I was just very excited about the discussion"',
+              ar: '«آسف إن كنتَ زعلتَ — ما كانت قصدي أوقفك، كنت متحمّساً جداً للنقاش وحريصاً على الوقت»',
+              en: '"Sorry if you were upset — I did not mean to stop you, I was just very excited about the discussion and watching the clock"',
             },
             {
               ar: '«قاطعتُك أمام الجميع وجعلتُك تشعر أنّ فكرتك لم تُكتمَل. هذا لم يكن عادلاً وأنا آسف. لن أفعل هذا مجدّداً»',
               en: '"I interrupted you in front of everyone and made you feel your idea was not completed. That was not fair and I am sorry. I will not do this again"',
             },
             {
-              ar: '«ما كان المقصود إلحاق أيّ أذى — الكلّ يتقاطع في النقاشات وهذا طبيعي»',
-              en: '"No harm was intended — everyone interrupts in discussions and that is normal"',
+              ar: '«ما كان المقصود إلحاق أيّ أذى — الكلّ يتقاطع في النقاشات وهذا طبيعي في فريق متحمّس»',
+              en: '"No harm was intended — everyone interrupts in discussions and that is normal in an enthusiastic team"',
             },
             {
-              ar: '«أنا آسف — لكن كانت هناك أفكار كثيرة على الطاولة والوقت المتاح كان ضيّقاً جداً»',
-              en: '"I am sorry — but there were many ideas on the table and the time available was very tight"',
+              ar: '«أنا آسف — لكن كانت هناك أفكار كثيرة على الطاولة والوقت المتاح كان ضيّقاً جداً علينا جميعاً»',
+              en: '"I am sorry — but there were many ideas on the table and the time available was very tight for all of us"',
             },
           ],
           correct: 1,
@@ -559,8 +559,8 @@ export const emotionalIntelligence: CourseContent = {
           },
           options: [
             {
-              ar: 'إخباره أنّ الأمور ستكون مختلفة تماماً في النشاط القادم',
-              en: 'Tell him that things will be completely different in the next activity',
+              ar: 'إخباره أنّ الأمور ستكون مختلفة تماماً في النشاط القادم وأنّك ستستشيره في كل شيء',
+              en: 'Tell him that things will be completely different in the next activity and that you will consult him on everything',
             },
             {
               ar: 'الاعتراف بما حدث في النشاط السابق، ثم إشراكه فعلياً في أوّل قرار تصميمي يخصّ النشاط القادم',

@@ -109,10 +109,10 @@ export const publicSpeaking: CourseContent = {
             en: 'You have been invited to present a community project to a mixed group of international donors, beneficiary families, and new volunteers. How do you begin your preparation?',
           },
           options: [
-            { ar: 'تحضّر نفس الحديث المعتاد عن المشروع لأنه يغطّي كل شيء لأي جمهور', en: 'Prepare your usual project talk since it covers everything for any audience' },
+            { ar: 'تحضّر الحديث المعتاد عن المشروع لأنه جُرّب مرات كثيرة ويغطّي كل ما يهمّ أي جمهور', en: 'Prepare your usual project talk since it has been tested many times and covers everything any audience cares about' },
             { ar: 'تسأل المنظّمين عن أولويات كل فئة ثم تجد رسالة تجمعهم مع أمثلة تناسب كل فئة منهم', en: "Ask the organisers about each group's priorities, then find a connecting message with examples tailored to each" },
-            { ar: 'تخاطب المانحين حصراً لأنهم يمتلكون القرار المالي', en: 'Address only the donors since they hold the financial decision' },
-            { ar: 'تترك الأهالي يتحدّثون بدلاً منك لأن صوتهم أكثر تأثيراً', en: 'Let the families speak instead because their voice carries more impact' },
+            { ar: 'تخاطب المانحين حصراً لأنهم يملكون القرار المالي، ويستفيد الباقون بما يسمعونه بالمناسبة', en: 'Address only the donors since they hold the financial decision, and the others will benefit from what they overhear' },
+            { ar: 'تترك الأهالي يتحدّثون بدلاً منك طوال الوقت لأن صوتهم أكثر تأثيراً من أي عرض تقدّمه أنت', en: 'Let the families speak instead of you throughout because their voice carries more impact than any presentation you could give' },
           ],
           correct: 1,
           feedback: {
@@ -205,10 +205,10 @@ export const publicSpeaking: CourseContent = {
             en: 'You open your pitch before a funding committee with: "Thank you for having us, I am Rana from Amal Foundation, and today I will present an overview of our project in five points." What is the core problem with this opening?',
           },
           options: [
-            { ar: 'لا مشكلة — هذا افتتاح محترف ومنظّم يُظهر الاحترافية', en: 'No problem — this is a professional and organised opening that shows professionalism' },
+            { ar: 'لا مشكلة — هذا افتتاح محترف ومنظّم يطمئن اللجنة إلى أن العرض مرتّب وأن محاوره الخمسة محدّدة بوضوح', en: 'No problem — it is a professional and well-organised opening that reassures the committee that the presentation is orderly and its five points clearly defined' },
             { ar: 'ضيّعت الثلاثين ثانية الأولى في معلومات تعريفية لا تبني انتباهاً ولا تُخبر اللجنة لماذا تهتمّ', en: 'You wasted the first thirty seconds on introductory information that builds no attention and does not tell the committee why they should care' },
-            { ar: 'لا ينبغي ذكر اسمك في البداية أبداً', en: 'You should never mention your name at the start' },
-            { ar: 'خمسة محاور كثيرة جداً لعرض واحد', en: 'Five points is far too many for a single presentation' },
+            { ar: 'لا ينبغي ذكر اسمك في البداية أبداً لأن اللجنة تقرأ الاسم في الملف ولا تحتاج سماعه منك', en: 'You should never mention your name at the start because the committee reads it in the file and does not need to hear it from you' },
+            { ar: 'خمسة محاور كثيرة جداً لعرض واحد، والأفضل اختصارها إلى ثلاثة حتى لا يتشتّت انتباه اللجنة', en: 'Five points is far too many for one presentation, and it would be better to cut them to three so the committee does not lose focus' },
           ],
           correct: 1,
           feedback: {
@@ -282,10 +282,10 @@ export const publicSpeaking: CourseContent = {
             en: 'You want to tell the story of a family that benefited from your project in a donor presentation. The family agreed quickly and verbally when you asked. What do you still need before you tell the story?',
           },
           options: [
-            { ar: 'لا شيء — الموافقة الشفهية كافية ومريحة للجميع', en: 'Nothing — verbal consent is sufficient and comfortable for everyone' },
+            { ar: 'لا شيء — الموافقة الشفهية كافية، والإصرار على توقيع ورقة مكتوبة قد يُشعر الأسرة بأنك لا تثق بكلمتها', en: 'Nothing — verbal consent is enough, and insisting on a signed paper may make the family feel you do not trust their word' },
             { ar: 'موافقة مكتوبة مع شرح واضح لكيفية استخدام القصة وأمام من، وإمكانية سحب الإذن في أي وقت', en: 'Written consent with a clear explanation of how the story will be used and before whom, with the ability to withdraw permission at any time' },
-            { ar: 'إذن من مدير المشروع فقط', en: 'Only the project manager\'s permission' },
-            { ar: 'موافقة شفهية من الأب وحده بوصفه ربّ الأسرة', en: 'Verbal consent from the father alone as head of household' },
+            { ar: 'إذن من مدير المشروع فقط، لأنه المسؤول عن العلاقة مع الأسرة وهو من يقرّر ما يُعرض على المانحين', en: 'Only the project manager\'s permission, since he owns the relationship with the family and decides what is shown to funders' },
+            { ar: 'موافقة شفهية من الأب وحده بوصفه ربّ الأسرة، لأنه من يتحدّث باسمها في الأمور الرسمية وبقية أفرادها يتبعون رأيه', en: 'Verbal consent from the father alone as head of household, since he speaks for the family in all official matters and the others will follow his view' },
           ],
           correct: 1,
           feedback: {
@@ -350,10 +350,10 @@ export const publicSpeaking: CourseContent = {
             en: 'Mid-way through your donor presentation, one of them asks: "What percentage of beneficiaries completed the programme through to the end?" You do not know the exact figure. What do you do?',
           },
           options: [
-            { ar: 'تعطيه تقديراً تقريبياً يبدو معقولاً ومريحاً', en: 'Give an approximate estimate that sounds plausible and comfortable' },
-            { ar: 'تقول إن النسبة عالية جداً وتكمل بمثال ناجح', en: 'Say the percentage is very high and continue with a success example' },
+            { ar: 'تعطيه تقديراً تقريبياً يبدو معقولاً ومريحاً للجميع', en: 'Give an approximate estimate that sounds plausible and comfortable for everyone in the room' },
+            { ar: 'تقول إن النسبة عالية جداً وتكمل بمثال ناجح من الميدان', en: 'Say the percentage is very high and continue with a successful example from the field' },
             { ar: 'تعترف أن هذا الرقم ليس أمامك الآن وتتعهّد بتزويده كتابةً بتاريخ محدّد', en: 'Acknowledge that this figure is not in front of you now and commit to providing it in writing by a specific date' },
-            { ar: 'تُحوّل الحديث إلى قصة نجاح فردية لتتجاوز السؤال بسلاسة', en: 'Redirect to an individual success story to move past the question smoothly' },
+            { ar: 'تُحوّل الحديث إلى قصة نجاح فردية لتتجاوز السؤال بسلاسة ودون إحراج', en: 'Redirect to an individual success story to move past the question smoothly and without embarrassment' },
           ],
           correct: 2,
           feedback: {
@@ -462,10 +462,10 @@ export const publicSpeaking: CourseContent = {
             en: 'After your presentation ends, the potential partner asks: "What is the fundamental difference between your project and what a neighbouring organisation does in the same field?" How do you answer?',
           },
           options: [
-            { ar: 'تقول إن نهجكم أفضل وأن المنظمة الأخرى لا تحقّق النتائج نفسها', en: 'Say your approach is better and that the other organisation does not achieve the same results' },
+            { ar: 'تقول إن نهجكم أفضل وأن المنظمة الأخرى لا تحقّق النتائج نفسها رغم ميزانيتها الأكبر وفريقها الأوسع', en: 'Say your approach is better and that the other organisation does not achieve the same results despite its larger budget and bigger team' },
             { ar: 'تحدّد الفارق المحدّد في المنهج أو الجمهور أو الجغرافيا من دون تنقيص الآخرين', en: 'Identify the specific difference in approach, audience, or geography without denigrating the others' },
-            { ar: 'تقول إنكم مختلفون تماماً وتتركه يكتشف ذلك بنفسه', en: 'Say you are completely different and leave them to discover this themselves' },
-            { ar: 'تتجنّب المقارنة وتعود إلى نقاط قوّة مشروعك وحده', en: 'Avoid the comparison and return solely to your project\'s strengths' },
+            { ar: 'تقول إنكم مختلفون تماماً وتتركه يكتشف الفارق بنفسه حين يقارن التقارير المنشورة', en: 'Say you are completely different and leave them to discover the difference themselves by comparing published reports' },
+            { ar: 'تتجنّب المقارنة وتعود إلى نقاط قوّة مشروعك وحده حتى لا تبدو ناقداً لزملاء في القطاع', en: 'Avoid the comparison and return solely to your project\'s strengths so you do not appear critical of colleagues in the sector' },
           ],
           correct: 1,
           feedback: {

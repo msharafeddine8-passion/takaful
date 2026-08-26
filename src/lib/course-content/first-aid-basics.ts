@@ -113,10 +113,19 @@ export const firstAidBasics: CourseContent = {
             en: 'You see a man who has fallen near an electricity pole with broken power lines lying on the ground beside him. He appears to be unconscious. What do you do?',
           },
           options: [
-            { ar: 'تقترب منه بسرعة وتتحقق من تنفّسه', en: 'Approach him quickly and check his breathing' },
+            {
+              ar: 'تقترب منه بسرعة وتتحقق من تنفّسه، فكل ثانية تأخير تزيد الضرر عليه',
+              en: 'Approach him quickly and check his breathing — every second of delay adds to the harm',
+            },
             { ar: 'تبقى بعيداً، تتصل بالطوارئ، وتصف الموقع والحالة بدقة', en: 'Stay back, call the emergency services, and describe the location and situation accurately' },
-            { ar: 'تحاول إبعاد الأسلاك عنه بعصا خشبية لتستطيع الاقتراب', en: 'Try to push the cables away from him with a wooden stick so you can approach' },
-            { ar: 'تطلب من شخص آخر بجانبك أن يقترب بدلاً منك', en: 'Ask someone else nearby to approach him instead of you' },
+            {
+              ar: 'تحاول إبعاد الأسلاك عنه بعصا خشبية جافّة لأن الخشب لا يوصل الكهرباء',
+              en: 'Try to push the cables away from him with a dry wooden stick, since wood does not conduct electricity',
+            },
+            {
+              ar: 'تطلب من شخص آخر بجانبك أن يقترب بدلاً منك، فأنت لست مضطراً للمخاطرة بنفسك',
+              en: 'Ask someone else nearby to approach him instead of you, since you are not obliged to take the risk yourself',
+            },
           ],
           correct: 1,
           feedback: {
@@ -356,10 +365,19 @@ export const firstAidBasics: CourseContent = {
             en: 'During a group activity in an outdoor yard, a participant falls and injures her head and is bleeding. You and a colleague are both present. Who calls the emergency services?',
           },
           options: [
-            { ar: 'كلاكما يتصلان في وقت واحد لضمان وصول المعلومة', en: 'Both of you call at the same time to make sure the information gets through' },
-            { ar: 'تنتظران تقييم وضعها أولاً قبل اتخاذ أي قرار', en: 'Wait to assess her condition first before making any decision' },
+            {
+              ar: 'كلاكما يتصلان في وقت واحد لضمان وصول المعلومة ولو انقطع أحد الخطّين',
+              en: 'Both of you call at the same time to make sure the information gets through even if one line drops',
+            },
+            {
+              ar: 'تنتظران تقييم وضعها أولاً قبل اتخاذ أي قرار، فقد تبدو الإصابة سطحية ولا تستدعي إسعافاً',
+              en: 'Wait to assess her condition first before making any decision — the injury may look superficial and need no ambulance',
+            },
             { ar: 'تحدّدان شخصاً واحداً باسمه للاتصال بينما يبقى الآخر مع المصابة', en: 'Assign one named person to call while the other stays with the injured woman' },
-            { ar: 'كلاكما تتركان المصابة وتذهبان بحثاً عن هاتف بإشارة أقوى', en: 'Both leave the injured woman to go and find a phone with a stronger signal' },
+            {
+              ar: 'كلاكما تتركان المصابة وتذهبان بحثاً عن مكان فيه إشارة هاتف أقوى',
+              en: 'Both leave the injured woman to go and find a spot where the phone signal is stronger',
+            },
           ],
           correct: 2,
           feedback: {
@@ -445,8 +463,14 @@ export const firstAidBasics: CourseContent = {
           options: [
             { ar: 'تثبّت رأسه ببطء وتُعيده إلى وضع مستقيم حتى لا تزداد إصابة رقبته', en: 'Slowly stabilise his head and return it to a straight position to prevent his neck injury from worsening' },
             { ar: 'تبقى بجانبه وتطمئنه وتطلب منه ألّا يتحرّك، وتتصل بالطوارئ دون لمس رأسه أو رقبته', en: 'Stay beside him, reassure him, ask him not to move, and call the emergency services without touching his head or neck' },
-            { ar: 'تطلب منه أن يجلس ببطء ويتحرّك قليلاً للتأكّد من أن بإمكانه ذلك', en: 'Ask him to sit up slowly and move a little to confirm he can do so' },
-            { ar: 'تنتظر حتى يصل أهله ليقرّروا ما يريدونه بشأن تحريكه', en: 'Wait for his family to arrive and let them decide whether to move him' },
+            {
+              ar: 'تطلب منه أن يجلس ببطء ويتحرّك قليلاً للتأكّد من أن بإمكانه ذلك، فإن استطاع فالإصابة بسيطة',
+              en: 'Ask him to sit up slowly and move a little to confirm he can do so — if he can, the injury is not serious',
+            },
+            {
+              ar: 'تنتظر حتى يصل أهله ليقرّروا ما يريدونه بشأن تحريكه، فهم أدرى بحالته الصحية وهم من يتحمّل القرار',
+              en: 'Wait for his family to arrive and let them decide whether to move him — they know his health and the decision is theirs to carry',
+            },
           ],
           correct: 1,
           feedback: {
@@ -531,10 +555,19 @@ export const firstAidBasics: CourseContent = {
             en: 'A man has been stabbed in the abdomen and a sharp object is still visibly embedded in the wound. You have arrived before the ambulance. What do you do?',
           },
           options: [
-            { ar: 'تسحب الجسم الغريب برفق ثم تضغط على الجرح بقماش نظيف', en: 'Gently pull the object out then press on the wound with a clean cloth' },
+            {
+              ar: 'تسحب الجسم الغريب برفق ثم تضغط على الجرح بقماش نظيف حتى يتوقّف النزيف، لأن بقاءه في الجرح يزيد التلوّث',
+              en: 'Gently pull the object out then press on the wound with a clean cloth until the bleeding stops, since leaving it in adds to the contamination',
+            },
             { ar: 'تتصل بالطوارئ وتُغطّي الجرح من حوله بقماش نظيف دون سحب الجسم الغريب أو الضغط عليه', en: 'Call the emergency services and cover the area around the wound with a clean cloth without pulling or pressing on the embedded object' },
-            { ar: 'تعطيه مسكّناً للألم وماءً ريثما يصل الإسعاف', en: 'Give him a painkiller and water while waiting for the ambulance' },
-            { ar: 'تطلب منه الاستلقاء على بطنه لإغلاق الجرح والحدّ من النزيف', en: 'Ask him to lie on his stomach to close the wound and reduce bleeding' },
+            {
+              ar: 'تعطيه مسكّناً للألم وقليلاً من الماء ريثما يصل الإسعاف حتى لا يدخل في صدمة من شدّة الألم',
+              en: 'Give him a painkiller and a little water while waiting for the ambulance so the pain does not send him into shock',
+            },
+            {
+              ar: 'تطلب منه الاستلقاء على بطنه ليضغط وزنه على الجرح فيُغلقه ويحدّ من النزيف',
+              en: 'Ask him to lie on his stomach so that his own weight closes the wound and reduces the bleeding',
+            },
           ],
           correct: 1,
           feedback: {
@@ -607,10 +640,19 @@ export const firstAidBasics: CourseContent = {
             en: 'What does it mean when this course says it "does not replace certified hands-on training"?',
           },
           options: [
-            { ar: 'أن محتوى الدورة غير موثوق وتحتاج إلى التحقّق منه من مصادر أخرى', en: 'That the course content is unreliable and you need to verify it from other sources' },
+            {
+              ar: 'أن محتوى الدورة غير موثوق وعليك التحقّق من كل ما ورد فيه من مصادر طبية أخرى قبل العمل به',
+              en: 'That the course content is unreliable and you must verify all of it against other medical sources before acting on it',
+            },
             { ar: 'أن المهارات اليدوية كالإنعاش القلبي الرئوي تحتاج ممارسة جسدية متكرّرة مع مدرّب لا تُتعلّم بالقراءة وحدها', en: 'That hands-on skills like CPR require repeated physical practice with an instructor and cannot be learned through reading alone' },
-            { ar: 'أن هذه الدورة موجّهة فقط لمن لا يعرفون القراءة والكتابة', en: 'That this course is aimed only at people who cannot read or write' },
-            { ar: 'أن قراءة الكتب الطبية المتخصّصة تعوّض كلاً من هذه الدورة والتدريب العملي معاً', en: 'That reading specialised medical books compensates for both this course and hands-on training together' },
+            {
+              ar: 'أن هذه الدورة موجّهة فقط لمن لا يعرفون القراءة والكتابة، أمّا المتعلّم فيكفيه أن يقرأ الكتيّب',
+              en: 'That this course is aimed only at people who cannot read or write, while an educated reader can manage with the leaflet',
+            },
+            {
+              ar: 'أن قراءة الكتب الطبية المتخصّصة تعوّض كلاً من هذه الدورة والتدريب العملي معاً، فالمعلومة واحدة أينما قرأتها',
+              en: 'That reading specialised medical books compensates for both this course and hands-on training together, since the information is the same wherever you read it',
+            },
           ],
           correct: 1,
           feedback: {

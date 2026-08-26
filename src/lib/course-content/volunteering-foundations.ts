@@ -235,8 +235,8 @@ export const volunteeringFoundations: CourseContent = {
           },
           options: [
             {
-              ar: 'المتطوّع الحقيقي لا ينتظر أي فائدة لنفسه إطلاقاً',
-              en: 'A true volunteer expects no personal benefit whatsoever',
+              ar: 'المتطوّع الحقيقي لا ينتظر أي فائدة لنفسه إطلاقاً، ومن ينتظر شيئاً فدافعه ناقص',
+              en: 'A true volunteer expects no personal benefit whatsoever, and anyone who expects something has an incomplete motive',
             },
             {
               ar: 'الاستفادة الشخصية مشروعة ما دامت لا تُقدَّم على مصلحة المستفيد',

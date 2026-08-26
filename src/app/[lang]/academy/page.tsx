@@ -10,6 +10,7 @@ import { COURSES, coursesInLevel, electiveCourses, type Course } from '@/lib/cou
 import { LEVELS } from '@/lib/programme/definition';
 import { challengeForLevel } from '@/lib/programme/level-challenge';
 import { countsTowardsLevel } from '@/lib/programme/gate';
+import { decideAccess, prerequisitesMet } from '@/lib/programme/access';
 import { challengeLevels } from '@/lib/dictionaries/challenge-levels';
 import { COURSE_CONTENT } from '@/lib/course-content';
 import { currentUser } from '@/lib/auth';
@@ -71,6 +72,30 @@ export default async function AcademyPage(props: PageProps<'/[lang]/academy'>) {
     const total = COURSE_CONTENT[slug]?.modules.length ?? 0;
     if (total === 0) return null;
     return (s.modules_read / total) * 100;
+  }
+
+  /**
+   * One state per card, decided here, by the same function the course page
+   * decides with.
+   *
+   * This used to be `locked={course.requires.some((r) => !passed.has(r))}` next
+   * to a badge derived from `course.status` — one asking whether the content
+   * had been written, the other whether this visitor had earned it. Both are
+   * real questions and neither is "may I open this", so a signed-out visitor
+   * got thirty-seven cards reading «متاحة», «هذه الدورة مقفلة» and «ابدأ
+   * الدورة» at once. Now the card is handed the decision and renders it three
+   * ways, which is the only arrangement in which the three cannot disagree.
+   *
+   * No extra query: `passed` is already loaded above, and this is the same set
+   * `eligibilityFor` would go and fetch for each of forty-one cards.
+   */
+  function accessOf(course: Course) {
+    return decideAccess({
+      kind: course.kind,
+      signedIn: user !== null,
+      prerequisitesMet: prerequisitesMet(course.requires, passed),
+      published: course.status === 'available',
+    });
   }
 
   const passedCount = COURSES.filter((c) => standingOf(c.slug) === 'completed').length;
@@ -185,7 +210,8 @@ export default async function AcademyPage(props: PageProps<'/[lang]/academy'>) {
                     course={course}
                     standing={standingOf(course.slug)}
                     percent={percentOf(course.slug)}
-                    locked={course.requires.some((r) => !passed.has(r))}
+                    access={accessOf(course)}
+                    passed={passed}
                   />
                 ))}
               </div>

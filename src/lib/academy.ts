@@ -5,6 +5,7 @@ import { COURSE_CONTENT } from './course-content';
 import { COURSES, courseBySlug } from './courses';
 import { generateCode } from './certificates';
 import { courseFingerprint } from './course-version';
+import { prerequisitesMet } from './programme/access';
 import type { Locale } from './i18n';
 
 /**
@@ -417,7 +418,8 @@ export async function eligibilityFor(userId: string | null, slug: string): Promi
   const passed = userId ? await passedCourseSlugs(userId) : new Set<string>();
 
   return {
-    allowed: course.requires.every((r) => passed.has(r)),
+    // The shared expression, not a second copy of it. See access.ts.
+    allowed: prerequisitesMet(course.requires, passed),
     missing: course.requires.filter((r) => !passed.has(r)),
     suggested: course.recommends.filter((r) => !passed.has(r)),
   };

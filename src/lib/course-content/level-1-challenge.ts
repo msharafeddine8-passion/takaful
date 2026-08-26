@@ -84,20 +84,20 @@ export const levelOneChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تنتظرون وصولها — توزيع الأدوار مسؤوليتها وليس مسؤوليتكم',
-              en: 'Wait for her — assigning roles is her responsibility, not yours',
+              ar: 'تنتظرون وصولها — توزيع الأدوار مسؤوليتها لا مسؤوليتكم، وأي توزيع تتّفقون عليه قبلها قد تنقضه حين تصل',
+              en: 'Wait for her — assigning roles is her responsibility, not yours, and any split you agree without her may be overturned when she arrives',
             },
             {
               ar: 'تقترح أن توزّعوا الأدوار بينكم الآن، وتحدّدوا من يقف عند الباب الخلفي، وتُبلغوا المنسّقة بما اتّفقتم عليه',
               en: 'Propose that you divide the roles now, decide who covers the back door, and tell the coordinator what you agreed',
             },
             {
-              ar: 'تبدأ بترتيب القاعة وحدك وتترك الأدوار حتى تصل',
-              en: 'Start setting up the hall on your own and leave the roles until she arrives',
+              ar: 'تبدأ بترتيب القاعة وحدك وتترك الأدوار حتى تصل — الكراسي والطاولات تحتاج هذا الوقت على أي حال، والأدوار دقيقتان',
+              en: 'Start setting up the hall on your own and leave the roles until she arrives — the chairs and tables need this time anyway, and the roles take two minutes',
             },
             {
-              ar: 'تتّصل بأهالي الأطفال لتأجيل النشاط نصف ساعة',
-              en: 'Call the children’s families to push the activity back half an hour',
+              ar: 'تتّصل بأهالي الأطفال لتأجيل النشاط نصف ساعة حتى تصل المنسّقة، فيبدأ النشاط منظّماً بدل أن يبدأ مرتبكاً',
+              en: 'Call the children’s families to push the activity back half an hour until the coordinator arrives, so it starts organised rather than in confusion',
             },
           ],
           correct: 1,
@@ -115,13 +115,22 @@ export const levelOneChallenge: CourseContent = {
             en: 'A colleague suggests locking the back door so no child can wander out. What do you think?',
           },
           options: [
-            { ar: 'فكرة ممتازة — تحلّ المشكلة نهائياً', en: 'Excellent idea — it solves the problem for good' },
+            {
+              ar: 'فكرة ممتازة — تحلّ المشكلة نهائياً: باب واحد يعني نقطة واحدة تُضبط ويتحرّر متطوّع للعمل مع الأطفال',
+              en: 'Excellent idea — it solves the problem for good: one door means a single point to control, and it frees a volunteer to work with the children',
+            },
             {
               ar: 'لا: باب مقفل بالمفتاح يمنع الخروج في حالة طوارئ. يبقى مغلقاً لا مقفلاً، ومعه شخص مسؤول',
               en: 'No: a locked door blocks the exit in an emergency. It stays shut but unlocked, with someone responsible standing there',
             },
-            { ar: 'يُقفل ويُعطى المفتاح لطفل كبير يفتحه عند الحاجة', en: 'Lock it and give the key to an older child to open if needed' },
-            { ar: 'يُقفل ويُفتح فقط وقت الاستراحة', en: 'Lock it and open it only at break time' },
+            {
+              ar: 'يُقفل ويُعطى المفتاح لطفل كبير يفتحه عند الحاجة — الكبار هنا مسؤولون والمفتاح يبقى قرب الباب',
+              en: 'Lock it and give the key to an older child to open if needed — the older ones here are responsible and the key stays by the door',
+            },
+            {
+              ar: 'يُقفل ويُفتح فقط وقت الاستراحة بإشراف متطوّعَين، فيبقى مغلقاً في الأوقات التي ينشغل فيها الجميع بالنشاط',
+              en: 'Lock it and open it only at break time under two volunteers’ supervision, so it stays sealed during the times when everyone is busy with the activity',
+            },
           ],
           correct: 1,
           feedback: {
@@ -156,7 +165,10 @@ export const levelOneChallenge: CourseContent = {
               ar: 'تعتذر، وتعرض عليه عدد الحاضرين فقط، وتحيله إلى منسّقة الفريق إن أراد أكثر',
               en: 'Decline, offer him the head count only, and refer him to the coordinator if he wants more',
             },
-            { ar: 'تعطيه الكشف بعد حذف أرقام الهواتف', en: 'Give him the list with the phone numbers removed' },
+            {
+              ar: 'تعطيه الكشف بعد حذف أرقام الهواتف، فالرقم هو البيانات الشخصية',
+              en: 'Give him the list with the phone numbers removed — the number is the personal data',
+            },
             { ar: 'تصوّر الكشف وترسله له على واتساب ليبقى معك الأصل', en: 'Photograph the list and send it to him on WhatsApp so you keep the original' },
           ],
           correct: 1,
@@ -176,15 +188,21 @@ export const levelOneChallenge: CourseContent = {
           question: { ar: 'كيف تدير التصوير اليوم؟', en: 'How do you handle photography today?' },
           options: [
             {
-              ar: 'تصوّر الأولى ولا تصوّر الثانية، وتنتبه أثناء التصوير',
-              en: 'Photograph the first and not the second, and be careful while shooting',
+              ar: 'تصوّر الأولى ولا تصوّر الثانية، وتنتبه أثناء التصوير وتطلب من الثانية أن تبتعد قليلاً كلّما رفعت الكاميرا، فرفض أهلها يخصّها وحدها',
+              en: 'Photograph the first and not the second, be careful while shooting, and ask the second girl to step aside whenever you raise the camera, since her parents’ refusal covers only her',
             },
             {
               ar: 'تصوّر أنشطة لا وجوهاً، من زوايا لا تُظهر ملامح أحد، وتترك الصور الشخصية للحالات التي فيها موافقة مكتوبة للطرفين',
               en: 'Photograph activities rather than faces, from angles that show no one’s features, and leave individual photos to cases with written consent on both sides',
             },
-            { ar: 'لا تصوّر شيئاً اليوم تفادياً للمشكلة', en: 'Photograph nothing today to avoid the problem' },
-            { ar: 'تصوّر الجميع وتحذف صور الثانية لاحقاً', en: 'Photograph everyone and delete the second girl’s photos later' },
+            {
+              ar: 'لا تصوّر شيئاً اليوم تفادياً للمشكلة، وتكتب في التقرير أن التوثيق تعذّر لتعارض الموافقات وتؤجّله إلى نشاط تتوحّد فيه',
+              en: 'Photograph nothing today to avoid the problem, and note in the report that documentation was impossible because the consents conflicted, leaving it to an activity where they agree',
+            },
+            {
+              ar: 'تصوّر الجميع وتحذف صور الثانية لاحقاً على الهاتف قبل أن ترفع أي شيء، فلا تصل صورة واحدة لها إلى أحد',
+              en: 'Photograph everyone and delete the second girl’s photos afterwards on the phone before uploading anything, so not one image of her reaches anybody',
+            },
           ],
           correct: 1,
           feedback: {
@@ -216,18 +234,21 @@ export const levelOneChallenge: CourseContent = {
           question: { ar: 'ماذا تفعل الآن؟', en: 'What do you do now?' },
           options: [
             {
-              ar: 'تسأله بلطف عمّا يحدث في البيت لتفهم قبل أن تقرّر إن كان الأمر يستحقّ الإبلاغ',
-              en: 'Ask him gently what happens at home, so you understand before deciding whether it is worth reporting',
+              ar: 'تسأله بلطف عمّا يحدث في البيت لتفهم قبل أن تقرّر إن كان الأمر يستحقّ الإبلاغ، فلا تُحرّك إجراءً ثقيلاً بلا داعٍ',
+              en: 'Ask him gently what happens at home, so you understand before deciding whether it is worth reporting, rather than starting a heavy process needlessly',
             },
             {
               ar: 'تطمئنه وتُشركه في نشاط، وتدوّن كلامه كما قاله بلا زيادة، وتُبلّغ مسؤولة الحماية اليوم',
               en: 'Reassure him and bring him into an activity, write his words down exactly as he said them, and report to the safeguarding focal point today',
             },
             {
-              ar: 'تخبر والده عند الاستلام أن ابنه بدا متضايقاً اليوم',
-              en: 'Tell his father at pick-up that his son seemed upset today',
+              ar: 'تخبر والده عند الاستلام أن ابنه بدا متضايقاً اليوم وتراقب ردّة فعله، فهي أسرع طريقة لتعرف ما يجري',
+              en: 'Tell his father at pick-up that his son seemed upset today and watch how he reacts — the quickest way to learn what is going on',
             },
-            { ar: 'تنتظر لترى إن تكرّر الأمر في النشاط القادم', en: 'Wait and see whether it happens again at the next activity' },
+            {
+              ar: 'تنتظر لترى إن تكرّر الأمر في النشاط القادم وتدوّن ملاحظة لنفسك، فجملة واحدة لا تكفي لبناء بلاغ',
+              en: 'Wait and see whether it happens again at the next activity, keeping a note for yourself — one sentence is not enough to build a report on',
+            },
           ],
           correct: 1,
           feedback: {
@@ -247,15 +268,21 @@ export const levelOneChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تصحّح الموقف أمام الأطفال فوراً حتى يعرفوا أن هذا ليس مقبولاً',
-              en: 'Correct him in front of the children immediately, so they know it is not acceptable',
+              ar: 'تصحّح الموقف أمام الأطفال فوراً حتى يعرفوا أن هذا ليس مقبولاً وأن أحداً في الفريق لا يوافق عليه',
+              en: 'Correct him in front of the children immediately, so they know it is not acceptable and that no one on the team endorses it',
             },
             {
               ar: 'تتولّى المجموعة بهدوء، وتتحدّث إليه على انفراد بعد النشاط، وتذكر الأمر في تقرير اليوم',
               en: 'Take over the group calmly, speak to him privately after the activity, and note it in the day’s report',
             },
-            { ar: 'لا تتدخّل — الأطفال كانوا مزعجين فعلاً وهو تحت ضغط', en: 'Stay out of it — the children were genuinely disruptive and he is under pressure' },
-            { ar: 'تُبلّغ عنه فوراً وتطلب إخراجه من النشاط', en: 'Report him immediately and ask for him to be removed from the activity' },
+            {
+              ar: 'لا تتدخّل — الأطفال كانوا مزعجين فعلاً وهو تحت ضغط، والتدخّل أمامهم يقوّض موقفه',
+              en: 'Stay out of it — the children were genuinely disruptive and he is under pressure, and stepping in front of them would undermine him',
+            },
+            {
+              ar: 'تُبلّغ عنه فوراً وتطلب إخراجه من النشاط، فالصراخ في الأطفال مسّ بسلامتهم النفسية',
+              en: 'Report him immediately and ask for him to be removed from the activity — shouting at children touches their emotional safety',
+            },
           ],
           correct: 1,
           feedback: {
@@ -287,15 +314,21 @@ export const levelOneChallenge: CourseContent = {
           question: { ar: 'ماذا تفعل؟', en: 'What do you do?' },
           options: [
             {
-              ar: 'تسلّمه إياها — الطفلة تعرفه وارتياحها دليل كافٍ',
-              en: 'Hand her over — she knows him and her ease is evidence enough',
+              ar: 'تسلّمه إياها — الطفلة تعرفه وارتياحها دليل كافٍ، ومنعه أمام الناس إهانة لعائلة تعرفونها',
+              en: 'Hand her over — she knows him and her ease is evidence enough, and refusing him in public insults a family you know',
             },
             {
               ar: 'لا تسلّمها، وتبقيها معك في مكان آمن ومرئي، وتستمرّ في محاولة الاتصال بالأمّ، وتُبلغ المنسّقة',
               en: 'Do not hand her over; keep her with you somewhere safe and visible, keep trying the mother, and tell the coordinator',
             },
-            { ar: 'تسأل الطفلة إن كانت تريد الذهاب معه وتعمل بجوابها', en: 'Ask the girl whether she wants to go with him and act on her answer' },
-            { ar: 'تطلب بطاقته وتصوّرها ثم تسلّمها', en: 'Ask for his ID, photograph it, and then hand her over' },
+            {
+              ar: 'تسأل الطفلة إن كانت تريد الذهاب معه وتعمل بجوابها، فهي أدرى بمن في عائلتها ولها رأي فيمن يأخذها',
+              en: 'Ask the girl whether she wants to go with him and act on her answer — she knows her own family best and has a say in who takes her',
+            },
+            {
+              ar: 'تطلب بطاقته وتصوّرها وترسل الصورة إلى المنسّقة ثم تسلّمها، فيصبح لديكم أثر موثّق لمن أخذها',
+              en: 'Ask for his ID, photograph it and send the picture to the coordinator, then hand her over — you now have a documented trace of who took her',
+            },
           ],
           correct: 1,
           feedback: {
@@ -316,9 +349,18 @@ export const levelOneChallenge: CourseContent = {
               ar: 'تقرير نشاط قصير فيه العدد وما جرى — والحادثتان (كلام الطفل، وواقعة الاستلام) في بلاغين منفصلين لمن يخصّه كلٌّ منهما',
               en: 'A short activity report with the numbers and what happened — and the two incidents (the child’s remark, and the pick-up) as separate reports, each to whoever it concerns',
             },
-            { ar: 'تقرير واحد يجمع كل شيء ويُرسل للفريق كلّه', en: 'One report covering everything, sent to the whole team' },
-            { ar: 'تقرير بالعدد فقط، والباقي شفهي للمنسّقة', en: 'A report with the numbers only, and the rest verbally to the coordinator' },
-            { ar: 'لا شيء — لم يقع ضرر فعلي في النهاية', en: 'Nothing — no actual harm occurred in the end' },
+            {
+              ar: 'تقرير واحد يجمع كل شيء ويُرسل للفريق كلّه، فالجميع كان في القاعة ومن حقّهم أن يعرفوا ويتعلّموا، وهو يوفّر كتابة اليوم نفسه ثلاث مرّات',
+              en: 'One report covering everything, sent to the whole team — everyone was in the hall, they have a right to know what happened and learn from it, and it saves writing the same day up three times',
+            },
+            {
+              ar: 'تقرير بالعدد فقط، والباقي شفهي للمنسّقة، فهي تعرف الأسر وتستطيع أن تقرّر ما يستحقّ أن يُكتب وما يبقى بينكم',
+              en: 'A report with the numbers only, and the rest verbally to the coordinator — she knows the families and can decide what deserves writing down and what stays between you',
+            },
+            {
+              ar: 'لا شيء — لم يقع ضرر فعلي في النهاية، والكتابة عن وقائع انتهت بخير تملأ الملفات بما لا يقرؤه أحد',
+              en: 'Nothing — no actual harm occurred in the end, and writing up incidents that resolved fine only fills the files with things nobody reads',
+            },
           ],
           correct: 0,
           feedback: {

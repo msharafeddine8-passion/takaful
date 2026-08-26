@@ -101,13 +101,22 @@ export const lifeSkills: CourseContent = {
             en: 'The day is planned to the minute from 09:00 to 13:00 with no gaps. What is wrong with it?',
           },
           options: [
-            { ar: 'لا خطأ — الدقّة مطلوبة في العمل الميداني', en: 'Nothing — precision is what field work needs' },
+            {
+              ar: 'لا خطأ — الدقّة مطلوبة في العمل الميداني، والخطّة المضبوطة على الدقيقة هي ما يجعل كل متطوّع يعرف أين يقف في أي لحظة',
+              en: 'Nothing — precision is what field work needs, and a to-the-minute plan is what lets every volunteer know exactly where they should be at any moment',
+            },
             {
               ar: 'خطّة بلا هوامش تفترض ألّا يتأخّر شيء، فأول تأخير يهدم ما بعده ولا يبقى قرار سوى الإلغاء العشوائي',
               en: 'A plan with no slack assumes nothing slips, so the first delay collapses everything after it and the only decision left is cutting at random',
             },
-            { ar: 'الخطأ أن اليوم قصير — أربع ساعات لا تكفي', en: 'The problem is that four hours is too short' },
-            { ar: 'الخطأ أنها لم تُكتب بالتشاور مع الفريق', en: 'The problem is that it was not written with the team' },
+            {
+              ar: 'الخطأ أن اليوم قصير — أربع ساعات لا تكفي لتسجيل ونشاط وتوزيع، والحلّ تمديده إلى الثالثة لا إعادة ترتيب ما فيه',
+              en: 'The problem is that four hours is too short for registration, an activity and a distribution — the fix is to run the day until three, not to rearrange what is in it',
+            },
+            {
+              ar: 'الخطأ أنها لم تُكتب بالتشاور مع الفريق، فمن ينفّذ الخطوات أعرف بزمنها الحقيقي ممّن كتبها على الورق',
+              en: 'The problem is that it was not written with the team — whoever runs the steps knows their real timings better than whoever wrote them on paper',
+            },
           ],
           correct: 1,
           feedback: {
@@ -166,13 +175,22 @@ export const lifeSkills: CourseContent = {
           },
           question: { ar: 'ماذا تفعل؟', en: 'What do you do?' },
           options: [
-            { ar: 'تشرب قهوة وتكمل — باقٍ ساعتان فقط', en: 'Get a coffee and carry on — only two hours left' },
+            {
+              ar: 'تشرب قهوة وتكمل — باقٍ ساعتان فقط، والانسحاب الآن يترك اثني عشر طفلاً بلا مشرف',
+              en: 'Get a coffee and carry on — only two hours left, and pulling out now leaves twelve children unsupervised',
+            },
             {
               ar: 'تُخبر المنسّقة فوراً وتطلب أن يشاركك أحد في المجموعة أو يستبدلك',
               en: 'Tell the coordinator immediately and ask for someone to share the group or take it',
             },
-            { ar: 'تصغّر المجموعة وتترك نصفها لزميل من دون إخبار أحد', en: 'Split the group and hand half to a colleague without telling anyone' },
-            { ar: 'تكمل وتنتبه أكثر، وتخبر المنسّقة في نهاية اليوم', en: 'Carry on and concentrate harder, and tell the coordinator at the end of the day' },
+            {
+              ar: 'تصغّر المجموعة وتترك نصفها لزميل من دون إخبار أحد، فستّة أطفال أسهل عليك من اثني عشر',
+              en: 'Split the group and hand half to a colleague without telling anyone — six children are easier to hold than twelve',
+            },
+            {
+              ar: 'تكمل وتنتبه أكثر، وتخبر المنسّقة في نهاية اليوم حتى لا تُربك النشاط في منتصفه',
+              en: 'Carry on and concentrate harder, and tell the coordinator at the end of the day rather than disrupt the activity halfway',
+            },
           ],
           correct: 1,
           feedback: {
@@ -248,15 +266,21 @@ export const lifeSkills: CourseContent = {
           question: { ar: 'ما التصرّف؟', en: 'What do you do?' },
           options: [
             {
-              ar: 'تذكّرها بأهمّية العمل ومن يعتمد عليها',
-              en: 'Remind her how important the work is and who depends on her',
+              ar: 'تذكّرها بأهمّية العمل ومن يعتمد عليها، وتقول لها إن الموسم ضاغط وإن كل من في الفريق يمرّ بهذا وإنه سيهدأ بعد أسابيع',
+              en: 'Remind her how important the work is and who depends on her, and tell her the season is heavy, that everyone on the team feels it, and that it will settle in a few weeks',
             },
             {
               ar: 'تسألها على انفراد كيف حالها فعلاً، وتقترح راحة أو دوراً أخفّ، وتُخبر المنسّقة أن الفريق يحتاج توزيعاً مختلفاً',
               en: 'Ask her privately how she actually is, suggest a rest or a lighter role, and tell the coordinator the team needs a different distribution',
             },
-            { ar: 'لا تتدخّل — هذا شأنها الشخصي', en: 'Stay out of it — that is her own business' },
-            { ar: 'تُبلّغ عنها لأن كلامها عن المستفيدين غير مقبول', en: 'Report her, because talking about people we serve that way is unacceptable' },
+            {
+              ar: 'لا تتدخّل — هذا شأنها الشخصي، والسؤال عن زميلة لم تطلب شيئاً قد يبدو فضولاً أو مراقبةً لأدائها',
+              en: 'Stay out of it — that is her own business, and asking a colleague who has not asked for anything can come across as prying or as monitoring her',
+            },
+            {
+              ar: 'تُبلّغ عنها لأن كلامها عن المستفيدين غير مقبول ويجب أن يُعالَج كمسألة سلوك قبل أن يسمعه الأهالي',
+              en: 'Report her, because talking about people we serve that way is unacceptable and should be handled as a conduct matter before a family hears it',
+            },
           ],
           correct: 1,
           feedback: {
@@ -340,9 +364,18 @@ export const lifeSkills: CourseContent = {
               ar: 'تشكره على صراحته وتسأله ما القدر الذي يستطيعه فعلاً، ثم تبني الجدول على جوابه',
               en: 'Thank him for saying so, ask what he can actually manage, and build the schedule around his answer',
             },
-            { ar: 'تطلب منه أن يصبر شهراً حتى ينتهي الموسم', en: 'Ask him to hold on for a month until the season ends' },
-            { ar: 'تقبل توقّفه فوراً حتى لا تضغط عليه', en: 'Accept that he is stopping, immediately, so as not to pressure him' },
-            { ar: 'تذكّره كم يعتمد عليه الفريق والأطفال', en: 'Remind him how much the team and the children depend on him' },
+            {
+              ar: 'تطلب منه أن يصبر شهراً حتى ينتهي الموسم، ثم تُراجعان الوضع حين يهدأ الجدول',
+              en: 'Ask him to hold on for a month until the season ends, then review it once the schedule quietens',
+            },
+            {
+              ar: 'تقبل توقّفه فوراً حتى لا تضغط عليه، وتشكره على ما قدّمه وتتركه يعود متى شاء',
+              en: 'Accept that he is stopping, immediately, so as not to pressure him, and leave the door open',
+            },
+            {
+              ar: 'تذكّره كم يعتمد عليه الفريق والأطفال، فمعرفته بأثره قد تُعيد إليه دافعه',
+              en: 'Remind him how much the team and the children depend on him, which may revive his motivation',
+            },
           ],
           correct: 0,
           feedback: {
@@ -398,13 +431,22 @@ export const lifeSkills: CourseContent = {
             en: 'You are asked to take an extra activity on Sunday. You are tired and have a family commitment. What is the best reply?',
           },
           options: [
-            { ar: '«إن شاء الله بحاول» ثم تعتذر يوم السبت إن لم تستطع', en: '"I will try" — then apologise on Saturday if you cannot' },
+            {
+              ar: '«إن شاء الله بحاول» ثم تعتذر يوم السبت إن لم تستطع، فلا تُغلق الباب من الآن',
+              en: '"I will try" — then apologise on Saturday if you cannot, so you are not closing the door now',
+            },
             {
               ar: '«لا أستطيع الأحد. أستطيع الأحد القادم إن كان ينفع.»',
               en: '"I cannot do Sunday. I could do the following Sunday if that helps."',
             },
-            { ar: 'توافق لأن الفريق قليل ولا تريد أن تخذلهم', en: 'Say yes, because the team is short-handed and you do not want to let them down' },
-            { ar: 'لا تردّ حتى يجدوا شخصاً آخر', en: 'Do not reply, so they find someone else' },
+            {
+              ar: 'توافق لأن الفريق قليل ولا تريد أن تخذلهم، وتدبّر التزامك العائلي بطريقة ما',
+              en: 'Say yes, because the team is short-handed and you do not want to let them down',
+            },
+            {
+              ar: 'لا تردّ حتى يجدوا شخصاً آخر دون أن تضطرّ إلى رفض صريح',
+              en: 'Do not reply, so they find someone else without you having to refuse outright',
+            },
           ],
           correct: 1,
           feedback: {
@@ -456,13 +498,22 @@ export const lifeSkills: CourseContent = {
             en: 'Which of the following describes the association’s responsibility rather than yours?',
           },
           options: [
-            { ar: 'أن تنام جيداً قبل يوم ميداني', en: 'Sleeping properly before a field day' },
+            {
+              ar: 'أن تنام جيداً قبل يوم ميداني وتصل إليه قادراً على الانتباه',
+              en: 'Sleeping properly before a field day so you arrive able to pay attention',
+            },
             {
               ar: 'ألّا يُطلب من متطوّع واحد أن يشرف على اثني عشر طفلاً وحده',
               en: 'Not asking one volunteer to supervise twelve children alone',
             },
-            { ar: 'أن تخبر المنسّقة حين تشعر بالإرهاق', en: 'Telling the coordinator when you feel exhausted' },
-            { ar: 'أن تضع حدوداً لأوقات تواصلك', en: 'Setting boundaries around when you are contactable' },
+            {
+              ar: 'أن تخبر المنسّقة حين تشعر بالإرهاق قبل أن يتحوّل إلى غياب',
+              en: 'Telling the coordinator you feel exhausted before it turns into an absence',
+            },
+            {
+              ar: 'أن تضع حدوداً لأوقات تواصلك وتلتزم بها بعد النشاط',
+              en: 'Setting boundaries around when you are contactable, and keeping to them',
+            },
           ],
           correct: 1,
           feedback: {

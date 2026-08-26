@@ -140,20 +140,20 @@ export const negotiationAndAdvocacy: CourseContent = {
           },
           options: [
             {
-              ar: 'إخبارهم أن هذا القرار يتعارض مع مبدأ حق المجتمع في الثقافة',
-              en: 'Tell them this decision conflicts with the community\'s right to culture',
+              ar: 'إخبارهم أن القرار يتعارض مع حقّ المجتمع في الوصول إلى مرفق ثقافي عام مموَّل من المال العام',
+              en: 'Tell them the decision conflicts with the community\'s right to access a public cultural facility paid for from public money',
             },
             {
               ar: 'سؤالهم عمّا تعنيه «الجهات الرسمية» تحديداً وما القلق الذي تحميه هذه السياسة',
               en: 'Ask what "officially licensed bodies" means specifically and what concern this policy is protecting',
             },
             {
-              ar: 'الاستسلام والبحث فوراً عن مكان بديل',
-              en: 'Accept the refusal and immediately look for an alternative venue',
+              ar: 'الاستسلام والبحث فوراً عن مكان بديل بدل إضاعة الوقت في مراجعات لن تُغيّر السياسة',
+              en: 'Accept the refusal and look immediately for another venue rather than lose time on appeals that will not change the policy',
             },
             {
-              ar: 'تصعيد الأمر مباشرةً إلى رئيس البلدية',
-              en: 'Escalate directly to the head of the municipality',
+              ar: 'تصعيد الأمر مباشرةً إلى رئيس البلدية لأن الموظّف المسؤول لا يملك صلاحية الاستثناء',
+              en: 'Escalate directly to the head of the municipality since the officer you spoke to has no authority to grant an exception',
             },
           ],
           correct: 1,
@@ -251,20 +251,20 @@ export const negotiationAndAdvocacy: CourseContent = {
           },
           options: [
             {
-              ar: 'إنه سقف فعلي مُقيَّد بقوانين الميزانية ولا يمكن تجاوزه أبداً',
-              en: 'That it is a real ceiling constrained by budget regulations and can never be exceeded',
+              ar: 'إنه سقف فعلي مُقيَّد بقوانين الميزانية السنوية ولا يمكن تجاوزه مهما كان أثر المشروع، ولا فائدة من مناقشته',
+              en: 'That it is a real ceiling constrained by annual budget regulations that cannot be exceeded whatever the project\'s impact, so discussing it is pointless',
             },
             {
               ar: 'أنهم أعلنوا خطّهم المفاوضي — الرقم الذي يريدون أن تقبله، لكنه ليس بالضرورة أقصى ما يمكنهم تقديمه',
               en: 'That they have stated their negotiating line — the number they want you to accept, but not necessarily the most they can offer',
             },
             {
-              ar: 'أن المشروع غير مجدٍ وعليك إيجاد جهة تمويل أخرى',
-              en: 'That the project is not viable and you should find another funder',
+              ar: 'أن المشروع غير مجدٍ بهذه الميزانية وعليك البحث عن جهة تمويل أخرى تقدّر حجمه الحقيقي',
+              en: 'That the project is not viable on this budget and you should look for another funder who values its true scale',
             },
             {
-              ar: 'يجب أن تطلب مبلغاً أقل فوراً لتُبدي مرونتك',
-              en: 'You should immediately ask for less to signal your flexibility',
+              ar: 'يجب أن تطلب مبلغاً أقلّ فوراً لتُبدي مرونتك وتضمن ألّا ينسحبوا من تمويل المشروع',
+              en: 'You should immediately ask for less to signal your flexibility and make sure they do not withdraw funding altogether',
             },
           ],
           correct: 1,
@@ -374,20 +374,20 @@ export const negotiationAndAdvocacy: CourseContent = {
           },
           options: [
             {
-              ar: '«النازحون في منطقة X يعانون من ضغوط نفسية شديدة جراء تجاربهم المؤلمة وظروفهم القاسية»',
-              en: '"Displaced people in area X suffer severe psychological stress due to their painful experiences and harsh circumstances"',
+              ar: '«النازحون في منطقة X يعانون من ضغوط نفسية شديدة جراء تجاربهم المؤلمة وظروفهم المعيشية القاسية منذ نزوحهم»',
+              en: '"Displaced people in area X suffer severe psychological stress because of their painful experiences and the harsh living conditions they have faced since displacement"',
             },
             {
               ar: '«مسح أجريناه على ٣٤٠ شخصاً في مركز X أظهر أن ٦٢٪ يُبلّغون عن أعراض قلق أو اكتئاب تؤثّر على وظائفهم اليومية — وليس في المركز حالياً أي بروتوكول إحالة للصحة النفسية»',
               en: '"A survey of 340 people at centre X found that 62% report anxiety or depression symptoms affecting their daily functioning — and the centre has no mental health referral protocol at present"',
             },
             {
-              ar: '«نناشدك كمدير صحة أن تراعي المعاناة الإنسانية الكبيرة للنازحين في منطقتنا وتتّخذ الإجراء المناسب»',
-              en: '"We appeal to you as health director to take into account the great human suffering of displaced people in our area and take the appropriate action"',
+              ar: '«نناشدك كمدير صحة أن تراعي المعاناة الإنسانية الكبيرة للنازحين في منطقتنا وتتّخذ الإجراء المناسب في أقرب فرصة»',
+              en: '"We appeal to you as health director to take into account the great human suffering of displaced people in our area and take the appropriate action at the earliest opportunity"',
             },
             {
-              ar: '«منظمات دولية عديدة كمنظمة الصحة العالمية والمفوضية السامية تؤكّد أهمية الصحة النفسية للنازحين»',
-              en: '"Many international organisations such as WHO and UNHCR affirm the importance of mental health for displaced people"',
+              ar: '«منظمات دولية عديدة كمنظمة الصحة العالمية والمفوضية السامية تؤكّد أن الصحة النفسية للنازحين أولوية في كل استجابة إنسانية»',
+              en: '"Many international organisations such as WHO and UNHCR affirm that mental health for displaced people is a priority in every humanitarian response"',
             },
           ],
           correct: 1,
@@ -468,20 +468,20 @@ export const negotiationAndAdvocacy: CourseContent = {
           },
           options: [
             {
-              ar: '«هذا البناء ممتلك عام وأنتم ملزمون بإتاحته لخدمة المجتمع»',
-              en: '"This is a public building and you are obliged to make it available for community service"',
+              ar: '«هذا البناء ملك عام ممولّ من ضرائب الناس وأنتم ملزمون قانوناً بإتاحته لخدمة المجتمع الذي يموّله»',
+              en: '"This is a public building funded by people\'s taxes and you are legally obliged to make it available to serve the community that pays for it"',
             },
             {
               ar: '«أفهم قلقك على هيبة المكان ونظامه. هل يُحلّ الأمر باستخدام مدخل آخر أو بوقت بعد انتهاء الدوام الرسمي؟»',
               en: '"I understand your concern about the building\'s dignity and order. Would using a different entrance or scheduling it after official working hours solve this?"',
             },
             {
-              ar: '«سنضمن أن المشاركين يُعرِّفون بأنفسهم ويلتزمون بكل بروتوكولات المبنى»',
-              en: '"We will ensure participants identify themselves and comply with all building protocols"',
+              ar: '«سنضمن أن كل مشارك يُعرِّف بنفسه عند الباب ويحمل بطاقة زائر ويلتزم بكل بروتوكولات المبنى والأمن من دون استثناء»',
+              en: '"We will guarantee that every participant identifies themselves at the door, wears a visitor badge, and complies with every building and security protocol without exception"',
             },
             {
-              ar: '«إن لم توافقوا سنجد مبنى آخر وسنذكر ذلك في تقاريرنا»',
-              en: '"If you do not agree we will find another building and will note this in our reports"',
+              ar: '«إن لم توافقوا سنجد مبنى آخر وسنذكر في تقاريرنا أن الدائرة رفضت التعاون مع برنامج مجتمعي»',
+              en: '"If you do not agree we will find another building, and we will note in our reports that the department refused to cooperate with a community programme"',
             },
           ],
           correct: 1,
@@ -500,20 +500,20 @@ export const negotiationAndAdvocacy: CourseContent = {
           },
           options: [
             {
-              ar: 'اعتراض معلوماتي — لديهم معلومات ناقصة عن المشروع تحتاج تصحيحاً',
-              en: 'An informational objection — they have incomplete information about the project that needs correcting',
+              ar: 'اعتراض معلوماتي — لديهم معلومات ناقصة عن المشروع يكفي تصحيحها بعرض تفصيلي عن أهدافه',
+              en: 'An informational objection — they have incomplete information about the project that a detailed presentation of its aims would correct',
             },
             {
               ar: 'قد يكون اعتراض مخاوف أو قيمي — يحتاج سؤالاً توضيحياً قبل الحكم عليه وتحديد نوعه',
               en: 'Likely a concerns or values objection — it needs a clarifying question before judging it or identifying its type',
             },
             {
-              ar: 'اعتراض قيمي نهائي لا يمكن التفاوض عليه',
-              en: 'A final values objection that cannot be negotiated',
+              ar: 'اعتراض قيمي نهائي لا يمكن التفاوض عليه — أولوياتهم مختلفة عن أولوياتك ولا يبقى إلا البحث عن شريك آخر',
+              en: 'A final values objection that cannot be negotiated — their priorities differ from yours and all that remains is to look for another partner',
             },
             {
-              ar: 'ليس اعتراضاً حقيقياً بل مجرد ذريعة للرفض',
-              en: 'Not a real objection but just a pretext for refusal',
+              ar: 'ليس اعتراضاً حقيقياً بل ذريعة مهذّبة للرفض، والأفضل تجاوزها ومواصلة عرض مزايا المشروع',
+              en: 'Not a real objection but a polite pretext for refusal, so the best move is to pass over it and carry on presenting the project\'s merits',
             },
           ],
           correct: 1,
@@ -618,20 +618,20 @@ export const negotiationAndAdvocacy: CourseContent = {
           },
           options: [
             {
-              ar: '«أنا ممثّلة اللاجئين في هذه المنطقة وأتحدّث نيابةً عنهم جميعاً»',
-              en: '"I represent the refugees in this area and speak on behalf of all of them"',
+              ar: '«أنا ممثّلة اللاجئين في هذه المنطقة وأتحدّث نيابةً عنهم جميعاً، وسأعرض الأولويات التي خلصتُ إليها بوصفها الأكثر إلحاحاً لهم حتى يخرج المجلس اليوم بقائمة واحدة واضحة»',
+              en: '"I represent the refugees in this area and speak on behalf of all of them, and I will set out the priorities I have concluded are the most urgent for them so the council leaves today with one clear list"',
             },
             {
               ar: '«تحدّثتُ مع عشرين أسرة خلال الأسابيع الثلاثة الماضية وما يلي يعكس ما سمعته منهم — وأودّ التأكيد أن أصواتهم المباشرة أهمّ وأولى من أي وسيط»',
               en: '"I spoke with twenty families over the past three weeks and what follows reflects what I heard from them — and I want to emphasise that their direct voices matter more than any intermediary"',
             },
             {
-              ar: '«أنا متطوّعة لديّ خبرة ميدانية في هذه المنطقة وأعرف جيّداً ما يحتاجه الناس هنا»',
-              en: '"I am a volunteer with field experience in this area and I know well what people here need"',
+              ar: '«أنا متطوّعة أمضيتُ ثلاث سنوات في العمل الميداني في هذه المنطقة وأعرف احتياجات الناس هنا أفضل من أي تقرير مكتوب»',
+              en: '"I am a volunteer who has spent three years working in the field in this area, and I know what people here need better than any written report does"',
             },
             {
-              ar: '«معظم اللاجئين الذين التقيتُ بهم يطالبون بـ...»',
-              en: '"Most of the refugees I met are demanding..."',
+              ar: '«معظم اللاجئين الذين التقيتُ بهم يطالبون بـ... وهذا ما ستسمعونه من أي أسرة تسألونها في المنطقة»',
+              en: '"Most of the refugees I met are demanding... and this is what you would hear from any family you asked in the area"',
             },
           ],
           correct: 1,

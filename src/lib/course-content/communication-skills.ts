@@ -143,13 +143,22 @@ export const communicationSkills: CourseContent = {
             en: 'Someone tells you about a hardship they went through. Which response reflects active listening?',
           },
           options: [
-            { ar: '«ما تزعل، في ناس أوضاعهم أصعب بكتير»', en: '“Don’t be upset — other people have it much worse.”' },
-            { ar: '«لازم تعمل كذا وكذا، هيك بتنحلّ»', en: '“You need to do this and this, that will fix it.”' },
+            {
+              ar: '«ما تزعل، في ناس أوضاعهم أصعب بكتير وعم يتدبّروا حالهم»',
+              en: '“Don’t be upset — other people have it much worse and they are managing to cope.”',
+            },
+            {
+              ar: '«لازم تعمل كذا وكذا، وإذا ما زبطت جرّب غيره — هيك بتنحلّ»',
+              en: '“You need to do this and this, and if that doesn’t work try something else — that will fix it.”',
+            },
             {
               ar: '«سمعتك. إذا فهمت صح، أصعب شي عليك كان… صح؟»',
               en: '“I hear you. If I understood right, the hardest part for you was… is that right?”',
             },
-            { ar: '«وأنا كمان صار معي شي شبيه، خليني احكيلك»', en: '“Something similar happened to me — let me tell you.”' },
+            {
+              ar: '«وأنا كمان صار معي شي شبيه، خليني احكيلك شو عملت وقتها»',
+              en: '“Something similar happened to me — let me tell you what I did at the time.”',
+            },
           ],
           correct: 2,
           feedback: {
@@ -214,16 +223,22 @@ export const communicationSkills: CourseContent = {
             en: 'You are explaining registration steps to a group of older people. You notice puzzled looks, but when you asked “Understood?” everyone said yes.',
           },
           options: [
-            { ar: 'تكمل لأنهم أكّدوا أنهم فهموا', en: 'Continue — they confirmed they understood' },
             {
-              ar: 'تعيد الشرح بصوت أعلى وأسرع لتوفير الوقت',
-              en: 'Repeat louder and faster to save time',
+              ar: 'تكمل لأنهم أكّدوا أنهم فهموا، وإعادة الشرح ستُحرجهم أمام بعضهم وتُضيّع الوقت',
+              en: 'Continue — they confirmed they understood, and repeating it would only embarrass them in front of each other',
+            },
+            {
+              ar: 'تعيد الشرح بصوت أعلى وأسرع لتوفير الوقت — المشكلة على الأرجح في السمع',
+              en: 'Repeat it louder and faster to save time — at their age the problem is probably hearing',
             },
             {
               ar: 'تعيد بصياغة أبسط، وتسأل «أي خطوة تحبّوا أعيدها؟»، وتكتب الخطوات',
               en: 'Re-explain more simply, ask “Which step shall I go over again?”, and write the steps down',
             },
-            { ar: 'تطلب منهم سؤال أبنائهم في البيت', en: 'Tell them to ask their children at home' },
+            {
+              ar: 'تطلب منهم سؤال أبنائهم في البيت، فالشرح العائلي أسهل عليهم من شرحك',
+              en: 'Tell them to ask their children at home — family will explain it more easily than you can',
+            },
           ],
           correct: 2,
           feedback: {
@@ -284,20 +299,20 @@ export const communicationSkills: CourseContent = {
           },
           options: [
             {
-              ar: 'ترفع صوتك أيضاً لتثبت أن التوزيع عادل',
-              en: 'Raise your voice too, to prove the distribution is fair',
+              ar: 'ترفع صوتك أيضاً لتثبت أمام الجميع أن التوزيع عادل ولا محاباة فيه',
+              en: 'Raise your voice too, so everyone hears that the distribution is fair and there is no favouritism',
             },
             {
-              ar: 'تتجاهله وتكمل عملك حتى يتعب ويمشي',
-              en: 'Ignore him and carry on until he tires and leaves',
+              ar: 'تتجاهله وتكمل عملك حتى يتعب ويمشي، فالردّ عليه يشجّع غيره على الصراخ',
+              en: 'Ignore him and carry on until he tires and leaves — answering him would encourage others to shout',
             },
             {
               ar: 'تخفض صوتك، تعترف بانزعاجه، تدعوه جانباً، وتشرح آلية القائمة — وتُبلغ مشرفك',
               en: 'Lower your voice, acknowledge his frustration, invite him aside, explain how the list works — and inform your supervisor',
             },
             {
-              ar: 'تعده بأن تضيفه للقائمة لتهدئته الآن',
-              en: 'Promise to add him to the list to calm him down now',
+              ar: 'تعده بأن تضيفه للقائمة لتهدئته الآن، وتشرح للمشرف لاحقاً أنك اضطررت لذلك أمام الجمهور',
+              en: 'Promise to add him to the list to calm him down now, and explain to your supervisor afterwards that the crowd left you no choice',
             },
           ],
           correct: 2,
@@ -377,20 +392,20 @@ export const communicationSkills: CourseContent = {
           },
           options: [
             {
-              ar: 'تردّ بجفاء مماثل حتى يفهم أن أسلوبه غير مقبول',
-              en: 'Reply just as bluntly so he understands his tone is unacceptable',
+              ar: 'تردّ بجفاء مماثل حتى يفهم أن أسلوبه غير مقبول ويفكّر قبل أن يعيدها',
+              en: 'Reply just as bluntly so he understands his tone is unacceptable and thinks twice next time',
             },
             {
               ar: 'تفترض حسن النيّة، وإن بقي الشعور تتصل به أو تسأله وجهاً لوجه',
               en: 'Assume good intent, and if the feeling persists, call him or ask face to face',
             },
             {
-              ar: 'تشكو منه في مجموعة الفريق لترى إن كان يعامل غيرك هكذا',
-              en: 'Raise it in the team group to see whether he treats others this way',
+              ar: 'تشكو منه في مجموعة الفريق لترى إن كان يعامل غيرك هكذا وليعرف أن أسلوبه ملحوظ',
+              en: 'Raise it in the team group to see whether he treats others this way and to let him know his tone was noticed',
             },
             {
-              ar: 'تتوقّف عن مراسلته وتتعامل مع القائد فقط',
-              en: 'Stop messaging him and deal only with the lead',
+              ar: 'تتوقّف عن مراسلته وتتعامل مع القائد فقط حتى ينتهي التقرير',
+              en: 'Stop messaging him and deal only with the lead until the report is finished',
             },
           ],
           correct: 1,
@@ -459,20 +474,20 @@ export const communicationSkills: CourseContent = {
           },
           options: [
             {
-              ar: '«أكيد، بس استنّي شوي» — لتطمئنها الآن',
-              en: '“Of course, just wait a little” — to reassure her now',
+              ar: '«أكيد، بس استنّي شوي» — لتطمئنها الآن وتتجنّب إحباطها قبل أن يتأكّد شيء',
+              en: '“Of course, just wait a little” — to reassure her now and spare her the worry before anything is confirmed',
             },
             {
-              ar: '«ما بعرف» وتنهي الحديث',
-              en: '“I don’t know”, and end the conversation',
+              ar: '«ما بعرف» وتنهي الحديث، فالمعلومات غير المؤكّدة لا يجوز أن تُنقل للأهالي',
+              en: '“I don’t know”, and end the conversation, since unconfirmed information should not be passed on to families',
             },
             {
               ar: 'تقول إن البرنامج غير مؤكّد هذا العام، وإنك ستسأل وتعود بجواب في موعد محدّد، وتنصحها بألّا تنتظرنا وحدنا',
               en: 'Say the programme is not confirmed this year, that you will ask and come back with an answer by a named date, and advise her not to wait on us alone',
             },
             {
-              ar: 'تحيلها إلى القائد دون أن تقول شيئاً',
-              en: 'Refer her to the lead without saying anything',
+              ar: 'تحيلها إلى القائد دون أن تقول شيئاً، لأنه صاحب القرار وهو الأقدر على شرح الوضع',
+              en: 'Refer her to the lead without saying anything, since he makes the decision and can explain the situation better',
             },
           ],
           correct: 2,
@@ -553,20 +568,20 @@ export const communicationSkills: CourseContent = {
           },
           options: [
             {
-              ar: 'تعدها بألّا تخبر أحداً إطلاقاً وتحفظ السرّ',
-              en: 'Promise never to tell anyone and keep the secret',
+              ar: 'تعدها بألّا تخبر أحداً إطلاقاً وتحفظ السرّ، لأن ثقتها بك أهمّ من أي مساعدة',
+              en: 'Promise never to tell anyone and keep the secret, because her trust in you matters more than any help she might get',
             },
             {
-              ar: 'تخبر منسّقة البرنامج فوراً باسمها لتُدرَج على قائمة المساعدة',
-              en: 'Tell the programme coordinator her name at once so she is added to the assistance list',
+              ar: 'تخبر منسّقة البرنامج فوراً باسمها لتُدرَج على قائمة المساعدة قبل أن تُقفل',
+              en: 'Tell the programme coordinator her name at once so she is added to the assistance list before it closes',
             },
             {
               ar: 'تشكرها على ثقتها، وتشرح لها أنك ستذكر لمنسّقة البرنامج أن هناك أسرة قد تحتاج دعماً وتسألها إن كانت توافق أن تُذكر باسمها',
               en: 'Thank her for the trust, explain you will mention to the coordinator that a family may need support, and ask whether she agrees to be named',
             },
             {
-              ar: 'تنصحها بالتحدّث إلى أهلها وتترك الأمر',
-              en: 'Advise her to talk to her parents and leave it there',
+              ar: 'تنصحها بالتحدّث إلى أهلها وتترك الأمر، فهذا شأن عائلي لا يخصّ الجمعية',
+              en: 'Advise her to talk to her parents and leave it there, since this is a family matter and not the association’s business',
             },
           ],
           correct: 2,

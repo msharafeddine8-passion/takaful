@@ -114,10 +114,10 @@ export const mediaAndContent: CourseContent = {
             en: 'During a distribution activity, the coordinator suggests you photograph quickly because people are busy and there is no time to explain. What do you do?',
           },
           options: [
-            { ar: 'تصوّر من بعيد حتى لا تزعج أحداً وتنشر الصور لاحقاً', en: 'Photograph from a distance so as not to disturb anyone and post the photos later' },
+            { ar: 'تصوّر من بعيد بلقطات عامة تظهر فيها الوجوه صغيرة وتنشرها لاحقاً بلا أسماء', en: 'Photograph from a distance in wide shots where faces stay small, and post them later without naming anyone' },
             { ar: 'تؤجّل التصوير إلى لحظة تجد فيها دقيقة لتشرح وتأخذ موافقة', en: 'Postpone photographing to a moment when you have a minute to explain and obtain consent' },
-            { ar: 'تصوّر ثم تعود لاحقاً لأخذ موافقة ممن تستطيع الوصول إليهم', en: 'Photograph and return later to get consent from whoever you can reach' },
-            { ar: 'تصوّر المواد والمساعدات فقط من دون أن يظهر أي وجه', en: 'Photograph only the materials and aid without any faces appearing' },
+            { ar: 'تصوّر الآن ثم تعود بعد التوزيع لأخذ موافقة ممن تستطيع الوصول إليهم', en: 'Photograph now and return after the distribution to get consent from whoever you can still reach' },
+            { ar: 'تصوّر المواد والمساعدات فقط من دون أن يظهر أي وجه وتعتبر ذلك توثيقاً كافياً', en: 'Photograph only the materials and aid with no faces showing, and treat that as documentation enough' },
           ],
           correct: 1,
           feedback: {
@@ -277,10 +277,10 @@ export const mediaAndContent: CourseContent = {
             en: 'Another volunteer shares a WhatsApp post saying 500 families were affected by the floods and asks you to repost it on the organisation\'s page. The source given in the post is "local residents". What do you do?',
           },
           options: [
-            { ar: 'تنشره لأن مصدره أهل المنطقة وهم الأعلم بما حدث', en: 'Post it because the source is local residents who know best what happened' },
-            { ar: 'تنشره مع إضافة ملاحظة «الأرقام غير مؤكّدة»', en: 'Post it with a note that the figures are unconfirmed' },
+            { ar: 'تنشره لأن مصدره أهل المنطقة وهم الأعلم بما جرى في حيّهم، وتضيف أن المعلومة وصلتك من متطوّع تثق به', en: 'Post it because the source is local residents who know best what happened in their own neighbourhood, and add that a volunteer you trust passed it on' },
+            { ar: 'تنشره مع إضافة ملاحظة أن «الأرقام غير مؤكّدة» وأنها ستُصحَّح فور صدور رقم رسمي', en: 'Post it with a note that the figures are unconfirmed and will be corrected as soon as an official figure is issued' },
             { ar: 'لا تنشره وتبحث عن رقم رسمي من البلدية أو الدفاع المدني أو منظمة إنسانية معتمدة أولاً', en: 'Do not post it and look for an official figure from the municipality, civil defence or an accredited humanitarian organisation first' },
-            { ar: 'تنشره الآن وتحذفه لاحقاً إن ظهر رقم رسمي مختلف', en: 'Post it now and delete it later if an official figure turns out to be different' },
+            { ar: 'تنشره الآن لأن السرعة مهمّة في الاستجابة، وتحذفه لاحقاً إن ظهر رقم رسمي مختلف', en: 'Post it now because speed matters in an emergency response, and delete it later if an official figure turns out to be different' },
           ],
           correct: 2,
           feedback: {
@@ -422,10 +422,10 @@ export const mediaAndContent: CourseContent = {
             en: 'You photographed a group of participants at a workshop and posted the image. An hour later a participant tells you she is in a sensitive legal situation and should not have appeared. What do you do?',
           },
           options: [
-            { ar: 'تحذف الصورة فوراً وتعتذر منها وتعتبر الأمر منتهياً', en: 'Delete the photo immediately, apologise to her, and consider the matter closed' },
+            { ar: 'تحذف الصورة فوراً وتعتذر منها وتعتبر الأمر منتهياً بعد إزالة المنشور', en: 'Delete the photo immediately, apologise to her, and consider the matter closed once the post is off the page' },
             { ar: 'تحذف الصورة فوراً، تُبلّغ مشرفك أو مسؤول الحماية، وتكتب وصفاً لما حدث لمنع التكرار', en: 'Delete the photo immediately, notify your supervisor or protection officer, and write an account of what happened to prevent recurrence' },
-            { ar: 'تطمئنها وتتحقّق أولاً من أن المنشور لم يُشارَك من حسابات أخرى قبل الحذف', en: 'Reassure her and first check that the post has not been shared by other accounts before deleting' },
-            { ar: 'تُبقي الصورة لكن تُعدّل التعليق بحيث لا يذكر اسمها', en: 'Keep the photo but edit the caption so it no longer mentions her name' },
+            { ar: 'تطمئنها وتتحقّق أولاً من أن المنشور لم يُشارَك أو يُحفَظ من حسابات أخرى', en: 'Reassure her and first check whether the post has been shared or saved by other accounts before deleting' },
+            { ar: 'تُبقي الصورة لكن تُعدّل التعليق بحيث لا يذكر اسمها ولا مكان الورشة', en: 'Keep the photo but edit the caption so it no longer mentions her name or where the workshop was held' },
           ],
           correct: 1,
           feedback: {
@@ -443,9 +443,9 @@ export const mediaAndContent: CourseContent = {
           },
           options: [
             { ar: 'نشر الاسم الكامل للشخص مع صورته ليتعرّف إليه المتابعون ويدعموا قصّته', en: 'Publishing the person\'s full name with their image so followers recognise them and support their story' },
-            { ar: 'ذكر الحيّ والشارع بدقة حتى يعرف المانحون أين ترسل المساعدات', en: 'Naming the neighbourhood and street precisely so donors know where to send aid' },
+            { ar: 'ذكر الحيّ والشارع بدقة حتى يعرف المانحون أين تُرسل المساعدات وأين يزورون المستفيدين', en: 'Naming the neighbourhood and street precisely so donors know where to send aid and where to visit the beneficiaries' },
             { ar: 'طمس الوجه أو تمويهه حين تكون الصورة ضرورية للتوثيق لكن الشخص لم يوافق على نشر وجهه', en: 'Blurring or masking the face when the image is necessary for documentation but the person has not agreed to their face being published' },
-            { ar: 'إرسال الصور في مجموعة واتساب داخلية بدلاً من نشرها علنياً لأن المجموعة محدودة العضوية', en: 'Sending photos in an internal WhatsApp group instead of posting publicly because the group has limited membership' },
+            { ar: 'إرسال الصور في مجموعة واتساب داخلية بدلاً من نشرها علنياً، لأن أعضاءها كلّهم زملاء معروفون والمجموعة صغيرة العدد', en: 'Sending the photos in an internal WhatsApp group instead of posting them publicly, because the members are all known colleagues and the group is small' },
           ],
           correct: 2,
           feedback: {

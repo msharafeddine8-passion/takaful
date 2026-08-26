@@ -88,8 +88,8 @@ export const ethicalFundraising: CourseContent = {
           },
           options: [
             { ar: 'استخدام صور تنتهك كرامة الأطفال بدون موافقتهم أو موافقة أوليائهم، وتُقدّم المستفيدين كضحايا لا كأصحاب حقوق', en: 'Using images that violate children\'s dignity without their or their guardians\' consent, and presenting beneficiaries as victims rather than rights-holders' },
-            { ar: 'الصور مؤثّرة جداً وقد تُبعد بعض المانحين', en: 'The images are too emotional and may deter some donors' },
-            { ar: 'لا مشكلة — الهدف تجميع الموارد لمساعدتهم', en: 'No problem — the goal is gathering resources to help them' },
+            { ar: 'الصور مؤثّرة جداً وقد تُبعد بعض المانحين الذين ينفرون من مشاهد الحزن، فيُستحسن تخفيف حدّتها لتوسيع قاعدة التبرّع', en: 'The images are too emotional and may deter donors who recoil from sad scenes, so softening them would widen the base of people who give' },
+            { ar: 'لا مشكلة — الهدف تجميع الموارد لمساعدتهم، وما دام المال يعود إلى الأطفال أنفسهم فالوسيلة مبرّرة بحجم ما تجمعه الحملة', en: 'No problem — the goal is gathering resources to help them, and as long as the money goes back to the children themselves the method is justified by what the campaign raises' },
           ],
           correct: 0,
           feedback: {
@@ -107,8 +107,8 @@ export const ethicalFundraising: CourseContent = {
           },
           options: [
             { ar: 'نعم — تُبسّط وعداً معقّداً وتُغري المانح بتوقّعات قد لا تتحقّق بهذا المبلغ وحده', en: 'Yes — it oversimplifies a complex promise and entices the donor with expectations that may not materialise from this amount alone' },
-            { ar: 'لا — التبسيط ضروري في جمع التبرّعات لتسهيل اتّخاذ قرار التبرّع', en: 'No — simplification is necessary in fundraising to facilitate the donation decision' },
-            { ar: 'يعتمد على مدى صحّة الرقم', en: 'It depends on the accuracy of the figure' },
+            { ar: 'لا — التبسيط ضروري في جمع التبرّعات لتسهيل اتّخاذ قرار التبرّع، والمانح لا يقرأ التفاصيل المعقّدة أصلاً', en: 'No — simplification is necessary in fundraising to facilitate the donation decision, and the donor does not read the complicated detail anyway' },
+            { ar: 'يعتمد على مدى صحّة الرقم — إن كانت المئة تكفي أسرة فالعبارة دقيقة', en: 'It depends on the accuracy of the figure — if a hundred does cover a family the sentence is accurate' },
           ],
           correct: 0,
           feedback: {
@@ -153,8 +153,8 @@ export const ethicalFundraising: CourseContent = {
           },
           options: [
             { ar: 'احترم طلبه واسحب قصّته دون تأخير أو ضغط — الموافقة قابلة للسحب في أي وقت', en: 'Respect their request and withdraw their story without delay or pressure — consent can be withdrawn at any time' },
-            { ar: 'أخبره أن الحملة جاهزة وإعادة الصياغة مكلفة — اطلب منه الصبر حتى الحملة التالية', en: 'Tell them the campaign is ready and rephrasing is costly — ask them to wait until the next campaign' },
-            { ar: 'استبدل اسمه ومعرّفاته بأسماء مستعارة وتابع', en: 'Replace their name and identifiers with aliases and continue' },
+            { ar: 'أخبره أن الحملة جاهزة وإعادة الصياغة مكلفة — اطلب منه الصبر حتى الحملة التالية بدل سحبها الآن', en: 'Tell them the campaign is ready and rephrasing is costly — ask them to be patient and wait until the next campaign instead' },
+            { ar: 'استبدل اسمه ومعرّفاته بأسماء مستعارة وتابع — القصّة تبقى مفيدة ولا يستطيع أحد التعرّف عليه', en: 'Replace their name and identifiers with aliases and continue — the story stays useful and nobody can recognise them' },
           ],
           correct: 0,
           feedback: {
@@ -172,8 +172,8 @@ export const ethicalFundraising: CourseContent = {
           },
           options: [
             { ar: 'أبلّغ المانحين بالمبلغ الإضافي وأوضح كيف سيُستخدَم — إن لم تُحدَّد الاستخدامات في الحملة الأصلية، اطلب موافقتهم على توجيه مناسب', en: 'Notify donors of the additional amount and clarify how it will be used — if uses were not specified in the original campaign, seek their approval for an appropriate allocation' },
-            { ar: 'استخدم المبلغ الإضافي في احتياجات الجمعية العامّة دون إبلاغ لأنك لم تُحدّد المبلغ الأقصى', en: 'Use the additional amount for general organisation needs without notification since you did not specify a maximum amount' },
-            { ar: 'أعِد المبلغ الإضافي للمانحين', en: 'Return the additional amount to donors' },
+            { ar: 'استخدم المبلغ الإضافي في احتياجات الجمعية العامّة دون إبلاغ لأنك لم تُحدّد المبلغ الأقصى في الحملة، والتشغيل الإداري يحتاجه أكثر من البرنامج', en: 'Use the additional amount for general organisation needs without notification since you did not specify a maximum amount in the campaign, and administrative running costs need it more than the programme does' },
+            { ar: 'أعِد المبلغ الإضافي للمانحين فوراً، فالمال الذي جُمع فوق الهدف المُعلن لا يحقّ للجمعية الاحتفاظ به إطلاقاً', en: 'Return the additional amount to donors immediately, since money raised above the announced target is not the organisation’s to keep at all' },
           ],
           correct: 0,
           feedback: {
@@ -218,8 +218,8 @@ export const ethicalFundraising: CourseContent = {
           },
           options: [
             { ar: 'أبلّغه صادقاً بما حدث وما الظروف التي أثّرت، وما الذي سيتغيّر في الدورة القادمة — الصدق يبني ثقة يصعب بناؤها بالتفاؤل', en: 'Inform them honestly about what happened, what circumstances affected it, and what will change in the next cycle — honesty builds trust that optimism cannot' },
-            { ar: 'ضع الأرقام بشكل يُبرز ما تحقّق ويُهوّن ما لم يتحقّق', en: 'Frame the numbers to highlight what was achieved and minimise what was not' },
-            { ar: 'تجنّب الإشارة للأهداف الأصلية في التقرير لتجنّب المقارنة المحرجة', en: 'Avoid mentioning the original goals in the report to avoid an embarrassing comparison' },
+            { ar: 'ضع الأرقام بشكل يُبرز ما تحقّق ويُهوّن ما لم يتحقّق، فالمانح يحتاج أن يرى أثراً لا اعتذاراً كي يجدّد تمويله', en: 'Frame the numbers to highlight what was achieved and minimise what was not, since a funder needs to see impact rather than an apology to renew' },
+            { ar: 'تجنّب الإشارة للأهداف الأصلية في التقرير لتجنّب المقارنة المحرجة، واكتفِ بسرد ما أُنجز فعلاً حتى لا تُثير أسئلة عن ظروف خارجة عن يدك', en: 'Avoid mentioning the original goals in the report to avoid an embarrassing comparison, and simply narrate what was done so no questions arise about circumstances beyond your control' },
           ],
           correct: 0,
           feedback: {
@@ -237,8 +237,8 @@ export const ethicalFundraising: CourseContent = {
           },
           options: [
             { ar: 'أوضح للمانح الوضع بصدق وناقش معه توزيعاً أكثر كفاءة يحترم هدفه الأصلي — لا تقبل تمويلاً لا يمكن إنفاقه بكفاءة', en: 'Clarify the situation to the donor honestly and discuss a more efficient distribution that respects their original goal — do not accept funding that cannot be spent efficiently' },
-            { ar: 'قبل الأموال كاملاً ووزّع ما تبقّى على احتياجات أخرى بشكل هادئ', en: 'Accept the full funds and quietly distribute the remainder to other needs' },
-            { ar: 'ادّخر المبلغ الإضافي للطوارئ دون إبلاغ', en: 'Save the additional amount for emergencies without notification' },
+            { ar: 'قبل الأموال كاملاً ووزّع ما تبقّى على احتياجات أخرى بشكل هادئ، فالمانح يهمّه أن يُنفَق المال في عمل نافع لا أن يُتابع تفاصيل التوزيع', en: 'Accept the full funds and quietly distribute the remainder to other needs, since what matters to the donor is that the money does useful work, not that they follow every detail of the split' },
+            { ar: 'ادّخر المبلغ الإضافي للطوارئ دون إبلاغ، فالاحتياطي يخدم البرنامج نفسه حين تتوسّع قدرته على الاستيعاب لاحقاً', en: 'Save the additional amount for emergencies without notification, since a reserve serves the same programme once its absorption capacity grows later on' },
           ],
           correct: 0,
           feedback: {
@@ -318,8 +318,8 @@ export const ethicalFundraising: CourseContent = {
           },
           options: [
             { ar: 'هل هذا التعاون يُحسّن أثرها البيئي الفعلي أم يُعطيها غطاء "أخضر" دون تغيير حقيقي؟', en: 'Does this collaboration improve their actual environmental impact or give them "green" cover without real change?' },
-            { ar: 'كم يدفعون وهل يكفي لتمويل الأنشطة المخطّطة؟', en: 'How much do they pay and is it enough to fund the planned activities?' },
-            { ar: 'هل لديهم حضور إعلامي يُعزّز وصول حملتنا؟', en: 'Do they have a media presence that enhances our campaign\'s reach?' },
+            { ar: 'كم يدفعون، وهل يكفي المبلغ لتمويل كلّ الأنشطة التي خطّطنا لها هذا العام؟', en: 'How much do they pay, and is the amount enough to fund all of the activities we have planned for this year?' },
+            { ar: 'هل لديهم حضور إعلامي يُعزّز وصول حملتنا إلى جمهور أوسع ممّا نصله عادةً؟', en: 'Do they have a media presence that extends our campaign’s reach to a wider audience than we normally get?' },
           ],
           correct: 0,
           feedback: {
@@ -344,8 +344,8 @@ export const ethicalFundraising: CourseContent = {
           },
           options: [
             { ar: 'ارفض الشرط — قبول تمويل يشترط التمييز ينتهك مبدأ عدم التمييز الأساسي وقد يُفقدك ثقة المستفيدين والجمهور الذي يفوق قيمة التمويل', en: 'Refuse the condition — accepting funding that conditions discrimination violates the basic non-discrimination principle and may cost you beneficiary and public trust that exceeds the funding value' },
-            { ar: 'قبل الشرط لأن الجمعية تحتاج التمويل لخدمة الفئات الأخرى', en: 'Accept the condition because the organisation needs the funding to serve other groups' },
-            { ar: 'قبل الشرط مع التحايل عليه بطرق غير رسمية', en: 'Accept the condition while circumventing it through unofficial means' },
+            { ar: 'قبل الشرط لأن الجمعية تحتاج التمويل لخدمة الفئات الأخرى، وهي التي ستتضرّر أكثر إن رفضتَ المبلغ كلّه ولم يبقَ برنامج', en: 'Accept the condition because the organisation needs the funding to serve other groups, who are the ones harmed most if you refuse the whole amount and no programme survives' },
+            { ar: 'قبل الشرط مع التحايل عليه بطرق غير رسمية، فتخدم الفئة المستبعَدة عبر شريك آخر دون أن يظهر ذلك في التقارير', en: 'Accept the condition while circumventing it through unofficial means, serving the excluded group through another partner so it never shows in the reports' },
           ],
           correct: 0,
           feedback: {

@@ -30,6 +30,7 @@ import {
  * reason: «1 قيد» is not a sentence anybody says.
  */
 import { beirutToday, countPhrase, formatDuration } from '@/lib/when';
+import { emptyStates } from '@/lib/dictionaries/empty-states';
 import { HoursForm } from '@/components/account/HoursForm';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account/hours'>): Promise<Metadata> {
@@ -50,6 +51,9 @@ export default async function HoursPage(props: PageProps<'/[lang]/account/hours'
   if (!isLocale(lang)) notFound();
   const dict = getDictionary(lang);
   const t = dict.account.hours;
+  /* The sentences that stand where a zero would. Their own module rather than
+   * three splices into types.ts / ar.ts / en.ts — see its header. */
+  const nothing = emptyStates(lang).hours;
 
   if (!isDbConfigured()) {
     return (
@@ -117,9 +121,16 @@ export default async function HoursPage(props: PageProps<'/[lang]/account/hours'
           * this page.
           */}
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {/*
+            * At zero this rendered a label and then nothing at all — a bordered
+            * box with «ساعات معتمدة» in it and a blank where the answer goes,
+            * which is the one thing on the page a volunteer opens it to read.
+            * The sentence says how an hour gets into this total instead.
+            */}
           <Tile
             label={t.verifiedLabel}
             value={verified > 0 ? formatDuration(verified, lang) : null}
+            sentence={verified > 0 ? undefined : nothing.verifiedNone}
             note={verified > 0 ? t.verifiedNote : undefined}
             strong
           />
@@ -132,10 +143,13 @@ export default async function HoursPage(props: PageProps<'/[lang]/account/hours'
             sentence={countPhrase(awaiting, t.awaiting)}
             note={awaiting > 0 ? t.pendingNote : undefined}
           />
+          {/* «لم تبدأ بعد» was a verdict on the reader where the fact is about
+              the record: the first stage opens on its own the moment an hour is
+              verified, so the tile says that instead of marking them. */}
           <Tile
             label={t.stageLabel}
             value={stage === 0 ? null : String(stage)}
-            sentence={stage === 0 ? t.notStarted : t.stageOf}
+            sentence={stage === 0 ? nothing.stageNone : t.stageOf}
           />
         </div>
 
@@ -165,7 +179,9 @@ export default async function HoursPage(props: PageProps<'/[lang]/account/hours'
         )}
 
         {rows.length === 0 ? (
-          <p className="mt-3 rounded-xl border border-line bg-surface-2 px-5 py-4 text-ink-2">{t.empty}</p>
+          <p className="mt-3 max-w-[70ch] rounded-xl border border-line bg-surface-2 px-5 py-4 leading-relaxed text-ink-2">
+            {nothing.ledgerEmpty}
+          </p>
         ) : (
           <div className="mt-3 overflow-x-auto rounded-2xl border border-line">
             <table className="w-full min-w-[38rem] border-collapse bg-surface text-start">
@@ -338,7 +354,21 @@ function Tile({
         </p>
       )}
       {sentence && (
-        <p className={`text-[0.95rem] font-bold text-ink-2 ${value ? 'mt-1' : 'mt-1.5'}`}>
+        /*
+         * Bold beside a figure, plain without one.
+         *
+         * With a value above it this is a caption and wants the weight. With no
+         * value it IS the tile — a sentence saying how something gets into this
+         * total — and two lines of bold at that point reads as an alarm rather
+         * than as an explanation.
+         */
+        <p
+          className={
+            value
+              ? 'mt-1 text-[0.95rem] font-bold text-ink-2'
+              : 'mt-1.5 text-[0.92rem] leading-relaxed text-ink-2'
+          }
+        >
           {sentence}
         </p>
       )}

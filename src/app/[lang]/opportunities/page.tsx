@@ -9,10 +9,11 @@ import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
 import {
   opportunities, scheduledMinutes, isAwaitingDate, interestsOf,
-  type OpportunityRow,
+  type OpportunityListRow,
 } from '@/lib/activities';
 import { formatDuration } from '@/lib/hours';
-import { formatDateTime } from '@/lib/when';
+import { countPhrase, formatDateTime } from '@/lib/when';
+import { emptyStates } from '@/lib/dictionaries/empty-states';
 import { JoinButton } from '@/components/activities/JoinButton';
 import { InterestButton } from '@/components/activities/InterestButton';
 
@@ -33,6 +34,7 @@ export default async function OpportunitiesPage(props: PageProps<'/[lang]/opport
   if (!isLocale(lang)) notFound();
   const dict = getDictionary(lang);
   const t = dict.account.activities;
+  const nothing = emptyStates(lang).opportunities;
 
   if (!isDbConfigured()) {
     return (
@@ -66,8 +68,13 @@ export default async function OpportunitiesPage(props: PageProps<'/[lang]/opport
         <p className="mt-3 max-w-[60ch] text-[1.02rem] leading-relaxed text-ink-2">{t.lede}</p>
 
         {rows.length === 0 ? (
-          <p className="mt-8 rounded-xl border border-line bg-surface-2 px-5 py-4 text-ink-2">
-            {t.none}
+          /* «تابعنا قريبًا» asks a stranger to keep coming back and check. This
+             says what will be here and what each entry will carry, so somebody
+             deciding whether volunteering with this association is for them
+             learns something from an empty page rather than being asked to
+             return to it. */
+          <p className="mt-8 max-w-[70ch] rounded-xl border border-line bg-surface-2 px-5 py-4 leading-relaxed text-ink-2">
+            {nothing.none}
           </p>
         ) : (
           <div className="mt-8 grid gap-5 sm:grid-cols-2">
@@ -91,13 +98,14 @@ export default async function OpportunitiesPage(props: PageProps<'/[lang]/opport
 function ActivityCard({
   a, lang, dict, signedIn, interested,
 }: {
-  a: OpportunityRow;
+  a: OpportunityListRow;
   lang: Locale;
   dict: Dictionary;
   signedIn: boolean;
   interested: boolean;
 }) {
   const t = dict.account.activities;
+  const nothing = emptyStates(lang).opportunities;
   const minutes = scheduledMinutes(a);
   const full = a.capacity !== null && a.taken >= a.capacity;
   const awaiting = isAwaitingDate(a);
@@ -148,17 +156,43 @@ function ActivityCard({
             <dd>{formatDuration(minutes, lang)} {t.hoursValue}</dd>
           </div>
         )}
+        {/*
+          * Three different questions were being answered by one bare numeral.
+          *
+          * On an activity with no date, `taken` is a registration count on
+          * something nobody can register for: it was zero on every such card,
+          * for ever, and rendered as «👥 0» — the client's section 22 exactly.
+          * That number is not shown at all now. What is shown is how many
+          * people have asked to be told when it is scheduled, which is a real
+          * figure that moves, and at nought it is the invitation rather than
+          * the measurement: «كن أوّل من يبدي اهتمامه».
+          *
+          * With a date and a capacity, «0 / 20 مقعد» is left exactly as it was.
+          * A zero with a denominator beside it is not an empty room, it is
+          * twenty free places, and replacing it with a sentence would tell a
+          * reader less than the numbers do.
+          *
+          * With a date and no capacity, the bare figure gets its noun. «👥 3»
+          * says three of nothing in either language, and Arabic cannot count a
+          * noun by putting a numeral in front of it — hence countPhrase.
+          */}
         <div className="flex gap-2">
-          <dt aria-hidden>👥</dt>
+          <dt aria-hidden>{awaiting ? '🔔' : '👥'}</dt>
           <dd>
-            {a.capacity === null
-              ? `${a.taken}`
-              : `${a.taken} / ${a.capacity} ${t.spots}`}
-            {full && <span className="ms-2 font-bold text-ink-3">({t.full})</span>}
-            {a.waiting > 0 && (
-              <span className="ms-2 text-ink-3">
-                {t.waitlist}: {a.waiting}
-              </span>
+            {awaiting ? (
+              countPhrase(a.interested, nothing.waitingCount)
+            ) : (
+              <>
+                {a.capacity === null
+                  ? countPhrase(a.taken, nothing.registeredCount)
+                  : `${a.taken} / ${a.capacity} ${t.spots}`}
+                {full && <span className="ms-2 font-bold text-ink-3">({t.full})</span>}
+                {a.waiting > 0 && (
+                  <span className="ms-2 text-ink-3">
+                    {t.waitlist}: {a.waiting}
+                  </span>
+                )}
+              </>
             )}
           </dd>
         </div>

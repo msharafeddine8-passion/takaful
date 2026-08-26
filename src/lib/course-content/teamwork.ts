@@ -120,20 +120,20 @@ export const teamwork: CourseContent = {
           },
           options: [
             {
-              ar: 'تكمل بطريقتك لأنك كُلّفت أولاً وتتركه يعمل بطريقته',
-              en: 'Carry on your way since you were assigned first, and let him do his',
+              ar: 'تكمل بطريقتك لأنك كُلّفت أولاً وتتركه يعمل بطريقته، ويحسم القائد الأمر حين يصل',
+              en: 'Carry on your way since you were assigned first and let him do his, so the lead settles it when he arrives',
             },
             {
-              ar: 'تتنازل وتنسحب تجنّباً للخلاف',
-              en: 'Give way and withdraw to avoid conflict',
+              ar: 'تتنازل وتنسحب تجنّباً للخلاف، فهو يبدو واثقاً من تكليفه، وتجد لنفسك مهمّة أخرى',
+              en: 'Give way and withdraw to avoid conflict — he sounds certain of his assignment — and find another task',
             },
             {
               ar: 'توقفان معاً دقيقة، تتصلان بالقائد ليحسم من المسؤول، ثم تنفّذان قراره',
               en: 'Both pause for a minute, call the lead to settle who is responsible, then follow their decision',
             },
             {
-              ar: 'تتجادلان حتى يقتنع أحدكما',
-              en: 'Argue until one of you is convinced',
+              ar: 'تتجادلان حتى يقتنع أحدكما، فمن قرأ التكليف صحيحاً هو من يُكمل التجهيز',
+              en: 'Argue until one of you is convinced — whoever read the assignment correctly should finish the setup',
             },
           ],
           correct: 2,
@@ -191,16 +191,22 @@ export const teamwork: CourseContent = {
             en: 'You finished early and notice a teammate is behind and looks overwhelmed. What is most appropriate?',
           },
           options: [
-            { ar: 'تنتظر انتهاء النشاط لأنك أدّيت ما عليك', en: 'Wait until the activity ends — you did your part' },
             {
-              ar: 'تنفّذ مهمته مكانه بسرعة دون إخباره لتوفير الوقت',
-              en: 'Quickly do his task for him without telling him, to save time',
+              ar: 'تنتظر انتهاء النشاط لأنك أدّيت ما عليك، والتدخّل قد يُفهم تشكيكاً في قدرته',
+              en: 'Wait until the activity ends — you did your part, and stepping in may look like doubt',
+            },
+            {
+              ar: 'تنفّذ مهمته مكانه بسرعة دون إخباره لتوفير الوقت، وتخبره بعد أن تنتهي',
+              en: 'Quickly do his task for him without telling him, then say so once it is done',
             },
             {
               ar: 'تعرض عليه المساعدة، وإن كانت المهمة تتطلّب تنسيقاً تُعلم القائد',
               en: 'Offer to help, and if the task needs coordination, tell the lead',
             },
-            { ar: 'تخبر القائد أن زميلك متأخّر', en: 'Tell the lead that your teammate is behind' },
+            {
+              ar: 'تخبر القائد أن زميلك متأخّر ليعيد توزيع المهمّة قبل تأخّر النشاط',
+              en: 'Tell the lead that your teammate is behind, so the task gets reassigned in time',
+            },
           ],
           correct: 2,
           feedback: {
@@ -285,20 +291,20 @@ export const teamwork: CourseContent = {
           },
           options: [
             {
-              ar: 'تصحّحه بصمت في التقرير القادم دون إخبار أحد',
-              en: 'Quietly correct it in the next report without telling anyone',
+              ar: 'تصحّحه بصمت في التقرير القادم فيتوازن المجموع الشهري',
+              en: 'Quietly correct it in the next report so the monthly total balances out again',
             },
             {
               ar: 'تُبلغ القائد فوراً بالرقم الصحيح وكيف حدث الخطأ',
               en: 'Tell the lead at once with the correct figure and how the error happened',
             },
             {
-              ar: 'تتركه لأن الفرق بسيط ولن ينتبه أحد',
-              en: 'Leave it — the difference is small and nobody will notice',
+              ar: 'تتركه لأن الفرق بسيط ولن ينتبه أحد بعد إرسال التقرير',
+              en: 'Leave it — the difference is small and nobody will notice once the report is sent',
             },
             {
-              ar: 'تلوم من أملى عليك الأرقام',
-              en: 'Blame whoever gave you the numbers',
+              ar: 'تلوم من أملى عليك الأرقام وتطلب منه إبلاغ القائد',
+              en: 'Blame whoever gave you the numbers and ask him to tell the lead',
             },
           ],
           correct: 1,
@@ -367,7 +373,7 @@ export const teamwork: CourseContent = {
           },
           options: [
             {
-              ar: 'تحضر في الصباح وتشرح للقائد هناك أن المواد ناقصة',
+              ar: 'تحضر في الصباح وتشرح للقائد هناك أن المواد ناقصة، فقد يجد لها حلّاً في الموقع',
               en: 'Turn up in the morning and explain to the lead there that the materials are missing',
             },
             {
@@ -375,12 +381,12 @@ export const teamwork: CourseContent = {
               en: 'Call the lead now, explain, and ask whether the materials are with the association or a teammate',
             },
             {
-              ar: 'تعتذر عن المشاركة لأنك غير جاهز',
-              en: 'Withdraw from the activity because you are not ready',
+              ar: 'تعتذر عن المشاركة لأنك غير جاهز، وتترك مكانك لمتطوّع آخر يستطيع تجهيزه',
+              en: 'Withdraw from the activity because you are not ready, and free your place for someone else',
             },
             {
-              ar: 'تحضر وتدبّر أمرك بما تجده في المكان',
-              en: 'Turn up and improvise with whatever is on site',
+              ar: 'تحضر وتدبّر أمرك بما تجده في المكان، فالارتجال جزء من العمل الميداني',
+              en: 'Turn up and improvise with whatever is on site — improvising is part of field work',
             },
           ],
           correct: 1,
@@ -460,20 +466,20 @@ export const teamwork: CourseContent = {
           },
           options: [
             {
-              ar: 'تنتظر حتى الجمعة مساءً لعلّ السفر يُلغى',
-              en: 'Wait until Friday evening in case the trip is cancelled',
+              ar: 'تنتظر حتى الجمعة مساءً لعلّ السفر يُلغى، فلا داعي لإقلاق القائد الآن',
+              en: 'Wait until Friday evening in case the trip is cancelled — no sense worrying the lead yet',
             },
             {
               ar: 'تُبلغ القائد يوم الأربعاء، وتوضّح أن السفر شبه مؤكّد',
               en: 'Tell the lead on Wednesday, explaining the trip is near-certain',
             },
             {
-              ar: 'لا تُبلغ أحداً وتحاول أن تجد بديلاً بنفسك بصمت',
-              en: 'Tell nobody and quietly try to find a replacement yourself',
+              ar: 'لا تُبلغ أحداً وتجد بديلاً بنفسك بصمت، وتُعرّفه بالقائد يوم السبت',
+              en: 'Tell nobody, quietly find a replacement yourself, and introduce him on Saturday',
             },
             {
-              ar: 'تحضر رغم السفر لأنك وعدت',
-              en: 'Go to the activity despite the trip, because you promised',
+              ar: 'تحضر رغم السفر لأنك وعدت، وتؤجّل سفرك إلى ما بعد النشاط',
+              en: 'Go to the activity despite the trip, because you promised, and push your travel back',
             },
           ],
           correct: 1,
@@ -678,20 +684,20 @@ export const teamwork: CourseContent = {
           },
           options: [
             {
-              ar: 'تصحّح أمام الأهالي فوراً وتوضّح للجميع أنها جديدة وأخطأت',
-              en: 'Correct it in front of the families at once, explaining she is new and got it wrong',
+              ar: 'تصحّح أمام الأهالي فوراً وتوضّح أنها جديدة وأنّ ما قالته ليس سياسة الجمعية',
+              en: 'Correct it in front of the families at once, explaining she is new and that what she said is not the association’s policy',
             },
             {
               ar: 'تصحّح المعلومة للأهالي بهدوء دون لومها، ثم تشرح لها على انفراد بعد ذلك',
               en: 'Calmly correct the information for the families without blaming her, then explain to her privately afterwards',
             },
             {
-              ar: 'تصمت الآن وتترك القائد يتصرّف لاحقاً',
-              en: 'Stay quiet now and let the lead deal with it later',
+              ar: 'تصمت الآن وتترك القائد يتصرّف لاحقاً، فتصحيح متطوّعة أمام الأهالي ليس دورك أنت',
+              en: 'Stay quiet now and let the lead deal with it later — correcting another volunteer in front of families is not your role',
             },
             {
-              ar: 'تشرح لها على انفراد وتترك الوعد قائماً تجنّباً للإحراج',
-              en: 'Explain to her privately and let the promise stand, to avoid embarrassment',
+              ar: 'تشرح لها على انفراد وتترك الوعد قائماً تجنّباً للإحراج، وتُدبّر الأمر مع الجمعية لاحقاً',
+              en: 'Explain to her privately and let the promise stand to avoid embarrassment, then sort something out with the association later',
             },
           ],
           correct: 1,

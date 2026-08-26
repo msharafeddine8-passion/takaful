@@ -5,7 +5,7 @@ import { connection } from 'next/server';
 import { isLocale } from '@/lib/i18n';
 import { getDictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
-import { Container, Section, Kicker } from '@/components/ui';
+import { Arrow, Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
 import { certificatesFor, type CertificateKind } from '@/lib/certificates';
@@ -15,6 +15,7 @@ import { credentialView } from '@/lib/credential-view';
  * name, and those both go through lib/format. */
 import { formatDate } from '@/lib/format';
 import { unissuedCourseCertificates, ensureCourseCertificate } from '@/lib/academy';
+import { emptyStates } from '@/lib/dictionaries/empty-states';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account/certificates'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -33,6 +34,7 @@ export default async function MyCertificatesPage(props: PageProps<'/[lang]/accou
   if (!isLocale(lang)) notFound();
   const dict = getDictionary(lang);
   const t = dict.account.certificate;
+  const nothing = emptyStates(lang).certificates;
 
   if (!isDbConfigured()) {
     return (
@@ -86,15 +88,28 @@ export default async function MyCertificatesPage(props: PageProps<'/[lang]/accou
         )}
 
         {certificates.length === 0 ? (
+          /*
+           * «أنهِ دورة لتحصل على أولى شهاداتك» was an instruction; this says how
+           * the association issues one and what it carries, which is the same
+           * information without the imperative. Word for word the sentence the
+           * printed record uses (passport.ts, certificatesEmpty) — a volunteer
+           * meets both, and two accounts of how a certificate is earned would
+           * make each of them look like a guess.
+           *
+           * The filled button is a plain link now. The academy is genuinely
+           * open and worth pointing at; it is not worth shouting at somebody on
+           * the day they signed up.
+           */
           <div className="mt-8">
-            <p className="rounded-xl border border-line bg-surface-2 px-5 py-4 text-ink-2">
-              {t.none}
+            <p className="max-w-[70ch] rounded-xl border border-line bg-surface-2 px-5 py-4 leading-relaxed text-ink-2">
+              {nothing.never}
             </p>
             <Link
               href={`/${lang}/academy`}
-              className="mt-4 inline-block rounded-full bg-brand-orange px-6 py-3 text-[0.95rem] font-extrabold text-[#241503] hover:bg-brand-orange-dark"
+              className="mt-4 inline-flex min-h-11 items-center font-bold text-brand-blue hover:underline dark:text-brand-orange"
             >
-              {dict.account.dashboard.coursesCta} →
+              {nothing.browse}
+              <Arrow lang={lang} />
             </Link>
           </div>
         ) : (

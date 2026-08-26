@@ -62,8 +62,8 @@ export const environmentalVolunteering: CourseContent = {
           },
           options: [
             { ar: 'التنظيف وحده غير كافٍ — يحتاج تدخّلاً موازياً في السلوك: التوعية وإدارة النفايات في المصدر', en: 'Cleaning alone is insufficient — it needs a parallel intervention in behaviour: awareness and waste management at the source' },
-            { ar: 'يجب تنظيم أيام تنظيف أكثر وأكبر', en: 'More and larger cleaning days should be organised' },
-            { ar: 'الشاطئ غير قابل للإنقاذ في السياق الحالي', en: 'The beach is unsalvageable in the current context' },
+            { ar: 'يجب تنظيم أيام تنظيف أكثر وأكبر — رفع الوتيرة إلى مرّة كل شهر بدل مرّة في السنة يسبق تراكم النفايات ويُبقي الشاطئ نظيفاً', en: 'More and larger cleaning days should be organised — raising the frequency to monthly instead of yearly outpaces the accumulation and keeps the beach clean' },
+            { ar: 'الشاطئ غير قابل للإنقاذ في السياق الحالي — الأجدى نقل الجهد إلى موقع آخر أقلّ تلوّثاً يظهر فيه أثر التنظيف', en: 'The beach is unsalvageable in the current context — the effort is better moved to a less polluted site where the cleaning actually shows' },
           ],
           correct: 0,
           feedback: {
@@ -81,8 +81,8 @@ export const environmentalVolunteering: CourseContent = {
           },
           options: [
             { ar: 'رصد مستمرّ لجودة المياه وتوثيق مصادر التلوّث لدعم ملفّ قانوني أو سياساتي', en: 'Continuous monitoring of water quality and documenting pollution sources to support a legal or policy case' },
-            { ar: 'حملة تنظيف موسمية بمشاركة المدارس', en: 'A seasonal cleaning campaign with school participation' },
-            { ar: 'توعية الأطفال بأهمية المياه النظيفة', en: 'Educating children about the importance of clean water' },
+            { ar: 'حملة تنظيف موسمية بمشاركة المدارس، فتكرارها كل فصل يُبقي القضية حاضرة في المنطقة ويُخفّف الحمل الظاهر على المجرى', en: 'A seasonal cleaning campaign with school participation, repeated each term so the issue stays present locally and the visible load on the watercourse drops' },
+            { ar: 'توعية الأطفال بأهمية المياه النظيفة ضمن برنامج مدرسي ممتدّ، على أمل أن ينقلوا ما تعلّموه إلى أهاليهم فيتغيّر سلوك الأسرة كلّها', en: 'Educating children about the importance of clean water within an extended school programme, hoping they carry what they learn home so the whole household changes' },
           ],
           correct: 0,
           feedback: {
@@ -120,8 +120,8 @@ export const environmentalVolunteering: CourseContent = {
           },
           options: [
             { ar: 'اختيار أنواع نباتية مقاومة للجفاف ووضع خطّة ري وصيانة مستمرّة بعد اليوم الأول', en: 'Choosing drought-resistant plant species and establishing a continuous irrigation and maintenance plan after the first day' },
-            { ar: 'جمع أكبر عدد من المتطوّعين لزراعة أكبر عدد من الأشجار', en: 'Gathering the largest number of volunteers to plant the largest number of trees' },
-            { ar: 'توثيق الحدث بالصور ومشاركتها لرفع الوعي', en: 'Documenting the event with photos and sharing them to raise awareness' },
+            { ar: 'جمع أكبر عدد من المتطوّعين لزراعة أكبر عدد من الأشجار في يوم واحد', en: 'Gathering the largest possible number of volunteers to plant as many trees as possible in a single day' },
+            { ar: 'توثيق الحدث بالصور ومشاركتها لرفع الوعي واجتذاب متطوّعين للموسم القادم', en: 'Documenting the event with photos and sharing them to raise awareness and attract volunteers for the next season' },
           ],
           correct: 0,
           feedback: {
@@ -139,8 +139,8 @@ export const environmentalVolunteering: CourseContent = {
           },
           options: [
             { ar: 'ناقش بوضوح: تمويل موقع يُحقّق أثراً بيئياً أقلّ قد يُضرّ بمصداقيتك ومصداقية الجمعية على المدى البعيد', en: 'Discuss clearly: funding a site that achieves less environmental impact may harm your credibility and the organisation\'s in the long run' },
-            { ar: 'وافق — أي تشجير أفضل من لا تشجير', en: 'Agree — any greening is better than none' },
-            { ar: 'ارفض التمويل لأنه يتعارض مع استقلالية قرار الجمعية', en: 'Refuse the funding as it conflicts with the organisation\'s decision independence' },
+            { ar: 'وافق — أي تشجير أفضل من لا تشجير، والموقع السياحي يمنح الحملة ظهوراً يجذب تمويلاً أكبر لاحقاً', en: 'Agree — any greening is better than none, and a visible tourist site gives the campaign media reach that attracts larger funding later' },
+            { ar: 'ارفض التمويل لأنه يتعارض مع استقلالية قرار الجمعية، فقبول شرط الموقع مرّة يجعل كل مانح لاحق يتوقّع الحقّ نفسه', en: 'Refuse the funding as it conflicts with the organisation’s decision independence — accepting a site condition once makes every later funder expect the same right' },
           ],
           correct: 0,
           feedback: {
@@ -178,8 +178,8 @@ export const environmentalVolunteering: CourseContent = {
           },
           options: [
             { ar: 'البرنامج غير مستدام — انسحاب المتطوّعين يعني موت الأشجار، يجب تحويل مسؤولية الري للسكّان أو البلدية', en: 'The programme is not sustainable — volunteer withdrawal means tree death; watering responsibility must be transferred to residents or the municipality' },
-            { ar: 'تكلفة الري مرتفعة ويجب تقليل عدد الأشجار', en: 'Irrigation cost is high and the number of trees should be reduced' },
-            { ar: 'المتطوّعون يتعبون من الري اليومي ويحتاجون تناوباً', en: 'Volunteers tire of daily irrigation and need rotation' },
+            { ar: 'تكلفة الري مرتفعة ويجب تقليل عدد الأشجار إلى ما تحتمله الميزانية الحالية قبل أن يستنزف البرنامج موارد الجمعية كلّها', en: 'Irrigation cost is high and the number of trees should be reduced to what the current budget can bear, before the programme drains the organisation’s resources' },
+            { ar: 'المتطوّعون يتعبون من الري اليومي ويحتاجون جدول تناوب أسبوعياً يُوزّع العبء ويمنع انقطاع أحدهم عن إفساد الري', en: 'Volunteers tire of daily irrigation and need a weekly rotation schedule that spreads the load so one person dropping out does not break the watering' },
           ],
           correct: 0,
           feedback: {
@@ -197,8 +197,8 @@ export const environmentalVolunteering: CourseContent = {
           },
           options: [
             { ar: 'أشرك السكّان في القرارات منذ البداية، اجعل منهم جزءاً من تصميم البرنامج والتنفيذ، لا فقط مستهدفين للتوعية', en: 'Involve residents in decisions from the start, make them part of programme design and implementation, not just targets of awareness' },
-            { ar: 'نظّم حفلات توعية بيئية متكرّرة لبناء ثقافة الحفاظ على البيئة', en: 'Organise repeated environmental awareness events to build a conservation culture' },
-            { ar: 'ركّز على الشباب لأنهم أكثر تقبّلاً للقيم البيئية', en: 'Focus on youth as they are more receptive to environmental values' },
+            { ar: 'نظّم حفلات توعية بيئية متكرّرة لبناء ثقافة الحفاظ على البيئة، فتراكم الرسائل على مدار السنة يُرسّخ العادة لدى السكّان', en: 'Organise repeated environmental awareness events to build a conservation culture, since messages accumulating across the year embed the habit in residents' },
+            { ar: 'ركّز على الشباب لأنهم أكثر تقبّلاً للقيم البيئية، وحين يكبرون يحملون هذه القيم إلى أسرهم وإلى قرارات الحيّ بعد سنوات', en: 'Focus on youth as they are more receptive to environmental values, and as they grow they carry those values into their families and into neighbourhood decisions' },
           ],
           correct: 0,
           feedback: {
@@ -273,8 +273,8 @@ export const environmentalVolunteering: CourseContent = {
           },
           options: [
             { ar: 'هل المنطقة تستوعب هذا العدد من الزوّار دون ضرر للنظام البيئي، وما البروتوكولات الرسمية للدخول؟', en: 'Can the area accommodate this number of visitors without harm to the ecosystem, and what are the official entry protocols?' },
-            { ar: 'كيف نُوثّق الرحلة بأفضل طريقة لزيادة الوعي البيئي؟', en: 'How do we document the trip in the best way to increase environmental awareness?' },
-            { ar: 'ما الأنشطة التطوّعية التي يمكن تنفيذها خلال الزيارة؟', en: 'What volunteer activities can be carried out during the visit?' },
+            { ar: 'كيف نُوثّق الرحلة بالصور بأفضل طريقة لزيادة الوعي البيئي لدى من لم يشارك فيها؟', en: 'How do we document the trip in the best way to increase environmental awareness among those who did not come?' },
+            { ar: 'ما الأنشطة التطوّعية التي يمكن تنفيذها خلال الزيارة لتكون الرحلة مفيدة لا نزهة؟', en: 'What volunteer activities can be carried out during the visit so the trip is useful rather than an outing?' },
           ],
           correct: 0,
           feedback: {
@@ -292,8 +292,8 @@ export const environmentalVolunteering: CourseContent = {
           },
           options: [
             { ar: 'اشكر حماسه وأخبره أن اختيار النوع النباتي يستوجب استشارة متخصّص في البيئة المحلّية أولاً', en: 'Thank their enthusiasm and explain that selecting a plant species requires first consulting a local environment specialist' },
-            { ar: 'وافق — سرعة النموّ ميزة وجمال المنطقة يُشجّع الزيارات', en: 'Agree — fast growth is an advantage and area beauty encourages visits' },
-            { ar: 'ارفض لأن اقتراحات وسائل التواصل الاجتماعي لا تُوثَق علمياً', en: 'Refuse because social media suggestions are not scientifically validated' },
+            { ar: 'وافق — سرعة النموّ ميزة وجمال المنطقة يُشجّع الزيارات، وحماس المتطوّع الذي يقترح لا يُردّ حتى لا ينطفئ', en: 'Agree — fast growth is an advantage and area beauty encourages visits, and a volunteer’s proposal should not be refused lest their enthusiasm die' },
+            { ar: 'ارفض لأن اقتراحات وسائل التواصل الاجتماعي لا تُوثَق علمياً، واعتمد فقط ما ورد في أدلّة التشجير المعتمدة', en: 'Refuse because social media suggestions are not scientifically validated, and rely only on what the approved planting guides list' },
           ],
           correct: 0,
           feedback: {

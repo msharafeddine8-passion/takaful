@@ -19,6 +19,22 @@ import type { Locale } from '@/lib/i18n';
  * same physical distance on both, and makes the whole sheet tunable from one
  * number when a form needs to be squeezed onto one page.
  *
+ * WHY THE SHEET CARRIES ITS PAPER WIDTH AS A MINIMUM
+ *
+ * Because a unit is a fraction of the container, the sheet is only legible
+ * while the container is about as wide as the paper. On a 375px phone the
+ * column is 333px, one unit collapsed to 2.4mm-worth of nothing — 3.3px — and
+ * the whole form rendered as grey texture: field labels at 3.3px, the title at
+ * 9px, a landscape attendance sheet down to 2.4px. Not small. Unreadable.
+ *
+ * So the sheet never narrows below the paper it is drawn for, and the page
+ * scrolls it sideways instead. The alternative — reflowing to one column on
+ * screen — would mean a second layout to keep true, and the thing a volunteer
+ * is looking at would stop being the thing that comes out of the printer.
+ * A form is a fixed piece of paper; showing it at its real size and letting
+ * the phone pan across it is the honest presentation, and it makes the preview
+ * and the print byte-for-byte the same drawing.
+ *
  * The full lockup at the top, on the sheet's own white — not the symbol
  * alone. A form that comes back filled in has to be identifiable as the
  * association's while sitting in a folder months later with nothing around
@@ -208,6 +224,13 @@ export function TemplateSheet({
    */
   const unit = t.orientation === 'landscape' ? '0.7071cqw' : '1cqw';
 
+  /*
+   * The sheet's own width on paper, and the width it refuses to go below on a
+   * screen. `--u` is a fraction of it, so this one number is what keeps the
+   * preview at printed size instead of at phone size.
+   */
+  const paper = t.orientation === 'landscape' ? '297mm' : '210mm';
+
   return (
     /*
      * As tall as the form is, not as tall as one sheet.
@@ -224,6 +247,13 @@ export function TemplateSheet({
       style={
         {
           containerType: 'inline-size',
+          /*
+           * Wider than its column on a narrow screen, on purpose — the page
+           * puts it in a container that scrolls. Print overrides this back to
+           * 0 and fixes the width in millimetres, so nothing here reaches the
+           * paper.
+           */
+          minWidth: paper,
           color: INK,
           '--u': unit,
         } as React.CSSProperties

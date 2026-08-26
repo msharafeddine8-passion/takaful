@@ -82,8 +82,8 @@ export const professionalIdentity: CourseContent = {
           },
           options: [
             { ar: '"تعلّمت إدارة الوقت تحت الضغط حين نظّمت ثلاث دورات تدريبية بشكل متزامن لثمانين متطوّعاً"', en: '"I learned time management under pressure when I simultaneously organised three training sessions for eighty volunteers"' },
-            { ar: '"تعلّمت كثيراً عن أنفسنا وكيف نُساعد الناس"', en: '"I learned a lot about ourselves and how to help people"' },
-            { ar: '"تعلّمت أن العمل التطوّعي يختلف كثيراً عن العمل المدفوع"', en: '"I learned that volunteer work differs greatly from paid work"' },
+            { ar: '"تعلّمت كثيراً عن أنفسنا وكيف نُساعد الناس، وصار عندي صبر أكبر على من يحتاج وقتاً"', en: '"I learned a lot about ourselves and how to help people, and I became far more patient with anyone who needs time"' },
+            { ar: '"تعلّمت أن العمل التطوّعي يختلف كثيراً عن العمل المدفوع، فالدافع فيه داخلي والالتزام يأتي من القناعة لا من العقد"', en: '"I learned that volunteer work differs greatly from paid work — the motivation is internal and commitment comes from conviction, not from a contract"' },
           ],
           correct: 0,
           feedback: {
@@ -101,8 +101,8 @@ export const professionalIdentity: CourseContent = {
           },
           options: [
             { ar: '"منسّق تطوّع — الجمعية X: صمّمت برنامج توجيه أقصر تدريب الجدد من أسبوعين إلى خمسة أيام مع الحفاظ على مستوى الجودة"', en: '"Volunteer Coordinator — Organisation X: Designed an orientation programme that shortened new volunteers\' training from two weeks to five days while maintaining quality levels"' },
-            { ar: '"متطوّع في الجمعية X لمدة سنتين، شاركت في أنشطة متعدّدة"', en: '"Volunteer at Organisation X for two years, participated in various activities"' },
-            { ar: '"خدمة مجتمعية في الجمعية X"', en: '"Community service at Organisation X"' },
+            { ar: '"متطوّع في الجمعية X لمدة سنتين، شاركت في أنشطة متعدّدة شملت التوزيع والتنظيم والتوعية، وحضرت أغلب الفعاليات الميدانية"', en: '"Volunteer at Organisation X for two years, participated in various activities including distribution, organising and awareness work, and attended most of the field events over that period"' },
+            { ar: '"خدمة مجتمعية في الجمعية X على مدى سنتين بدوام جزئي إلى جانب الدراسة، ومُثبتة في سجلّ الجامعة"', en: '"Community service at Organisation X over two years, part-time alongside university study, recorded in the university’s service log"' },
           ],
           correct: 0,
           feedback: {
@@ -147,8 +147,8 @@ export const professionalIdentity: CourseContent = {
           },
           options: [
             { ar: 'التطوّع يُطوّر مهارات قابلة للقياس والنقل — إدارة مشاريع، تنسيق فرق، تواصل متعدّد الثقافات — وتجربة حقيقية في بيئة عمل غير مضمونة الموارد', en: 'Volunteering develops measurable and transferable skills — project management, team coordination, cross-cultural communication — and real experience in a resource-uncertain work environment' },
-            { ar: 'التطوّع قيمة إنسانية وليس للتوظيف أصلاً', en: 'Volunteering is a human value and not intended for employment' },
-            { ar: 'يعتمد على نوع التطوّع ومستواه', en: 'It depends on the type and level of volunteering' },
+            { ar: 'التطوّع قيمة إنسانية وليس للتوظيف أصلاً، ومن يقيسه بمعيار سوق العمل يُفرغه من معناه ويُحوّله إلى تدريب مجاني', en: 'Volunteering is a human value and not intended for employment — measuring it against job market standards empties it of meaning and turns it into free training' },
+            { ar: 'يعتمد على نوع التطوّع ومستواه، فالأدوار القيادية وحدها تُذكر في السيرة الذاتية، أمّا العمل الميداني العادي فلا يُلتفت إليه في المقابلات الوظيفية إطلاقاً', en: 'It depends on the type and level of volunteering — only leadership roles are worth putting on a CV, while ordinary field work goes unnoticed by recruiters and is not really worth mentioning at an interview' },
           ],
           correct: 0,
           feedback: {
@@ -166,8 +166,8 @@ export const professionalIdentity: CourseContent = {
           },
           options: [
             { ar: 'نعم — التجارب التطوّعية صالحة تماماً للإجابة على أسئلة الكفاءة السلوكية، خاصّة إن كانت مُحدّدة ولها أثر قابل للوصف', en: 'Yes — volunteer experiences are fully valid for answering behavioural competency questions, especially if they are specific and have a describable impact' },
-            { ar: 'لا — المقابلة تتوقّع تجارب مهنية مدفوعة', en: 'No — the interview expects paid professional experiences' },
-            { ar: 'نعم لكن أذكر أنه تطوّعي لتجنّب سوء الفهم', en: 'Yes but I mention it is voluntary to avoid misunderstanding' },
+            { ar: 'لا — المقابلة تتوقّع تجارب مهنية مدفوعة، والمثال التطوّعي يُوحي بأنك لم تُختبر في بيئة فيها محاسبة حقيقية', en: 'No — the interview expects paid professional experiences, and a volunteer example suggests you have not been tested in a setting with real accountability' },
+            { ar: 'نعم لكن أذكر أنه تطوّعي لتجنّب سوء الفهم، وأعتذر مسبقاً عن كونه مثالاً أضعف من مثال مأخوذ من وظيفة مدفوعة بدوام كامل في شركة', en: 'Yes but I mention it is voluntary to avoid misunderstanding, and apologise in advance for it being a weaker example than one taken from a full-time paid job somewhere' },
           ],
           correct: 0,
           feedback: {
@@ -259,8 +259,8 @@ export const professionalIdentity: CourseContent = {
           },
           options: [
             { ar: 'منسّق شراكات في جمعية صغيرة يُدير ميزانية صغيرة بنفسه وله صلاحية توقيع', en: 'Partnerships coordinator at a small organisation who manages a small budget himself and has signing authority' },
-            { ar: 'متطوّع ميداني في برنامج توزيع كبير', en: 'Field volunteer in a large distribution programme' },
-            { ar: 'عضو في لجنة بدون حقيبة عمل محدّدة', en: 'Member of a committee without a specific work portfolio' },
+            { ar: 'متطوّع ميداني في برنامج توزيع كبير يخدم آلاف الأسر شهرياً', en: 'Field volunteer in a large distribution programme that serves thousands of families every month' },
+            { ar: 'عضو في لجنة استشارية بدون حقيبة عمل محدّدة تجتمع مرّة كل شهر', en: 'Member of an advisory committee without a specific work portfolio that meets once a month' },
           ],
           correct: 0,
           feedback: {
@@ -278,8 +278,8 @@ export const professionalIdentity: CourseContent = {
           },
           options: [
             { ar: 'وثّق الأثر بأرقام محدّدة، احصل على توصية مكتوبة من المشرف، وأضفه لسيرتك الذاتية بلغة الإنجاز', en: 'Document the impact with specific numbers, obtain a written recommendation from your supervisor, and add it to your CV with achievement language' },
-            { ar: 'شارك خبرك مع المتطوّعين الجدد شفهياً', en: 'Share your experience with new volunteers verbally' },
-            { ar: 'اذكره في المقابلات القادمة حين يُسأل عنك', en: 'Mention it in future interviews when asked about yourself' },
+            { ar: 'شارك خبرك مع المتطوّعين الجدد شفهياً في جلسة توجيه، فنقل ما تعلّمته أبقى أثراً من تدوينه في ملفّ لا يقرأه أحد', en: 'Share your experience with new volunteers verbally in an orientation session, since passing on what you learned lasts longer than writing it into a file nobody reads' },
+            { ar: 'اذكره في المقابلات القادمة حين يُسأل عنك، فالتفاصيل باقية في ذاكرتك ما دام المشروع قريباً', en: 'Mention it in future interviews when asked about yourself, since the details stay in your memory while the project is recent' },
           ],
           correct: 0,
           feedback: {
@@ -347,8 +347,8 @@ export const professionalIdentity: CourseContent = {
           },
           options: [
             { ar: 'ناقش مع مشرفك إضافة مسؤوليات تُطوّر مهارة جديدة، أو فكّر في الانتقال لدور مختلف يُبقي تجربتك الحالية ثروة لا ثقلاً', en: 'Discuss with your supervisor adding responsibilities that develop a new skill, or consider transitioning to a different role that keeps your current experience an asset, not a burden' },
-            { ar: 'استمرّ لأن الإتقان نفسه قيمة ويصعب بناؤه', en: 'Continue because mastery itself is valuable and hard to build' },
-            { ar: 'اترك التطوّع وابحث عن وظيفة في المجال تدفع راتباً', en: 'Leave volunteering and look for a paid job in the field' },
+            { ar: 'استمرّ لأن الإتقان نفسه قيمة ويصعب بناؤه، والفريق يعتمد عليك في هذا الدور ولا يجد بديلاً بالسهولة نفسها', en: 'Continue because mastery itself is valuable and hard to build, and the team depends on you in this role and will not replace you as easily' },
+            { ar: 'اترك التطوّع وابحث عن وظيفة في المجال تدفع راتباً، فالشعور بالركود علامة على أنك استنفدت ما يمكن أن يُقدّمه العمل غير المدفوع', en: 'Leave volunteering and look for a paid job in the field, since a feeling of stagnation is a sign that you have exhausted everything unpaid work has to offer a person at this stage of their career' },
           ],
           correct: 0,
           feedback: {
@@ -366,8 +366,8 @@ export const professionalIdentity: CourseContent = {
           },
           options: [
             { ar: '"التطوّع يُبقيني متّصلاً بقيمي، يُطوّر مهارات لا يُتيحها عملي المدفوع، ويُوسّع شبكتي المهنية في مجالات تكمّل مسيرتي"', en: '"Volunteering keeps me connected to my values, develops skills my paid work doesn\'t offer, and expands my professional network in areas that complement my career"' },
-            { ar: '"بحبّ المساعدة ومش قادر أوقف"', en: '"I love helping and cannot stop"' },
-            { ar: '"بساعد الجمعية لأنهم محتاجين ناس متطوّعة"', en: '"I help the organisation because they need volunteers"' },
+            { ar: '"بحبّ المساعدة ومش قادر أوقف، صار جزء من روتيني الأسبوعي وبيريّحني بعد دوام الشغل الطويل"', en: '"I love helping and cannot stop — it has become part of my weekly routine and it settles me after a long day at work"' },
+            { ar: '"بساعد الجمعية لأنهم محتاجين ناس متطوّعة، وما بقدر أقول لأ لما يطلبوا مني بشي"', en: '"I help the organisation because they need volunteers, and I cannot say no when they ask me for something"' },
           ],
           correct: 0,
           feedback: {

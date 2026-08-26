@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Locale } from '@/lib/i18n';
 import type { Dictionary } from '@/lib/dictionaries';
 import { countPhrase, formatDuration } from '@/lib/when';
+import { emptyStates } from '@/lib/dictionaries/empty-states';
 
 /**
  * What this volunteer has actually done, as four things you can open.
@@ -23,7 +24,8 @@ type Tile = {
   label: string;
   /** Null where there is nothing to count yet — the sentence says so instead. */
   figure: string | null;
-  sentence: string;
+  /** Null only where the figure already IS the whole sentence — see hours. */
+  sentence: string | null;
   icon: string;
   note?: string;
 };
@@ -42,7 +44,34 @@ export function ImpactTiles({
 }) {
   const p = dict.account.portal;
   const impact = dict.account.impact;
+  const nothing = emptyStates(lang).tiles;
   const at = (path: string) => `/${lang}/account${path}`;
+
+  /*
+   * At zero, the mechanism rather than the measurement.
+   *
+   * countPhrase's own zero forms are «لم تحضر نشاطاً بعد» and «لم تبدأ أيّ دورة
+   * بعد» — accurate, and each of them makes the emptiness a property of the
+   * reader on the first screen they ever see. The counted forms are still the
+   * right sentence the moment there is anything to count, so only the zero
+   * branch is replaced: from one upwards these tiles say what somebody did.
+   */
+  const sentence = (n: number, forms: typeof impact.hours, whenNone: string) =>
+    n > 0 ? countPhrase(n, forms) : whenNone;
+
+  /*
+   * The hours tile counts whole hours and the figure above it counts minutes,
+   * which disagree for the first fifty-nine of them: forty minutes verified
+   * printed «40 دقيقة» over «لم تُسجَّل ساعات بعد», telling somebody in one tile
+   * both that they had volunteered and that they had not. Under an hour the
+   * figure is left to speak for itself.
+   */
+  const hoursSentence =
+    verifiedMinutes <= 0
+      ? nothing.hours
+      : verifiedMinutes < 60
+        ? null
+        : countPhrase(Math.floor(verifiedMinutes / 60), impact.hours);
 
   /*
    * The hours figure is a duration, not a count — «ساعتان و30 دقيقة» has no
@@ -59,7 +88,7 @@ export function ImpactTiles({
       href: at('/hours'),
       label: p.summaryHours,
       figure: hoursFigure,
-      sentence: countPhrase(Math.floor(verifiedMinutes / 60), impact.hours),
+      sentence: hoursSentence,
       icon: '⏱',
       note: pendingMinutes > 0
         ? p.pendingNote.replace('{n}', formatDuration(pendingMinutes, lang))
@@ -72,21 +101,21 @@ export function ImpactTiles({
       // yet" is the same nothing twice, and a row of zeroes on a new
       // volunteer's first visit reads as a scoreboard they are losing.
       figure: coursesPassed > 0 ? String(coursesPassed) : null,
-      sentence: countPhrase(coursesPassed, impact.courses),
+      sentence: sentence(coursesPassed, impact.courses, nothing.courses),
       icon: '📚',
     },
     {
       href: at('/activities'),
       label: p.summaryActivities,
       figure: activitiesAttended > 0 ? String(activitiesAttended) : null,
-      sentence: countPhrase(activitiesAttended, impact.activities),
+      sentence: sentence(activitiesAttended, impact.activities, nothing.activities),
       icon: '🤝',
     },
     {
       href: at('/certificates'),
       label: p.summaryCertificates,
       figure: certificates > 0 ? String(certificates) : null,
-      sentence: countPhrase(certificates, impact.certificates),
+      sentence: sentence(certificates, impact.certificates, nothing.certificates),
       icon: '🎖',
     },
   ];
@@ -111,11 +140,13 @@ export function ImpactTiles({
               {tile.figure}
             </span>
           )}
-          <span
-            className={`text-[0.88rem] leading-snug text-ink-2 ${tile.figure ? 'mt-1.5' : 'mt-2'}`}
-          >
-            {tile.sentence}
-          </span>
+          {tile.sentence && (
+            <span
+              className={`text-[0.88rem] leading-snug text-ink-2 ${tile.figure ? 'mt-1.5' : 'mt-2'}`}
+            >
+              {tile.sentence}
+            </span>
+          )}
           {tile.note && (
             <span className="mt-1.5 text-[0.82rem] font-bold text-brand-orange-text dark:text-brand-orange">
               {tile.note}

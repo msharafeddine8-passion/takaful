@@ -239,6 +239,8 @@ export const en: Dictionary = {
     whyHeld: 'Why it is held',
     printHint:
       'Choose "Save as PDF" in the print dialog if you want a digital copy. The margins are set in the page, so there is nothing to change.',
+    sheetPanHint:
+      'The form is shown at paper size, exactly as it will print. Scroll it sideways to see all of it on a small screen.',
     notFound: 'There is no form by that name.',
   },
   account: {
@@ -354,6 +356,16 @@ export const en: Dictionary = {
     chooser: {
       title: 'How would you like to join us?',
       lede: 'Pick whichever describes you, and we will take you straight to the right place instead of leaving you to find it.',
+      /* The other two doors name what somebody already is; this one names what
+         they want to become — "I want to start" rather than "I am not a
+         volunteer yet". Nobody walks through a door labelled with what they
+         lack. */
+      newVolunteerTitle: 'I want to start volunteering',
+      newVolunteerBody:
+        'New to Takaful and want to join us? Create your account, fill in the volunteering ' +
+        'application once, and the volunteering team will read it and get back to you.',
+      newVolunteerLede:
+        'Create your account first, then we take you straight to the volunteering application.',
       volunteerTitle: 'I volunteer with Takaful',
       volunteerBody: 'If you volunteer with us — now or in the past — we will find your record and keep your membership number and seniority. No application.',
       volunteerLede: 'Create your account first, then we look for your record on the association roster.',
@@ -838,6 +850,11 @@ export const en: Dictionary = {
       statusAvailable: 'Available',
       statusSoon: 'Coming soon',
       statusDraft: 'In review',
+      statusLocked: 'Locked',
+      statusSignIn: 'Account needed',
+      lockedAfter: 'Opens once you finish: {course}',
+      signInToOpen: 'Sign in to open this course.',
+      readableNoCredit: 'You can read it now; the quiz and the certificate need an account.',
       notStarted: 'Not started',
       inProgress: 'In progress',
       completed: 'Completed',

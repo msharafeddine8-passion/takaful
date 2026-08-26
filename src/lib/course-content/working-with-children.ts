@@ -123,15 +123,21 @@ export const workingWithChildren: CourseContent = {
           },
           options: [
             {
-              ar: 'تأخذه إلى غرفة فارغة قريبة ليرتاح ويتكلّم براحته',
-              en: 'Take him to a nearby empty room so he can settle and speak freely',
+              ar: 'تأخذه إلى غرفة فارغة قريبة ليرتاح ويتكلّم براحته بعيداً عن أعين الأطفال الآخرين',
+              en: 'Take him to a nearby empty room so he can settle and speak freely, away from the other children’s eyes',
             },
             {
               ar: 'تنتقل معه إلى طرف القاعة، ضمن مرأى الفريق، وتُعلم زميلاً',
               en: 'Move with him to the side of the hall, in view of the team, and tell a colleague',
             },
-            { ar: 'تطلب منه الانتظار حتى ينتهي النشاط', en: 'Ask him to wait until the activity finishes' },
-            { ar: 'تخرج معه إلى الشارع بعيداً عن الضجيج', en: 'Step outside with him, away from the noise' },
+            {
+              ar: 'تطلب منه الانتظار حتى ينتهي النشاط لأنّ المجموعة كلّها بحاجة إليك الآن',
+              en: 'Ask him to wait until the activity finishes, because the whole group needs you right now',
+            },
+            {
+              ar: 'تخرج معه إلى الشارع بعيداً عن الضجيج لتسمعه براحته ثم تعود به بسرعة',
+              en: 'Step outside with him, away from the noise, so you can hear him properly, then come back quickly',
+            },
           ],
           correct: 1,
           feedback: {
@@ -214,15 +220,21 @@ export const workingWithChildren: CourseContent = {
           },
           options: [
             {
-              ar: 'تعطيها الرقم لأن رفضك سيجرحها وهي متعلّقة بك',
-              en: 'Give her the number — refusing would hurt her, and she is attached to you',
+              ar: 'تعطيها الرقم لأن رفضك سيجرحها وهي متعلّقة بك، وتطلب منها ألّا تتصل إلّا عند الضرورة',
+              en: 'Give her the number — refusing would hurt her, and she is attached to you — and ask her to call only when she needs to',
             },
             {
               ar: 'ترفض بلطف، توزّع انتباهك على كل الأطفال، وتُعلم مسؤول الحماية بتعلّقها',
               en: 'Decline kindly, spread your attention across all the children, and tell the safeguarding focal point about her attachment',
             },
-            { ar: 'تتجنّبها تماماً بقية المخيّم', en: 'Avoid her entirely for the rest of the camp' },
-            { ar: 'تعطيها رقم زميلة لك بدلاً من رقمك', en: 'Give her a colleague’s number instead of yours' },
+            {
+              ar: 'تتجنّبها تماماً بقية المخيّم حتى ينقطع تعلّقها بك من تلقاء نفسه',
+              en: 'Avoid her entirely for the rest of the camp until the attachment fades on its own',
+            },
+            {
+              ar: 'تعطيها رقم زميلة لك بدلاً من رقمك، فيبقى التواصل داخل الفريق ولا يصير شخصياً بينك وبينها',
+              en: 'Give her a colleague’s number instead of yours, so the contact stays inside the team and never becomes personal between you and her',
+            },
           ],
           correct: 1,
           feedback: {
@@ -473,18 +485,21 @@ export const workingWithChildren: CourseContent = {
           },
           options: [
             {
-              ar: 'تخبرها بالتفصيل لأنها زميلة في الفريق ومن حقّها أن تعرف',
-              en: 'Tell her in detail — she is a teammate and has a right to know',
+              ar: 'تخبرها بالتفصيل لأنها زميلة في الفريق ومن حقّها أن تعرف حتى تنتبه هي أيضاً للطفل',
+              en: 'Tell her in detail — she is a teammate and has a right to know so she can keep an eye on the child too',
             },
             {
-              ar: 'تخبرها باختصار فقط دون ذكر الأسماء',
-              en: 'Tell her briefly without naming anyone',
+              ar: 'تخبرها باختصار فقط دون ذكر الأسماء، فالخلاصة العامّة لا تكشف الطفل لأحد',
+              en: 'Tell her briefly without naming anyone, since a general summary cannot identify the child to anybody',
             },
             {
               ar: 'تعتذر عن الحديث في الموضوع وتوضّح أنك أبلغت مسؤول الحماية',
               en: 'Decline to discuss it and explain that you have reported to the safeguarding focal point',
             },
-            { ar: 'تنكر أن الطفل قال لك شيئاً', en: 'Deny that the child told you anything' },
+            {
+              ar: 'تنكر أن الطفل قال لك شيئاً حتى تُغلق الموضوع وتحافظ على سرّيته',
+              en: 'Deny that the child told you anything, to close the subject and keep it confidential',
+            },
           ],
           correct: 2,
           feedback: {
@@ -536,18 +551,21 @@ export const workingWithChildren: CourseContent = {
           },
           options: [
             {
-              ar: 'تنشرها — الإذن الشفهي كافٍ والصورة إيجابية',
-              en: 'Post it — verbal permission is enough and the photo is positive',
+              ar: 'تنشرها — الإذن الشفهي كافٍ والصورة إيجابية وتُظهر عمل الجمعية بأفضل صورة',
+              en: 'Post it — verbal permission is enough, and the photo is positive and shows the association’s work at its best',
             },
             {
-              ar: 'تنشرها بعد تشويش وجوه الأطفال الذين لا تملك إذنهم',
-              en: 'Post it after blurring the faces of children you have no permission for',
+              ar: 'تنشرها بعد تشويش وجوه الأطفال الذين لا تملك إذنهم، فلا يعود أحد قادراً على التعرّف عليهم',
+              en: 'Post it after blurring the faces of the children you have no permission for, so that nobody who sees it can identify them',
             },
             {
               ar: 'تسلّم الصورة للمنظمة ولا تُنشر إلا بعد إذن خطّي من أولياء أمور كل طفل ظاهر فيها',
               en: 'Hand the photo to the organisation; it is published only after written permission from the guardian of every child visible in it',
             },
-            { ar: 'تنشرها على حسابك الشخصي بدل صفحة المنظمة', en: 'Post it on your personal account instead of the organisation’s page' },
+            {
+              ar: 'تنشرها على حسابك الشخصي بدل صفحة المنظمة، فحسابك خاصّ ولا يتابعه إلّا أصدقاؤك',
+              en: 'Post it on your personal account instead of the organisation’s page — your account is private and only friends follow it',
+            },
           ],
           correct: 2,
           feedback: {
@@ -633,20 +651,20 @@ export const workingWithChildren: CourseContent = {
           },
           options: [
             {
-              ar: 'تُخرجه من القاعة ويجلس وحده في الممرّ حتى ينتهي النشاط',
-              en: 'Send him out of the hall to sit alone in the corridor until the activity ends',
+              ar: 'تُخرجه من القاعة ليجلس وحده في الممرّ حتى ينتهي النشاط، فتهدأ المجموعة ويفهم أنّ للسلوك نتيجة',
+              en: 'Send him out of the hall to sit alone in the corridor until the activity ends, so the group settles and he learns that behaviour has consequences',
             },
             {
-              ar: 'تتجاهله تماماً حتى يملّ',
-              en: 'Ignore him completely until he gets bored',
+              ar: 'تتجاهله تماماً حتى يملّ، فالانتباه الذي يطلبه هو ما يُغذّي السلوك',
+              en: 'Ignore him completely until he gets bored — the attention he is after is what feeds the behaviour',
             },
             {
               ar: 'تطلب من زميل متابعة المجموعة، وتجلس معه جانباً ضمن مجال النظر، وتسأله ما الذي يزعجه، وتسجّل ما لاحظته لاحقاً',
               en: 'Ask a colleague to hold the group, sit with him aside but within sight, ask what is bothering him, and record what you noticed afterwards',
             },
             {
-              ar: 'تخبره أنك ستتصل بوالده إن لم يتوقّف',
-              en: 'Tell him you will call his father if he does not stop',
+              ar: 'تخبره أنك ستتصل بوالده إن لم يتوقّف، فالأهل أقدر على ضبطه منك داخل النشاط',
+              en: 'Tell him you will call his father if he does not stop, since his parents can rein him in better than you can here',
             },
           ],
           correct: 2,
@@ -724,20 +742,20 @@ export const workingWithChildren: CourseContent = {
           },
           options: [
             {
-              ar: 'تراقب أكثر قبل أن تبلّغ، حتى تتأكّد أن هناك شيئاً فعلاً',
-              en: 'Watch a while longer before reporting, until you are sure there is really something',
+              ar: 'تراقب أكثر قبل أن تبلّغ، حتى تتأكّد أن هناك شيئاً فعلاً ولا تظلم زميلاً قديماً في الجمعية',
+              en: 'Watch a while longer before reporting, until you are sure there is really something and you are not wronging a long-standing colleague',
             },
             {
-              ar: 'تتحدّث معه على انفراد وتسأله عن سبب ذلك',
-              en: 'Speak to him privately and ask why he is doing it',
+              ar: 'تتحدّث معه على انفراد وتسأله عن سبب ذلك، فقد يكون هناك تفسير بسيط',
+              en: 'Speak to him privately and ask why he is doing it — there may be a simple explanation',
             },
             {
               ar: 'تُبلغ المسؤول عن الحماية اليوم نفسه بما رأيته بالتحديد، وتكتبه، ولا تناقشه مع أحد آخر',
               en: 'Tell the safeguarding focal point the same day exactly what you saw, write it down, and discuss it with nobody else',
             },
             {
-              ar: 'تسأل متطوّعين آخرين إن لاحظوا الشيء نفسه',
-              en: 'Ask other volunteers whether they noticed the same thing',
+              ar: 'تسأل متطوّعين آخرين إن لاحظوا الشيء نفسه قبل أن ترفع الأمر',
+              en: 'Ask other volunteers whether they noticed the same thing before you raise it',
             },
           ],
           correct: 2,

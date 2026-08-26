@@ -197,16 +197,16 @@ export const communityNeeds: CourseContent = {
           },
           options: [
             {
-              ar: 'استبيان إلكتروني قصير ترسله لكل من سجّلن في الجلسات',
-              en: 'A short electronic survey sent to everyone who registered for the sessions',
+              ar: 'استبيان إلكتروني قصير ترسله لكل من سجّلن في الجلسات، يتضمّن سؤالاً متعدّد الخيارات بأرجح أسباب الانقطاع',
+              en: 'A short electronic survey sent to everyone who registered for the sessions, with a multiple-choice question listing the likeliest reasons for stopping',
             },
             {
               ar: 'مقابلات فردية مع نساء أتممن الجلسات ومع نساء تركنها في الأسبوعين الأولين',
               en: 'Individual interviews with women who completed the sessions and with women who left in the first two weeks',
             },
             {
-              ar: 'ملاحظة حضور الجلسات وتسجيل نسب الغياب أسبوعياً',
-              en: 'Observing session attendance and recording absence rates weekly',
+              ar: 'ملاحظة حضور الجلسات وتسجيل نسب الغياب أسبوعياً لتحديد الأسبوع الذي يبدأ عنده الانقطاع بدقّة',
+              en: 'Observing session attendance and recording absence rates weekly to pinpoint the week at which the drop-off begins',
             },
           ],
           correct: 1,
@@ -294,16 +294,16 @@ export const communityNeeds: CourseContent = {
           },
           options: [
             {
-              ar: 'لا مشكلة — الأم أكثر راحةً بوجود طفلها',
-              en: 'No problem — the mother is more comfortable with her child present',
+              ar: 'لا مشكلة — الأم أكثر راحةً بوجود طفلها، وهو يذكّرها بتفاصيل عن البرنامج قد تنساها وحدها',
+              en: 'No problem — the mother is more comfortable with her child present, and he reminds her of details she may forget',
             },
             {
               ar: 'الأم قد لا تُفصح عن مشاكل تخصّ طفلها بحضوره، وقد تُؤثّر إجاباتها على إجاباته هو',
               en: 'The mother may not disclose issues about her child in his presence, and her answers may influence his',
             },
             {
-              ar: 'الوقت سيتضاعف لأن كليهما سيتكلّمان',
-              en: 'The session will take twice as long because both will speak',
+              ar: 'الوقت سيتضاعف لأن كليهما سيتكلّمان، وستحتاج موعداً ثانياً لإكمال ما لم يُقَل في الجلسة',
+              en: 'The session will take twice as long because both will speak, and you will need a second appointment to finish',
             },
           ],
           correct: 1,
@@ -370,16 +370,16 @@ export const communityNeeds: CourseContent = {
           },
           options: [
             {
-              ar: 'العمدة لم يكن شريكاً مناسباً للعمل معه',
-              en: 'The neighbourhood leader was not a suitable partner to work with',
+              ar: 'العمدة لم يكن شريكاً مناسباً للعمل معه، وكان على الفريق الوصول إلى الأسر مباشرةً دون أي وسيط مجتمعي',
+              en: 'The neighbourhood leader was not a suitable partner to work with, and the team should have reached the families directly without any intermediary',
             },
             {
               ar: 'العيّنة تعكس اختيارات الوسيط لا المجتمع بأسره، وأصوات مجموعات كاملة غائبة عن التقييم',
               en: 'The sample reflects the intermediary\'s choices rather than the whole community, and entire groups\' voices are missing from the assessment',
             },
             {
-              ar: 'العدد عشرون أسرة صغير جداً لأي تقييم موثوق',
-              en: 'Twenty families is too small a number for any reliable assessment',
+              ar: 'العدد عشرون أسرة صغير جداً لأي تقييم موثوق، وكان على الفريق مضاعفة العيّنة قبل استخلاص أي نتيجة',
+              en: 'Twenty families is too small a number for any reliable assessment, and the team should have doubled the sample before drawing conclusions',
             },
           ],
           correct: 1,
@@ -455,16 +455,16 @@ export const communityNeeds: CourseContent = {
           },
           options: [
             {
-              ar: 'البرنامج يسير بشكل ممتاز والمشاركون راضون عنه بصورة واسعة',
-              en: 'The programme is running excellently and participants are widely satisfied',
+              ar: 'البرنامج يسير بشكل ممتاز والمشاركون راضون عنه بصورة واسعة، ويمكن تسجيل الشكوى الوحيدة كحالة فردية',
+              en: 'The programme is running excellently and participants are widely satisfied, so the single complaint can be recorded as an isolated case',
             },
             {
               ar: 'على الأرجح آلية الشكاوى غير مُعلنة كفاية أو غير آمنة أو لم تُثبت جدواها بعد — وهذا يستدعي مراجعة',
               en: 'Most likely the complaints mechanism is not sufficiently publicised, not safe, or has not yet demonstrated its usefulness — which calls for a review',
             },
             {
-              ar: 'المشاركون مهذّبون ويتجنّبون الشكوى بطبيعتهم الثقافية',
-              en: 'Participants are polite and avoid complaining by cultural nature',
+              ar: 'المشاركون مهذّبون ويتجنّبون الشكوى بطبيعتهم الثقافية، فقلّة الشكاوى متوقّعة هنا ولا ينبغي قراءتها كمؤشّر على خلل',
+              en: 'Participants are polite and avoid complaining by cultural nature, so a low number of complaints is expected here and should not be read as a sign of any fault',
             },
           ],
           correct: 1,
@@ -547,12 +547,12 @@ export const communityNeeds: CourseContent = {
           },
           options: [
             {
-              ar: 'عضو الفريق نسي ولم يكن ملتزماً بما يكفي',
-              en: 'The team member forgot and was not committed enough',
+              ar: 'عضو الفريق نسي ولم يكن ملتزماً بما يكفي، ويكفي تذكير الفريق كلّه بمسؤولية المتابعة في الاجتماع القادم لمنع تكرار ذلك',
+              en: 'The team member forgot and was not committed enough, and reminding the whole team of its follow-up responsibility at the next meeting will stop it recurring',
             },
             {
-              ar: 'الشكوى الشفهية لا تلزم الفريق بالردّ الرسمي',
-              en: 'A verbal complaint does not oblige the team to a formal reply',
+              ar: 'الشكوى الشفهية لا تلزم الفريق بالردّ الرسمي، فمهلة الردّ لا تبدأ إلا بشكوى تُقدَّم عبر القناة المعلَنة',
+              en: 'A verbal complaint does not oblige the team to a formal reply, since the response clock starts only with a complaint filed through the announced channel',
             },
             {
               ar: 'لا يوجد بروتوكول يُحوّل الشكاوى الشفهية إلى سجلّ مكتوب بمسؤول ومهلة — فالمشكلة هيكلية لا فردية',

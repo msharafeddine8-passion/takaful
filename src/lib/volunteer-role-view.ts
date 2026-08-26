@@ -240,6 +240,27 @@ export function checkTitle(titleAr: string): boolean {
   return titleAr.trim().length > 0;
 }
 
+/**
+ * The title in one language, falling back to the Arabic.
+ *
+ * The same three lines that titleOf() already spells out in
+ * components/staff/VolunteerRoles.tsx and components/account/MyRoles.tsx. It is
+ * lifted here — pure, no React, no database — because the chips beside the
+ * badges now need it on a PUBLIC page as well, and a fourth private copy of a
+ * fallback rule is a fourth place for it to be got wrong. The two existing
+ * copies are deliberately left where they are: they are correct, and rewriting
+ * two working components to import one branch is churn on files this change has
+ * no other reason to touch.
+ *
+ * The fallback direction is fixed by the column's own default — title_en is ''
+ * and never null (see toRole in lib/volunteer-roles.ts) — so an untranslated
+ * role reads in Arabic on the English page rather than as a blank chip.
+ */
+export function roleTitle(role: { titleAr: string; titleEn: string }, lang: Locale): string {
+  if (lang === 'ar') return role.titleAr;
+  return role.titleEn.trim() || role.titleAr;
+}
+
 /** One achievement, in both languages. `en` may be empty and the reader falls back. */
 export type RoleAchievement = { ar: string; en: string };
 

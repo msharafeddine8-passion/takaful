@@ -88,8 +88,14 @@ export const psychologicalFirstAid: CourseContent = {
           },
           options: [
             { ar: 'اجلس بجانبه بهدوء، أخبره أنك هنا إن أراد التحدّث، ولا تُلحّ', en: 'Sit beside them calmly, tell them you are here if they want to talk, and do not insist' },
-            { ar: 'شجّعه على التحدّث لأن التعبير عن المشاعر يُساعد في التعافي', en: 'Encourage them to talk because expressing feelings helps recovery' },
-            { ar: 'اتصل بمتخصّص نفسي فوراً لأن الصمت علامة خطيرة', en: 'Call a mental health specialist immediately because silence is a serious sign' },
+            {
+              ar: 'شجّعه على التحدّث لأن التعبير عن المشاعر يُساعد في التعافي، والصمت يُرسّخ الصدمة',
+              en: 'Encourage them to talk because expressing feelings helps recovery, and silence lets the shock settle in',
+            },
+            {
+              ar: 'اتصل بمتخصّص نفسي فوراً لأن الصمت بعد الصدمة علامة خطيرة لا يجوز تركها',
+              en: 'Call a mental health specialist immediately because silence after trauma is a serious sign not to be left alone',
+            },
           ],
           correct: 0,
           feedback: {
@@ -107,8 +113,14 @@ export const psychologicalFirstAid: CourseContent = {
           },
           options: [
             { ar: 'إخبار الشخص "سيكون كل شيء على ما يرام" لتهدئته', en: 'Telling the person "everything will be fine" to calm them' },
-            { ar: 'تأمين مكان آمن وهادئ للشخص', en: 'Providing a safe and quiet place for the person' },
-            { ar: 'توفير ماء وطعام وحاجات أساسية', en: 'Providing water, food, and basic needs' },
+            {
+              ar: 'تأمين مكان آمن وهادئ للشخص بعيداً عن الضجيج والمتفرّجين',
+              en: 'Providing a safe and quiet place for the person, away from the noise and the onlookers',
+            },
+            {
+              ar: 'توفير ماء وطعام وغطاء وحاجات أساسية أخرى قبل أيّ حديث عن المشاعر',
+              en: 'Providing water, food, a blanket, and other basic needs before any talk about feelings',
+            },
           ],
           correct: 0,
           feedback: {
@@ -155,8 +167,14 @@ export const psychologicalFirstAid: CourseContent = {
           },
           options: [
             { ar: 'قد يكون ردّ فعل صدمة طبيعياً — راقبه وكن حاضراً دون إصدار حكم، وانتبه لعلامات خطر أخرى', en: 'It may be a normal trauma response — observe and be present without judgment, and watch for other danger signs' },
-            { ar: 'نعم، الضحك غير المناسب دليل قاطع على ضائقة خطيرة', en: 'Yes, inappropriate laughter is definitive evidence of serious distress' },
-            { ar: 'لا، الضحك دليل أنه تعامل مع الموقف بشكل جيّد', en: 'No, laughter is evidence that they handled the situation well' },
+            {
+              ar: 'نعم، الضحك غير المناسب في مثل هذا الموقف دليل قاطع على ضائقة خطيرة تستوجب إحالته إلى متخصّص فوراً',
+              en: 'Yes, inappropriate laughter in a moment like this is definitive evidence of serious distress and warrants referring them to a specialist at once',
+            },
+            {
+              ar: 'لا، الضحك دليل أنه تعامل مع الموقف بشكل جيّد ولا يحتاج إلى أيّ متابعة',
+              en: 'No, laughter is evidence that they handled the situation well and need no follow-up',
+            },
           ],
           correct: 0,
           feedback: {
@@ -220,8 +238,14 @@ export const psychologicalFirstAid: CourseContent = {
           },
           options: [
             { ar: 'ابتعد به عن الازدحام لمكان أهدأ — الجلبة تُضاعف الضيق قبل أي تدخّل لفظي', en: 'Move them away from the crowd to a quieter place — noise amplifies distress before any verbal intervention' },
-            { ar: 'اطلب منه أن يهدأ وأن يتنفّس بعمق', en: 'Ask them to calm down and breathe deeply' },
-            { ar: 'اتصل بالإسعاف فوراً', en: 'Call emergency services immediately' },
+            {
+              ar: 'اطلب منه أن يهدأ وأن يتنفّس بعمق، وكرّر الطلب بصوت واثق حتى يستعيد سيطرته على نفسه',
+              en: 'Ask them to calm down and breathe deeply, repeating it in a confident voice until they regain control of themselves',
+            },
+            {
+              ar: 'اتصل بالإسعاف فوراً، فالبكاء بهذه الشدّة حالة طبية طارئة',
+              en: 'Call emergency services immediately — crying this intensely is a medical emergency',
+            },
           ],
           correct: 0,
           feedback: {
@@ -239,8 +263,14 @@ export const psychologicalFirstAid: CourseContent = {
           },
           options: [
             { ar: 'أبلغ مشرفك، خذ استراحة مقصودة، ولا تستمرّ في تقديم PFA أنت بحاجة لدعم — تعبك الصادق ليس ضعفاً', en: 'Inform your supervisor, take a deliberate break, and do not continue providing PFA while you need support — your honest exhaustion is not weakness' },
-            { ar: 'استمرّ في العمل — المتأثّرون يحتاجونك أكثر مما تحتاج أنت', en: 'Continue working — those affected need you more than you need yourself' },
-            { ar: 'خذ مسكّن نوم وتابع عملك في الصباح', en: 'Take a sleep aid and continue your work in the morning' },
+            {
+              ar: 'استمرّ في العمل — المتأثّرون يحتاجونك أكثر مما تحتاج أنت، وانسحابك الآن يترك الفريق ناقصاً في وسط الأزمة',
+              en: 'Continue working — those affected need you more than you need yourself, and pulling out now leaves the team short-handed in the middle of the crisis',
+            },
+            {
+              ar: 'خذ مسكّن نوم وتابع عملك في الصباح، فالنوم وحده كافٍ لاستعادة طاقتك',
+              en: 'Take a sleep aid and continue your work in the morning — sleep alone is enough to restore your energy',
+            },
           ],
           correct: 0,
           feedback: {
@@ -313,8 +343,14 @@ export const psychologicalFirstAid: CourseContent = {
           },
           options: [
             { ar: 'هذا يتجاوز نطاق PFA الأولية — أبلغ مشرفك وأحِله لمتخصّص في الصحة النفسية في أقرب وقت', en: 'This is beyond initial PFA scope — inform your supervisor and refer them to a mental health specialist as soon as possible' },
-            { ar: 'استمرّ في دعمه — الجسم يتكيّف تدريجياً', en: 'Continue supporting them — the body adapts gradually' },
-            { ar: 'اقترح عليه زيارة طبيب عام للحصول على حبوب نوم', en: 'Suggest he visit a general practitioner for sleeping pills' },
+            {
+              ar: 'استمرّ في دعمه — الجسم يتكيّف تدريجياً، وثلاثة أيام مدّة قصيرة بعد حدث بهذا الحجم',
+              en: 'Continue supporting them — the body adapts gradually, and three days is a short time after an event this size',
+            },
+            {
+              ar: 'اقترح عليه زيارة طبيب عام للحصول على حبوب نوم، فالنوم أوّل ما يجب إصلاحه قبل أن يتحسّن أيّ شيء آخر',
+              en: 'Suggest he visit a general practitioner for sleeping pills, since sleep is the first thing that needs fixing before anything else can improve',
+            },
           ],
           correct: 0,
           feedback: {

@@ -22,8 +22,9 @@ type RegisterProps = {
   t: Dictionary['account']['join'];
   errors: Errors;
   /** Which door they came in by, so registration ends where they meant to go:
-   *  a volunteer at the roster claim, a learner at their account. */
-  next?: 'volunteer' | 'learner';
+   *  a new volunteer at the application form, an existing one at the roster
+   *  claim, a learner at their account. */
+  next?: 'new-volunteer' | 'volunteer' | 'learner';
 };
 type LoginProps = { lang: Locale; t: Dictionary['account']['login']; errors: Errors };
 

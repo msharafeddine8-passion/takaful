@@ -108,8 +108,8 @@ export const communityProjectManagement: CourseContent = {
           },
           options: [
             { ar: 'تُقدّر الوقت الإضافي والتكلفة والأثر على الجدول وتطلب قراراً كتابياً', en: 'Estimate the additional time, cost and schedule impact and request a written decision' },
-            { ar: 'توافق لأن الطلب من المدير وهو يعلم ما يريد', en: 'Agree because the request comes from the manager and they know what they want' },
-            { ar: 'ترفض لأن وثيقة النطاق لا تتضمّن دورة خامسة', en: 'Refuse because the scope document does not include a fifth session' },
+            { ar: 'توافق فوراً لأن الطلب من المدير وهو أدرى بأولويات البرنامج', en: 'Agree at once because the request comes from the manager, who knows the programme priorities best' },
+            { ar: 'ترفض لأن وثيقة النطاق لا تتضمّن دورة خامسة، وأي إضافة تحتاج مشروعاً جديداً', en: 'Refuse because the scope document does not include a fifth session, and any addition needs a new project' },
           ],
           correct: 0,
           feedback: {
@@ -127,8 +127,8 @@ export const communityProjectManagement: CourseContent = {
           },
           options: [
             { ar: 'احصر كل المهام الحالية وقارنها بالنطاق الأصلي لمعرفة حجم الانحراف', en: 'List all current tasks and compare them with the original scope to understand the extent of the deviation' },
-            { ar: 'عقد اجتماع عاجل مع الفريق وابدأ من الصفر', en: 'Hold an emergency meeting with the team and start from scratch' },
-            { ar: 'أرسل تقريراً للإدارة وانتظر توجيهاتهم', en: 'Send a report to management and wait for their instructions' },
+            { ar: 'اعقد اجتماعاً عاجلاً مع الفريق وأعِد بناء خطة العمل من الصفر', en: 'Hold an emergency meeting with the team and rebuild the work plan from scratch' },
+            { ar: 'أرسل تقريراً للإدارة بما يجري وانتظر توجيهاتهم قبل أي تعديل على مهام الفريق', en: 'Send a report to management on what is happening and wait for their instructions before adjusting any of the team tasks' },
           ],
           correct: 0,
           feedback: {
@@ -190,7 +190,7 @@ export const communityProjectManagement: CourseContent = {
           },
           options: [
             { ar: 'اطلب موافقة مكتوبة من المانح قبل نقل البند، وفق شروط العقد', en: 'Request written approval from the donor before transferring the line item, per the contract terms' },
-            { ar: 'أصرف من الاحتياطي لأنه مخصّص لهذه الحالات', en: 'Spend from contingency because it is reserved for such cases' },
+            { ar: 'أصرف من احتياطي الطوارئ لأنه مخصّص لمثل هذه الحالات', en: 'Spend from the contingency reserve because it is set aside for such cases' },
             { ar: 'لا ضرورة لموافقة لأن التوفير ناتج عن كفاءة وليس عن تقصير', en: 'No approval needed because the saving came from efficiency not shortfall' },
           ],
           correct: 0,
@@ -209,8 +209,8 @@ export const communityProjectManagement: CourseContent = {
           },
           options: [
             { ar: 'حلّل البنود المتجاوزة واكتشف السبب قبل الإبلاغ والمعالجة', en: 'Analyse the overspent lines and find the cause before reporting and correcting' },
-            { ar: 'قلّص فوراً أنشطة النصف الثاني للتعويض', en: 'Immediately cut second-half activities to compensate' },
-            { ar: 'أبلغ المانح الآن قبل أي تحليل لأن الشفافية مطلوبة', en: 'Report to the donor now before any analysis because transparency is required' },
+            { ar: 'قلّص فوراً أنشطة النصف الثاني بما يكفي لتعويض التجاوز', en: 'Immediately cut second-half activities enough to offset the overspend' },
+            { ar: 'أبلغ المانح الآن قبل أي تحليل لأن الشفافية تقتضي إخباره فور ظهور التجاوز', en: 'Report to the donor now before any analysis, because transparency means telling them the moment an overspend appears' },
           ],
           correct: 0,
           feedback: {
@@ -261,8 +261,8 @@ export const communityProjectManagement: CourseContent = {
           },
           options: [
             { ar: 'حدّث السجل فوراً: غيّر الاحتمال إلى "ممكن" وابدأ خطة بديلة مؤقتة', en: 'Update the log immediately: change likelihood to "possible" and begin a provisional contingency plan' },
-            { ar: 'انتظر حتى يتأكّد الانسحاب قبل تغيير السجل', en: 'Wait until the withdrawal is confirmed before changing the log' },
-            { ar: 'أبلغ المانح فوراً لأنه خطر جسيم', en: 'Notify the funder immediately because the impact is critical' },
+            { ar: 'انتظر حتى يتأكّد الانسحاب رسمياً قبل تغيير السجل، فالتلميح وحده لا يكفي', en: 'Wait until the withdrawal is officially confirmed before changing the log, since a hint on its own is not enough' },
+            { ar: 'أبلغ المانح فوراً لأن الأثر جسيم واترك تحديث السجل إلى ما بعد ردّه', en: 'Notify the funder immediately because the impact is critical, and leave updating the log until after their reply' },
           ],
           correct: 0,
           feedback: {
@@ -280,8 +280,8 @@ export const communityProjectManagement: CourseContent = {
           },
           options: [
             { ar: 'سجل المخاطر يلتقط المخاطر المتوقّعة — فائدته تظهر في الاستجابة للمتوقَّع بسرعة. لكن هذا درس لتحسين السجل القادم', en: 'The risk log captures anticipated risks — its value shows in responding to expected issues quickly. But this is a lesson to improve the next log' },
-            { ar: 'محقّ: لا فائدة من سجل المخاطر في المشاريع المجتمعية الصغيرة', en: 'He\'s right: there\'s no value in a risk log for small community projects' },
-            { ar: 'يجب إعادة كتابة السجل الآن لإضافة المشاكل التي وقعت', en: 'The log should be rewritten now to add the problems that occurred' },
+            { ar: 'محقّ: لا فائدة تُذكر من سجل المخاطر في المشاريع المجتمعية الصغيرة لأن مشكلاتها غير متوقّعة', en: 'He is right: a risk log adds no real value in small community projects because their problems are unpredictable' },
+            { ar: 'يجب إعادة كتابة السجل الآن لإضافة المشاكل التي وقعت حتى يبدو مكتملاً في تقرير الإغلاق', en: 'The log should be rewritten now to add the problems that occurred so it looks complete in the closure report' },
           ],
           correct: 0,
           feedback: {
@@ -336,8 +336,8 @@ export const communityProjectManagement: CourseContent = {
           },
           options: [
             { ar: 'اطلب تحليل مكتوب لأسباب الفجوة وخطة تعويض محدّدة الأنشطة والمواعيد', en: 'Request a written analysis of the gap causes and a specific recovery plan with activities and dates' },
-            { ar: 'قبل "الأمور ستتحسّن" فهو تفاؤل مشروع في المشاريع', en: 'Accept "things will improve" as legitimate optimism in projects' },
-            { ar: 'أعلن أزمة وادعُ اجتماعاً طارئاً مع المانح', en: 'Declare a crisis and call an emergency meeting with the funder' },
+            { ar: 'اقبل "الأمور ستتحسّن" فالتفاؤل مشروع والفرق تُعوّض التأخير عادةً في المرحلة الأخيرة', en: 'Accept "things will improve" as legitimate optimism, since teams usually make up delay in the final stage of a project' },
+            { ar: 'أعلن أزمة وادعُ إلى اجتماع طارئ مع المانح لطلب تمديد مدّة المشروع', en: 'Declare a crisis and call an emergency meeting with the funder to request a project extension' },
           ],
           correct: 0,
           feedback: {
@@ -355,8 +355,8 @@ export const communityProjectManagement: CourseContent = {
           },
           options: [
             { ar: 'قيّم أثر الانسحاب على الجدول والإنجاز، وزّع مهامه الحالية، وابحث عن بديل مع تحديث سجل المخاطر', en: 'Assess the withdrawal\'s impact on schedule and deliverables, redistribute their current tasks, seek a replacement, and update the risk log' },
-            { ar: 'وزّع مهامه على الفريق دون تغيير الجدول لأن التغيير يخلق ارتباكاً', en: 'Distribute their tasks to the team without changing the schedule because change creates confusion' },
-            { ar: 'أبلغ المانح فوراً وانتظر توجيهاته', en: 'Notify the funder immediately and wait for their instructions' },
+            { ar: 'وزّع مهامه على بقية الفريق فوراً دون تغيير الجدول، لأن تعديل المواعيد في منتصف التنفيذ يخلق ارتباكاً أكبر من الانسحاب نفسه', en: 'Distribute their tasks to the rest of the team at once without changing the schedule, because shifting the dates midway creates more confusion than the withdrawal itself' },
+            { ar: 'أبلغ المانح فوراً بالانسحاب وانتظر توجيهاته قبل إعادة توزيع أي مهمة على الفريق', en: 'Notify the funder of the withdrawal immediately and wait for their instructions before reassigning any task' },
           ],
           correct: 0,
           feedback: {
@@ -451,8 +451,8 @@ export const communityProjectManagement: CourseContent = {
           },
           options: [
             { ar: 'وجّه النقاش نحو الأنظمة والعمليات: ما الذي جعل هذا ممكناً؟ وما الذي يمنعه في المرة القادمة؟', en: 'Direct the discussion toward systems and processes: what made this possible? And what prevents it next time?' },
-            { ar: 'وثّق الاتهام كما هو لأنه رأي أحد أعضاء الفريق', en: 'Document the accusation as-is because it is one team member\'s view' },
-            { ar: 'أوقف النقاش وانتقل لبند آخر لتجنّب التوتّر', en: 'Stop the discussion and move to the next item to avoid tension' },
+            { ar: 'وثّق الاتهام كما ورد باسم صاحبه لأنه رأي أحد أعضاء الفريق ومن حقّه أن يُسجَّل', en: 'Document the accusation as stated and attributed, because it is the view of a team member and deserves recording' },
+            { ar: 'أوقف النقاش وانتقل إلى بند آخر لتجنّب التوتّر داخل الفريق، وأجّل الموضوع إلى نهاية الجلسة إن بقي وقت', en: 'Stop the discussion and move to the next item to avoid tension in the team, deferring the subject to the end of the session if time remains' },
           ],
           correct: 0,
           feedback: {

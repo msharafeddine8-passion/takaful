@@ -312,7 +312,21 @@ export default async function MembershipCardPage(props: PageProps<'/[lang]/accou
 
                   <dl className="mt-auto grid grid-cols-2 gap-x-[3cqw] gap-y-[0.8cqw] text-[2.8cqw]">
                     <Field label={t.memberSince} value={since} ltr />
-                    <Field label={t.hoursLabel} value={formatDuration(minutes, lang)} />
+                    {/*
+                      * Only once there are hours to print.
+                      *
+                      * formatDuration answers «0 دقيقة» / "0 min" at nothing, so
+                      * a volunteer accepted last week was handed a card reading
+                      * «ساعات موثّقة: 0 دقيقة» — the one figure on it, and a
+                      * nought, on the object they carry and show to people. The
+                      * card is 85.6mm wide and there is no room on it for the
+                      * sentence that would replace the zero, so the line waits
+                      * until it has something to say and the card is a card
+                      * about who they are until then.
+                      */}
+                    {minutes > 0 && (
+                      <Field label={t.hoursLabel} value={formatDuration(minutes, lang)} />
+                    )}
                     {stage && (
                       <div className="col-span-2 min-w-0">
                         <dt className="font-bold text-ink-3">{t.stage}</dt>

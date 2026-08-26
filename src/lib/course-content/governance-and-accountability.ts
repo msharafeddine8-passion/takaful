@@ -83,8 +83,8 @@ export const governanceAndAccountability: CourseContent = {
           },
           options: [
             { ar: 'لا فصل بين صلاحيات الإشراف والتنفيذ، فإذا أخطأ المؤسّس لا أحد بصلاحية تصحيحه', en: 'No separation between oversight and execution authorities — if the founder errs, no one has the authority to correct them' },
-            { ar: 'البيروقراطية تُبطئ العمل الميداني', en: 'Bureaucracy slows field work' },
-            { ar: 'المانحون لا يُفضّلون المؤسسات التي يُديرها مؤسّسها', en: 'Funders dislike institutions managed by their founder' },
+            { ar: 'البيروقراطية تُبطئ العمل الميداني، لأن قرارات الصرف البسيطة ستنتظر مجلساً يجتمع مرّة كل ثلاثة أشهر', en: 'Bureaucracy slows field work, because even simple spending decisions would have to wait for a board that meets once every three months' },
+            { ar: 'المانحون لا يُفضّلون المؤسسات التي يُديرها مؤسّسها وحده وقد يمتنعون عن تمويل مشاريعها القادمة', en: 'Funders dislike institutions run solely by their founder and may decline to fund their next round of projects' },
           ],
           correct: 0,
           feedback: {
@@ -102,8 +102,8 @@ export const governanceAndAccountability: CourseContent = {
           },
           options: [
             { ar: 'المجلس يُحدّد الاتجاه الاستراتيجي والرقابة؛ المدير التنفيذي ينفّذ ويُدير العمليات اليومية', en: 'The board sets strategic direction and oversight; the executive director implements and manages daily operations' },
-            { ar: 'المجلس يُدير المال والمدير التنفيذي يُدير الناس', en: 'The board manages money and the executive director manages people' },
-            { ar: 'المجلس له صلاحية أعلى في كل القرارات بلا استثناء', en: 'The board has higher authority over all decisions without exception' },
+            { ar: 'المجلس يُدير المال ويُقرّ الميزانية، والمدير التنفيذي يُدير الناس والشركاء', en: 'The board manages money and approves the budget; the executive director manages people and partners' },
+            { ar: 'المجلس له صلاحية أعلى في كل القرارات بلا استثناء، فله أن يُلغي أي قرار تشغيلي يتّخذه المدير التنفيذي', en: 'The board has higher authority over all decisions without exception, and may overturn any operational decision the executive director makes' },
           ],
           correct: 0,
           feedback: {
@@ -148,8 +148,8 @@ export const governanceAndAccountability: CourseContent = {
           },
           options: [
             { ar: 'حافظ على سريّة المُبلِّغ وأحِل الأمر للمجلس أو أعلى سلطة متاحة، مع توثيق ما بلّغت به', en: 'Maintain the reporter\'s confidentiality and refer the matter to the board or highest available authority, documenting what was reported' },
-            { ar: 'واجه مدير التوريد مباشرة لأن الغموض أسوأ', en: 'Confront the procurement manager directly because ambiguity is worse' },
-            { ar: 'أخبر المتطوّع أنك لا تستطيع التصرّف دون سياسة رسمية', en: 'Tell the volunteer you cannot act without a formal policy' },
+            { ar: 'واجه مدير التوريد مباشرة واسأله عن الهدايا، لأن ترك الشبهة معلّقة أسوأ من مواجهة صريحة تحسم الأمر', en: 'Confront the procurement manager directly and ask him about the gifts, because leaving the suspicion hanging is worse than a frank confrontation that settles it' },
+            { ar: 'أخبر المتطوّع أنك لا تستطيع التصرّف دون سياسة رسمية، واقترح عليه انتظار اعتماد سياسة التبليغ', en: 'Tell the volunteer you cannot act without a formal policy, and suggest waiting until a whistleblowing policy is adopted' },
           ],
           correct: 0,
           feedback: {
@@ -167,8 +167,8 @@ export const governanceAndAccountability: CourseContent = {
           },
           options: [
             { ar: 'يغادر العضو غرفة النقاش والتصويت للقرار المحدّد فقط، ويُدوَّن ذلك في المحضر', en: 'The member leaves the discussion and voting room for that specific decision only, and this is recorded in the minutes' },
-            { ar: 'يستقيل من المجلس فوراً', en: 'Resign from the board immediately' },
-            { ar: 'يبقى في الاجتماع لكن يمتنع عن التصويت فقط', en: 'Remain in the meeting but only abstain from voting' },
+            { ar: 'يستقيل من المجلس فوراً لأن وجود التضارب يُفقده أهليّة العضوية', en: 'Resign from the board immediately, because the existence of a conflict disqualifies them from membership' },
+            { ar: 'يبقى في الاجتماع ويُشارك في النقاش لكن يمتنع عن التصويت فقط', en: 'Remain in the meeting and take part in the discussion but abstain from the vote only' },
           ],
           correct: 0,
           feedback: {
@@ -234,8 +234,8 @@ export const governanceAndAccountability: CourseContent = {
           },
           options: [
             { ar: 'المشكلة تنظيمية — التقرير لا يُدار كمشروع مستقل بجدول واضح، والمسؤوليّة موزّعة بشكل غير محكَم', en: 'Organisational problem — the report is not managed as an independent project with a clear schedule, and responsibility is loosely distributed' },
-            { ar: 'المشكلة شخصية — الموظّف غير مؤهّل', en: 'Personal problem — the employee is not competent' },
-            { ar: 'المشكلة خارجية — حجم العمل زاد هذه الفترة', en: 'External problem — workload increased this period' },
+            { ar: 'المشكلة شخصية — الموظّف غير مؤهّل لإدارة مواعيده، والحلّ نقل مهمّة التقرير إلى شخص آخر', en: 'Personal problem — the employee is not competent at managing deadlines, and the fix is to move the report task to someone else' },
+            { ar: 'المشكلة خارجية — حجم العمل زاد هذه الفترة وأي فريق كان سيتأخّر تحت الضغط نفسه، والحلّ توظيف شخص إضافي', en: 'External problem — the workload increased this period, any team would have slipped under the same pressure, and the fix is to hire an additional person' },
           ],
           correct: 0,
           feedback: {
@@ -253,8 +253,8 @@ export const governanceAndAccountability: CourseContent = {
           },
           options: [
             { ar: 'ثقافة التبليغ الداخلي ضعيفة — لا يشعر الفريق بالأمان الكافي لرفع المشكلات للمجلس', en: 'Internal reporting culture is weak — the team does not feel safe enough to escalate problems to the board' },
-            { ar: 'المنظّمة تُؤدّي بشكل مثالي فعلاً', en: 'The organisation is actually performing perfectly' },
-            { ar: 'المجلس لا يُطرح أمامه تقارير بالتفصيل الكافي', en: 'The board is not presented with reports in sufficient detail' },
+            { ar: 'المنظّمة تُؤدّي بشكل مثالي فعلاً، فالفريق يحلّ مشكلاته أولاً بأول ولا يبقى ما يستحقّ رفعه إلى المجلس', en: 'The organisation really is performing perfectly — the team resolves problems as they arise and nothing is left worth escalating' },
+            { ar: 'المجلس لا يُطرح أمامه تقارير بالتفصيل الكافي وينبغي أن يطلب نماذج أطول', en: 'The board is not presented with reports in sufficient detail and should ask for longer templates' },
           ],
           correct: 0,
           feedback: {
@@ -302,7 +302,7 @@ export const governanceAndAccountability: CourseContent = {
           options: [
             { ar: 'طلب تفسير خطّي من المسؤول المالي، وإن لم يُقنع أحِل الأمر للمجلس', en: 'Request a written explanation from the financial officer; if not convincing, refer to the board' },
             { ar: 'افترض أن الفرق خطأ محاسبي وأبلغ المانح بالتصحيح', en: 'Assume the difference is an accounting error and inform the funder of the correction' },
-            { ar: 'تجاوز الأمر إن كان الفرق صغيراً دون 5%', en: 'Overlook the matter if the difference is small under 5%' },
+            { ar: 'تجاوز الأمر إن كان الفرق صغيراً دون 5% لأنه ضمن هامش التقريب', en: 'Overlook the matter if the difference is small, under 5%, within the rounding margin' },
           ],
           correct: 0,
           feedback: {
@@ -320,8 +320,8 @@ export const governanceAndAccountability: CourseContent = {
           },
           options: [
             { ar: 'عقد اجتماع طارئ للمجلس لمراجعة القرارات الماضية وإعادة ضبط جدول الاجتماعات الدورية', en: 'Hold an emergency board meeting to review past decisions and reset the regular meetings schedule' },
-            { ar: 'الاستمرار بالنمط الحالي لأنه أسرع وأكثر مرونة', en: 'Continue the current pattern as it is faster and more flexible' },
-            { ar: 'استبدال رئيس المجلس بشخص أكثر التزاماً', en: 'Replace the board chair with a more committed person' },
+            { ar: 'الاستمرار بالنمط الحالي لأنه أسرع وأكثر مرونة، مع إرسال ملخّص القرارات لبقية الأعضاء للاطّلاع', en: 'Continue the current pattern as it is faster and more flexible, emailing a summary of decisions to the other members for information' },
+            { ar: 'استبدال رئيس المجلس بشخص أكثر التزاماً بالدعوة إلى الاجتماعات الدورية', en: 'Replace the board chair with someone more committed to calling the regular meetings' },
           ],
           correct: 0,
           feedback: {
@@ -373,8 +373,8 @@ export const governanceAndAccountability: CourseContent = {
           },
           options: [
             { ar: 'ناقش التأثير على الطاقة التشغيلية وحاول التفاوض على وسط، مثل تقرير شهري مختصر وربعي مفصَّل', en: 'Discuss the operational capacity impact and try to negotiate a middle ground, such as a brief monthly report and a detailed quarterly one' },
-            { ar: 'وافق فوراً لأن رضا المانح الكبير أولوية', en: 'Agree immediately because satisfying the major funder is a priority' },
-            { ar: 'ارفض لأن وتيرة التقارير مُحدَّدة في العقد الأصلي', en: 'Refuse because the reporting frequency is specified in the original contract' },
+            { ar: 'وافق فوراً لأن رضا المانح الكبير أولوية، ويمكن للفريق استيعاب العبء بالعمل ساعات أطول', en: 'Agree immediately because satisfying the major funder is a priority, and the team can absorb the extra load by working longer hours' },
+            { ar: 'ارفض لأن وتيرة التقارير مُحدَّدة في العقد الأصلي وأي تعديل عليها يفتح الباب لطلبات إضافية طوال المشروع', en: 'Refuse because the reporting frequency is fixed in the original contract, and any change to it opens the door to further demands throughout the project' },
           ],
           correct: 0,
           feedback: {
@@ -399,8 +399,8 @@ export const governanceAndAccountability: CourseContent = {
           },
           options: [
             { ar: 'استمع للشاكي بجدية، سجّل الشكوى، أجرِ تحقيقاً داخلياً صادقاً، أبلغه بالنتائج والإجراءات المتّخذة، ثم صمّم آلية شكاوى رسمية فوراً', en: 'Listen to the complainant seriously, record the complaint, conduct an honest internal investigation, inform them of findings and actions taken, then design a formal complaints mechanism immediately' },
-            { ar: 'وضّح للمستفيد أن الضرر لم يكن مقصوداً واعتذر شفهياً', en: 'Clarify to the beneficiary that the harm was unintentional and apologise verbally' },
-            { ar: 'أحل الأمر لمحامي الجمعية لتجنّب أي مسؤولية قانونية', en: 'Refer the matter to the organisation\'s lawyer to avoid any legal liability' },
+            { ar: 'وضّح للمستفيد أن الضرر لم يكن مقصوداً واعتذر شفهياً، فالنيّة الحسنة كافية ما دامت الخدمة مجانية', en: 'Clarify to the beneficiary that the harm was unintentional and apologise verbally, since good intent is enough when the service was provided free of charge' },
+            { ar: 'أحل الأمر لمحامي الجمعية لتجنّب أي مسؤولية قانونية قبل أن تُجري أي تحقيق داخلي أو تردّ على الشاكي', en: 'Refer the matter to the organisation lawyer to avoid any legal liability, before conducting an internal investigation or replying to the complainant' },
           ],
           correct: 0,
           feedback: {

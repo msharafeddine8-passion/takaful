@@ -149,12 +149,12 @@ export const projectManagement: CourseContent = {
           },
           options: [
             {
-              ar: 'الأطفال في حيّنا لا يقرؤون كفاية وهذا سيضرّ بمستقبلهم الدراسي.',
-              en: 'Children in our neighbourhood do not read enough and this will harm their academic future.',
+              ar: 'الأطفال في حيّنا لا يقرؤون كفاية وهذا سيضرّ بمستقبلهم الدراسي ويجعلهم أقلّ قدرة على المنافسة لاحقاً.',
+              en: 'Children in our neighbourhood do not read enough, and this will harm their academic future and leave them less able to compete later.',
             },
             {
-              ar: 'نريد إنشاء نادي قراءة لتشجيع الأطفال على القراءة بدل قضاء الوقت على الهواتف.',
-              en: 'We want to create a reading club to encourage children to read instead of spending time on phones.',
+              ar: 'نريد إنشاء نادي قراءة أسبوعي في مركز الحيّ بإشراف متطوّعين من الحيّ، يوفّر كتباً مناسبة لأعمار الأطفال ويشجّعهم على القراءة بدل قضاء الوقت على الهواتف.',
+              en: 'We want to create a weekly reading club at the neighbourhood centre, run by volunteers, that provides books suited to the ages of the children and encourages them to read instead of spending time on phones.',
             },
             {
               ar: 'استبيان على ٤٥ طفلاً بين ٧ و١٢ سنة في حيّ المزرعة أظهر أن ٦٥٪ منهم يقرؤون بمستوى أدنى من صفّهم الدراسي، وأن ٧٨٪ من أسرهم لا تملك كتباً في المنزل.',
@@ -265,20 +265,20 @@ export const projectManagement: CourseContent = {
           },
           options: [
             {
-              ar: 'تدريب ٨٠ أمّاً على مبادئ التغذية السليمة خلال ثلاثة أشهر',
-              en: 'Training 80 mothers in basic nutrition principles over three months',
+              ar: 'تدريب ٨٠ أمّاً على مبادئ التغذية السليمة خلال ثلاثة أشهر في ست جلسات عملية داخل مركز الحيّ',
+              en: 'Training 80 mothers in basic nutrition principles over three months across six practical sessions at the neighbourhood centre',
             },
             {
               ar: '٦٠٪ من الأمّهات المشاركات يوفّرن وجبة كاملة العناصر الغذائية لأطفالهن يومياً بعد ثلاثة أشهر من نهاية البرنامج',
               en: '60% of participating mothers provide a nutritionally complete meal to their children every day three months after the programme ends',
             },
             {
-              ar: 'توزيع دليل تغذوي مصوَّر على جميع المشاركات في البرنامج',
-              en: 'Distributing an illustrated nutrition guide to all programme participants',
+              ar: 'توزيع دليل تغذوي مصوَّر يتضمّن وصفات محلّية منخفضة التكلفة على جميع المشاركات في البرنامج',
+              en: 'Distributing an illustrated nutrition guide containing low-cost local recipes to all programme participants',
             },
             {
-              ar: 'عقد عشر جلسات توعية شهرية في مراكز الرعاية الصحّية الأولية',
-              en: 'Holding ten monthly awareness sessions at primary healthcare centres',
+              ar: 'عقد عشر جلسات توعية شهرية في مراكز الرعاية الصحّية الأولية بحضور أخصّائية تغذية وتوزيع مواد تثقيفية مطبوعة على الحاضرات',
+              en: 'Holding ten monthly awareness sessions at primary healthcare centres with a nutritionist present and educational materials handed to attendees',
             },
           ],
           correct: 1,
@@ -387,16 +387,16 @@ export const projectManagement: CourseContent = {
           },
           options: [
             {
-              ar: 'تعقد ورش عمل لتطوير المهارات التجارية كما خطّطت، لأن الناس لا يدركون دائماً كل ما يحتاجون',
-              en: 'Hold business-skills workshops as planned, because people do not always recognise everything they need',
+              ar: 'تعقد ورش عمل لتطوير المهارات التجارية كما خطّطت، لأن الناس لا يدركون دائماً كل ما يحتاجون، ولأن الممول وافق على هذا التدخّل',
+              en: 'Hold business-skills workshops as planned, because people do not always recognise everything they need and because the funder has already approved this intervention',
             },
             {
               ar: 'تراجع خطّتها وتصمّم تدخّلاً يعالج الوصول إلى التوزيع، أو تعيد صياغة مشكلتها وتتواصل مع ممول يملك تفويضاً ملائماً',
               en: 'Revise the plan and design an intervention addressing distribution access, or reframe the problem and contact a funder with a suitable mandate',
             },
             {
-              ar: 'تُجري المزيد من المقابلات إلى أن تجد من يؤكّد أن المهارات التجارية هي المشكلة الأساسية',
-              en: 'Conduct more interviews until someone confirms that business skills are the main problem',
+              ar: 'تُجري المزيد من المقابلات في قرى أخرى إلى أن تجد من يؤكّد أن المهارات التجارية هي المشكلة الأساسية',
+              en: 'Conduct more interviews in other villages until someone confirms that business skills are the main problem',
             },
           ],
           correct: 1,
@@ -495,12 +495,12 @@ export const projectManagement: CourseContent = {
               en: 'Move "field training" to the month following the completion of "beneficiary recruitment" and revise the entire timeline accordingly',
             },
             {
-              ar: 'يبدأ النشاطان في الشهر نفسه ويُنجزان بشكل متوازٍ لتوفير الوقت',
-              en: 'Start both activities in the same month and run them in parallel to save time',
+              ar: 'يبدأ النشاطان في الشهر نفسه ويُنجزان بشكل متوازٍ لتوفير الوقت وضمان انتهاء المشروع في موعده',
+              en: 'Start both activities in the same month and run them in parallel to save time and finish the project on schedule',
             },
             {
-              ar: 'يُمدَّد المشروع شهراً إضافياً ويُترك الجدول كما هو حتى يُرى ما سيحدث في التنفيذ',
-              en: 'Extend the project by one month and leave the schedule as-is to see what happens in implementation',
+              ar: 'يُمدَّد المشروع شهراً إضافياً ويُترك الجدول كما هو حتى يُرى ما سيحدث فعلاً في التنفيذ',
+              en: 'Extend the project by one month and leave the schedule as-is to see what actually happens in implementation',
             },
           ],
           correct: 0,
@@ -611,16 +611,16 @@ export const projectManagement: CourseContent = {
           },
           options: [
             {
-              ar: 'تكتب الـ Concept Note الآن بتقديرات ومؤشرات افتراضية وتجمع البيانات الحقيقية بعد الحصول على الموافقة',
-              en: 'Write the concept note now with assumed estimates and indicators, then collect real data after getting approval',
+              ar: 'تكتب الـ Concept Note الآن بتقديرات ومؤشرات افتراضية مأخوذة من مشاريع مشابهة، وتجمع البيانات الحقيقية بعد الحصول على الموافقة المبدئية من الممول على الفكرة',
+              en: 'Write the concept note now with assumed estimates and indicators borrowed from similar projects, then collect the real data after getting initial approval from the funder',
             },
             {
               ar: 'تطلب من الممول تمديد المهلة أسبوعاً أو أسبوعَين لإجراء ثلاث إلى خمس مقابلات قصيرة مع الفئة المستهدفة وتحديد بيان المشكلة بشكل يمكن الدفاع عنه',
               en: 'Ask the funder for a one- or two-week extension to conduct three to five short interviews with the target group and develop a problem statement you can defend',
             },
             {
-              ar: 'ترسل الـ Concept Note في الموعد المحدّد استناداً إلى ملاحظاتك الشخصية، وتعدّلها بعد الموافقة الأولية',
-              en: 'Send the concept note on the set date based on your personal observations, and revise it after initial approval',
+              ar: 'ترسل الـ Concept Note في الموعد المحدّد استناداً إلى ملاحظاتك الشخصية من الحيّ، وتعدّلها بعد الموافقة الأولية',
+              en: 'Send the concept note on the set date based on your own personal observations of the area, and revise it after initial approval',
             },
           ],
           correct: 1,
@@ -747,16 +747,16 @@ export const projectManagement: CourseContent = {
           },
           options: [
             {
-              ar: 'خطر — يجب وضع خطّة احترازية لحالة انخفاض الحضور وإبلاغ الممول',
-              en: 'A risk — a contingency plan should be prepared for the case of low attendance and the funder informed',
+              ar: 'خطر — يجب تسجيله في سجل مخاطر المشروع ووضع خطّة احترازية لحالة انخفاض الحضور المسائي، مثل إضافة جلسة صباحية بديلة، وإبلاغ الممول بها قبل بدء التنفيذ',
+              en: 'A risk — it should be recorded in the project risk log with a contingency plan for low evening attendance, such as adding an alternative morning session, and the funder informed of that plan before implementation begins',
             },
             {
               ar: 'افتراض يحتاج تحقّقاً فورياً قبل اعتماد الجدول — بسؤال مجموعة من النساء مباشرةً عن تفضيلات التوقيت وإمكانية الحضور في الساعة المساءَية المحدّدة',
               en: 'An assumption that needs immediate verification before fixing the schedule — by asking a group of women directly about time preferences and ability to attend at the specified evening hour',
             },
             {
-              ar: 'مؤشر نجاح — يُقيَّم بعد انتهاء المشروع بالمقارنة بين الحضور الفعلي والعدد المستهدف',
-              en: 'A success indicator — evaluated after the project ends by comparing actual attendance with the target number',
+              ar: 'مؤشر نجاح — يُقيَّم بعد انتهاء المشروع بالمقارنة بين الحضور الفعلي والعدد المستهدف في كل جلسة مسائية',
+              en: 'A success indicator — evaluated after the project ends by comparing actual attendance with the target number for each evening session',
             },
           ],
           correct: 1,

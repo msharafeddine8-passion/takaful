@@ -31,6 +31,22 @@ export type AccessState =
   /** Restricted to particular roles. */
   | 'staff_only';
 
+/**
+ * Are the courses this one sits behind all passed?
+ *
+ * One expression, in one place, because it has two callers and they must not
+ * drift: `academy.ts:eligibilityFor` asks it for the course page, and the
+ * catalogue asks it for every card. The catalogue used to ask it inline —
+ * `course.requires.some((r) => !passed.has(r))` — and that copy is how a card
+ * came to disagree with the page it opened.
+ *
+ * A course with no prerequisites is trivially met, which is what `every` on an
+ * empty list already says.
+ */
+export function prerequisitesMet(requires: string[], passed: ReadonlySet<string>): boolean {
+  return requires.every((slug) => passed.has(slug));
+}
+
 export type AccessDecision = {
   state: AccessState;
   /** Whether the modules and questions may be built at all. */

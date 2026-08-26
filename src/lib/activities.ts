@@ -27,6 +27,30 @@ export type OpportunityRow = {
 };
 
 /**
+ * The public listing's row: an opportunity, plus how many people are waiting on
+ * it.
+ *
+ * Its own type rather than a field on OpportunityRow because MyActivityRow and
+ * ManagedActivity both extend that one and neither of their queries selects the
+ * figure — widening the base would have those two claim a number they never
+ * fetched, which type-checks (query<T> casts) and is undefined at runtime.
+ */
+export type OpportunityListRow = OpportunityRow & {
+  /**
+   * How many people have asked to be told when this one is scheduled.
+   *
+   * Needed because `taken` is not a usable figure on an activity with no date:
+   * nothing can be registered for one, so that count is structurally zero and
+   * the public page printed «👥 0» beside every card waiting on a coordinator —
+   * ten of them down a phone screen. A headcount that cannot yet be anything
+   * but nought is not a count. This is the number that does move on those
+   * cards, and the invitation the client's section 22 asks for is an invitation
+   * to be the first entry in it.
+   */
+  interested: number;
+};
+
+/**
  * Upcoming, open activities, soonest first.
  *
  * `is_published` was the whole point of the draft/published choice on the
@@ -43,11 +67,19 @@ export type OpportunityRow = {
  * Cancelled activities are excluded here too. `is_open` is about registration
  * being open, not about the activity still being on.
  */
-export async function opportunities(viewerId: string | null): Promise<OpportunityRow[]> {
-  return query<OpportunityRow>(
+export async function opportunities(viewerId: string | null): Promise<OpportunityListRow[]> {
+  return query<OpportunityListRow>(
+    /*
+     * The interest count is a scalar subquery rather than a JOIN on purpose: a
+     * join to activity_interest would multiply the row once per interested
+     * person and inflate p.taken along with it, and an activity nobody has
+     * asked about must come back as 0 rather than vanish from the listing.
+     */
     `SELECT a.id, a.title_ar, a.title_en, a.description_ar, a.description_en,
             a.location, a.starts_at, a.ends_at, a.capacity, a.min_stage,
             p.taken, p.waiting,
+            (SELECT count(*)::INT FROM activity_interest i
+              WHERE i.activity_id = a.id) AS interested,
             r.status AS my_status
        FROM activities a
        JOIN activity_places p ON p.activity_id = a.id

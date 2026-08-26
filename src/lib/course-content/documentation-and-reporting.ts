@@ -139,13 +139,22 @@ export const documentationAndReporting: CourseContent = {
             en: 'An activity ends with no problems worth mentioning. Is a report written?',
           },
           options: [
-            { ar: 'لا — التقارير للحوادث، والكتابة بلا سبب إهدار وقت', en: 'No — reports are for incidents, and writing without cause wastes time' },
+            {
+              ar: 'لا — التقارير للحوادث، والكتابة بلا سبب إهدار لوقت كان يمكن أن يُصرف على تحضير النشاط التالي',
+              en: 'No — reports are for incidents, and writing without cause wastes time that could have gone into preparing the next activity',
+            },
             {
               ar: 'نعم، تقرير قصير: العدد وما نُفّذ وما لم يُنفّذ وما يستحقّ التعديل في المرّة القادمة',
               en: 'Yes, a short one: the numbers, what was delivered, what was not, and what is worth changing next time',
             },
-            { ar: 'يُكتب فقط إن طلبته المنسّقة', en: 'Only if the coordinator asks for one' },
-            { ar: 'تكفي رسالة في مجموعة الفريق', en: 'A message in the team group is enough' },
+            {
+              ar: 'يُكتب فقط إن طلبته المنسّقة، فهي التي تعرف أيّ الأنشطة يحتاج توثيقاً',
+              en: 'Only if the coordinator asks for one — she is the one who knows which activities need documenting',
+            },
+            {
+              ar: 'تكفي رسالة في مجموعة الفريق تقول إنّ النشاط تمّ ولم يقع فيه شيء',
+              en: 'A message in the team group saying the activity ran and nothing happened in it is enough',
+            },
           ],
           correct: 1,
           feedback: {
@@ -293,13 +302,22 @@ export const documentationAndReporting: CourseContent = {
             en: 'Which of the following works as a fact in an incident report?',
           },
           options: [
-            { ar: '«كانت الأمّ غاضبة جداً وغير متعاونة.»', en: '"The mother was very angry and uncooperative."' },
+            {
+              ar: '«كانت الأمّ غاضبة جداً وغير متعاونة، ورفضت أن تسمع أيّ شرح عن المعايير وأصرّت على موقفها.»',
+              en: '"The mother was very angry and uncooperative, refused to hear any explanation of the criteria, and insisted on her position."',
+            },
             {
               ar: '«رفعت الأمّ صوتها وطلبت مقابلة المسؤولة، وغادرت الساعة ١٢:٢٠ قبل انتهاء التوزيع.»',
               en: '"The mother raised her voice, asked to see the person in charge, and left at 12:20 before the distribution ended."',
             },
-            { ar: '«الأمّ لم تفهم المعايير رغم الشرح.»', en: '"The mother did not understand the criteria despite the explanation."' },
-            { ar: '«حصل توتّر بسبب سوء تنظيم التوزيع.»', en: '"There was tension because the distribution was badly organised."' },
+            {
+              ar: '«الأمّ لم تفهم المعايير رغم الشرح، ولذلك اعتقدت أنّ الحصّة مُنعت عنها بلا سبب واضح.»',
+              en: '"The mother did not understand the criteria despite the explanation, and so believed the parcel had been withheld from her for no clear reason."',
+            },
+            {
+              ar: '«حصل توتّر بسبب سوء تنظيم التوزيع وضيق المكان على عدد الحاضرين.»',
+              en: '"There was tension because the distribution was badly organised and the space was too small for the number of people who came."',
+            },
           ],
           correct: 1,
           feedback: {
@@ -417,13 +435,22 @@ export const documentationAndReporting: CourseContent = {
             en: 'Which of these works as an action item in minutes?',
           },
           options: [
-            { ar: '«الفريق سيحضّر المواد قبل النشاط.»', en: '"The team will prepare the materials before the activity."' },
-            { ar: '«ناقشنا موضوع المواد وسنرى.»', en: '"We discussed the materials and will see."' },
+            {
+              ar: '«الفريق سيحضّر المواد قبل النشاط ويتأكّد أنّ كلّ شيء جاهز في القاعة.»',
+              en: '"The team will prepare the materials before the activity and make sure everything is ready in the hall."',
+            },
+            {
+              ar: '«ناقشنا موضوع المواد وسنرى ما يمكن تأمينه في الأيام القادمة.»',
+              en: '"We discussed the materials and will see what can be arranged in the coming days."',
+            },
             {
               ar: '«ريما تشتري المواد وتسلّمها للقاعة قبل الأربعاء ١٤ منه.»',
               en: '"Rima buys the materials and delivers them to the hall before Wednesday the 14th."',
             },
-            { ar: '«المواد مسؤولية من يستطيع.»', en: '"The materials are the responsibility of whoever is able."' },
+            {
+              ar: '«المواد مسؤولية من يستطيع من الفريق، وأيّ شخص متفرّغ يوم الثلاثاء يتولّاها.»',
+              en: '"The materials are the responsibility of whoever on the team is able, and anyone free on Tuesday takes them on."',
+            },
           ],
           correct: 2,
           feedback: {
@@ -622,13 +649,22 @@ export const documentationAndReporting: CourseContent = {
           },
           question: { ar: 'ماذا تفعل بهذه الخلفية؟', en: 'What do you do with that background?' },
           options: [
-            { ar: 'تكتبها كما سمعتها — كلّما زادت المعلومات كان القرار أفضل', en: 'Write it as you heard it — the more information, the better the decision' },
+            {
+              ar: 'تكتبها كما سمعتها — كلّما زادت المعلومات كان القرار أفضل وأقرب إلى الواقع',
+              en: 'Write it as you heard it — the more information there is, the better and the more grounded the decision',
+            },
             {
               ar: 'لا تكتبها. تقريرك يحمل ما رأيته وسمعته بنفسك، وما نقله الجيران شائعة قد تبني عليها قراراً عن أسرة',
               en: 'Leave it out. Your report carries what you saw and heard yourself; what neighbours passed on is hearsay that a decision about a family might be built on',
             },
-            { ar: 'تكتبها وتذكر أنها من الجيران', en: 'Write it, noting that it came from neighbours' },
-            { ar: 'تخبر المسؤولة شفهياً ولا تكتبها', en: 'Tell the focal point verbally and leave it out of the report' },
+            {
+              ar: 'تكتبها وتذكر أنّها من الجيران، فيقرّر القارئ بنفسه كم يزنها',
+              en: 'Write it, noting that it came from neighbours, so the reader can decide for themselves how much to weigh it',
+            },
+            {
+              ar: 'تخبر المسؤولة شفهياً ولا تكتبها، فتصلها المعلومة من دون أن تُثبَّت على أحد',
+              en: 'Tell the focal point verbally and leave it out of the report, so the information reaches her without being pinned on anybody',
+            },
           ],
           correct: 1,
           feedback: {
@@ -743,13 +779,22 @@ export const documentationAndReporting: CourseContent = {
             en: 'An incident happens at one in the afternoon. You are tired and have somewhere to be. When do you write the report?',
           },
           options: [
-            { ar: 'غداً صباحاً وأنت مرتاح، فتكتبه أفضل', en: 'Tomorrow morning when you are rested, so you write it better' },
+            {
+              ar: 'غداً صباحاً وأنت مرتاح، فتكتبه بلغة أوضح وترتيب أفضل ممّا تكتبه الآن وأنت متعب ومستعجل',
+              en: 'Tomorrow morning when you are rested, so you write it in clearer language and better order than you would now, while you are tired and in a hurry',
+            },
             {
               ar: 'الآن ولو ناقصاً وبالنقاط، ثم تكمله مساءً — والاقتباسات الحرفية تحديداً تُكتب فوراً',
               en: 'Now, even incomplete and in note form, then finish it in the evening — and the verbatim quotations in particular go down immediately',
             },
-            { ar: 'حين تطلبه المنسّقة', en: 'When the coordinator asks for it' },
-            { ar: 'تكتفي بإخبارها هاتفياً وتكتبه إن تطوّر الأمر', en: 'Just tell her by phone, and write it if things develop' },
+            {
+              ar: 'حين تطلبه المنسّقة، فهي التي تقرّر أيّ الحوادث يحتاج تقريراً مكتوباً',
+              en: 'When the coordinator asks for it — she is the one who decides which incidents need a written report',
+            },
+            {
+              ar: 'تكتفي بإخبارها هاتفياً وتكتبه إن تطوّر الأمر، فأغلب الحوادث تنتهي عند حدّها',
+              en: 'Just tell her by phone and write it if things develop, since most incidents end where they started',
+            },
           ],
           correct: 1,
           feedback: {
@@ -798,10 +843,10 @@ export const documentationAndReporting: CourseContent = {
             en: 'Which filename works for an activity report?',
           },
           options: [
-            { ar: 'تقرير نهائي معدّل ٢.docx', en: 'final report revised 2.docx' },
+            { ar: 'تقرير نهائي معدّل ٢ - النسخة الأخيرة النهائية.docx', en: 'final report revised 2 - latest version final.docx' },
             { ar: '2026-08-13_تقرير-نشاط_طرابلس.docx', en: '2026-08-13_activity-report_tripoli.docx' },
-            { ar: 'تقرير حالة أحمد.docx', en: 'case report ahmad.docx' },
-            { ar: 'تقرير الاثنين.docx', en: 'monday report.docx' },
+            { ar: 'تقرير حالة أحمد - مركز الحيّ.docx', en: 'case report ahmad - neighbourhood centre.docx' },
+            { ar: 'تقرير الاثنين - نشاط الأطفال.docx', en: 'monday report - children activity.docx' },
           ],
           correct: 1,
           feedback: {
@@ -818,13 +863,22 @@ export const documentationAndReporting: CourseContent = {
             en: 'A volunteer leaves the team with six months of reports on his own device, never copied to the association’s storage. What is the lesson?',
           },
           options: [
-            { ar: 'أن يُطلب منه إرسالها قبل أن يغادر', en: 'That he should be asked to send them before he goes' },
+            {
+              ar: 'أن يُطلب منه إرسالها قبل أن يغادر، وأن تُضاف خطوة تسليم الملفّات إلى إجراءات إنهاء التطوّع',
+              en: 'That he should be asked to send them before he goes, and that handing the files over should be added to the exit procedure',
+            },
             {
               ar: 'أن الأرشفة تحدث وقت الكتابة لا وقت المغادرة — الملف يُحفظ في مكان الجمعية يوم يُكتب، وإلا فهو غير موجود',
               en: 'That archiving happens when a file is written, not when somebody leaves — a file lives in the association’s storage the day it is written, or it does not exist',
             },
-            { ar: 'أن على الجمعية أن توفّر أجهزة لكل متطوّع', en: 'That the association should provide devices for every volunteer' },
-            { ar: 'أن ستة أشهر مدّة طويلة بلا مراجعة', en: 'That six months is a long time without a review' },
+            {
+              ar: 'أن على الجمعية أن توفّر أجهزة لكلّ متطوّع بدل أن يعمل الناس على أجهزتهم الشخصية',
+              en: 'That the association should provide devices for every volunteer instead of people working on their own',
+            },
+            {
+              ar: 'أن ستة أشهر مدّة طويلة بلا مراجعة، وأنّ على المنسّقة أن تسأل عن التقارير شهرياً',
+              en: 'That six months is a long time without a review, and that the coordinator should ask about reports every month',
+            },
           ],
           correct: 1,
           feedback: {

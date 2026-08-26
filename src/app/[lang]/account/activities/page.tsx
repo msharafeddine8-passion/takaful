@@ -5,7 +5,7 @@ import { connection } from 'next/server';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { getDictionary, type Dictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
-import { Container, Section, Kicker } from '@/components/ui';
+import { Arrow, Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
 import { myActivities, scheduledMinutes, type MyActivityRow } from '@/lib/activities';
@@ -17,6 +17,7 @@ import {
 // formatDuration writes «2 ساعة» where Arabic says «ساعتان», and an activity's
 // date printed as a raw ISO string is the database's way of saying it.
 import { formatDate, formatDuration } from '@/lib/when';
+import { emptyStates } from '@/lib/dictionaries/empty-states';
 import { leaveActivityAction } from '@/lib/actions/activities';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account/activities'>): Promise<Metadata> {
@@ -36,6 +37,7 @@ export default async function MyActivitiesPage(props: PageProps<'/[lang]/account
   if (!isLocale(lang)) notFound();
   const dict = getDictionary(lang);
   const t = dict.account.activities;
+  const nothing = emptyStates(lang).activities;
 
   if (!isDbConfigured()) {
     return (
@@ -96,20 +98,52 @@ export default async function MyActivitiesPage(props: PageProps<'/[lang]/account
         <p className="mt-3 text-[1.02rem] leading-relaxed text-ink-2">{t.mineLede}</p>
 
         {rows.length === 0 ? (
+          /*
+           * A sentence and a link, where there used to be a sentence and a
+           * filled orange button.
+           *
+           * The button was the loudest thing on an empty page, and it led to a
+           * listing that is itself empty most days — an emphatic invitation to
+           * a room with nobody in it. The sentence says where openings are
+           * announced and that a notice reaches them, which is the part that is
+           * actually true today; the link stays because the page is real and
+           * somebody may want to look.
+           */
           <div className="mt-8">
-            <p className="rounded-xl border border-line bg-surface-2 px-5 py-4 text-ink-2">
-              {t.mineNone}
+            <p className="max-w-[70ch] rounded-xl border border-line bg-surface-2 px-5 py-4 leading-relaxed text-ink-2">
+              {nothing.never}
             </p>
             <Link
               href={`/${lang}/opportunities`}
-              className="mt-4 inline-block rounded-full bg-brand-orange px-6 py-3 text-[0.95rem] font-extrabold text-[#241503] hover:bg-brand-orange-dark"
+              className="mt-4 inline-flex min-h-11 items-center font-bold text-brand-blue hover:underline dark:text-brand-orange"
             >
-              {t.title} →
+              {nothing.browse}
+              <Arrow lang={lang} />
             </Link>
           </div>
         ) : (
           <>
-            <Group title={t.upcoming} rows={inGroup('upcoming')} lang={lang} dict={dict} />
+            {/*
+              * «لا شيء الآن» and «لا شيء أبداً» are different sentences.
+              *
+              * The upcoming group used to render nothing at all when it was
+              * empty, so a volunteer of two years with a quiet month met a page
+              * that began at «سابقة» — their own record reading as though the
+              * association had stopped inviting them. Said out loud instead,
+              * and said as a fact about the diary rather than about them.
+              */}
+            {inGroup('upcoming').length === 0 ? (
+              <section className="mt-9">
+                <h2 className="text-[0.8rem] font-bold tracking-[0.12em] text-ink-3">
+                  {t.upcoming}
+                </h2>
+                <p className="mt-3 max-w-[70ch] rounded-xl border border-line bg-surface-2 px-5 py-4 leading-relaxed text-ink-2">
+                  {nothing.noneUpcoming}
+                </p>
+              </section>
+            ) : (
+              <Group title={t.upcoming} rows={inGroup('upcoming')} lang={lang} dict={dict} />
+            )}
             <Group title={t.past} rows={inGroup('past')} lang={lang} dict={dict} />
             {/*
               * Its own list, with its own heading, and never dimmed.

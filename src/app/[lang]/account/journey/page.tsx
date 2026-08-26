@@ -10,6 +10,7 @@ import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
 import { journeyFor, type StageView, type RequirementView, type StageStatus } from '@/lib/journey';
 import { formatDuration } from '@/lib/hours';
+import { emptyStates } from '@/lib/dictionaries/empty-states';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account/journey'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -112,8 +113,16 @@ export default async function JourneyPage(props: PageProps<'/[lang]/account/jour
         )}
 
         {journey.stages.length === 0 ? (
-          <p className="mt-8 rounded-xl border border-line bg-surface-2 px-5 py-4 text-ink-2">
-            {t.noStages}
+          /*
+           * This emptiness is the association's, not the reader's — nobody has
+           * configured the stages yet. «لم تُضبط مراحل بعد» above a blank page
+           * reads to a volunteer as their own path having gone missing, so the
+           * sentence says whose side the gap is on and, more to the point, that
+           * the hours and courses already on their record are not being lost
+           * while it lasts.
+           */
+          <p className="mt-8 max-w-[70ch] rounded-xl border border-line bg-surface-2 px-5 py-4 leading-relaxed text-ink-2">
+            {emptyStates(lang).journey.noStages}
           </p>
         ) : (
           <ol className="mt-10">

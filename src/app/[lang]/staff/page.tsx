@@ -19,6 +19,7 @@ import { practical } from '@/lib/dictionaries/practical';
 import { challengeLevels } from '@/lib/dictionaries/challenge-levels';
 import { projectsAdmin } from '@/lib/dictionaries/projects-admin';
 import { partners } from '@/lib/dictionaries/partners';
+import { impactAdminDictionaries } from '@/lib/dictionaries/impact-admin';
 import { staffHub } from '@/lib/dictionaries/staff-hub';
 
 /**
@@ -221,19 +222,29 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
       ],
     },
     {
-      /* One entry, and it earns its own heading. A partner is public content
-         about the association and not a record about a person — nothing in that
-         feature writes or reads a volunteer_role, which is why
-         lib/actions/partners.ts gates it on challenges.manage and not on
-         members.manage. Filing it with the members' screens would put the one
-         button on this page that publishes to strangers in among the ones that
-         do not. */
+      /* The screens that publish to strangers, kept together and apart from
+         the ones that do not. A partner is public content about the
+         association rather than a record about a person — nothing in that
+         feature writes or reads a volunteer_role — and the impact figures are
+         the association's own public claims about itself. Filing either among
+         the members' screens would hide the buttons with the widest reach in
+         among the ones with the narrowest.
+
+         The two are gated differently on purpose and the difference is argued
+         where each action lives: partners on challenges.manage, the figures on
+         members.manage, because widening who may restate what the association
+         IS should not happen as a side effect of picking a capability name. */
       title: g.publicPages,
       items: [
         {
           href: at('/partners'),
           label: partners(lang).staffTitle,
           show: can(user, 'challenges.manage'),
+        },
+        {
+          href: at('/impact'),
+          label: impactAdminDictionaries[lang].title,
+          show: can(user, 'members.manage'),
         },
       ],
     },

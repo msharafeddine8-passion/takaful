@@ -140,13 +140,22 @@ export const conflictResolution: CourseContent = {
             en: 'A volunteer suggested changing the weekly activity time, and her colleague rejected it sharply: "We always change everything at the last minute." What type of conflict is this most likely?',
           },
           options: [
-            { ar: 'نزاع مهاماتي خالص — الخلاف على الموعد فقط', en: 'Pure task conflict — the disagreement is only about the time' },
+            {
+              ar: 'نزاع مهاماتي خالص — الخلاف على الموعد فقط ويُحلّ بالتصويت على جدول جديد',
+              en: 'Pure task conflict — the disagreement is only about the time and is settled by voting on a new schedule',
+            },
             {
               ar: 'نزاع مختلط — كلمة «دائماً» تشير إلى تراكم سابق يتجاوز الموعد',
               en: 'Mixed conflict — the word "always" points to accumulated history that goes beyond the time slot',
             },
-            { ar: 'نزاع شخصي خالص — الموعد ليس ما يهمّ أصلاً', en: 'Pure personal conflict — the time is not what really matters' },
-            { ar: 'مجرد سوء تفاهم بسيط لا يحتاج تصنيفاً', en: 'Just a simple misunderstanding that does not need categorising' },
+            {
+              ar: 'نزاع شخصي خالص — الموعد ليس ما يهمّ أصلاً، وأي نقاش عن الجدول مضيعة للوقت',
+              en: 'Pure personal conflict — the time is not what really matters, and any discussion of the schedule is a waste of time',
+            },
+            {
+              ar: 'مجرد سوء تفاهم بسيط لا يحتاج تصنيفاً وسينتهي وحده بعد أيام',
+              en: 'Just a simple misunderstanding that does not need categorising and will pass on its own in a few days',
+            },
           ],
           correct: 1,
           feedback: {
@@ -254,13 +263,22 @@ export const conflictResolution: CourseContent = {
             en: 'Which of the following is a verifiable fact?',
           },
           options: [
-            { ar: '«لا يحترمنا» — إذ يُظهر ذلك تصرّفه', en: '"He does not respect us" — his behaviour shows it' },
-            { ar: '«يعتقد أنه أهمّ شخص» — هذا واضح من طريقته', en: '"He thinks he is the most important" — it is clear from his manner' },
+            {
+              ar: '«لا يحترمنا» — إذ يُظهر ذلك تصرّفه المتكرّر مع الفريق كلّه',
+              en: '"He does not respect us" — his repeated behaviour toward the whole team shows it',
+            },
+            {
+              ar: '«يعتقد أنه أهمّ شخص» — هذا واضح من طريقته في تجاهل ما نتّفق عليه',
+              en: '"He thinks he is the most important" — it is clear from the way he ignores what we agree',
+            },
             {
               ar: '«لم يرتّب الأماكن كما اتُّفق ولم يُبلّغها» — هذان شيئان يمكن التحقّق منهما',
               en: '"He did not set up the spaces as agreed and did not notify her" — these two things can be checked',
             },
-            { ar: 'لا شيء منها وقيعة لأن كلها وجهة نظرها', en: 'None of them — they are all her point of view' },
+            {
+              ar: 'لا شيء منها وقيعة لأن كلها وجهة نظرها ولا يمكن التحقّق منها',
+              en: 'None of them — they are all her point of view and none of them can be checked',
+            },
           ],
           correct: 2,
           feedback: {
@@ -344,13 +362,22 @@ export const conflictResolution: CourseContent = {
             en: 'What is the best immediate response as meeting facilitator?',
           },
           options: [
-            { ar: 'اطلب من نادر أن يهدأ لأن أسلوبه غير لائق في الاجتماعات', en: 'Ask Nader to calm down because his manner is inappropriate in meetings' },
+            {
+              ar: 'اطلب من نادر أن يهدأ لأن أسلوبه غير لائق في الاجتماعات وذكّره أن النقاش يجب أن يبقى محترماً',
+              en: 'Ask Nader to calm down because his manner is inappropriate in meetings, and remind him that discussion must stay respectful',
+            },
             {
               ar: 'أوقف الاجتماع، اعترف بأن الموضوع مهمّ، واقترح توقّفاً قصيراً قبل المتابعة',
               en: 'Pause the meeting, acknowledge that the topic matters, and suggest a short break before continuing',
             },
-            { ar: 'اطلب من الزميل أن يردّ لأن ذلك حقّه', en: 'Ask the colleague to respond because that is their right' },
-            { ar: 'واصل الاجتماع وتجاهل ما حدث حتى تمرّ اللحظة', en: 'Continue the meeting and ignore what happened until the moment passes' },
+            {
+              ar: 'اطلب من الزميل أن يردّ لأن ذلك حقّه وسماع الطرفين ينهي الأمر',
+              en: 'Ask the colleague to respond because that is their right — hearing both sides ends it',
+            },
+            {
+              ar: 'واصل الاجتماع وتجاهل ما حدث حتى تمرّ اللحظة، فالتوقّف يمنح الخلاف أهمية أكبر',
+              en: 'Continue the meeting and ignore what happened until the moment passes — stopping gives the argument more weight',
+            },
           ],
           correct: 1,
           feedback: {
@@ -443,13 +470,22 @@ export const conflictResolution: CourseContent = {
             en: 'What is the most important next step now?',
           },
           options: [
-            { ar: 'شكر الطرفين وإنهاء الجلسة — الأمر انتهى', en: 'Thank both parties and close the session — it is done' },
+            {
+              ar: 'شكر الطرفين وإنهاء الجلسة — الأمر انتهى وقد اتّفقا بأنفسهما',
+              en: 'Thank both parties and close the session — it is done and they agreed themselves',
+            },
             {
               ar: 'تدوين الاتفاق كتابةً بوضوح وتحديد موعد متابعة لمراجعة مدى التنفيذ',
               en: 'Write the agreement down clearly and set a follow-up date to review how it has been implemented',
             },
-            { ar: 'إبلاغ الإدارة بتفاصيل ما دار في الجلسة كاملاً', en: 'Inform management of the full details of everything discussed in the session' },
-            { ar: 'الانتظار، وإن لم يلتزما سيُبلَّغ عنهما لاحقاً', en: 'Wait and see, and if they do not comply they can be reported later' },
+            {
+              ar: 'إبلاغ الإدارة بتفاصيل ما دار في الجلسة كاملاً لتوثيقها رسمياً',
+              en: 'Inform management of the full details of everything discussed in the session so it is formally recorded',
+            },
+            {
+              ar: 'الانتظار، وإن لم يلتزما سيُبلَّغ عنهما لاحقاً — والمتابعة الآن قد تبدو تشكيكاً في نيّتهما',
+              en: 'Wait and see, and if they do not comply they can be reported later — following up now might look like doubting their intentions',
+            },
           ],
           correct: 1,
           feedback: {
@@ -466,13 +502,22 @@ export const conflictResolution: CourseContent = {
             en: 'Which of the following works as a clause in a written mediation agreement?',
           },
           options: [
-            { ar: 'سيحاول الطرفان تحسين التواصل فيما بينهما', en: 'Both parties will try to improve their communication with each other' },
-            { ar: 'ستتجنّب ليلى التصرّف بأنانية في المستقبل', en: 'Layla will avoid acting selfishly in the future' },
+            {
+              ar: 'سيحاول الطرفان تحسين التواصل فيما بينهما وتجنّب سوء الفهم',
+              en: 'Both parties will try to improve their communication and avoid misunderstandings',
+            },
+            {
+              ar: 'ستتجنّب ليلى التصرّف بأنانية في المستقبل وستراعي مصلحة الفريق',
+              en: 'Layla will avoid acting selfishly in the future and will consider the team\'s interest',
+            },
             {
               ar: 'سيُرسل خالد ملاحظات اجتماع الفريق لليلى خلال أربع وعشرين ساعة من نهاية كل اجتماع',
               en: 'Khalid will send Layla the team meeting notes within twenty-four hours of each meeting ending',
             },
-            { ar: 'سيحاول الطرفان الانسجام والتعاون بشكل أفضل في المستقبل', en: 'Both parties will try to get along and cooperate better in the future' },
+            {
+              ar: 'سيحاول الطرفان الانسجام والتعاون بشكل أفضل وحلّ خلافاتهما ودّياً',
+              en: 'Both parties will try to get along and cooperate better and settle disagreements amicably',
+            },
           ],
           correct: 2,
           feedback: {
@@ -564,15 +609,21 @@ export const conflictResolution: CourseContent = {
           },
           options: [
             {
-              ar: 'تتصرّف بناءً على طلبها وتجلس مع المشرف لـ«حديث غير رسمي» لأنها طلبت ذلك منك',
-              en: 'Act on her request and sit with the supervisor for an "informal word" because she asked you to',
+              ar: 'تتصرّف بناءً على طلبها وتجلس مع المشرف لـ«حديث غير رسمي» لأنها طلبت ذلك منك ولا تريد أن تفقد ثقتها برفضك',
+              en: 'Act on her request and sit with the supervisor for an "informal word" because she asked you to and you do not want to lose her trust by refusing',
             },
-            { ar: 'تتجاهل الأمر لأنه شأن بين المشرف وموظّفته ولا يخصّك', en: 'Ignore it because it is between the supervisor and his team member and is not your business' },
+            {
+              ar: 'تتجاهل الأمر لأنه شأن بين المشرف وموظّفته ولا يخصّك، وتنصحها بالتحدّث إليه مباشرة',
+              en: 'Ignore it because it is between the supervisor and his team member and is not your business, and advise her to speak to him directly',
+            },
             {
               ar: 'تُخبرها بوضوح أن هذا يتجاوز دورك، تشرح لها خيارات الإبلاغ المتاحة، وتعرض مرافقتها إن أرادت',
               en: 'Tell her clearly that this goes beyond your role, explain the reporting options available to her, and offer to accompany her if she wishes',
             },
-            { ar: 'تُبلّغ الإدارة فوراً بكل ما أخبرتك إياه دون استئذانها', en: 'Report everything she told you to management immediately without asking her permission' },
+            {
+              ar: 'تُبلّغ الإدارة فوراً بكل ما أخبرتك إياه دون استئذانها لأن الأمر أخطر من أن يُترك لها',
+              en: 'Report everything she told you to management immediately without asking her, because this is too serious to leave to her',
+            },
           ],
           correct: 2,
           feedback: {

@@ -9,6 +9,7 @@ import { Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
 import { notificationsFor, markAllRead, type Notification } from '@/lib/notify';
+import { emptyStates } from '@/lib/dictionaries/empty-states';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account/notifications'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -72,8 +73,12 @@ export default async function NotificationsPage(props: PageProps<'/[lang]/accoun
         <p className="mt-3 text-[1.02rem] leading-relaxed text-ink-2">{t.lede}</p>
 
         {items.length === 0 ? (
-          <p className="mt-8 rounded-xl border border-line bg-surface-2 px-5 py-4 text-ink-2">
-            {t.empty}
+          /* «لا إشعارات بعد» is a measurement. This names the four things that
+             actually arrive here, which is also the answer to the question
+             somebody with an empty bell is really asking: whether this page
+             does anything. No link — there is nowhere to go to be notified. */
+          <p className="mt-8 max-w-[70ch] rounded-xl border border-line bg-surface-2 px-5 py-4 leading-relaxed text-ink-2">
+            {emptyStates(lang).notifications.never}
           </p>
         ) : (
           <ul className="mt-8 space-y-3">

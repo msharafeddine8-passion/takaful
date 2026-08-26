@@ -323,20 +323,20 @@ export const eventsManagement: CourseContent = {
           },
           options: [
             {
-              ar: 'قبول الجميع وترتيب كراسي إضافية في الممرات حتى لا يخيب ظن أحد',
-              en: 'Accept everyone and arrange extra chairs in the aisles so as not to disappoint anyone',
+              ar: 'قبول الجميع وترتيب كراسي إضافية في الممرات حتى لا يخيب ظن أحد، فالقاعة تحتمل تسعين بتوزيع أدقّ للكراسي',
+              en: 'Accept everyone and arrange extra chairs in the aisles so as not to disappoint anyone, since the hall takes ninety with a tighter seating layout',
             },
             {
               ar: 'إغلاق التسجيل والبحث عن مكان أكبر، أو تقليص العدد إلى ما يسمح به المكان مع قائمة انتظار',
               en: 'Close registrations and look for a larger venue, or reduce numbers to what the venue allows with a waiting list',
             },
             {
-              ar: 'قبول الجميع والأمل بأن لا يحضر جميعهم في اليوم نفسه',
-              en: 'Accept everyone and hope not all will actually turn up on the day',
+              ar: 'قبول الجميع والأمل بأن لا يحضر جميعهم في اليوم نفسه، فنسبة الغياب المعتادة في فعاليات كهذه تقارب الربع',
+              en: 'Accept everyone and hope not all will actually turn up on the day, since the usual no-show rate at events like this is about a quarter',
             },
             {
-              ar: 'إلغاء الفعالية لأن التنظيم وصل إلى طريق مسدود',
-              en: 'Cancel the event because the organisation has reached a dead end',
+              ar: 'إلغاء الفعالية لأن التنظيم وصل إلى طريق مسدود، وتأجيلها إلى تاريخ لاحق أسلم من إقامتها في مكان لا يتّسع',
+              en: 'Cancel the event because the organisation has reached a dead end, and postponing to a later date is safer than holding it in a venue that does not fit',
             },
           ],
           correct: 1,
@@ -411,8 +411,8 @@ export const eventsManagement: CourseContent = {
               en: 'Apologise and explain that the event is unfortunately not suitable for him this time',
             },
             {
-              ar: 'تخصّص متطوّعَين يحملانه عبر الدرج حين يصل',
-              en: 'Assign two volunteers to carry him up the stairs when he arrives',
+              ar: 'تخصّص متطوّعَين يحملانه عبر الدرج حين يصل وعند مغادرته',
+              en: 'Assign two volunteers to carry him up the stairs when he arrives and back down when he leaves',
             },
             {
               ar: 'تبحث عن قاعة بديلة في الطابق الأرضي أو تغيّر المكان كاملاً',

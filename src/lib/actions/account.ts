@@ -130,11 +130,24 @@ export async function registerAction(prev: FormState, formData: FormData): Promi
    * to notice a prompt among everything else there, which is how a volunteer
    * of six years ends up filling in an application form instead.
    *
-   * Only the two known values are honoured — the field arrives from a form and
-   * an open redirect is not something to hand a stranger.
+   * And someone who said they want to *become* a volunteer goes straight to the
+   * application. That form has always existed, but it lived behind the
+   * dashboard: you registered, landed on a page of panels, and had to find it.
+   * There is no second application flow here — this is the same
+   * /account/apply, reached without the detour. The session is already created
+   * above, so it opens rather than bouncing to the login page.
+   *
+   * Only the known values are honoured — the field arrives from a form and an
+   * open redirect is not something to hand a stranger. Anything else, including
+   * `learner` and a missing field, lands on the dashboard as before.
    */
   const next = text(formData, 'next');
-  const destination = next === 'volunteer' ? `/${lang}/account/claim` : `/${lang}/account`;
+  const destination =
+    next === 'volunteer'
+      ? `/${lang}/account/claim`
+      : next === 'new-volunteer'
+        ? `/${lang}/account/apply`
+        : `/${lang}/account`;
 
   // redirect() signals by throwing, so it must sit outside the try block above.
   redirect(destination);

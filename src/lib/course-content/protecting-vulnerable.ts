@@ -195,10 +195,19 @@ export const protectingVulnerable: CourseContent = {
             en: 'What should you do?',
           },
           options: [
-            { ar: 'تقبّل قوله «بخير» وتمضي، فهو بالغ ويستطيع الاعتراض إذا أراد', en: 'Accept his "I\'m fine" and move on — he is an adult who can object if he wants to' },
-            { ar: 'تسأل الابن مباشرةً عن طبيعة علاقته مع والده', en: 'Ask the son directly about the nature of his relationship with his father' },
+            {
+              ar: 'تقبّل قوله «بخير» وتمضي، فهو بالغ راشد ويستطيع الاعتراض بنفسه إذا أراد ولا تُفرض المساعدة على أحد',
+              en: 'Accept his "I\'m fine" and move on — he is an adult who can object if he wants to, and help is not to be forced on anyone',
+            },
+            {
+              ar: 'تسأل الابن مباشرةً عن طبيعة علاقته مع والده وعن سبب توتّر والده في حضوره',
+              en: 'Ask the son directly about the nature of his relationship with his father and why his father tenses when he is there',
+            },
             { ar: 'توثّق ما لاحظته بدقّة، تُبلّغ المشرف، وتحرص على أن يتضمّن كل لقاء قادم وقتاً منفرداً مع السيد يوسف حين يكون ذلك ممكناً', en: 'Document what you observed precisely, report to the supervisor, and ensure every future meeting includes time alone with Mr Yusuf when possible' },
-            { ar: 'تتّصل بخدمات حماية المسنّين مباشرةً الآن دون إخبار مشرفك', en: 'Contact older adults\' protection services directly now without informing your supervisor' },
+            {
+              ar: 'تتّصل بخدمات حماية المسنّين مباشرةً الآن دون إخبار مشرفك، فالوقت ثمين والمسار الرسمي أسرع من التسلسل الداخلي',
+              en: 'Contact older adults\' protection services directly now without informing your supervisor — time matters and the official route is faster than the internal chain',
+            },
           ],
           correct: 2,
           feedback: {

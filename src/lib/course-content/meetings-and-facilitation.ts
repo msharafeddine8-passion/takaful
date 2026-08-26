@@ -111,20 +111,20 @@ export const meetingsAndFacilitation: CourseContent = {
           },
           options: [
             {
-              ar: 'تحديثات من كل شخص (٣٠ د) — نقاش التقرير (٣٠ د) — أسئلة ومتفرّقات (٣٠ د)',
-              en: 'Updates from each person (30 min) — Discussion of the report (30 min) — Questions and miscellaneous (30 min)',
+              ar: 'قراءة محضر الاجتماع السابق (١٠ د) — تحديثات من كلّ شخص (٣٠ د) — نقاش التقرير (٢٥ د) — أسئلة ومتفرّقات (١٥ د) — تحديد موعد الاجتماع القادم (١٠ د)',
+              en: 'Reading the previous minutes (10 min) — Updates from each person (30 min) — Discussion of the report (25 min) — Questions and miscellaneous (15 min) — Setting the next meeting date (10 min)',
             },
             {
               ar: 'الاتفاق على خطة الشهر القادم (٤٥ د) — مراجعة ميزانية الربع الأول واتخاذ قرار بشأن البند الثالث (٣٠ د) — تحديث سريع عن النشاطات الجارية (١٥ د)',
               en: 'Agree on next month\'s plan (45 min) — Review Q1 budget and decide on item 3 (30 min) — Quick update on ongoing activities (15 min)',
             },
             {
-              ar: 'اجتماع مفتوح — كل شخص يطرح ما يراه مهمّاً',
-              en: 'Open meeting — each person raises whatever they think is important',
+              ar: 'اجتماع مفتوح بلا جدول — كلّ شخص يطرح ما يراه مهمّاً، والوقت يُقسَّم بحسب ما يظهر في الغرفة',
+              en: 'Open meeting with no agenda — each person raises whatever they think is important, and the time is divided according to what comes up in the room',
             },
             {
-              ar: 'عرض تقديمي من المنسّق ثم نقاش حر',
-              en: 'Presentation from the coordinator followed by open discussion',
+              ar: 'عرض تقديمي من المنسّق عن وضع المشروع، ثمّ نقاش حرّ بلا وقت محدّد لكلّ متحدّث',
+              en: 'A presentation from the coordinator on the state of the project, then open discussion with no time limit on any speaker',
             },
           ],
           correct: 1,
@@ -323,16 +323,16 @@ export const meetingsAndFacilitation: CourseContent = {
           },
           options: [
             {
-              ar: '«شكراً، هذا واضح. ننتقل للبند التالي.»',
-              en: '"Thank you, that is clear. We move to the next item."',
+              ar: '«شكراً، هذا واضح ومفيد. ننتقل للبند التالي قبل أن يضيق الوقت.»',
+              en: '"Thank you, that is clear and useful. We move to the next item before we run out of time."',
             },
             {
               ar: '«هل هناك من يريد أن يضيف شيئاً أو يطرح وجهة نظر مختلفة؟»',
               en: '"Is there anyone who would like to add something or offer a different perspective?"',
             },
             {
-              ar: '«أعتقد أن الجميع متّفق — هل نصوّت؟»',
-              en: '"I think everyone agrees — shall we vote?"',
+              ar: '«أعتقد أنّ الجميع متّفق ما دام لا أحد اعترض — هل نصوّت؟»',
+              en: '"I think everyone agrees, since nobody has objected — shall we put it to a vote?"',
             },
             {
               ar: '«ما رأيك أنتَ، أنتَ صامت منذ البداية؟» — موجّهاً السؤال لأحد الصامتين',
@@ -583,20 +583,20 @@ export const meetingsAndFacilitation: CourseContent = {
           },
           options: [
             {
-              ar: 'تنتظر حتى ينتهي ثم تسأل بشكل عام «هل هناك تعليقات أخرى؟»',
-              en: 'Wait until they finish and then ask generally "Are there other comments?"',
+              ar: 'تنتظر حتى ينتهي ثمّ تسأل بشكل عام «هل هناك تعليقات أخرى؟» وتترك المجال لمن يريد',
+              en: 'Wait until they finish and then ask the room generally "Are there other comments?", leaving the floor to whoever wants it',
             },
             {
-              ar: 'تقطعه في منتصف الكلام وتعطي الكلام لشخص آخر',
-              en: 'Cut them off mid-sentence and hand the floor to someone else',
+              ar: 'تقطعه في منتصف الكلام وتعطي الكلام لشخص آخر لم يتكلّم بعد، حتى يرى الجميع أنّ الوقت موزّع بالتساوي',
+              en: 'Cut them off mid-sentence and hand the floor to somebody who has not spoken yet, so that everyone in the room can see that speaking time is being shared out equally',
             },
             {
               ar: 'تشكره على مداخلته وتقول «أريد أن نسمع ممّن لم يتكلّم بعد — سنعمل جولة سريعة جملة من كل شخص»',
               en: 'Thank them for their contribution and say "I want to hear from those who have not spoken yet — we will do a quick round, one sentence from each person"',
             },
             {
-              ar: 'تتحدّث إليه على انفراد أثناء الاجتماع وتطلب منه التوقّف',
-              en: 'Speak to them privately during the meeting and ask them to stop',
+              ar: 'تتحدّث إليه على انفراد أثناء الاجتماع وتطلب منه التوقّف حتى لا تُحرجه أمام الفريق',
+              en: 'Speak to them privately during the meeting and ask them to stop, so as not to embarrass them in front of the team',
             },
           ],
           correct: 2,
@@ -760,8 +760,8 @@ export const meetingsAndFacilitation: CourseContent = {
           },
           options: [
             {
-              ar: 'ترسل ملخّصاً يضمّ ما تفهمه من البند الثاني ويأمل أن يوافق الجميع، وتُسقط البند الثالث',
-              en: 'Send a summary with your own understanding of item two and hope everyone agrees, and drop item three',
+              ar: 'ترسل ملخّصاً يضمّ ما تفهمه من البند الثاني وتأمل أن يوافق الجميع، وتُسقط البند الثالث لأنّ الوقت لم يتّسع له أصلاً',
+              en: 'Send a summary with your own understanding of item two and hope everyone agrees, and drop item three altogether since there was never time for it',
             },
             {
               ar: 'تمدّد الاجتماع لعشر دقائق، تُغلق البند الثاني صراحةً بإقرار الجميع، وتحدّد موعد اجتماع ثانٍ قصير للبند الثالث',

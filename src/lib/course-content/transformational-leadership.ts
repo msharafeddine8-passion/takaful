@@ -201,10 +201,10 @@ export const transformationalLeadership: CourseContent = {
             en: 'You announce a change in volunteer registration. A long-standing team member says publicly: "this new system is exhausting and impractical — we are wasting time for nothing." What is the best response?',
           },
           options: [
-            { ar: 'نفهم قلقك، لكن القرار قد اتُّخذ ونحتاج تعاون الجميع للمضيّ قُدُماً', en: 'We understand your concern, but the decision has been made and we need everyone\'s cooperation to move forward' },
+            { ar: 'نفهم قلقك، لكن القرار قد اتُّخذ ونحتاج تعاون الجميع للمضيّ قُدُماً — إعادة فتحه الآن ستُربك من بدأ العمل به فعلاً', en: 'We understand your concern, but the decision has been made and we need everyone\'s cooperation to move forward — reopening it now would unsettle those already working with it' },
             { ar: 'اشرح لي أكثر: ما الذي تجده مرهقاً تحديداً، وهل واجهتَ مشكلة فعلية أم أنها توقّع؟', en: 'Tell me more: what specifically do you find exhausting, and did you encounter an actual problem or is it an expectation?' },
-            { ar: 'نحن نسمع الجميع، لكن الأغلبية وافقت على هذا التغيير', en: 'We listen to everyone, but the majority approved this change' },
-            { ar: 'سنعطيك وقتاً أطول للتأقلم مع النظام الجديد', en: 'We will give you more time to adapt to the new system' },
+            { ar: 'نحن نسمع الجميع، لكن الأغلبية وافقت على هذا التغيير ولا يمكننا نقضه كلّما اعترض شخص واحد', en: 'We listen to everyone, but the majority approved this change and we cannot overturn it whenever one person objects' },
+            { ar: 'سنعطيك وقتاً أطول للتأقلم مع النظام الجديد ونراجع الأمر معك بعد شهر من الاستخدام', en: 'We will give you more time to adapt to the new system and we will review it with you after a month of use' },
           ],
           correct: 1,
           feedback: {
@@ -360,10 +360,10 @@ export const transformationalLeadership: CourseContent = {
             en: 'You have appointed a colleague to lead a new event. Mid-preparation he comes to you saying: "I\'m not sure of the right way to coordinate with volunteers — could you take that over?" What is your response?',
           },
           options: [
-            { ar: 'بالطبع، سأتولّاها حتى لا يتأخّر التحضير ونضمن الجودة', en: 'Of course, I\'ll take it over so preparation doesn\'t fall behind and we guarantee the quality' },
+            { ar: 'بالطبع، سأتولّاها حتى لا يتأخّر التحضير ونضمن جودة التنسيق مع المتطوّعين', en: 'Of course, I\'ll take it over so preparation doesn\'t fall behind and we guarantee the quality of the coordination with the volunteers' },
             { ar: 'أخبرني: ما الذي جرّبته حتى الآن؟ وما الذي يجعلك غير متأكّد بالتحديد؟', en: 'Tell me: what have you tried so far? And what specifically makes you unsure?' },
-            { ar: 'ثق بنفسك، أنت قادر وستنجح بالتأكيد', en: 'Trust yourself — you are capable and you will definitely succeed' },
-            { ar: 'سأعطيك قائمة تفصيلية بالخطوات، اتّبعها خطوة خطوة', en: 'I will give you a detailed list of steps — follow them one by one' },
+            { ar: 'ثق بنفسك، أنت قادر وستنجح بالتأكيد — لم يعرف أحد منّا الطريقة من أوّل مرّة', en: 'Trust yourself — you are capable and you will definitely succeed; none of us knew how to do it the first time' },
+            { ar: 'سأعطيك قائمة تفصيلية بالخطوات مرتّبةً بالترتيب الذي أتّبعه أنا، اتّبعها خطوة خطوة', en: 'I will give you a detailed list of steps in the order I follow myself — follow them one by one without deviating' },
           ],
           correct: 1,
           feedback: {
@@ -449,10 +449,10 @@ export const transformationalLeadership: CourseContent = {
             en: 'Mid-project, you discover a team member has not documented a portion of the work as policy requires. The deadline is close and full documentation will take time. What do you do?',
           },
           options: [
-            { ar: 'تتجاهل الموضوع هذه المرة لأن الموعد لا يحتمل التأخير', en: 'You overlook it this time because the deadline cannot absorb the delay' },
+            { ar: 'تتجاهل الموضوع هذه المرة لأن الموعد لا يحتمل التأخير، ولا تذكره للشخص حتى لا تُضيف عليه ضغطاً — فالسياسة وُضعت للأوقات الهادئة لا للأسبوع الأخير من المشروع', en: 'You overlook it this time because the deadline cannot absorb the delay, and say nothing to the person so as not to add pressure — the policy was written for calm periods, not for the last week of a project' },
             { ar: 'تخصّص وقتاً من الجدول للتوثيق حتى لو تأخّر التسليم قليلاً، وتتحدّث مع الشخص عن لماذا التوثيق ليس إجراءً إدارياً فارغاً', en: 'You make time in the schedule for documentation even if delivery is slightly delayed, and speak with the person about why documentation is not an empty administrative procedure' },
-            { ar: 'توثّق الجزء الناقص أنت بسرعة لإغلاق الموضوع دون إثارة ضجّة', en: 'You quickly document the missing portion yourself to close the matter without making a fuss' },
-            { ar: 'تُبلّغ الإدارة بالأمر رسمياً لأن الخطأ في مسؤولية الشخص', en: 'You formally report the matter to management because the error is the person\'s responsibility' },
+            { ar: 'توثّق الجزء الناقص أنت بسرعة لإغلاق الموضوع دون إثارة ضجّة، فأنت أسرع في الكتابة والوقت لا يتّسع للشرح، وتُخبره لاحقاً بما كتبته', en: 'You quickly document the missing portion yourself to close the matter without making a fuss — you write faster, there is no room to explain now, and you can tell him later what you wrote' },
+            { ar: 'تُبلّغ الإدارة بالأمر رسمياً لأن الخطأ في مسؤولية الشخص، وليس من صلاحيتك أن تتغاضى عن مخالفة للسياسة أو أن تُعالجها بنفسك', en: 'You formally report the matter to management because the error is the person\'s responsibility, and it is not within your authority either to let a policy breach pass or to handle it yourself' },
           ],
           correct: 1,
           feedback: {
@@ -469,10 +469,10 @@ export const transformationalLeadership: CourseContent = {
             en: 'You notice your team revolves entirely around you — every decision needs your approval, every crisis waits for your presence. What is the first step to building a leadership pipeline within the team?',
           },
           options: [
-            { ar: 'تُعلن عن منصب نائب قائد رسمي لتوزيع العبء على شخص واحد آخر', en: 'Announce a formal deputy leader position to distribute the load onto one other person' },
+            { ar: 'تُعلن عن منصب نائب قائد رسمي لتوزيع العبء على شخص واحد آخر يتولّى القرارات في غيابك', en: 'Announce a formal deputy leader position to distribute the load onto one other person who takes the decisions in your absence' },
             { ar: 'تُحدّد من يُظهر مبادرة طبيعية وقدرة على التأثير في الآخرين ثم تُعطيه مسؤوليات كاملة — لا مهام فرعية — مع دعم واضح', en: 'Identify who shows natural initiative and ability to influence others, then give them full responsibilities — not sub-tasks — with clear support' },
-            { ar: 'تنظّم تدريباً على القيادة لكل الفريق دون تمييز لأن إبراز أشخاص بعينهم يخلق توتّراً', en: 'Organise leadership training for the entire team without distinction, because singling out individuals creates tension' },
-            { ar: 'تنتظر حتى يطلب أحد أعضاء الفريق المزيد من المسؤولية بنفسه', en: 'Wait until someone on the team asks for more responsibility themselves' },
+            { ar: 'تنظّم تدريباً على القيادة لكل الفريق دون تمييز لأن إبراز أشخاص بعينهم يخلق توتّراً ويجعل البقية يشعرون بأنهم أقلّ قيمة', en: 'Organise leadership training for the entire team without distinction, because singling out individuals creates tension and leaves the rest feeling less valued' },
+            { ar: 'تنتظر حتى يطلب أحد أعضاء الفريق المزيد من المسؤولية بنفسه، فالقيادة الحقيقية تبدأ بمبادرة من صاحبها', en: 'Wait until someone on the team asks for more responsibility themselves, since real leadership starts with the person\'s own initiative' },
           ],
           correct: 1,
           feedback: {
@@ -489,10 +489,10 @@ export const transformationalLeadership: CourseContent = {
             en: 'You are trying to lead a cultural transformation in your organisation towards greater transparency and shared decision-making, but you meet resistance from senior management who see it as a threat to authority. How do you handle this?',
           },
           options: [
-            { ar: 'تواصل التغيير بهدوء دون مواجهة الإدارة العليا وتأمل أن تُقنعهم النتائج لاحقاً', en: 'Continue the change quietly without confronting senior management, hoping results will eventually persuade them' },
-            { ar: 'توقف عن المحاولة لأن القيادة التحويلية تحتاج دعماً من الأعلى لكي تنجح', en: 'Stop trying because transformational leadership needs top-down support to succeed' },
+            { ar: 'تواصل التغيير بهدوء دون مواجهة الإدارة العليا وتأمل أن تُقنعهم النتائج لاحقاً، وتتجنّب ذكر كلمة «الشفافية» في اجتماعاتهم حتى لا يشعر أحد بالاستفزاز قبل أن تُثبت التجربة نفسها', en: 'Continue the change quietly without confronting senior management, hoping results will eventually persuade them, and avoid saying the word "transparency" in their meetings so that nobody feels provoked before the experiment has had time to prove itself' },
+            { ar: 'توقف عن المحاولة لأن القيادة التحويلية تحتاج دعماً من الأعلى لكي تنجح، وتنتظر تغيّراً في الإدارة يجعل الفكرة ممكنة', en: 'Stop trying because transformational leadership needs top-down support to succeed, and wait for a change in management that makes the idea possible' },
             { ar: 'تبني تحالفات مع من يدعم التغيير وتُترجم رؤيتك إلى نتائج مرئية مبكّرة تُقلّل خوف الإدارة من الخسارة وتفتح محادثة صريحة معهم عن مخاوفهم الفعلية', en: 'Build alliances with those who support the change, translate your vision into early visible results that reduce management\'s fear of loss, and open an honest conversation with them about their actual concerns' },
-            { ar: 'تستقيل وتبحث عن بيئة أكثر انفتاحاً لأن بعض الثقافات المؤسسية لا تتغيّر', en: 'Resign and look for a more open environment because some organisational cultures do not change' },
+            { ar: 'تستقيل وتبحث عن بيئة أكثر انفتاحاً لأن بعض الثقافات المؤسسية لا تتغيّر مهما طال الوقت والجهد المبذول فيها', en: 'Resign and look for a more open environment because some organisational cultures do not change however long you stay and however much effort you put in' },
           ],
           correct: 2,
           feedback: {

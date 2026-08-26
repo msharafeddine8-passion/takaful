@@ -150,13 +150,22 @@ export const codeOfConductAndReporting: CourseContent = {
             en: 'A volunteer gave their personal number to a mother who said she needed urgent help outside activity hours, with entirely sincere intent. What is the problem?',
           },
           options: [
-            { ar: 'لا مشكلة، لأن نيّته كانت المساعدة', en: 'No problem — their intent was to help' },
+            {
+              ar: 'لا مشكلة، لأنّ نيّته كانت المساعدة والأمّ هي من طلبت، وما دام لم يأخذ منها شيئاً فهو تطوّع إضافي من وقته',
+              en: 'No problem — their intent was to help, the mother is the one who asked, and as long as they took nothing in return it is extra volunteering out of their own time',
+            },
             {
               ar: 'أنشأ علاقة خارج إشراف الجمعية، ووعداً ضمنياً لا يستطيع الوفاء به، ولا سجلّ لما يجري',
               en: 'They created a relationship outside the association’s oversight, an implied promise they cannot keep, and no record of what happens next',
             },
-            { ar: 'المشكلة فقط أنه لم يخبر زميله', en: 'The only problem is that they did not tell a colleague' },
-            { ar: 'كان عليه أن يعطي رقم الجمعية بدل رقمه', en: 'They should have given the association’s number instead' },
+            {
+              ar: 'المشكلة فقط أنّه لم يخبر زميله، ولو أخبره لصار في الفريق من يعرف بالأمر ويشهد على ما جرى',
+              en: 'The only problem is that they did not tell a colleague — had they done so, somebody on the team would know and could vouch for what happened',
+            },
+            {
+              ar: 'كان عليه أن يعطي رقم الجمعية بدل رقمه، فتصل الأمّ إلى من يناوب على الخطّ في أيّ وقت',
+              en: 'They should have given the association’s number instead, so the mother reaches whoever is on the line at any hour',
+            },
           ],
           correct: 1,
           feedback: {
@@ -242,18 +251,21 @@ export const codeOfConductAndReporting: CourseContent = {
           },
           options: [
             {
-              ar: 'تعتذر وتقول إنك لا تعرف، حتى لا تُحرج جارتها',
-              en: 'Apologise and say you do not know, to avoid embarrassing the neighbour',
+              ar: 'تعتذر وتقول إنّك لا تعرف المعايير، حتى لا تُحرج جارتها ولا تفتح نقاشاً في وسط التوزيع',
+              en: 'Apologise and say you do not know the criteria, so as not to embarrass the neighbour or open up a discussion in the middle of a distribution',
             },
             {
               ar: 'تشرح المعيار المعلن بوضوح، وتدلّها على قناة الشكاوى إن رأت أنه طُبّق عليها خطأً',
               en: 'Explain the published criterion clearly, and point her to the complaints channel if she believes it was applied to her wrongly',
             },
             {
-              ar: 'تشرح لها وضع جارتها حتى تفهم أنها أحوج',
-              en: 'Explain her neighbour’s circumstances so she understands the neighbour needed it more',
+              ar: 'تشرح لها وضع جارتها حتى تفهم أنّها أحوج، فتقتنع بالقرار ولا تعود إلى الموضوع',
+              en: 'Explain her neighbour’s circumstances so she understands the neighbour needed it more, accepts the decision and does not return to it',
             },
-            { ar: 'تعدها بحصّة في التوزيع القادم', en: 'Promise her a parcel in the next distribution' },
+            {
+              ar: 'تعدها بحصّة في التوزيع القادم حتى تنصرف الآن، وتتدبّر الأمر حين يحين موعده',
+              en: 'Promise her a parcel in the next distribution so she leaves now, and work out how to manage it when the time comes',
+            },
           ],
           correct: 1,
           feedback: {
@@ -317,18 +329,21 @@ export const codeOfConductAndReporting: CourseContent = {
           question: { ar: 'ماذا تفعل؟', en: 'What do you do?' },
           options: [
             {
-              ar: 'تعطيها رقم زميلة لتبقى على تواصل بأمان',
-              en: 'Give her a colleague’s number so she can stay safely in touch',
+              ar: 'تعطيها رقم زميلة لتبقى على تواصل بأمان، وتطلب منها أن تُخبرك إن اتّصلت',
+              en: 'Give her a colleague’s number so she can stay safely in touch, and ask that colleague to tell you if she rings',
             },
             {
               ar: 'ترفض بلطف، وتوزّع انتباهك على كل الأطفال، وتُخبر مسؤولة الحماية بشدّة تعلّقها',
               en: 'Decline kindly, spread your attention across all the children, and tell the safeguarding focal point about the strength of her attachment',
             },
             {
-              ar: 'تتجنّبها تماماً في الأنشطة القادمة حتى ينقطع التعلّق',
-              en: 'Avoid her entirely in future activities until the attachment fades',
+              ar: 'تتجنّبها تماماً في الأنشطة القادمة حتى ينقطع التعلّق من نفسه',
+              en: 'Avoid her entirely in the coming activities until the attachment fades of its own accord',
             },
-            { ar: 'تعطيها رقمك بشرط ألّا تتصل إلا نهاراً', en: 'Give her your number on condition she only calls during the day' },
+            {
+              ar: 'تعطيها رقمك بشرط ألّا تتصل إلا نهاراً وأن تكون المكالمات قصيرة',
+              en: 'Give her your number on condition that she only calls during the day and keeps the calls short',
+            },
           ],
           correct: 1,
           feedback: {
@@ -399,18 +414,21 @@ export const codeOfConductAndReporting: CourseContent = {
           },
           options: [
             {
-              ar: 'لا شيء — هي لم تشتكِ وقد يكون يمزح',
-              en: 'Nothing — she did not complain and he may have been joking',
+              ar: 'لا شيء — هي لم تشتكِ وقد يكون يمزح، والتدخّل في مزحة قد يجعل الأمر أكبر ممّا هو',
+              en: 'Nothing — she did not complain and he may have been joking, and stepping into a joke can make it bigger than it is',
             },
             {
-              ar: 'تنبّهه على انفراد وتكتفي بذلك إن اعتذر',
-              en: 'Warn him privately and leave it there if he apologises',
+              ar: 'تنبّهه على انفراد وتكتفي بذلك إن اعتذر، فالزميل يستحقّ فرصة قبل أن يصل اسمه إلى الجمعية',
+              en: 'Warn him privately and leave it there if he apologises — a colleague deserves a chance before his name reaches the association',
             },
             {
               ar: 'تُبلّغ مسؤولة الحماية في اليوم نفسه، بغضّ النظر عن ردّ فعلها أو نيّته',
               en: 'Report to the safeguarding focal point the same day, regardless of her reaction or his intent',
             },
-            { ar: 'تسألها أولاً إن كانت انزعجت', en: 'Ask her first whether she was bothered' },
+            {
+              ar: 'تسألها أوّلاً إن كانت انزعجت، فإن قالت إنّها لم تنزعج فلا داعي لإزعاجها أكثر',
+              en: 'Ask her first whether she was bothered, and if she says she was not there is no need to trouble her further',
+            },
           ],
           correct: 2,
           feedback: {
@@ -475,13 +493,22 @@ export const codeOfConductAndReporting: CourseContent = {
             en: 'An activity has ended and your supervisor asks you to send the attendance list of children’s names quickly. The fastest route available is to photograph it and post it in the team’s WhatsApp group. What do you do?',
           },
           options: [
-            { ar: 'ترسله في المجموعة — كلهم زملاء ومؤتمنون', en: 'Post it in the group — they are all trusted colleagues' },
+            {
+              ar: 'ترسله في المجموعة — كلّهم زملاء ومؤتمنون ووقّعوا على مدوّنة السلوك نفسها التي وقّعتها',
+              en: 'Post it in the group — they are all trusted colleagues who signed the very same code of conduct that you signed',
+            },
             {
               ar: 'ترسله للمشرف وحده عبر قناة الجمعية، وتحذف الصورة من هاتفك بعد التأكّد من الوصول',
               en: 'Send it to the supervisor alone through the association’s channel, and delete the photo from your phone once you have confirmed it arrived',
             },
-            { ar: 'ترسله في المجموعة ثم تحذفه بعد دقائق', en: 'Post it in the group and delete it after a few minutes' },
-            { ar: 'تكتب الأسماء نصّاً بدل الصورة', en: 'Type the names as text instead of a photo' },
+            {
+              ar: 'ترسله في المجموعة ثمّ تحذفه بعد دقائق، فحذف الرسالة يسحبها من عند الجميع قبل أن ينتبه أحد لوجودها',
+              en: 'Post it in the group and then delete it after a few minutes — deleting a message takes it back from everyone before anybody has had time to notice it',
+            },
+            {
+              ar: 'تكتب الأسماء نصّاً بدل الصورة في المجموعة نفسها، فالنصّ لا يُحفظ في معرض صور أحد',
+              en: 'Type the names as text in the same group instead of a photo, since text is not saved into anybody’s picture gallery',
+            },
           ],
           correct: 1,
           feedback: {
@@ -584,18 +611,21 @@ export const codeOfConductAndReporting: CourseContent = {
           question: { ar: 'ما التصرّف الصحيح؟', en: 'What is the right response?' },
           options: [
             {
-              ar: 'تعده بألّا تخبر أحداً حتى يثق بك ويكمل كلامه',
-              en: 'Promise not to tell anyone so he trusts you and says more',
+              ar: 'تعده بألّا تخبر أحداً حتى يثق بك ويكمل كلامه، ثمّ تُبلّغ بعد أن ينتهي',
+              en: 'Promise not to tell anyone so that he trusts you and says more, and then report it once he has finished',
             },
             {
-              ar: 'تسأله أسئلة هادئة لتعرف ما يحدث في البيت قبل أن تُبلّغ',
-              en: 'Ask him calm questions to find out what is happening at home before reporting',
+              ar: 'تسأله أسئلة هادئة لتعرف ما يحدث في البيت قبل أن تُبلّغ، حتى لا ترفع قلقاً ناقصاً',
+              en: 'Ask him calm questions to find out what is happening at home before reporting, so you do not pass on an incomplete concern',
             },
             {
               ar: 'تطمئنه، وتقول إنك ستخبر شخصاً واحداً مهمّته مساعدته، وتدوّن كلامه كما قاله وتُبلّغ اليوم',
               en: 'Reassure him, tell him you will tell one person whose job is to help him, write down his words as he said them, and report today',
             },
-            { ar: 'تخبر والدته لتفهم ما المشكلة', en: 'Tell his mother so you can understand the problem' },
+            {
+              ar: 'تخبر والدته لتفهم ما المشكلة، فهي أقرب الناس إليه وأعرفهم بأحواله',
+              en: 'Tell his mother so you can understand the problem — she is the closest person to him and knows his circumstances best',
+            },
           ],
           correct: 2,
           feedback: {
@@ -612,10 +642,19 @@ export const codeOfConductAndReporting: CourseContent = {
             en: 'Which of the following is an emergency, where you call the emergency services before the association?',
           },
           options: [
-            { ar: 'مستفيدة اشتكت من سوء معاملة متطوّع الأسبوع الماضي', en: 'A woman complained about a volunteer’s conduct last week' },
-            { ar: 'ضاع دفتر فيه أسماء أطفال', en: 'A notebook with children’s names has been lost' },
+            {
+              ar: 'مستفيدة اشتكت الأسبوع الماضي من سوء معاملة متطوّع لها',
+              en: 'A woman complained last week about the way a volunteer treated her',
+            },
+            {
+              ar: 'ضاع دفتر فيه أسماء أطفال وأرقام أهاليهم',
+              en: 'A notebook with children’s names and their parents’ numbers has been lost',
+            },
             { ar: 'مشارك فقد وعيه أثناء النشاط الآن', en: 'A participant has lost consciousness during the activity, now' },
-            { ar: 'متطوّع لم يلتزم بمهمّته مرّتين', en: 'A volunteer has failed to do their task twice' },
+            {
+              ar: 'متطوّع لم يلتزم بمهمّته مرّتين هذا الشهر',
+              en: 'A volunteer has failed to do the task assigned to them twice this month',
+            },
           ],
           correct: 2,
           feedback: {
