@@ -30,8 +30,8 @@ export const levelOneChallenge: CourseContent = {
   minutes: 25,
   passMark: 70,
   title: {
-    ar: 'تحدّي المستوى الأول: يوم تطوّعي كامل',
-    en: 'Level 1 Challenge: A Full Volunteering Day',
+    ar: 'مراجعة المستوى الأول: يوم تطوّعي كامل',
+    en: 'Level 1 Review: A Full Volunteering Day',
   },
   lede: {
     ar: 'يوم واحد من الوصول حتى المغادرة. كل قرار يحتاج أكثر من دورة واحدة ممّا تعلّمته، ولا يوجد دائماً خيار مريح.',

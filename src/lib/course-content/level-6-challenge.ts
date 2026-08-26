@@ -6,8 +6,8 @@ export const levelSixChallenge: CourseContent = {
   minutes: 55,
   passMark: 70,
   title: {
-    ar: 'تحدّي المستوى السادس: نظام تطوّع مستدام',
-    en: 'Level 6 Challenge: A Sustainable Volunteering System',
+    ar: 'مراجعة المستوى السادس: نظام تطوّع مستدام',
+    en: 'Level 6 Review: A Sustainable Volunteering System',
   },
   lede: {
     ar: 'هذا التحدّي يقيس قدرتك على تكامل المفاهيم القيادية العليا: الاستراتيجية والشراكات والحوكمة والمساءلة — في سيناريوهات تعكس تعقيد العمل الميداني الحقيقي.',

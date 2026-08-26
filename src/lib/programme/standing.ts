@@ -1,6 +1,14 @@
 import 'server-only';
 import { query } from '../db';
-import { snapshotFor, decide, levelOpen, type Missing, type Snapshot } from './gate';
+import {
+  snapshotFor,
+  decide,
+  levelOpen,
+  levelClosed,
+  countsTowardsLevel,
+  type Missing,
+  type Snapshot,
+} from './gate';
 import { COURSE_CONTENT } from '../course-content';
 import type { Locale } from '../i18n';
 
@@ -193,7 +201,16 @@ export async function programmeStanding(userId: string | null): Promise<Programm
 
   const levelStandings: LevelStanding[] = levels.map((lvl) => {
     const inLevel = courses.filter((c) => c.level_number === lvl.number).map(standingOf);
-    const done = inLevel.filter((c) => c.standing === 'passed').length;
+    /*
+     * The level's marked paper is still listed and still openable, but it is
+     * revision now and does not count towards the level. Counting it would
+     * leave the bar stuck one short of full for a learner who has finished
+     * everything the level actually asks of them.
+     */
+    const required = courses
+      .filter((c) => c.level_number === lvl.number && countsTowardsLevel(c))
+      .map(standingOf);
+    const done = required.filter((c) => c.standing === 'passed').length;
     return {
       number: lvl.number,
       title: t(lvl),
@@ -201,8 +218,9 @@ export async function programmeStanding(userId: string | null): Promise<Programm
       badgeCode: lvl.badge_code,
       open: levelOpen(snapshot, lvl.number),
       done,
-      total: inLevel.length,
-      complete: inLevel.length > 0 && done === inLevel.length,
+      total: required.length,
+      // One rule, asked once — the same function the gate and the certificate use.
+      complete: levelClosed(snapshot, lvl.number),
       certificateCode: levelCertByNumber.get(lvl.number) ?? null,
       courses: inLevel,
     };

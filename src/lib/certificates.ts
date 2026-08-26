@@ -57,6 +57,20 @@ export type CertificateSnapshot = {
   /** For a level credential: which level, and the courses it covered. */
   levelNumber?: number;
   courses?: string[];
+  /**
+   * For a level credential: what actually closed the level when it was issued.
+   *
+   * The recognition sentence is read from the dictionary at view time rather
+   * than frozen with the rest of this snapshot — so changing what closes a
+   * level silently rewords every certificate ever issued, the old ones
+   * included. Two people closed level 1 by sitting the marked paper, and the
+   * new wording would have their certificate say they walked a decision run:
+   * a document making a claim about somebody that is not true.
+   *
+   * Absent on anything issued before this field existed, and absent means
+   * `paper`, because that is what closed a level then.
+   */
+  closedBy?: 'run' | 'paper';
 };
 
 export type Certificate = {

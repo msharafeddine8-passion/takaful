@@ -57,8 +57,14 @@ export type ChallengeLevelStrings = {
 
   // ---- the run itself
   screenTitle: string;
-  optional: string;
-  optionalBody: string;
+  /*
+   * Renamed from `optional`/`optionalBody` when the decision run became the
+   * thing that closes a level. A key called `optionalBody` holding a string
+   * that says "required" is the trap this codebase keeps writing probes
+   * against: the next reader trusts the name and never opens the value.
+   */
+  closes: string;
+  closesBody: string;
   situationHeading: string;
   questionHeading: string;
   decisionOf: string;
@@ -88,6 +94,51 @@ export type ChallengeLevelStrings = {
   decisionCount: CountForms;
   courseCount: CountForms;
 
+  /*
+   * ---- the staff side: runs that ended in `review`
+   *
+   * Nested rather than prefixed, so that everything a reviewer reads is in one
+   * place and nothing here can be mistaken for a string the volunteer sees.
+   * The two audiences want different words for the same fact: the learner is
+   * told «تحدّث عنه مع منسّقك», and the coordinator is told what the
+   * conversation is for.
+   *
+   * NOTHING IN HERE GRADES EITHER. `review` is not a failure on the staff
+   * screen any more than it is on the learner's, there is no string for a
+   * count of runs against a name, and there is no string comparing two
+   * volunteers — because the query behind this page produces no such figure.
+   * See the invariant comment on reviewQueue() in lib/level-challenge-runs.ts.
+   */
+  staff: {
+    queueTitle: string;
+    queueLede: string;
+    queueOrderNote: string;
+    queueEmpty: string;
+    queueWaiting: CountForms;
+    levelLabel: string;
+    finishedOn: string;
+    readCta: string;
+    goQueue: string;
+    forbidden: string;
+
+    // ---- reading one run back
+    readTitle: string;
+    readLede: string;
+    /* Its own string rather than a reuse of `drewOnHeading`, which says «مسارك»
+       — "your path". The learner's debrief speaks to the person who walked it;
+       this screen speaks about them, and a second-person heading on a
+       reviewer's page reads as though the reviewer sat the run. */
+    drewOnHeading: string;
+    optionsHeading: string;
+    tookThis: string;
+    consequenceHeading: string;
+    conversationTitle: string;
+    conversationBody: string;
+    notFound: string;
+    unreadable: string;
+    backToQueue: string;
+  };
+
   // ---- refusals and empty states
   notYet: string;
   notYetBody: string;
@@ -106,7 +157,7 @@ export type ChallengeLevelStrings = {
 };
 
 export const challengeLevelsAr: ChallengeLevelStrings = {
-  cardKicker: 'تمرين اختياري',
+  cardKicker: 'بهذا يُغلق المستوى',
   cardTitle: 'مسار القرار في المستوى {level}',
   cardBody:
     'موقف واحد يمتدّ من أوّله إلى آخره، ويحتاج ما تعلّمته في دورات هذا المستوى مجتمعةً لا دورة واحدة. ما تختاره في كل خطوة يقرّر الموقف الذي يليه، فلا يمرّ اثنان بالمسار نفسه.',
@@ -114,9 +165,9 @@ export const challengeLevelsAr: ChallengeLevelStrings = {
   cardRetake: 'خُضْه من جديد',
 
   screenTitle: 'مسار القرار',
-  optional: 'اختياري بالكامل',
-  optionalBody:
-    'هذا التمرين لا يُحتسب في أيّ علامة ولا يصدر عنه شهادة، ولا يفتح ولا يُغلق شيئاً. أنهيتَ هذا المستوى فعلاً، وهذا مكان لتجرّب فيه قراراتك قبل الميدان.',
+  closes: 'مطلوب، وبلا علامة',
+  closesBody:
+    'هذا ما يُغلق هذا المستوى ويفتح الذي يليه. لا علامة فيه ولا نجاح ولا رسوب — ما يُسجَّل هو القرارات التي اتّخذتَها، ليقرأها معك إنسان. أنهِه كما هو، ولا تتراجع عن خطوة تشعر أنك أخطأتَ فيها: هي أهمّ ما فيه.',
   situationHeading: 'الموقف',
   questionHeading: 'قرارك',
   decisionOf: 'القرار {n} من {total}',
@@ -159,9 +210,45 @@ export const challengeLevelsAr: ChallengeLevelStrings = {
     many: '{n} دورة',
   },
 
-  notYet: 'لم يكتمل هذا المستوى بعد',
+  staff: {
+    queueTitle: 'قرارات تستحقّ وقفة',
+    queueLede:
+      'مسارات أنهاها متطوّعون، وفيها قرارٌ واحد على الأقلّ تجاوز حدّاً ليس لنا أن نتجاوزه. المستوى أُغلق كما هو ولا شيء هنا معلَّق على رأيك؛ المطلوب أن يقرأ إنسانٌ المسار ثمّ يجلس مع صاحبه.',
+    queueOrderNote:
+      'القائمة مرتّبة بالأحدث أوّلاً، وبهذا وحده. لا عدّ لأحد ولا مقارنة بين اثنين: هذه محادثات تُفتح، لا سجلّ يُبنى على أحد.',
+    queueEmpty: 'لا مسار ينتظر القراءة.',
+    queueWaiting: {
+      zero: 'لا مسارات تنتظر القراءة',
+      one: 'مسار واحد ينتظر القراءة',
+      two: 'مساران ينتظران القراءة',
+      few: '{n} مسارات تنتظر القراءة',
+      many: '{n} مساراً ينتظر القراءة',
+    },
+    levelLabel: 'المستوى {level}',
+    finishedOn: 'أُنهي في',
+    readCta: 'اقرأ المسار',
+    goQueue: 'مسارات تنتظر القراءة',
+    forbidden: 'هذه الصفحة ليست ضمن صلاحيّاتك.',
+
+    readTitle: 'قراءة مسار',
+    readLede:
+      'هذا ما مرّ به المتطوّع كما مرّ به: الموقف، والخيارات كما ظهرت له وبالترتيب نفسه، وما اختاره منها. أُعيد بناؤه من المسار المحفوظ، فهو ما رآه فعلاً لا ما نظنّ أنه رآه.',
+    drewOnHeading: 'الدورات التي احتاجها هذا المسار',
+    optionsHeading: 'الخيارات كما ظهرت له',
+    tookThis: 'ما اختاره',
+    consequenceHeading: 'ما ترتّب على القرار',
+    conversationTitle: 'هذه محادثة، لا مساءلة',
+    conversationBody:
+      'قراءتك لهذا المسار لا تُسجَّل على أحد ولا تفتح إجراءً، والمستوى مُغلق منذ أن أنهاه. ما يُطلب منك أن تجلس معه وتسأله ماذا رأى في تلك اللحظة وما الذي دفعه إلى ما اختاره. وقوع القرار هنا بدل الميدان هو الفائدة كلّها من هذا التمرين.',
+    notFound: 'لم يُعثر على هذا المسار.',
+    unreadable:
+      'تعذّرت قراءة هذا المسار: عُدِّل محتوى مسار القرار بعد أن خاضه المتطوّع، فلم تعد القرارات المحفوظة تصف طريقاً فيه. تحدّث مع المتطوّع مباشرةً.',
+    backToQueue: 'عودة إلى القائمة',
+  },
+
+  notYet: 'لم تُنهِ دورات هذا المستوى بعد',
   notYetBody:
-    'يفتح مسار القرار بعد أن تُنهي دورات هذا المستوى. لا شيء ينتظرك هنا قبل ذلك، ولا يؤثّر عدم خوضه في شهادتك ولا في تقدّمك.',
+    'يفتح مسار القرار بعد أن تُنهي دورات هذا المستوى، وإنهاؤه هو ما يُغلق المستوى ويفتح الذي يليه. أنهِ دوراتك أولاً ثم عُد إلى هنا.',
   noRun: 'لا يوجد مسار مفتوح.',
   signIn: 'سجّل الدخول لتخوض المسار.',
   errors: {
@@ -177,7 +264,7 @@ export const challengeLevelsAr: ChallengeLevelStrings = {
 };
 
 export const challengeLevelsEn: ChallengeLevelStrings = {
-  cardKicker: 'Optional exercise',
+  cardKicker: 'How this level closes',
   cardTitle: 'Level {level} decision run',
   cardBody:
     'One situation from beginning to end, needing what this level’s courses taught together rather than any one of them. What you choose at each step decides the situation that follows, so no two people walk the same path.',
@@ -185,9 +272,9 @@ export const challengeLevelsEn: ChallengeLevelStrings = {
   cardRetake: 'Take it again',
 
   screenTitle: 'Decision run',
-  optional: 'Entirely optional',
-  optionalBody:
-    'This exercise counts towards no mark, issues no certificate, and opens and closes nothing. You have already finished this level; this is somewhere to try your decisions out before the field does.',
+  closes: 'Required, and unmarked',
+  closesBody:
+    'This is what closes the level and opens the one after it. There is no mark in it, no pass and no fail — what is recorded is the decisions you took, so that a person can read them with you. Walk it to the end, and do not back away from a step you feel you got wrong: that step is the most useful thing in it.',
   situationHeading: 'The situation',
   questionHeading: 'Your decision',
   decisionOf: 'Decision {n} of {total}',
@@ -230,9 +317,45 @@ export const challengeLevelsEn: ChallengeLevelStrings = {
     many: '{n} courses',
   },
 
-  notYet: 'This level is not finished yet',
+  staff: {
+    queueTitle: 'Decisions worth sitting with',
+    queueLede:
+      'Runs finished by volunteers in which at least one decision crossed a line that is not ours to cross. The level closed as it stands and nothing here is waiting on your verdict; what is needed is that a person reads the run and then sits with whoever walked it.',
+    queueOrderNote:
+      'The list is ordered newest first, and by that alone. Nobody is counted and no two people are compared: these are conversations to open, not a record being built about anyone.',
+    queueEmpty: 'No run is waiting to be read.',
+    queueWaiting: {
+      zero: 'Nothing waiting to be read',
+      one: 'One run waiting to be read',
+      two: '2 runs waiting to be read',
+      few: '{n} runs waiting to be read',
+      many: '{n} runs waiting to be read',
+    },
+    levelLabel: 'Level {level}',
+    finishedOn: 'Finished on',
+    readCta: 'Read the run',
+    goQueue: 'Runs waiting to be read',
+    forbidden: 'This page is not within your capabilities.',
+
+    readTitle: 'Reading a run',
+    readLede:
+      'This is what the volunteer met, as they met it: the situation, the options as they appeared and in the same order, and the one they took. It is rebuilt from the stored run, so it is what they actually saw rather than what we assume they saw.',
+    drewOnHeading: 'The courses this path leaned on',
+    optionsHeading: 'The options as they appeared',
+    tookThis: 'Took this',
+    consequenceHeading: 'What the decision led to',
+    conversationTitle: 'This is a conversation, not an inquiry',
+    conversationBody:
+      'Reading this run is recorded against nobody and opens no procedure, and the level has been closed since they finished it. What is asked of you is to sit with them and ask what they saw at that moment, and what led them to what they chose. That the decision happened here rather than in the field is the entire value of the exercise.',
+    notFound: 'That run could not be found.',
+    unreadable:
+      'This run could not be read back: the decision run’s content was edited after the volunteer walked it, so the stored decisions no longer describe a path through it. Speak with the volunteer directly.',
+    backToQueue: 'Back to the list',
+  },
+
+  notYet: 'You have not finished this level’s courses yet',
   notYetBody:
-    'The decision run opens once you have finished this level’s courses. Nothing is waiting for you here before then, and not taking it affects neither your certificate nor your progress.',
+    'The decision run opens once this level’s courses are behind you, and finishing it is what closes the level and opens the one after it. Finish your courses first, then come back here.',
   noRun: 'There is no run open.',
   signIn: 'Sign in to take the run.',
   errors: {

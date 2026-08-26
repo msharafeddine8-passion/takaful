@@ -39,6 +39,12 @@ export type CertificateDocumentData = {
   learningTime: string;
   /** Volunteering hours for kind='hours'; empty string when none. */
   volunteerTime: string;
+  /**
+   * For kind='level': what closed the level when this was issued, from the
+   * snapshot. Absent means the marked paper, which is what closed a level
+   * before the decision run did — see CertificateSnapshot.closedBy.
+   */
+  closedBy?: 'run' | 'paper';
 };
 
 /**
@@ -92,7 +98,15 @@ export function CertificateDocument({
     ({
       course: { title: s.docTitleCourse, body: s.bodyCourse },
       orientation: { title: s.docTitleCourse, body: s.bodyCourse },
-      level: { title: s.docTitleLevel, body: s.bodyLevel },
+      /*
+       * The one sentence on this sheet that depends on WHEN it was issued.
+       * A certificate earned by sitting the paper must go on saying so, or the
+       * association has quietly rewritten what somebody did.
+       */
+      level: {
+        title: s.docTitleLevel,
+        body: cert.closedBy === 'run' ? s.bodyLevel : s.bodyLevelPaper,
+      },
       program: { title: s.docTitleProgram, body: s.bodyProgram },
       hours: { title: s.docTitleHours, body: s.bodyHours },
     }) as const;

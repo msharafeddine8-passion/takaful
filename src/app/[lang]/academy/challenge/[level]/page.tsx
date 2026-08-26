@@ -20,7 +20,7 @@ import {
   type Outcome,
   type Walked,
 } from '@/lib/programme/level-challenge';
-import { levelIsComplete, openRun, finishedRuns } from '@/lib/level-challenge-runs';
+import { readyForRun, openRun, finishedRuns } from '@/lib/level-challenge-runs';
 import { startRunAction, decideAction } from '@/lib/actions/level-challenge';
 
 /**
@@ -38,9 +38,11 @@ import { startRunAction, decideAction } from '@/lib/actions/level-challenge';
  * back next week all land on the same situation with the same options in the
  * same places.
  *
- * NOTHING ON THIS PAGE IS A WALL. It is reachable only for a level the learner
- * has already completed, it awards nothing, and not opening it changes no
- * certificate, no badge and no stage.
+ * THIS PAGE IS WHAT CLOSES A LEVEL. It opens once the level's courses are
+ * behind the learner, and finishing a run here is what opens the level after
+ * it. FINISHING is the whole condition: the verdict at the end changes nothing
+ * about access, and `review` locks no door. Somebody who senses they have erred
+ * must have no reason to abandon the run and start a cleaner one.
  */
 
 export async function generateMetadata(
@@ -112,11 +114,16 @@ export default async function LevelChallengePage(
   }
 
   /*
-   * The gate, before anything else is fetched. It is not a new rule — it reads
-   * the same passes gate.ts reads — and it sits behind an achievement rather
-   * than in front of one, so refusing here takes nothing away from anybody.
+   * The gate, before anything else is fetched. It reads the same passes
+   * gate.ts reads, so there is one rule and not two.
+   *
+   * This used to say a refusal here "takes nothing away from anybody", which
+   * was true while the run was optional and is not true now: refusing here
+   * holds the level shut. It still refuses only somebody who has courses left
+   * to finish, and the screen names them — which is the difference between a
+   * queue and a wall.
    */
-  if (!(await levelIsComplete(user.id, level))) {
+  if (!(await readyForRun(user.id, level))) {
     return shell(
       <div className="mt-6 rounded-2xl border border-line bg-surface p-6">
         <p className="text-[1.05rem] font-extrabold">{t.notYet}</p>
@@ -150,7 +157,7 @@ export default async function LevelChallengePage(
       const shown = shownChoices(step, open.seed);
       return shell(
         <>
-          <OptionalNote t={t} />
+          <ClosesNote t={t} />
           <p className="mt-6 text-[0.85rem] font-bold tracking-[0.12em] text-ink-3">
             {t.decisionOf
               .replace('{n}', String(open.decisions.length + 1))
@@ -216,7 +223,7 @@ export default async function LevelChallengePage(
     const walked = path.ok ? path.walked : [];
     return shell(
       <>
-        <OptionalNote t={t} />
+        <ClosesNote t={t} />
         <Verdict outcome={latest.outcome} t={t} />
         <p className="mt-4 text-[0.98rem] leading-relaxed text-ink-2">{t.debriefLede}</p>
 
@@ -263,7 +270,7 @@ export default async function LevelChallengePage(
   // ----------------------------------------------------------- never taken
   return shell(
     <>
-      <OptionalNote t={t} />
+      <ClosesNote t={t} />
       <p className="mt-6 text-[1.02rem] leading-relaxed text-ink-2">{def.lede[lang]}</p>
       <p className="mt-3 text-[0.9rem] font-bold text-ink-3">
         {countPhrase(total, t.decisionCount)}
@@ -275,13 +282,13 @@ export default async function LevelChallengePage(
 
 /* ------------------------------------------------------------------ pieces */
 
-function OptionalNote({ t }: { t: ReturnType<typeof challengeLevels> }) {
+function ClosesNote({ t }: { t: ReturnType<typeof challengeLevels> }) {
   return (
     <div className="mt-5 rounded-2xl border border-brand-blue/30 bg-brand-blue/[0.05] p-5">
       <p className="text-[0.82rem] font-extrabold tracking-[0.13em] text-brand-blue dark:text-sky-300">
-        {t.optional}
+        {t.closes}
       </p>
-      <p className="mt-2 text-[0.95rem] leading-relaxed text-ink-2">{t.optionalBody}</p>
+      <p className="mt-2 text-[0.95rem] leading-relaxed text-ink-2">{t.closesBody}</p>
     </div>
   );
 }

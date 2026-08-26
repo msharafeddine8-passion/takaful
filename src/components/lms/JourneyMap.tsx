@@ -293,6 +293,8 @@ function reasonText(missing: Missing[], t: Dictionary['account']['path'], lang: 
       return t.needOrientation;
     case 'challenge':
       return t.needChallenge;
+    case 'decision-run':
+      return t.needDecisionRun;
     case 'course':
       // Naming the course is the whole point: "finish Teamwork" is a route,
       // "finish a prerequisite" is a shrug.

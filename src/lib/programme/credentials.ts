@@ -2,6 +2,7 @@ import 'server-only';
 import { query, queryOne, transaction } from '../db';
 import { randomUUID } from 'node:crypto';
 import { generateCode, type CertificateSnapshot } from '../certificates';
+import { RUN_REQUIRED_FROM } from './gate';
 
 /**
  * Issuing the programme's credentials.
@@ -166,10 +167,18 @@ export async function issueLevelCredential(
      */
     if (levelNumber === 0) return null;
 
-    // Every course in the level, and none of them unpassed.
+    /*
+     * Every course of the level that counts towards it, and none unpassed.
+     *
+     * `kind <> 'challenge'` because the level's marked paper stopped closing
+     * the level — the decision run does that now, and the paper is revision.
+     * Without this line the certificate would still be withheld until somebody
+     * sat a paper nothing else asks of them.
+     */
     const outstanding = await client.query<{ slug: string }>(
       `SELECT c.slug FROM courses c
         WHERE c.level_id = $1
+          AND c.kind <> 'challenge'
           AND NOT EXISTS (
             SELECT 1 FROM course_attempts a
              WHERE a.user_id = $2 AND a.course_slug = c.slug AND a.passed
@@ -177,6 +186,38 @@ export async function issueLevelCredential(
       [lvl.id, userId],
     );
     if (outstanding.rowCount !== 0) return null;
+
+    /*
+     * And the decision run, which is what the certificate now attests.
+     *
+     * Finished, not cleared. A `review` verdict earns the certificate exactly
+     * as a `clear` one does: the level asks the volunteer to walk a real
+     * situation to its end and see what their decisions cost, and withholding
+     * the certificate on the verdict would turn that into a mark — the one
+     * thing this exercise was built never to produce.
+     */
+    const closed = await client.query<{ by_run: boolean; by_paper: boolean }>(
+      `SELECT EXISTS (
+                SELECT 1 FROM level_challenge_runs r
+                 WHERE r.user_id = $1 AND r.level_number = $2
+                   AND r.finished_at IS NOT NULL) AS by_run,
+              EXISTS (
+                SELECT 1 FROM course_attempts a
+                  JOIN courses c ON c.slug = a.course_slug
+                 WHERE a.user_id = $1 AND a.passed AND c.kind = 'challenge'
+                   AND c.level_id = $3
+                   AND a.submitted_at IS NOT NULL AND a.submitted_at < $4) AS by_paper`,
+      [userId, levelNumber, lvl.id, RUN_REQUIRED_FROM],
+    );
+    const how = closed.rows[0];
+    if (!how.by_run && !how.by_paper) return null;
+    /*
+     * Which one, frozen into the snapshot, because the sheet says different
+     * words for each and says them at view time. `run` wins a tie: somebody who
+     * was grandfathered and then walked the run anyway did both, and the run is
+     * the larger claim.
+     */
+    const closedBy: 'run' | 'paper' = how.by_run ? 'run' : 'paper';
 
     const live = await client.query<{ code: string }>(
       `SELECT code FROM certificates
@@ -191,10 +232,19 @@ export async function issueLevelCredential(
       text_ar: string | null;
       text_en: string | null;
     }>(
+      /*
+       * The same filter as the outstanding check above, and it has to be.
+       *
+       * This builds what the certificate CLAIMS — the courses named on it, the
+       * skills listed, the learning minutes totalled. The paper is optional
+       * now, so counting its minutes would print a figure for study the holder
+       * may never have done, on a document whose whole value is that a stranger
+       * can trust what it says.
+       */
       `SELECT c.slug, c.minutes, o.text_ar, o.text_en
          FROM courses c
          LEFT JOIN course_outcomes o ON o.course_id = c.id
-        WHERE c.level_id = $1
+        WHERE c.level_id = $1 AND c.kind <> 'challenge'
         ORDER BY c.sort_order, o.sort_order`,
       [lvl.id],
     );
@@ -209,6 +259,7 @@ export async function issueLevelCredential(
       titleAr: lvl.title_ar,
       titleEn: lvl.title_en,
       levelNumber,
+      closedBy,
       courses: slugs,
       learningMinutes: minutes,
       skillsAr: covered.rows.map((r) => r.text_ar).filter((s): s is string => Boolean(s)),
@@ -230,7 +281,11 @@ export async function issueLevelCredential(
 /**
  * The whole path. Earned when every level of the default programme has a live
  * level credential — which transitively means the orientation, all thirty
- * courses and all six challenges.
+ * courses, and a finished decision run at each of the six levels.
+ *
+ * Nothing in this function changed when the decision run replaced the marked
+ * paper, and that is the point: it asks whether the six level certificates
+ * stand, and what it takes to earn one of those is stated once, next door.
  *
  * Checked against live credentials rather than against passes, because this
  * one claims that the six level certificates stand. If a level is revoked, the

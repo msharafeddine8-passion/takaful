@@ -22,8 +22,8 @@ export const levelFourChallenge: CourseContent = {
   minutes: 45,
   passMark: 70,
   title: {
-    ar: 'تحدّي المستوى الرابع: إدارة اجتماع متأزّم',
-    en: 'Level 4 Challenge: Running a Difficult Meeting',
+    ar: 'مراجعة المستوى الرابع: إدارة اجتماع متأزّم',
+    en: 'Level 4 Review: Running a Difficult Meeting',
   },
   lede: {
     ar: 'اجتماع فيه خلاف قديم، وطرف يفاوض، وشخص لا يُسمع صوته، وقرار مشترك لا بد من الخروج به.',

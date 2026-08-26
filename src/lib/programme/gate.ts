@@ -36,6 +36,13 @@ export type Missing =
   | { kind: 'orientation'; slug: string; title: L }
   | { kind: 'course'; slug: string; title: L; level: number | null }
   | { kind: 'challenge'; slug: string; title: L; level: number }
+  /**
+   * The level's decision run has not been finished.
+   *
+   * Carries no slug, because a run is not a course and there is nothing to
+   * link to in the catalogue — the route is /academy/challenge/{level}.
+   */
+  | { kind: 'decision-run'; level: number }
   | { kind: 'level'; number: number; title: L };
 
 export type Access = {
@@ -86,6 +93,52 @@ export async function passedSlugs(userId: string): Promise<Set<string>> {
   return new Set(rows.map((r) => r.course_slug));
 }
 
+/**
+ * The instant the decision run became what closes a level.
+ *
+ * Before it, a level closed on the marked paper at the end of it. Two people
+ * had already closed level 1 that way when the rule changed, and re-locking
+ * somebody who finished under the old rule would be the platform taking back
+ * something it had already given.
+ *
+ * The alternative — writing them a finished run so the new rule finds one —
+ * was rejected outright. walk() refuses to guess which run a set of decisions
+ * belongs to on the grounds that it would be inventing a history for somebody,
+ * and a migration may not do what the engine is written to refuse. So the
+ * exemption is stated here, in the open, where it reads as what it is.
+ */
+export const RUN_REQUIRED_FROM = '2026-08-26T00:00:00Z';
+
+/** Levels whose decision run this learner has finished. */
+export async function levelsWithFinishedRun(userId: string): Promise<Set<number>> {
+  const rows = await query<{ level_number: number }>(
+    `SELECT DISTINCT level_number FROM level_challenge_runs
+     WHERE user_id = $1 AND finished_at IS NOT NULL`,
+    [userId],
+  );
+  return new Set(rows.map((r) => r.level_number));
+}
+
+/**
+ * Levels this learner closed under the old rule, before RUN_REQUIRED_FROM.
+ *
+ * Deliberately not "has ever passed the challenge course": the paper is still
+ * there to revise from, and passing it today must not close a level, or the
+ * old route would still be open and nothing would have changed.
+ */
+export async function levelsClosedBeforeCutover(userId: string): Promise<Set<number>> {
+  const rows = await query<{ level_number: number }>(
+    `SELECT DISTINCT l.number AS level_number
+     FROM course_attempts a
+     JOIN courses c ON c.slug = a.course_slug
+     JOIN program_levels l ON l.id = c.level_id
+     WHERE a.user_id = $1 AND a.passed AND c.kind = 'challenge'
+       AND a.submitted_at IS NOT NULL AND a.submitted_at < $2`,
+    [userId, RUN_REQUIRED_FROM],
+  );
+  return new Set(rows.map((r) => r.level_number));
+}
+
 /** Levels the learner has completed, by number. */
 export async function completedLevels(userId: string): Promise<Set<number>> {
   const rows = await query<{ number: number }>(
@@ -105,13 +158,17 @@ export type Snapshot = {
   courses: CourseRow[];
   passed: Set<string>;
   levels: Set<number>;
+  /** Levels whose decision run is finished. This is what closes a level. */
+  runs: Set<number>;
+  /** Levels closed under the old rule. See RUN_REQUIRED_FROM. */
+  grandfathered: Set<number>;
   /** slug -> prerequisite slugs, split by whether they lock or advise. */
   requires: Map<string, string[]>;
   recommends: Map<string, string[]>;
 };
 
 export async function snapshotFor(userId: string | null): Promise<Snapshot> {
-  const [courses, edges, passed, levels] = await Promise.all([
+  const [courses, edges, passed, levels, runs, grandfathered] = await Promise.all([
     catalogue(),
     query<{ from_slug: string; to_slug: string; kind: string }>(`
       SELECT a.slug AS from_slug, b.slug AS to_slug, p.kind
@@ -121,6 +178,8 @@ export async function snapshotFor(userId: string | null): Promise<Snapshot> {
     `),
     userId ? passedSlugs(userId) : Promise.resolve(new Set<string>()),
     userId ? completedLevels(userId) : Promise.resolve(new Set<number>()),
+    userId ? levelsWithFinishedRun(userId) : Promise.resolve(new Set<number>()),
+    userId ? levelsClosedBeforeCutover(userId) : Promise.resolve(new Set<number>()),
   ]);
 
   const requires = new Map<string, string[]>();
@@ -129,7 +188,7 @@ export async function snapshotFor(userId: string | null): Promise<Snapshot> {
     const target = e.kind === 'requires' ? requires : recommends;
     target.set(e.from_slug, [...(target.get(e.from_slug) ?? []), e.to_slug]);
   }
-  return { courses, passed, levels, requires, recommends };
+  return { courses, passed, levels, runs, grandfathered, requires, recommends };
 }
 
 /**
@@ -147,11 +206,55 @@ export async function snapshotFor(userId: string | null): Promise<Snapshot> {
  * Gating now depends only on what the learner has actually passed, so it
  * cannot go stale.
  */
+export function countsTowardsLevel(c: { kind: CourseRow['kind'] }): boolean {
+  return c.kind !== 'challenge';
+}
+
+/**
+ * Has this learner closed level N?
+ *
+ * Two things, and the second one is the change: every course of the level that
+ * counts towards it, and a finished decision run.
+ *
+ * The marked paper at the end of the level no longer closes it. It measured
+ * the wrong thing — in 92.8% of its questions the correct answer was the
+ * longest one on offer, so it rewarded test-wiseness rather than the level's
+ * material — and it held the credential while the decision run, which asks for
+ * judgement under consequence, opened nothing. The instruments swapped roles.
+ * The paper stays in the catalogue as revision.
+ *
+ * FINISHING the run is what closes the level. Not the outcome. `review` is not
+ * a fail here any more than it is anywhere else: a volunteer who senses they
+ * have erred must have no reason to abandon the run and start a cleaner one,
+ * and gating on the verdict would hand them exactly that reason. Walking it to
+ * the end, including the part that hurt, is the behaviour worth rewarding — so
+ * that is the behaviour the gate reads.
+ */
+export function levelClosed(snapshot: Snapshot, level: number): boolean {
+  const inLevel = snapshot.courses.filter((c) => c.level_number === level);
+  if (inLevel.length === 0) return false;
+
+  const required = inLevel.filter(countsTowardsLevel);
+  if (required.length === 0) return false;
+  if (!required.every((c) => snapshot.passed.has(c.slug))) return false;
+
+  /*
+   * Level 0 is the orientation, and it closes on its own course.
+   *
+   * There is no decision run for it and there cannot be: chk_lcr_level bounds
+   * level_number to 1..6. Requiring one here would have demanded a row the
+   * database refuses to hold, so level 1 would have been shut to every
+   * volunteer on the platform, for ever, with nothing on any screen to
+   * explain it.
+   */
+  if (level === 0) return true;
+
+  return snapshot.runs.has(level) || snapshot.grandfathered.has(level);
+}
+
 export function levelOpen(snapshot: Snapshot, level: number): boolean {
   if (level <= 0) return true;
-  const previous = snapshot.courses.filter((c) => c.level_number === level - 1);
-  if (previous.length === 0) return false;
-  return previous.every((c) => snapshot.passed.has(c.slug));
+  return levelClosed(snapshot, level - 1);
 }
 
 /**
@@ -171,9 +274,6 @@ export function decide(snapshot: Snapshot, slug: string): Access {
       if (!levelOpen(snapshot, n + 1)) {
         // Report the first level that is not finished, not all of them: a list
         // of five locked levels tells the learner nothing they can act on.
-        const blocker = snapshot.courses.find(
-          (c) => c.kind === 'challenge' && c.level_number === n,
-        );
         if (n === 0) {
           const orientation = snapshot.courses.find((c) => c.kind === 'orientation');
           if (orientation && !snapshot.passed.has(orientation.slug)) {
@@ -183,13 +283,27 @@ export function decide(snapshot: Snapshot, slug: string): Access {
               title: titleOf(orientation),
             });
           }
-        } else if (blocker) {
-          missing.push({
-            kind: 'challenge',
-            slug: blocker.slug,
-            title: titleOf(blocker),
-            level: n,
-          });
+        } else {
+          /*
+           * An unpassed course before the run, because the run cannot even be
+           * opened until every course of the level is behind the learner.
+           * Naming the run while a course is outstanding would send somebody to
+           * a page that refuses them.
+           */
+          const unpassed = snapshot.courses.find(
+            (c) =>
+              c.level_number === n && countsTowardsLevel(c) && !snapshot.passed.has(c.slug),
+          );
+          if (unpassed) {
+            missing.push({
+              kind: 'course',
+              slug: unpassed.slug,
+              title: titleOf(unpassed),
+              level: n,
+            });
+          } else {
+            missing.push({ kind: 'decision-run', level: n });
+          }
         }
         break;
       }
@@ -274,9 +388,13 @@ export async function recordLevelIfComplete(
   const inLevel = snapshot.courses.filter((c) => c.level_number === level);
   if (inLevel.length === 0) return false;
 
-  // Every course in the level, challenge included, must be passed.
-  const unfinished = inLevel.filter((c) => !snapshot.passed.has(c.slug));
-  if (unfinished.length > 0) return false;
+  /*
+   * One rule, asked once. This used to re-state "every course in the level,
+   * challenge included" in its own words, which was a second copy of the gate
+   * free to drift from the first — and it would have drifted the moment the
+   * decision run became part of closing a level.
+   */
+  if (!levelClosed(snapshot, level)) return false;
 
   const row = await queryOne<{ id: string }>(
     `SELECT l.id FROM program_levels l

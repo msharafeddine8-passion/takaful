@@ -109,7 +109,13 @@ function dedupeMissing(missing: Missing[]): Missing[] {
   const out: Missing[] = [];
   for (const m of missing) {
     const id =
-      m.kind === 'sign-in' ? 'sign-in' : m.kind === 'level' ? `level:${m.number}` : `${m.kind}:${m.slug}`;
+      m.kind === 'sign-in'
+        ? 'sign-in'
+        : m.kind === 'level'
+          ? `level:${m.number}`
+          : m.kind === 'decision-run'
+            ? `decision-run:${m.level}`
+            : `${m.kind}:${m.slug}`;
     if (seen.has(id)) continue;
     seen.add(id);
     out.push(m);
@@ -251,7 +257,22 @@ export function buildMapModel(standing: ProgrammeStanding): MapModel {
         remaining: target.courses
           .filter((c) => c.standing !== 'passed')
           .map((c) => ({ slug: c.slug, title: c.title })),
-        ready: target.total > 0 && target.done === target.total,
+        /*
+         * The level being CLOSED, not its courses being counted off.
+         *
+         * This read `done === total` until the decision run became what closes
+         * a level. `total` stopped counting the level's marked paper on the
+         * same day, so the two together started saying a certificate was ready
+         * the moment the five courses were passed — while issueLevelCredential
+         * went on refusing it for want of a finished run. The map promised a
+         * document the platform would not issue, which is the exact failure
+         * this preview's own header says it exists to avoid.
+         *
+         * `state === 'complete'` comes from LevelStanding.complete, which is
+         * levelClosed() — the same function the gate and the issuer ask. One
+         * rule, asked once.
+         */
+        ready: target.state === 'complete',
       }
     : null;
 

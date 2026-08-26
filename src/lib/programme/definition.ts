@@ -72,8 +72,8 @@ export const PROGRAM: { slug: string; title: L; description: L } = {
     en: 'The Complete Volunteer Path',
   },
   description: {
-    ar: 'برنامج تدريبي متدرّج من ست مستويات، يبدأ بدورة تمهيدية إلزامية وينتهي بمتطوّع قادر على قيادة فريق وتصميم مبادرة وحماية من يخدمهم. كل مستوى ينتهي بتحدٍّ تطبيقي وشهادة.',
-    en: 'A six-level training programme that starts with a mandatory orientation and ends with a volunteer who can lead a team, design an initiative, and protect the people they serve. Every level ends with an applied challenge and a certificate.',
+    ar: 'برنامج تدريبي متدرّج من ستة مستويات، يبدأ بدورة تمهيدية إلزامية وينتهي بمتطوّع قادر على قيادة فريق وتصميم مبادرة وحماية من يخدمهم. كل مستوى ينتهي بموقف واقعي تخوضه قراراً بعد قرار، ثم شهادة المستوى.',
+    en: 'A six-level training programme that starts with a mandatory orientation and ends with a volunteer who can lead a team, design an initiative, and protect the people they serve. Every level ends with a real situation you walk through decision by decision, and then the level certificate.',
   },
 };
 
@@ -349,7 +349,7 @@ export const COURSES: CourseDef[] = [
     kind: 'challenge',
     level: 1,
     order: 6,
-    title: { ar: 'تحدّي المستوى الأول: يوم تطوّعي كامل', en: 'Level 1 Challenge: A Full Volunteering Day' },
+    title: { ar: 'مراجعة المستوى الأول: يوم تطوّعي كامل', en: 'Level 1 Review: A Full Volunteering Day' },
     summary: {
       ar: 'موقف تطوّعي من الوصول حتى المغادرة. قرارات في التواصل والعمل الجماعي وحماية الطفل والأخلاقيات وحماية البيانات — بلا إجابة واحدة صحيحة دائماً.',
       en: 'A volunteering situation from arrival to departure. Decisions across communication, teamwork, child safeguarding, ethics and data protection — with no single right answer every time.',
@@ -541,7 +541,7 @@ export const COURSES: CourseDef[] = [
     kind: 'challenge',
     level: 2,
     order: 6,
-    title: { ar: 'تحدّي المستوى الثاني: تخطيط يوم ميداني', en: 'Level 2 Challenge: Planning a Field Day' },
+    title: { ar: 'مراجعة المستوى الثاني: تخطيط يوم ميداني', en: 'Level 2 Review: Planning a Field Day' },
     summary: {
       ar: 'خطّط يوماً ميدانياً كاملاً: جدول، توثيق، محتوى إعلامي، سجل مخاطر — ثم تقع حالة طارئة وترى ما إذا كانت خطتك تصمد.',
       en: 'Plan a whole field day: a schedule, documentation, media content, a risk log — then an emergency happens and you find out whether your plan holds.',
@@ -742,7 +742,7 @@ export const COURSES: CourseDef[] = [
     kind: 'challenge',
     level: 3,
     order: 6,
-    title: { ar: 'تحدّي المستوى الثالث: بناء مبادرة مجتمعية', en: 'Level 3 Challenge: Build a Community Initiative' },
+    title: { ar: 'مراجعة المستوى الثالث: بناء مبادرة مجتمعية', en: 'Level 3 Review: Build a Community Initiative' },
     summary: {
       ar: 'من تقييم احتياج إلى مقترح إلى فريق إلى فعالية — مع حالة حماية تظهر في منتصف الطريق وتفرض عليك إحالة.',
       en: 'From a needs assessment to a proposal to a team to an event — with a safeguarding case appearing halfway through that forces a referral.',
@@ -934,7 +934,7 @@ export const COURSES: CourseDef[] = [
     kind: 'challenge',
     level: 4,
     order: 6,
-    title: { ar: 'تحدّي المستوى الرابع: إدارة اجتماع متأزّم', en: 'Level 4 Challenge: Running a Difficult Meeting' },
+    title: { ar: 'مراجعة المستوى الرابع: إدارة اجتماع متأزّم', en: 'Level 4 Review: Running a Difficult Meeting' },
     summary: {
       ar: 'اجتماع فيه خلاف قديم، وطرف يفاوض، وشخص لا يُسمع صوته، وقرار مشترك لا بد من الخروج به.',
       en: 'A meeting carrying an old disagreement, a party negotiating, a person nobody is hearing, and a shared decision that has to be reached.',
@@ -1132,7 +1132,7 @@ export const COURSES: CourseDef[] = [
     kind: 'challenge',
     level: 5,
     order: 6,
-    title: { ar: 'تحدّي المستوى الخامس: قيادة مشروع', en: 'Level 5 Challenge: Leading a Project' },
+    title: { ar: 'مراجعة المستوى الخامس: قيادة مشروع', en: 'Level 5 Review: Leading a Project' },
     summary: {
       ar: 'مشروع يفرض قراراً أخلاقياً، وإدارة مخاطر، وميزانية لا تكفي، وخطاباً لشريك، ومؤشّرات أثر لا يمكن تضخيمها.',
       en: 'A project forcing an ethical decision, risk management, a budget that does not stretch, a pitch to a partner, and impact indicators you cannot inflate.',
@@ -1327,7 +1327,7 @@ export const COURSES: CourseDef[] = [
     kind: 'challenge',
     level: 6,
     order: 6,
-    title: { ar: 'تحدّي المستوى السادس: نظام تطوّع مستدام', en: 'Level 6 Challenge: A Sustainable Volunteering System' },
+    title: { ar: 'مراجعة المستوى السادس: نظام تطوّع مستدام', en: 'Level 6 Review: A Sustainable Volunteering System' },
     summary: {
       ar: 'صمّم نظاماً كاملاً: دورة حياة المتطوّع، الموارد، الشراكات، التدريب، والحوكمة التي تُبقيه قائماً بعدك.',
       en: 'Design a complete system: the volunteer lifecycle, resources, partnerships, training, and the governance that keeps it standing after you.',

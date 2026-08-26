@@ -32,6 +32,22 @@
  *
  * The course slugs come from definition.ts rather than being typed out here,
  * so a course rename cannot leave this probe quietly testing nothing.
+ *
+ * WHAT CLOSES A LEVEL, AND WHY NO DECISION RUN IS WRITTEN HERE.
+ * A level closes on every course that countsTowardsLevel plus a FINISHED
+ * decision run — or, before RUN_REQUIRED_FROM, on the marked paper, which is
+ * the exemption for the people who closed a level under the old rule. The
+ * level's paper is still listed, still openable and no longer counts towards
+ * the level, so a station that holds six courses now asks for five.
+ *
+ * This probe closes its levels through the pre-cutover exemption rather than
+ * by writing runs, because migration 042 puts a BEFORE DELETE trigger on
+ * level_challenge_runs which refuses unconditionally — 045's
+ * takaful_delete_allowed() hatch was never extended to it — and that table's
+ * user_id is ON DELETE RESTRICT. A single inserted run would be permanent in a
+ * production database and would hold the throwaway learner in `users` with it,
+ * where the association's own reports count them. No probe in this suite
+ * writes to a delete-refusing table.
  */
 import { Client } from 'pg';
 import { randomUUID } from 'node:crypto';
@@ -39,7 +55,14 @@ import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
-import { accessToCourse, snapshotFor, decide, levelOpen } from '../src/lib/programme/gate.ts';
+import {
+  accessToCourse,
+  snapshotFor,
+  decide,
+  levelOpen,
+  levelClosed,
+  RUN_REQUIRED_FROM,
+} from '../src/lib/programme/gate.ts';
 import { programmeStanding, type ProgrammeStanding } from '../src/lib/programme/standing.ts';
 import {
   issueEarnedCredentials,
@@ -94,18 +117,36 @@ const level1Core = level1.filter((x) => x.kind === 'core');
 const level1Challenge = level1.find((x) => x.kind === 'challenge');
 const programmeTotal = LEVELS.flatMap((l) => coursesInLevel(l.number)).length;
 
+/** A day before the cutover, derived so a moved cutover cannot strand it. */
+const PRE_CUTOVER = new Date(Date.parse(RUN_REQUIRED_FROM) - 86_400_000).toISOString();
+
 await c.connect();
 const learner = randomUUID();
 
-async function pass(slug: string) {
+async function pass(slug: string, submittedAt?: string) {
   // chk_attempt_questions rejects an empty array: a real attempt asked
   // something, and a pass recorded against no questions is not a pass.
+  //
+  // submittedAt exists because the grandfathering rule turns on WHEN a paper
+  // was submitted, and a probe that could only write now() could not tell the
+  // two sides of RUN_REQUIRED_FROM apart.
   await c.query(
     `INSERT INTO course_attempts (id, user_id, course_slug, question_ids, submitted_at,
                                   score, passed, pass_mark)
-     VALUES ($1, $2, $3, ARRAY['probe-q1','probe-q2']::text[], now(), 100, TRUE, 70)`,
-    [randomUUID(), learner, slug],
+     VALUES ($1, $2, $3, ARRAY['probe-q1','probe-q2']::text[],
+             COALESCE($4::timestamptz, now()), 100, TRUE, 70)`,
+    [randomUUID(), learner, slug, submittedAt ?? null],
   );
+}
+
+/**
+ * Close a level the only way a probe may: the marked paper, passed before the
+ * cutover. A decision run would close it too and cannot be written here — see
+ * the head of this file.
+ */
+async function closeLevelWithOldRule(level: number) {
+  const paper = coursesInLevel(level).find((x) => x.kind === 'challenge');
+  if (paper) await pass(paper.slug, PRE_CUTOVER);
 }
 
 /** The standing and the model built from it, always read together. */
@@ -328,9 +369,15 @@ try {
   check('exactly one station still says it', after0.map.stations.filter((s) => s.youAreHere).length === 1);
   check('level one is now the station in progress',
     after0.map.stations[1].state === 'current', after0.map.stations[1].state);
-  check('and level two is still locked behind level one\'s challenge',
+  /*
+   * Locked behind level one's COURSES, not behind its paper and not yet behind
+   * its decision run: naming the run while a course is outstanding would send
+   * the learner to a page that refuses them.
+   */
+  check('and level two is still locked behind level one\'s unfinished courses',
     after0.map.stations[2].state === 'locked'
-    && after0.map.stations[2].lockedBy.some((m) => m.kind === 'challenge'),
+    && after0.map.stations[2].lockedBy.some((m) => m.kind === 'course' && m.level === 1)
+    && !after0.map.stations[2].lockedBy.some((m) => m.kind === 'decision-run'),
     after0.map.stations[2].lockedBy.map((m) => m.kind).join(','));
   check('the orientation badge is earned', levelBadgeStanding(after0.standing)[0].earned);
   check('but no level counts as finished yet', highestLevelEarned(after0.standing) === 0,
@@ -340,22 +387,76 @@ try {
   console.log('\n--- working through level one ---');
   for (const course of level1Core) await pass(course.slug);
   const partial = await look();
-  check('five of six courses is 83%, not "nearly there"',
-    partial.map.stations[1].percent === Math.round((5 / 6) * 100),
-    partial.map.stations[1].percent);
-  check('the level is not complete until the challenge is passed',
-    partial.map.stations[1].state === 'current' && partial.map.stations[1].done === 5,
+  /*
+   * Five of five, not five of six. The level's marked paper is revision now
+   * and does not count towards the level — counting it would leave the bar
+   * stuck one short of full for a learner who has finished everything the
+   * level actually asks of them.
+   */
+  check('the five courses are the whole of what the level asks',
+    partial.map.stations[1].total === 5 && partial.map.stations[1].done === 5,
     `${partial.map.stations[1].done}/${partial.map.stations[1].total}`);
+  check('so the bar reads full', partial.map.stations[1].percent === 100,
+    partial.map.stations[1].percent);
+  check('the paper is still listed on the station, openable and uncounted',
+    partial.map.stations[1].courses.some((x) => x.slug === level1Challenge?.slug)
+    && partial.map.stations[1].courses.length === level1.length,
+    `${partial.map.stations[1].courses.length} courses listed, ${partial.map.stations[1].total} counted`);
+  /*
+   * And the level is STILL not complete, because the decision run has not been
+   * walked. A full bar beside an incomplete level is the honest picture here.
+   */
+  check('but the level is NOT complete, because the decision run is outstanding',
+    partial.standing.levels[1].complete === false
+    && partial.map.stations[1].state === 'current',
+    partial.map.stations[1].state);
+  check('the gate agrees', !levelClosed(await snapshotFor(learner), 1));
   check('the badge is not earned yet', !levelBadgeStanding(partial.standing)[1].earned);
-  check('and the next certificate still points at level one, not ready',
+  check('level two is still locked', partial.map.stations[2].state === 'locked',
+    partial.map.stations[2].state);
+  check('and the lock now names the level one decision run',
+    partial.map.stations[2].lockedBy.length === 1
+    && partial.map.stations[2].lockedBy[0].kind === 'decision-run',
+    partial.map.stations[2].lockedBy
+      .map((m) => `${m.kind}${'level' in m ? `:${m.level}` : ''}`).join(',') || 'no reason');
+  const refusedNow = await issueLevelCredential(learner, 1);
+  check('the issuer refuses the level credential while the run is outstanding',
+    refusedNow === null, refusedNow?.code);
+  /*
+   * The preview must not promise a document the platform would refuse. `ready`
+   * is computed from done === total, which the courses now satisfy on their
+   * own — so it outruns the issuer by exactly the width of the decision run.
+   * The fix belongs in buildMapModel, which this probe may not edit.
+   */
+  check('and the map does not offer a certificate the issuer would refuse',
     partial.map.nextCertificate?.levelNumber === 1
     && partial.map.nextCertificate?.ready === false,
-    partial.map.nextCertificate?.remaining.length);
+    `ready=${partial.map.nextCertificate?.ready}, issuer=${refusedNow === null ? 'refuses' : 'issues'}`);
 
-  check('level one has a challenge to pass', level1Challenge !== undefined);
+  console.log('\n--- the marked paper no longer closes a level ---');
+  check('level one has a paper to pass', level1Challenge !== undefined);
+  check('this probe runs after the cutover, so a pass recorded now is a late one',
+    Date.now() >= Date.parse(RUN_REQUIRED_FROM),
+    `now ${new Date().toISOString()} vs cutover ${RUN_REQUIRED_FROM}`);
   if (level1Challenge) await pass(level1Challenge.slug);
+  const papered = await look();
+  check('passing it today leaves the level open',
+    papered.standing.levels[1].complete === false
+    && papered.map.stations[1].state === 'current',
+    papered.map.stations[1].state);
+  check('level two stays locked', papered.map.stations[2].state === 'locked');
+  check('and no level credential is issued for it',
+    (await issueLevelCredential(learner, 1)) === null);
+
+  console.log('\n--- a paper passed before the cutover still closes it ---');
+  /*
+   * The exemption, and the only instrument a probe may use: two people closed
+   * level 1 under the old rule and re-locking them would be the platform
+   * taking back something it had already given.
+   */
+  await closeLevelWithOldRule(1);
   const done1 = await look();
-  check('with the challenge passed the level is complete',
+  check('the level is complete',
     done1.map.stations[1].state === 'complete' && done1.map.stations[1].percent === 100,
     done1.map.stations[1].percent);
   check('level two opens', done1.map.stations[2].state !== 'locked',
@@ -458,7 +559,11 @@ try {
    * certificate is withdrawn.
    */
   for (const level of LEVELS.filter((l) => l.number >= 2)) {
-    for (const course of coursesInLevel(level.number)) await pass(course.slug);
+    for (const course of coursesInLevel(level.number)) {
+      // The paper goes in before the cutover, which is the only instrument a
+      // probe has for closing a level. Everything else is passed today.
+      await pass(course.slug, course.kind === 'challenge' ? PRE_CUTOVER : undefined);
+    }
   }
   for (const level of LEVELS.filter((l) => l.number >= 2)) {
     const result = await issueLevelCredential(learner, level.number);
@@ -589,22 +694,58 @@ try {
     [ORIENTATION_SLUG, ...level1.map((x) => x.slug)].every((s) => catalogueSlugs.has(s)));
 } finally {
   console.log('\n--- cleanup ---');
+  /*
+   * Migrations 044/045: achievements refuses a plain DELETE, and this asks for
+   * the exception by name.
+   *
+   * Two things this got wrong, both of which sweep.mts had already been bitten
+   * by and documented. SET LOCAL only means anything inside a transaction —
+   * outside one Postgres warns and does nothing — and this loop ran every
+   * statement in its own implicit transaction, so the setting expired before
+   * the next line. And the SET was inside the parameterised list, so it was
+   * sent with one bind parameter and failed outright: "bind message supplies 1
+   * parameters". The escape hatch had therefore never once been open, and the
+   * only reason nothing was left behind is that this probe writes no
+   * achievements. A SAVEPOINT per statement keeps what the loop had before:
+   * one refusal does not abandon the rest.
+   */
+  try {
+    await c.query('BEGIN');
+    await c.query("SET LOCAL takaful.allow_delete = 'on'");
+    await c.query('DELETE FROM achievements WHERE user_id = $1', [learner]);
+    await c.query('COMMIT');
+  } catch (e) {
+    await c.query('ROLLBACK').catch(() => {});
+    console.log(`  cleanup: achievements — ${(e as Error).message.slice(0, 60)}`);
+  }
+  /*
+   * The rest outside a transaction, one statement at a time, deliberately.
+   * Wrapping the whole teardown in one made a dropped connection roll back all
+   * of it — which is exactly what happened once here, leaving a probe account
+   * in production for the sweep to find. Each statement commits on its own, so
+   * a connection lost half way through costs one delete rather than six.
+   */
   for (const sql of [
-    /* Migrations 044/045: achievements refuses a plain DELETE, and this asks
-     * for the exception by name. Transaction-scoped, so it ends here. */
-    "SET LOCAL takaful.allow_delete = 'on'",
     'DELETE FROM certificates WHERE user_id = $1',
-    'DELETE FROM achievements WHERE user_id = $1',
     'DELETE FROM level_progress WHERE user_id = $1',
     'DELETE FROM course_attempts WHERE user_id = $1',
     'DELETE FROM profiles WHERE user_id = $1',
     'DELETE FROM users WHERE id = $1',
   ]) {
-    await c.query(sql, [learner]).catch((e) => console.log(`  cleanup: ${e.message.slice(0, 60)}`));
+    await c.query(sql, [learner])
+      .catch((e) => console.log(`  cleanup: ${sql.split(' ')[3]} — ${e.message.slice(0, 60)}`));
   }
   const left = await c.query<{ n: number }>(
     `SELECT count(*)::int AS n FROM users WHERE email LIKE 'probe-path-%'`);
   console.log(`  ${left.rows[0].n} probe user(s) remaining (expected 0)`);
+  /*
+   * Nothing here writes a decision run, and this says so out loud: a row in
+   * that table could not be deleted afterwards, and it would hold the learner
+   * down with it. See the head of this file.
+   */
+  const runs = await c.query<{ n: number }>(
+    'SELECT count(*)::int AS n FROM level_challenge_runs WHERE user_id = $1', [learner]);
+  console.log(`  ${runs.rows[0].n} decision run(s) left behind (expected 0, and none is ever written)`);
   await c.end();
 }
 

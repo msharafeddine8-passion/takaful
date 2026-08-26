@@ -21,8 +21,8 @@ export const levelTwoChallenge: CourseContent = {
   minutes: 30,
   passMark: 70,
   title: {
-    ar: 'تحدّي المستوى الثاني: تخطيط يوم ميداني',
-    en: 'Level 2 Challenge: Planning a Field Day',
+    ar: 'مراجعة المستوى الثاني: تخطيط يوم ميداني',
+    en: 'Level 2 Review: Planning a Field Day',
   },
   lede: {
     ar: 'خطّط يوماً ميدانياً كاملاً: جدول، توثيق، محتوى إعلامي، سجل مخاطر — ثم تقع حالة طارئة وترى ما إذا كانت خطتك تصمد.',

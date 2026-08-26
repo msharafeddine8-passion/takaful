@@ -19,8 +19,8 @@ export const levelThreeChallenge: CourseContent = {
   minutes: 50,
   passMark: 70,
   title: {
-    ar: 'تحدّي المستوى الثالث: بناء مبادرة مجتمعية',
-    en: 'Level 3 Challenge: Build a Community Initiative',
+    ar: 'مراجعة المستوى الثالث: بناء مبادرة مجتمعية',
+    en: 'Level 3 Review: Build a Community Initiative',
   },
   lede: {
     ar: 'من تقييم احتياج إلى مقترح إلى فريق إلى فعالية — مع حالة حماية تظهر في منتصف الطريق وتفرض عليك إحالة.',

@@ -637,7 +637,14 @@ export const en: Dictionary = {
       docTitleHours: 'Certificate of Volunteering Hours',
       bodyCourse:
         'in recognition of successfully completing this course within the Takaful Academy volunteering path, and fulfilling all of its requirements.',
+      /*
+       * "Walking … through to the end", not "passing": the decision run has no
+       * pass and no fail, and a certificate that says "passing" promises the
+       * reader a mark that does not exist.
+       */
       bodyLevel:
+        'in recognition of successfully completing every course in this level of the volunteering path, and walking its field situation through to the end, decision by decision.',
+      bodyLevelPaper:
         'in recognition of successfully completing every course in this level of the volunteering path, and passing its applied challenge.',
       bodyProgram:
         'in recognition of successfully completing all stages and requirements of the volunteering path at Takaful Academy, and of commitment to the core standards, values and skills of volunteer work.',
@@ -648,7 +655,7 @@ export const en: Dictionary = {
     },
     path: {
       title: 'The volunteer path',
-      lede: 'Six levels, starting with a mandatory orientation. Every level ends with an applied challenge and a certificate.',
+      lede: 'Six levels, starting with a mandatory orientation. Every level ends with a real situation you walk through decision by decision, and then the level certificate.',
       youAreHere: 'You are here',
       continueTitle: 'Continue where you left off',
       continueCta: 'Continue',
@@ -664,8 +671,8 @@ export const en: Dictionary = {
       needOrientation: 'passing the orientation',
       needCourse: 'passing',
       needChallenge: 'passing the level challenge',
+      needDecisionRun: 'finishing this level’s decision run',
       needSignIn: 'signing in',
-      challengeWord: 'Level challenge',
       electivesTitle: 'Electives',
       electivesLede: 'They do not affect the main path certificate, but each carries one of its own.',
       certificateEarned: 'You earned this level’s certificate',

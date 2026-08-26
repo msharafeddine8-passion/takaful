@@ -116,6 +116,8 @@ export default async function CertificatePage(props: PageProps<'/[lang]/verify/[
     issued: formatDate(certificate.issued_at, lang),
     learningTime: learningMinutes > 0 ? formatDuration(learningMinutes, lang) : '',
     volunteerTime: volunteerMinutes > 0 ? formatDuration(volunteerMinutes, lang) : '',
+    // Frozen at issue, like everything else on the sheet.
+    closedBy: certificate.snapshot.closedBy,
   };
 
   const skills =

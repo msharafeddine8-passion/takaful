@@ -4,6 +4,30 @@
 --
 -- Additive and safe to run twice.
 --
+-- ===========================================================================
+-- SUPERSEDED IN PART, 2026-08-26. READ THIS FIRST.
+--
+-- The section below headed "IT GATES NOTHING" was true when this migration
+-- was written and is no longer true. A finished run is now half of what closes
+-- a programme level, the other half being the level's courses; the marked
+-- paper that used to close it was demoted to revision. The rule now lives in
+-- gate.ts:levelClosed, and RUN_REQUIRED_FROM there records the instant the
+-- reversal took effect.
+--
+-- Nothing below is edited. A migration is a record of what was done and why,
+-- and quietly rewriting one to agree with today's code hides that a decision
+-- was ever reversed — which is the one thing a reader a year from now most
+-- needs to know.
+--
+-- WHAT SURVIVED THE REVERSAL, and matters more than what did not: this table
+-- still holds no score, no rank and no position, and the gate reads only
+-- `finished_at IS NOT NULL`. Finishing closes the level; the verdict closes
+-- nothing. A `review` earns the level certificate exactly as a `clear` does —
+-- because a volunteer who senses they have erred must have no reason to
+-- abandon a run and start a cleaner one. The reasoning below for keeping this
+-- out of course_attempts is therefore unchanged and still binding.
+-- ===========================================================================
+--
 -- WHY A TABLE OF ITS OWN, AND NOT course_attempts
 --
 -- This is the whole reason the migration exists, and it is a safety decision

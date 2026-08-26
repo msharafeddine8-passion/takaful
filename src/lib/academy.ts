@@ -324,6 +324,21 @@ export async function ensureCourseCertificate(
   const meta = COURSES.find((c) => c.slug === slug);
   if (!meta) return null;
 
+  /*
+   * A level's paper is not a credential of its own.
+   *
+   * programme/credentials.ts has said so since it was written — it refuses a
+   * course credential for kind 'challenge' — but this function never asked, and
+   * completeCourseAction calls it for every pass. So passing the paper minted a
+   * `kind='course'` certificate for it anyway, and two of those are live in
+   * production: the rule existed in one file and was contradicted from another.
+   *
+   * It matters more now than it did. The paper no longer closes a level; the
+   * decision run does, and the level certificate attests that. A certificate
+   * for the revision on top of it would be a credential for having practised.
+   */
+  if (meta.kind === 'challenge') return null;
+
   const passed = await queryOne<{ one: number }>(
     `SELECT 1 AS one FROM course_attempts
       WHERE user_id = $1 AND course_slug = $2 AND passed LIMIT 1`,
@@ -349,12 +364,21 @@ export async function ensureCourseCertificate(
   return row?.code ?? null;
 }
 
-/** Every course someone has passed but holds no certificate for. */
+/**
+ * Every course someone has passed but holds no certificate for.
+ *
+ * `kind <> 'challenge'` for the same reason ensureCourseCertificate refuses
+ * one: a level's paper earns no certificate of its own. Without it this list
+ * would name the paper for ever — offering to issue something the issuer is
+ * built to refuse, and a backfill that never stops finding work to do.
+ */
 export async function unissuedCourseCertificates(userId: string): Promise<string[]> {
   const rows = await query<{ course_slug: string }>(
     `SELECT DISTINCT a.course_slug
        FROM course_attempts a
+       JOIN courses c2 ON c2.slug = a.course_slug
       WHERE a.user_id = $1 AND a.passed
+        AND c2.kind <> 'challenge'
         AND NOT EXISTS (
           SELECT 1 FROM certificates c
            WHERE c.user_id = a.user_id AND c.kind = 'course'

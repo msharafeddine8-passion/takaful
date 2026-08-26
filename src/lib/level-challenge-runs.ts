@@ -1,7 +1,7 @@
 import 'server-only';
 import { randomUUID } from 'node:crypto';
 import { query, queryOne, transaction } from './db';
-import { snapshotFor } from './programme/gate';
+import { countsTowardsLevel, snapshotFor } from './programme/gate';
 import {
   challengeFingerprint,
   challengeForLevel,
@@ -24,17 +24,26 @@ import {
  * ── WHAT THIS MAY NOT DO, AND STRUCTURALLY CANNOT ──────────────────────────
  *
  * It writes to `level_challenge_runs` and to nothing else. It issues no
- * certificate, records no attempt, touches no level_progress row and returns
- * nothing that gate.ts or credentials.ts consults. A volunteer who never opens
- * a run is in precisely the position they were in before the feature existed —
- * which is the promise, and the reason the rows live in a table of their own.
- * See the head of migration 042.
+ * certificate and records no attempt.
+ *
+ * WHAT CHANGED. gate.ts and credentials.ts now DO consult these rows: a
+ * finished run is half of what closes a level, the other half being the
+ * level's courses. The head of migration 042 says the opposite, in capitals,
+ * and it is right about the day it was written — read it as history, and read
+ * the reversal in gate.ts:levelClosed as the rule.
+ *
+ * What did NOT change is the shape of what may be read out of here. A run
+ * still carries no score, and finishing it is the whole of what the gate asks:
+ * `finished_at IS NOT NULL`, never the verdict. Nothing downstream can tell a
+ * `review` from a `clear`, which is what keeps three words about a decision
+ * from becoming a mark about a person.
  *
  * ── WHO MAY OPEN ONE ───────────────────────────────────────────────────────
  *
- * A signed-in learner who has already completed the level. That is not a new
- * rule and not a new gate: it is read from the same passes gate.ts reads, and
- * it sits *behind* an achievement rather than in front of one. Nothing is
+ * A signed-in learner whose courses for the level are behind them — see
+ * readyForRun, and note it is not "who has completed the level" any more,
+ * because finishing this is what completes it. It is read from the same passes
+ * gate.ts reads, so there is one rule and not two. Nothing is
  * walled off that was reachable yesterday.
  *
  * The check is re-run on every write rather than trusted from the page that
@@ -43,12 +52,26 @@ import {
  *
  * ── WHAT A ROW MAY CONTAIN ─────────────────────────────────────────────────
  *
- * A level, a seed, a list of decisions and one of three words. No profile is
- * joined here and no query in this file selects from `profiles` — so there is
- * no variable in this feature that could carry a date of birth, an age or a
- * safeguarding field, and nothing one careless JSX line away from rendering
- * one. Every query is scoped to a single user_id, so there is nothing to sort
- * across people and nothing to compare.
+ * A level, a seed, a list of decisions and one of three words. Nothing in this
+ * table names anybody and nothing in it is a number, so there is no figure here
+ * that two volunteers could be lined up against.
+ *
+ * ── THE TWO QUERIES THAT READ ACROSS PEOPLE, AND WHY ───────────────────────
+ *
+ * Everything a learner sees is scoped to their own user_id. The exceptions are
+ * reviewQueue() and runForReview() at the foot of this file, which exist so
+ * that a run ending in `review` is seen by a person rather than by nobody, and
+ * both are hedged in two ways that are easy to lose and worth stating here:
+ *
+ *   1. They order by TIME and by nothing else, and they aggregate nothing.
+ *      There is no count per volunteer, no "worst first", no GROUP BY. The full
+ *      argument is on reviewQueue() itself.
+ *
+ *   2. They take exactly one column from `profiles` — full_name — because a
+ *      reviewer has to know whose conversation this is. Not `p.*`: the date of
+ *      birth and the safeguarding fields live in profiles_sensitive, which no
+ *      query in this file touches, and a convenience SELECT would put a
+ *      variable carrying one a single careless JSX line from a screen.
  *
  * ── DATES ──────────────────────────────────────────────────────────────────
  *
@@ -70,6 +93,17 @@ const beirutDay = (column: string) =>
 const RUN_COLUMNS = `id, level_number, challenge_version, seed, decisions, outcome,
   ${beirutDay('started_at')} AS started_on,
   ${beirutDay('finished_at')} AS finished_on`;
+
+/*
+ * The same columns, qualified, for the two reads at the foot of this file that
+ * join `profiles`. Written out rather than derived from the string above,
+ * because both tables carry a user_id and an unqualified name in a join is a
+ * bug waiting for somebody to add a column to the other table.
+ */
+const RUN_COLUMNS_JOINED = `r.id, r.level_number, r.challenge_version, r.seed, r.decisions,
+  r.outcome,
+  ${beirutDay('r.started_at')} AS started_on,
+  ${beirutDay('r.finished_at')} AS finished_on`;
 
 type RunRow = {
   id: string;
@@ -109,7 +143,16 @@ const toRun = (r: RunRow): Run => ({
 });
 
 /**
- * Has this learner finished every course in the level?
+ * May this learner sit the level's decision run?
+ *
+ * Renamed from `levelIsComplete`, and the rename is the point: finishing the
+ * run is now what completes the level, so a function that returned "the level
+ * is complete" as the *precondition* for the run was describing the world
+ * backwards. What it actually answers is whether the courses are behind them.
+ *
+ * `countsTowardsLevel` excludes the level's marked paper. It is revision now,
+ * and requiring it here would have made it compulsory in order to reach the
+ * thing that replaced it — the reversal quietly undoing itself.
  *
  * Read from the gate's own snapshot, which derives passes from
  * `course_attempts` — so this agrees with the level badge, the certificate and
@@ -117,11 +160,12 @@ const toRun = (r: RunRow): Run => ({
  * read `level_progress`: that table is written after the fact, and a run that
  * depended on it would be unavailable to somebody who had genuinely finished.
  */
-export async function levelIsComplete(userId: string, level: number): Promise<boolean> {
+export async function readyForRun(userId: string, level: number): Promise<boolean> {
   const snapshot = await snapshotFor(userId);
   const inLevel = snapshot.courses.filter((c) => c.level_number === level);
   if (inLevel.length === 0) return false;
-  return inLevel.every((c) => snapshot.passed.has(c.slug));
+  const required = inLevel.filter(countsTowardsLevel);
+  return required.length > 0 && required.every((c) => snapshot.passed.has(c.slug));
 }
 
 /** The run this learner has open on a level, if any. */
@@ -172,7 +216,7 @@ export type StartResult =
 export async function startRun(userId: string, level: number): Promise<StartResult> {
   const def = challengeForLevel(level);
   if (!def) return { ok: false, reason: 'no-challenge' };
-  if (!(await levelIsComplete(userId, level))) return { ok: false, reason: 'level-not-complete' };
+  if (!(await readyForRun(userId, level))) return { ok: false, reason: 'level-not-complete' };
 
   const existing = await openRun(userId, level);
   if (existing) return { ok: true, run: existing };
@@ -240,7 +284,7 @@ export async function recordDecision(
 ): Promise<DecisionResult> {
   const def = challengeForLevel(level);
   if (!def) return { ok: false, reason: 'no-challenge' };
-  if (!(await levelIsComplete(userId, level))) return { ok: false, reason: 'level-not-complete' };
+  if (!(await readyForRun(userId, level))) return { ok: false, reason: 'level-not-complete' };
 
   try {
     return await transaction(async (client) => {
@@ -285,4 +329,132 @@ export async function recordDecision(
   } catch {
     return { ok: false, reason: 'db' };
   }
+}
+
+// ------------------------------------------------------ runs a person must read
+
+/**
+ * A finished run that ended in `review`, and the name to say when opening the
+ * conversation about it.
+ */
+export type RunForReview = {
+  id: string;
+  learnerId: string;
+  /** The name a reviewer needs in order to go and find somebody. Nothing else. */
+  fullName: string;
+  level: number;
+  /** 'YYYY-MM-DD' in Beirut, as text. Never reconstruct a Date from it. */
+  finishedOn: string;
+};
+
+/** The same, with the stored run, so walk() can rebuild what was on the screen. */
+export type RunToRead = RunForReview & { run: Run };
+
+type QueueRow = {
+  id: string;
+  user_id: string;
+  full_name: string | null;
+  level_number: number;
+  finished_on: string;
+};
+
+type ReviewRunRow = RunRow & { user_id: string; full_name: string | null };
+
+/*
+ * The two conditions that make a run readable by somebody other than its
+ * author, named once and used by both functions below so they cannot drift
+ * apart. A `clear` or `held` run, and an unfinished one, are nobody's business
+ * but the volunteer's — and the reader below refuses them by the same clause
+ * that keeps them out of the list, so a guessed URL opens nothing the queue
+ * would not have shown.
+ */
+const READABLE = `r.finished_at IS NOT NULL AND r.outcome = 'review'`;
+
+/**
+ * Every finished run that ended in `review`, newest first.
+ *
+ * ── WHY THIS READS ACROSS PEOPLE AT ALL ────────────────────────────────────
+ *
+ * `review` means at least one decision crossed a line the association does not
+ * cross. FINISHING a run closes the level whatever it says — that rule lives in
+ * gate.ts and nothing here touches it, `review` blocks nothing, and this list
+ * is not a door. Without it, somebody could cross that line and be waved
+ * through with no person ever knowing. The remedy for that is not a lock. It is
+ * making sure a human being sees it.
+ *
+ * ── THE INVARIANT: TIME ONLY, NEVER PEOPLE ─────────────────────────────────
+ *
+ * THIS QUERY MAY READ ACROSS PEOPLE. IT MAY NOT ORDER, SCORE, RANK OR
+ * AGGREGATE THEM.
+ *
+ * The ORDER BY is `r.finished_at DESC` and nothing else. There is deliberately
+ * no count of runs per volunteer, no "most reviews first", no tally of how
+ * often a name appears and no GROUP BY anywhere in this file.
+ *
+ * The reason is that sorting people is how a queue quietly becomes a league
+ * table. The moment this list can be read down the page as an ordering OF
+ * VOLUNTEERS rather than of moments, the runs stop being conversations to have
+ * and start being evidence about who is worst — which is precisely what
+ * migration 042 removed the score column to prevent, and it would come back
+ * here disguised as one reasonable-looking ORDER BY. A volunteer appearing
+ * twice is two conversations, not a pattern this file is entitled to assert.
+ *
+ * Newest first, and that is a different choice from the queue in
+ * practical-submissions, which is oldest first on purpose. That one is work
+ * waiting on a verdict, and the person who has waited longest must not sit at
+ * the bottom of it forever. Nothing here waits on a verdict — the level closed
+ * when the run finished — so the useful end is the recent one, while the
+ * decision is still fresh enough to talk about.
+ */
+export async function reviewQueue(): Promise<RunForReview[]> {
+  const rows = await query<QueueRow>(
+    /*
+     * profiles is joined for one column. LEFT JOIN rather than JOIN: a missing
+     * profile row must not make a run that needs reading disappear from the
+     * list — a nameless entry a reviewer has to chase is far better than
+     * silence.
+     */
+    `SELECT r.id, r.user_id, p.full_name, r.level_number,
+            ${beirutDay('r.finished_at')} AS finished_on
+       FROM level_challenge_runs r
+       LEFT JOIN profiles p ON p.user_id = r.user_id
+      WHERE ${READABLE}
+      ORDER BY r.finished_at DESC`,
+  );
+  return rows.map((r) => ({
+    id: r.id,
+    learnerId: r.user_id,
+    fullName: r.full_name ?? '',
+    level: Number(r.level_number),
+    finishedOn: r.finished_on,
+  }));
+}
+
+/**
+ * One run from that queue, by id, so a reviewer can read what was actually met.
+ *
+ * Returns the stored seed and decisions untouched. Rebuilding the situations,
+ * the options and their order is walk()'s job in programme/level-challenge.ts
+ * and no part of it is re-derived here — the whole reason the seed is a stored
+ * column is that "what was this person actually asked?" has one answer, from
+ * one function, this afternoon and next year.
+ */
+export async function runForReview(runId: string): Promise<RunToRead | null> {
+  const row = await queryOne<ReviewRunRow>(
+    `SELECT ${RUN_COLUMNS_JOINED}, r.user_id, p.full_name
+       FROM level_challenge_runs r
+       LEFT JOIN profiles p ON p.user_id = r.user_id
+      WHERE r.id = $1 AND ${READABLE}`,
+    [runId],
+  );
+  if (!row) return null;
+  const run = toRun(row);
+  return {
+    id: run.id,
+    learnerId: row.user_id,
+    fullName: row.full_name ?? '',
+    level: run.level,
+    finishedOn: run.finishedOn ?? '',
+    run,
+  };
 }

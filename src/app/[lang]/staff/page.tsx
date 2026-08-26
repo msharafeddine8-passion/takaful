@@ -16,6 +16,7 @@ import { recognitionAdmin } from '@/lib/dictionaries/recognition-admin';
 import { awardDictionaries } from '@/lib/dictionaries/awards';
 import { learningAnalytics } from '@/lib/dictionaries/learning-analytics';
 import { practical } from '@/lib/dictionaries/practical';
+import { challengeLevels } from '@/lib/dictionaries/challenge-levels';
 
 export async function generateMetadata(props: PageProps<'/[lang]/staff'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -182,6 +183,24 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
               {/* Its own dictionary module, like the links above — see the
                   header of src/lib/dictionaries/practical.ts. */}
               {practical(lang).goQueue}
+            </Link>
+          )}
+          {/*
+            Decision runs that ended in `review`. Same capability as the
+            practical queue and for the same reason — reading a learner's work
+            and forming a judgement about it — so the trainer, supervisor or
+            coordinator who would actually have the conversation can reach it.
+            Without a link here the page would exist and nobody would arrive at
+            it, which is the failure isStaff() is annotated against in authz.ts.
+          */}
+          {can(user, 'practical.review') && (
+            <Link
+              href={`/${lang}/staff/decision-runs`}
+              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {/* Its own dictionary module, like the links above — see the
+                  header of src/lib/dictionaries/challenge-levels.ts. */}
+              {challengeLevels(lang).staff.goQueue}
             </Link>
           )}
           {can(user, 'members.manage') && (

@@ -491,6 +491,8 @@ export type Account = {
         construction: the system does not store gender, so no إتمامه/إتمامها. */
     bodyCourse: string;
     bodyLevel: string;
+    /** For level certificates issued while the marked paper still closed a level. */
+    bodyLevelPaper: string;
     bodyProgram: string;
     bodyHours: string;
     /** The distinction mark only the full-path certificate carries. */
@@ -518,8 +520,8 @@ export type Account = {
     needOrientation: string;
     needCourse: string;
     needChallenge: string;
+    needDecisionRun: string;
     needSignIn: string;
-    challengeWord: string;
     electivesTitle: string;
     electivesLede: string;
     certificateEarned: string;

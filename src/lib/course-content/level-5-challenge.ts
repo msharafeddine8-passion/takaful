@@ -30,8 +30,8 @@ export const levelFiveChallenge: CourseContent = {
   minutes: 50,
   passMark: 70,
   title: {
-    ar: 'تحدّي المستوى الخامس: قيادة مشروع',
-    en: 'Level 5 Challenge: Leading a Project',
+    ar: 'مراجعة المستوى الخامس: قيادة مشروع',
+    en: 'Level 5 Review: Leading a Project',
   },
   lede: {
     ar: 'مشروع واحد من التصميم حتى التقرير النهائي. كل قرار يختبر ما إذا كانت دورات المستوى الخامس قد وُظِّفت معاً في آنٍ واحد لا كل واحدة على حدة.',

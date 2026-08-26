@@ -9,6 +9,7 @@ import { Container, Section } from '@/components/ui';
 import { COURSES, coursesInLevel, electiveCourses, type Course } from '@/lib/courses';
 import { LEVELS } from '@/lib/programme/definition';
 import { challengeForLevel } from '@/lib/programme/level-challenge';
+import { countsTowardsLevel } from '@/lib/programme/gate';
 import { challengeLevels } from '@/lib/dictionaries/challenge-levels';
 import { COURSE_CONTENT } from '@/lib/course-content';
 import { currentUser } from '@/lib/auth';
@@ -201,18 +202,30 @@ export default async function AcademyPage(props: PageProps<'/[lang]/academy'>) {
                     ? inLevel.filter((c) => standingOf(c.slug) === 'completed').length
                     : null;
                   /*
-                   * The decision run, offered only once the level is actually
-                   * finished — and offered, never required. It sits after the
-                   * courses rather than among them because it is not a seventh
-                   * course: nothing in it is marked, and a volunteer who never
-                   * opens it loses no certificate and no badge. Computed from
-                   * the passes already loaded above, so this adds no query to a
-                   * page that renders forty cards.
+                   * The decision run — what closes the level, offered once its
+                   * courses are behind the learner.
+                   *
+                   * It used to be optional and this comment used to say so.
+                   * Finishing it is now what opens the next level and earns the
+                   * level certificate, so a volunteer who never opens it stays
+                   * where they are.
+                   *
+                   * It still sits after the courses rather than among them,
+                   * because it is still not a seventh course: nothing in it is
+                   * marked and there is no way to fail it. Required and
+                   * unmarked is a real thing to be, and the placement says so.
+                   *
+                   * `countsTowardsLevel` excludes the level's marked paper,
+                   * which is revision now. Requiring it here would have made it
+                   * compulsory in order to reach the thing that replaced it.
+                   *
+                   * Computed from the passes already loaded above, so this adds
+                   * no query to a page that renders forty cards.
                    */
                   const runnable =
                     user !== null
                     && challengeForLevel(level.number) !== null
-                    && inLevel.every((c) => passed.has(c.slug));
+                    && inLevel.filter(countsTowardsLevel).every((c) => passed.has(c.slug));
                   return (
                     <section key={level.number} aria-label={level.title[lang]}>
                       <LevelHeading
@@ -268,14 +281,14 @@ export default async function AcademyPage(props: PageProps<'/[lang]/academy'>) {
 /**
  * The way into a level's decision run.
  *
- * Rendered only for a level the volunteer has already finished, so it is an
- * offer rather than a step: nothing on the other side of this link is required
- * for a certificate, a badge or a journey stage, and the card says so in the
- * kicker rather than making somebody click to find out.
+ * Rendered once the level's courses are behind the volunteer. It is the step
+ * that closes the level, and the kicker says so rather than making somebody
+ * click to find out — it used to say the opposite, back when this was an offer.
  *
- * Styled as a link rather than as a seventh course card on purpose — a card in
- * the grid would read as another thing to complete, which is exactly what this
- * is not.
+ * Still styled as a link rather than a seventh course card. The card shape
+ * carries a promise this thing cannot keep: a score, a pass mark, a retake
+ * that means something went wrong. This is required and unmarked, and the two
+ * facts have to arrive together or the first one drags the second along.
  */
 function LevelRunLink({ lang, level }: { lang: Locale; level: number }) {
   const t = challengeLevels(lang);

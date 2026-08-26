@@ -5,6 +5,8 @@ import { isDbConfigured } from '@/lib/db';
 import { audit, currentUser } from '@/lib/auth';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { startRun, recordDecision } from '@/lib/level-challenge-runs';
+import { issueEarnedCredentials } from '@/lib/programme/credentials';
+import { recomputeAchievements } from '@/lib/achievements';
 
 /**
  * Opening a decision run, and taking one decision in it.
@@ -62,8 +64,17 @@ export async function startRunAction(formData: FormData): Promise<void> {
   const user = await currentUser();
   if (!user) return;
 
-  // startRun re-checks that this learner has finished the level. It is not
-  // asserted here and passed down; there is one place that decides it.
+  /*
+   * startRun re-checks eligibility itself. It is not asserted here and passed
+   * down; there is one place that decides it.
+   *
+   * What it checks is readyForRun — the level's counting courses behind them —
+   * and not, as this comment used to say, a finished level. That was true while
+   * the run sat behind an achievement. Finishing the run is what closes a level
+   * now, so requiring a closed level to open one would have shut the run to
+   * every volunteer it exists for and left it reachable only by the two people
+   * grandfathered through the old rule.
+   */
   const result = await startRun(user.id, level);
   if (!result.ok) return;
 
@@ -101,13 +112,37 @@ export async function decideAction(formData: FormData): Promise<void> {
    *
    * audit_log answers "who has been doing what to whom" and is read by staff.
    * A volunteer's rehearsal answers are not that: they are about nobody but
-   * themselves, they award nothing, and writing each one into a staff-readable
-   * table would turn an optional exercise into a thing somebody could be read
-   * about. Starting a run is logged because it is an action against the
-   * account; what was chosen inside it is between the learner and the row.
+   * themselves, and no single one of them is marked, scored or read by anybody
+   * else. That the run as a whole now closes a level does not weaken the
+   * argument — what the gate and the issuer read is `finished_at`, never which
+   * way somebody turned inside it, so copying each turn into a staff-readable
+   * table would create the only record of a person's judgement here that a
+   * reader could form an opinion from. Starting a run is logged because it is
+   * an action against the account; what was chosen inside it is between the
+   * learner and the row.
    */
   const result = await recordDecision(user.id, level, { step, choice });
   if (!result.ok) return;
+
+  /*
+   * The decision that ends the run is the one that closes the level, so this is
+   * where the level's credential becomes earnable.
+   *
+   * Before the reversal, a level closed on a passed course and
+   * completeCourseAction issued from there — this file issued nothing because a
+   * run earned nothing. Moving what closes a level without moving this would
+   * have left a volunteer finishing their run, seeing the next level open, and
+   * holding no certificate until they happened to pass some other course weeks
+   * later. The gate and the credential have to fire from the same event.
+   *
+   * Caught, like completeCourseAction does, because a credential that fails to
+   * mint must not roll back a decision the volunteer has already taken. The row
+   * is the record; the paper can be issued again.
+   */
+  if (result.finished) {
+    await issueEarnedCredentials(user.id).catch(() => {});
+    await recomputeAchievements(user.id).catch(() => {});
+  }
 
   refresh(lang, level);
 }
