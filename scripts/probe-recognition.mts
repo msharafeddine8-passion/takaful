@@ -59,14 +59,49 @@ const ALL: MatchStrength[] = [
   'phone-and-name', 'phone-and-dob', 'number-and-name', 'number-and-dob',
   'phone-only', 'number-only',
 ];
-eq('a phone and a name that agree is enough', listed.includes('phone-and-name'), true);
+/*
+ * THE NAME PAIRS WERE REMOVED, AND THIS PROBE USED TO HOLD THEM IN PLACE.
+ *
+ * It asserted that a membership number plus an agreeing name was enough to
+ * recognise somebody without a human looking. A security audit walked that
+ * path end to end: the account holder types their own profile name, so the
+ * name is not a second independent fact — and /continuity published the
+ * membership number beside the volunteer's full name on a public page. Both
+ * halves of the check were printed on the association's own website. Register,
+ * copy the name, submit the number, and the platform hands over a real
+ * volunteer's standing, membership number and card — then locks the real
+ * person out permanently, because a claimed line cannot be claimed twice.
+ *
+ * 426 of 457 lines were unclaimed, two of them minors, and the source is
+ * public so the route was readable. 28 of 31 claims had taken this path.
+ *
+ * A probe asserting the shape of a rule will keep a bad rule alive. This one
+ * now asserts the property that matters — every self-evident pair contains a
+ * fact the claimant cannot choose — rather than a list somebody has to
+ * remember to think about.
+ */
 eq('a phone and the right birthday is enough', listed.includes('phone-and-dob'), true);
-eq('a membership number and a name that agree is enough', listed.includes('number-and-name'), true);
 eq('a membership number and the right birthday is enough', listed.includes('number-and-dob'), true);
 eq('a phone alone is NOT enough — households share numbers', listed.includes('phone-only'), false);
 eq('a membership number alone is NOT enough — numbers are sequential',
   listed.includes('number-only'), false);
-eq('nothing else has been added to the list', listed.length, 4);
+
+/* The name pairs, named individually so a re-add fails loudly rather than
+ * slipping past a length check. */
+eq('a name the claimant typed is NOT corroboration, with a phone',
+  listed.includes('phone-and-name'), false);
+eq('nor with a membership number', listed.includes('number-and-name'), false);
+
+/*
+ * The rule behind those two, stated so a future pair is judged by it. A date
+ * of birth is on no public page and is not self-set on the roster line; a name
+ * is typed by whoever is claiming. Auto-approval needs a fact the claimant
+ * cannot supply.
+ */
+check('every self-evident pair rests on something the claimant cannot choose',
+  listed.every((strength) => strength.endsWith('-dob')),
+  listed.join(', '));
+eq('nothing else has been added to the list', listed.length, 2);
 check(
   'every listed strength is one the matcher can actually return',
   listed.every((s) => (ALL as string[]).includes(s)),

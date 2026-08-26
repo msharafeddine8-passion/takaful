@@ -148,7 +148,24 @@ export function consentFor(subject: ConsentSubject, today: string): ContinuityCo
     listed: true,
     name: identity.name,
     photo: identity.photo,
-    memberNumber: namedInFull,
+    /*
+     * NEVER PUBLISHED, WHOEVER CONSENTED TO WHAT.
+     *
+     * This was `namedInFull`, so anybody named in full had their membership
+     * number printed beside their name. It reads as a small extra honour and it
+     * was half a credential: a roster claim was auto-approved on a membership
+     * number plus a name that folds to the roster's, and the account holder
+     * types their own name. This page therefore printed both halves of that
+     * check — read a name and a number off it, register, set the name to match,
+     * and the platform recognised you as that volunteer.
+     *
+     * The claim path is closed too (see SELF_EVIDENT in actions/roster.ts).
+     * This is closed as well rather than left to depend on that: a number that
+     * identifies a person in the association's own records has no business on a
+     * public page, and whatever is keyed on it next will not arrive with a note
+     * explaining why it used to be safe.
+     */
+    memberNumber: false,
     /*
      * The rest of the card follows from being listed at all.
      *

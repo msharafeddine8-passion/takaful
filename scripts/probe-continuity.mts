@@ -146,10 +146,27 @@ check('display_name publishes the chosen name and no photograph',
 check('display_name with nothing to show falls back to silence, never to the legal name',
   consentFor(row({ public_visibility: 'display_name', display_name: null }), TODAY).listed === false);
 
-check('the membership number goes out only beside a legal name',
-  consentFor(row(), TODAY).memberNumber === true &&
+/*
+ * THE MEMBERSHIP NUMBER IS NEVER PUBLISHED NOW, and this assertion used to
+ * guard the narrower version of that rule: it went out beside a legal name and
+ * not beside a chosen one.
+ *
+ * A security audit showed the narrow rule was not enough. Roster claims were
+ * auto-approved on a membership number plus a name that folds to the roster's
+ * — and the account holder types their own name. So this page printed both
+ * halves of that check, and somebody could read a name and a number off it and
+ * be recognised by the platform as that volunteer.
+ *
+ * The claim path is closed as well (probe-recognition holds it). Both were
+ * closed, rather than one: a number that identifies a person in the
+ * association's own records does not belong on a public page, and the next
+ * feature keyed on it will not arrive with a note explaining why it used to be
+ * safe.
+ */
+check('the membership number is never published, whatever was consented to',
+  consentFor(row(), TODAY).memberNumber === false &&
   consentFor(row({ public_visibility: 'display_name', display_name: 'أبو خالد' }), TODAY).memberNumber === false,
-  'T0NN is on the physical card, so beside a chosen name it reads straight back to the person');
+  'it was half of the roster-claim check, printed beside the other half');
 
 check('this page never reads profiles.is_public',
   !/is_public/.test(strip(read('src/lib/continuity.ts'))) &&

@@ -43,11 +43,35 @@ export type ClaimState = { error?: string; notFound?: boolean };
  * household sharing a number, and telling a mother she is her son is not a
  * small mistake. Those go to staff — but they are recorded first, which is
  * what `number-only` had to be invented to fix.
+ *
+ * THE NAME PAIRS WERE REMOVED, AND THE REASONING ABOVE WAS WRONG ABOUT THEM.
+ *
+ * It treats "a name that folds to the same name" as a second, independent fact.
+ * It is not independent, because the claimant supplies it: `accountName` is
+ * `profiles.full_name`, which the account holder edits at will and nothing
+ * re-verifies. So `number-and-name` was one fact — the membership number —
+ * plus a string the claimant chose to make match.
+ *
+ * The membership number was not a secret either. /continuity published it
+ * beside the volunteer's full name, on a public page with no session, because
+ * the association wanted to honour long service. Both halves of the check were
+ * therefore printed on our own website: read a name and a number off it,
+ * register, set your profile name to match, submit the number, and the platform
+ * recognised you as that person — membership standing, their number, a card
+ * token — and then refused the real volunteer, permanently, because a claimed
+ * line cannot be claimed twice.
+ *
+ * 426 of 457 lines are unclaimed, two of them minors, and 28 of the 31 claims
+ * so far took this path. The source is public, so the route was readable.
+ *
+ * The DOB pairs stay. A date of birth is not on the public site, is not
+ * self-set in the roster, and is the thing that survives the alphabet — which
+ * is the problem those pairs were added to solve. Name-based claims are not
+ * refused; they are recorded and sent to /staff/roster, where a person decides.
+ * That is a few days of waiting against handing somebody a volunteer identity.
  */
 const SELF_EVIDENT: readonly MatchStrength[] = [
-  'phone-and-name',
   'phone-and-dob',
-  'number-and-name',
   'number-and-dob',
 ];
 
