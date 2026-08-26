@@ -18,6 +18,7 @@ import { learningAnalytics } from '@/lib/dictionaries/learning-analytics';
 import { practical } from '@/lib/dictionaries/practical';
 import { challengeLevels } from '@/lib/dictionaries/challenge-levels';
 import { adminProfile } from '@/lib/dictionaries/admin-profile';
+import { orgGroups } from '@/lib/dictionaries/org-groups';
 
 export async function generateMetadata(props: PageProps<'/[lang]/staff'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -221,6 +222,24 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
               {/* Its own dictionary module, like the links above — see the
                   header of src/lib/dictionaries/admin-profile.ts. */}
               {adminProfile(lang).defs.title}
+            </Link>
+          )}
+          {/*
+            The committees and teams, and the leadership history read off the
+            roles that point at them. Gated on members.manage, matching every
+            action behind the screen — the head of lib/actions/org-groups.ts
+            argues why it is the roles' capability and not challenges.manage.
+            Without a link here the page would exist and nobody would arrive at
+            it, which is the failure isStaff() is annotated against in authz.ts.
+          */}
+          {can(user, 'members.manage') && (
+            <Link
+              href={`/${lang}/staff/groups`}
+              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {/* Its own dictionary module, like the links above — see the
+                  header of src/lib/dictionaries/org-groups.ts. */}
+              {orgGroups(lang).title}
             </Link>
           )}
           {can(user, 'members.manage') && (

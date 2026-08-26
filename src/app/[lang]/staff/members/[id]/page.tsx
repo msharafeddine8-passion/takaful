@@ -31,6 +31,8 @@ import {
   viewerOf,
 } from '@/lib/volunteer-roles';
 import { VolunteerRoles, type ArchivedRole } from '@/components/staff/VolunteerRoles';
+import { groupName, groups } from '@/lib/org-groups';
+import { orgGroups } from '@/lib/dictionaries/org-groups';
 import { adminProfile } from '@/lib/dictionaries/admin-profile';
 import { notesAbout } from '@/lib/admin-notes';
 import { fieldDefs, valuesFor } from '@/lib/profile-fields';
@@ -149,7 +151,7 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
    * second time. archived_at is a TIMESTAMPTZ, so it takes the Beirut
    * correction; started_on and ended_on are DATEs and must never be given one.
    */
-  const [roleTimeline, titleSuggestions, kindRows, archivedRows] = await Promise.all([
+  const [roleTimeline, titleSuggestions, kindRows, archivedRows, liveGroups] = await Promise.all([
     rolesFor(id, viewerOf(user)),
     roleTitleSuggestions('', 30),
     query<{ role_type: string }>(
@@ -166,7 +168,26 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
         ORDER BY archived_at DESC`,
       [id],
     ),
+    /*
+     * The committees and teams a role may be attached to, since migration 054
+     * made them rows. Offered by the form BESIDE the free-text box and never in
+     * place of it — a role for something with no row anywhere has to stay
+     * recordable, which is the whole reason entity_kind is free text.
+     *
+     * Archived groups are left out (the default), because a role should not be
+     * newly attached to a row that has been withdrawn. A role already pointing
+     * at one keeps its link: VolunteerRoleForm falls back to the read-only
+     * branch when the list cannot represent what a role points at.
+     */
+    groups({ includeInactive: true }),
   ]);
+
+  /* Names resolved here, in this page's language, so that nothing from the
+   * 'server-only' org-groups module reaches the client component below. */
+  const groupChoices = liveGroups.map((group) => ({
+    id: group.id,
+    label: groupName(group, lang),
+  }));
 
   const archivedRoles: ArchivedRole[] = (
     await Promise.all(
@@ -569,6 +590,8 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
           archived={archivedRoles}
           titleSuggestions={titleSuggestions}
           kindSuggestions={kindRows.map((r) => r.role_type)}
+          groupChoices={groupChoices}
+          groupText={orgGroups(lang).roleForm}
           canManage={can(user, 'members.manage')}
           t={volunteerRoleStrings(lang)}
         />

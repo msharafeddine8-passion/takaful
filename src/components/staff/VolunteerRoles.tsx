@@ -8,7 +8,8 @@ import {
   restoreRoleAction,
 } from '@/lib/actions/volunteer-roles';
 import type { VolunteerRoleStrings } from '@/lib/dictionaries/volunteer-roles';
-import { VolunteerRoleForm, type RoleFormValues } from './VolunteerRoleForm';
+import type { OrgGroupStrings } from '@/lib/dictionaries/org-groups';
+import { VolunteerRoleForm, type GroupChoice, type RoleFormValues } from './VolunteerRoleForm';
 
 /**
  * «المناصب والمهام» on a member's page: the timeline, and the four things an
@@ -78,15 +79,18 @@ function lineOf(item: { ar: string; en: string }, lang: Locale): string {
 /**
  * What a role was attached to, as one readable string.
  *
- * A role that points at a row shows its KIND and not its id: committees, teams
- * and projects do not all exist as tables yet (migration 046), so there is
- * nothing to join against for a name, and a bare UUID on a profile is noise
- * that looks like data.
+ * A role that points at a row shows that row's NAME when the page could resolve
+ * one — migration 054 made committees and teams rows, so «لجنة الإعلام» is now
+ * available where only the word «group» used to be. Anything else still falls
+ * back to the kind: projects have no table yet (migration 046), so there is
+ * nothing to join against for them, and a bare UUID on a profile is noise that
+ * looks like data.
  */
-function entityOf(role: VolunteerRole): string | null {
+function entityOf(role: VolunteerRole, names: Map<string, string>): string | null {
   const entity = role.entity;
   if (!entity) return null;
-  return 'name' in entity ? entity.name : entity.kind || null;
+  if ('name' in entity) return entity.name;
+  return names.get(entity.id) ?? entity.kind ?? null;
 }
 
 /** The three entity columns, from the union, for the edit form. */
@@ -157,6 +161,8 @@ export function VolunteerRoles({
   archived,
   titleSuggestions,
   kindSuggestions,
+  groupChoices,
+  groupText,
   canManage,
   t,
 }: {
@@ -167,9 +173,20 @@ export function VolunteerRoles({
   archived: ArchivedRole[];
   titleSuggestions: { titleAr: string; titleEn: string }[];
   kindSuggestions: string[];
+  /**
+   * The committees and teams that have rows, with their names already in this
+   * page's language. Offered by the form BESIDE the free-text box, never in
+   * place of it, and used here to print a linked role's entity as a name.
+   */
+  groupChoices: GroupChoice[];
+  groupText: OrgGroupStrings['roleForm'];
   canManage: boolean;
   t: VolunteerRoleStrings;
 }) {
+  /* Built once for the whole list rather than searched per row: a volunteer
+   * with nine roles would otherwise scan the group list nine times. */
+  const groupNames = new Map(groupChoices.map((choice) => [choice.id, choice.label]));
+
   return (
     <section className="mt-10">
       <h2 className="text-[1.1rem] font-extrabold">{t.sectionTitle}</h2>
@@ -187,6 +204,8 @@ export function VolunteerRoles({
               userId={userId}
               titleSuggestions={titleSuggestions}
               kindSuggestions={kindSuggestions}
+              groupChoices={groupChoices}
+              groupText={groupText}
               t={t}
             />
           </div>
@@ -202,7 +221,7 @@ export function VolunteerRoles({
       ) : (
         <ol className="mt-5 space-y-4">
           {roles.map((role) => {
-            const attachedTo = entityOf(role);
+            const attachedTo = entityOf(role, groupNames);
             return (
             <li
               key={role.id}
@@ -294,6 +313,8 @@ export function VolunteerRoles({
                       role={toFormValues(role)}
                       titleSuggestions={titleSuggestions}
                       kindSuggestions={kindSuggestions}
+                      groupChoices={groupChoices}
+                      groupText={groupText}
                       t={t}
                     />
                   </Disclosure>

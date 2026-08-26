@@ -9,6 +9,7 @@ import {
 import type { DatePrecision, Visibility } from '@/lib/volunteer-role-view';
 import type { Locale } from '@/lib/i18n';
 import type { VolunteerRoleStrings } from '@/lib/dictionaries/volunteer-roles';
+import type { OrgGroupStrings } from '@/lib/dictionaries/org-groups';
 
 /**
  * The one form an administrator types a role into.
@@ -52,6 +53,21 @@ import type { VolunteerRoleStrings } from '@/lib/dictionaries/volunteer-roles';
  * They are never a `<select>`, there is no `pattern`, and nothing below
  * compares what was typed against what was offered. See the head of migration
  * 046 for why that is the feature rather than an oversight.
+ *
+ * ── THE GROUP PICKER IS AN ADDITION, NEVER A REPLACEMENT ───────────────────
+ *
+ * Migration 054 made committees and teams rows, so a role can now point at one
+ * instead of naming it by hand. `groupChoices` is that list, and it is offered
+ * BESIDE the free-text box rather than in place of it — both controls are on
+ * the form at once, always.
+ *
+ * That is not a courtesy. Migration 046 keeps entity_kind free text precisely
+ * so a role can say it was «لحملة رمضان» when the campaign has no row anywhere,
+ * and there is no projects table yet at all; a select would make every one of
+ * those unrecordable until somebody shipped a migration, which is the failure
+ * this whole feature is arranged against. So: pick a group, or type a name, or
+ * neither. If both arrive, entityOf() in the action takes the id, because it is
+ * the more specific claim.
  */
 
 /** One achievement row, as the form holds it. */
@@ -85,6 +101,15 @@ export type RoleFormValues = {
   achievements: { ar: string; en: string }[];
   visibility: Visibility;
 };
+
+/**
+ * One committee or team as this form offers it.
+ *
+ * An id and a name already resolved into the page's language by the server
+ * component that renders this — not the OrgGroup row, because lib/org-groups.ts
+ * is 'server-only' and nothing from it may cross into the browser bundle.
+ */
+export type GroupChoice = { id: string; label: string };
 
 const EMPTY: RoleFormState = {};
 
@@ -126,6 +151,8 @@ export function VolunteerRoleForm({
   role,
   titleSuggestions,
   kindSuggestions,
+  groupChoices,
+  groupText,
   t,
 }: {
   lang: Locale;
@@ -137,6 +164,9 @@ export function VolunteerRoleForm({
   titleSuggestions: { titleAr: string; titleEn: string }[];
   /** Kinds used before. Same rule. */
   kindSuggestions: string[];
+  /** The groups that have rows, offered BESIDE the free-text box — never instead. */
+  groupChoices?: GroupChoice[];
+  groupText?: OrgGroupStrings['roleForm'];
   t: VolunteerRoleStrings;
 }) {
   const editing = role !== undefined;
@@ -170,6 +200,8 @@ export function VolunteerRoleForm({
         role={role}
         titleSuggestions={titleSuggestions}
         kindSuggestions={kindSuggestions}
+        groupChoices={groupChoices}
+        groupText={groupText}
         echoed={state.values}
         t={t}
       />
@@ -210,12 +242,16 @@ function Fields({
   role,
   titleSuggestions,
   kindSuggestions,
+  groupChoices,
+  groupText,
   echoed,
   t,
 }: {
   role?: RoleFormValues;
   titleSuggestions: { titleAr: string; titleEn: string }[];
   kindSuggestions: string[];
+  groupChoices?: GroupChoice[];
+  groupText?: OrgGroupStrings['roleForm'];
   echoed?: Record<string, string>;
   t: VolunteerRoleStrings;
 }) {
@@ -242,6 +278,26 @@ function Fields({
     echoed?.[name] ?? fallback ?? '';
 
   const linked = role?.entityId != null && role.entityKind != null;
+
+  /*
+   * The group picker, or nothing.
+   *
+   * It is offered when there are groups to offer AND it can represent whatever
+   * this role already points at. A role linked to something the list does not
+   * contain — an activity, or a group archived since — keeps the read-only
+   * branch below instead, so that saving an edit cannot silently demote a
+   * linked entity to a typed string or re-point it at the wrong table.
+   *
+   * Held as the strings themselves rather than as a boolean, because a boolean
+   * would not narrow `groupText` for the JSX that needs its three labels.
+   */
+  const choices = groupChoices ?? [];
+  const picker =
+    groupText !== undefined &&
+    choices.length > 0 &&
+    (!linked || choices.some((choice) => choice.id === role?.entityId))
+      ? groupText
+      : null;
 
   const setRow = (key: number, patch: Partial<AchievementRow>) =>
     setRows((current) => current.map((r) => (r.key === key ? { ...r, ...patch } : r)));
@@ -336,12 +392,12 @@ function Fields({
       </p>
 
       {/* ---------------------------------------------------------- entity */}
-      {linked ? (
+      {linked && picker === null ? (
         /*
-         * The role points at a row somewhere. The two columns travel as hidden
-         * fields so that saving an edit cannot quietly demote a linked entity
-         * to a typed string — entityOf() in the action rebuilds {kind, id} from
-         * exactly these two.
+         * The role points at a row this form cannot offer as a choice. The two
+         * columns travel as hidden fields so that saving an edit cannot quietly
+         * demote a linked entity to a typed string — entityOf() in the action
+         * rebuilds {kind, id} from exactly these two.
          */
         <div>
           <p className={LABEL}>{t.entityNameLabel}</p>
@@ -353,18 +409,57 @@ function Fields({
           <p className={HINT}>{t.entityLinkedNote}</p>
         </div>
       ) : (
-        <div>
-          <label className={LABEL} htmlFor={`${uid}-entityName`}>
-            {t.entityNameLabel}
-          </label>
-          <input
-            id={`${uid}-entityName`}
-            name="entityName"
-            type="text"
-            defaultValue={was('entityName', role?.entityName)}
-            className={FIELD}
-          />
-          <p className={HINT}>{t.entityNameHint}</p>
+        <div className="space-y-5">
+          {/*
+           * The free-text box comes FIRST and is always here. A role for
+           * something with no row anywhere — a campaign, a one-off task, a
+           * project in a table that does not exist yet — has to stay recordable;
+           * see the head of this file and of migration 046.
+           */}
+          <div>
+            <label className={LABEL} htmlFor={`${uid}-entityName`}>
+              {t.entityNameLabel}
+            </label>
+            <input
+              id={`${uid}-entityName`}
+              name="entityName"
+              type="text"
+              defaultValue={was('entityName', role?.entityName)}
+              className={FIELD}
+            />
+            <p className={HINT}>{t.entityNameHint}</p>
+          </div>
+
+          {picker && (
+            <div>
+              <label className={LABEL} htmlFor={`${uid}-entityId`}>
+                {picker.chooseLabel}
+              </label>
+              {/*
+               * `entityKind` is fixed at 'group' because that is the only table
+               * this select names, and chk_vr_entity_resolvable in migration 054
+               * refuses an entity_id whose kind resolves to nothing. It posts
+               * unconditionally: with the select left on «لا شيء من هذه» the id
+               * is empty, and entityOf() in the action reads `kind && id` and
+               * falls through to the typed name.
+               */}
+              <input type="hidden" name="entityKind" value="group" />
+              <select
+                id={`${uid}-entityId`}
+                name="entityId"
+                defaultValue={was('entityId', role?.entityId)}
+                className={FIELD}
+              >
+                <option value="">{picker.chooseNone}</option>
+                {choices.map((choice) => (
+                  <option key={choice.id} value={choice.id}>
+                    {choice.label}
+                  </option>
+                ))}
+              </select>
+              <p className={HINT}>{picker.chooseHint}</p>
+            </div>
+          )}
         </div>
       )}
 
