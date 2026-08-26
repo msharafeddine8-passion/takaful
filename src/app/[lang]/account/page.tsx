@@ -32,6 +32,9 @@ import { runBirthdays, runMilestones } from '@/lib/milestones-data';
 import { BirthdayBanner } from '@/components/account/BirthdayBanner';
 import { milestoneDictionaries } from '@/lib/dictionaries/milestones';
 import { hidesPanel } from '@/lib/preferences';
+import { rolesFor, viewerOf } from '@/lib/volunteer-roles';
+import { volunteerRoleStrings } from '@/lib/dictionaries/volunteer-roles';
+import { MyRolesPanel } from '@/components/account/MyRoles';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -104,7 +107,7 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
 
   const [
     summary, application, account, rosterClaim, safeguarding, profile, photo, challenges,
-    preferences,
+    preferences, roles,
   ] = await Promise.all([
     portalSummary(user.id),
     queryOne<{ id: string; status: string; submitted_at: Date | null }>(
@@ -141,6 +144,21 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
       'SELECT muted_topics FROM notification_preferences WHERE user_id = $1',
       [user.id],
     ),
+    /*
+     * What they have been inside the association.
+     *
+     * The viewer is named on the call and there is no default to fall back to —
+     * the head of lib/volunteer-roles.ts argues why, and viewerOf() is what
+     * makes getting it right less work than getting it wrong. This is somebody
+     * reading their own dashboard, so it is their session and never ANONYMOUS
+     * and never a widened filter: a role an administrator marked staff-only
+     * does not become readable by being about you.
+     *
+     * The whole list, not just the current ones. The panel needs to tell "you
+     * have never held anything" apart from "you hold nothing right now", and
+     * those are different sentences — see MyRolesPanel.
+     */
+    rolesFor(user.id, viewerOf(user)),
   ]);
 
   const hasOpenApplication = application ? APPLICATION_OPEN.includes(application.status) : false;
@@ -313,6 +331,21 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
             certificates={summary.certificates}
           />
         </div>
+
+        {/*
+          * What this person is, under what this person has done.
+          *
+          * Placed with the tiles rather than below the shared panels because
+          * both are "you" — the figures are what you did, this is what you
+          * were asked to be. The challenge panel underneath is "us", and the
+          * page keeps that order deliberately.
+          *
+          * The panel decides for itself whether to render: somebody who has
+          * never held a role gets nothing rather than an empty box announcing
+          * a zero, which is the whole of the client's own note on empty
+          * states.
+          */}
+        <MyRolesPanel roles={roles} lang={lang} t={volunteerRoleStrings(lang)} />
 
         {/*
           * What the association is working towards, under what this one person

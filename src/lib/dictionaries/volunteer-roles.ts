@@ -39,6 +39,31 @@ import type { Locale } from '@/lib/i18n';
  * with administrators leaving wrong roles sitting on people's profiles rather
  * than writing one. A reason always, an essay never — the same argument the
  * head of lib/actions/volunteer-roles.ts makes.
+ *
+ * ── THREE AUDIENCES, ONE FILE ──────────────────────────────────────────────
+ *
+ * The keys above are the administrator's screen. `mine` below is the volunteer
+ * reading their OWN record, and `publicHeading` is the one line the open web
+ * gets. They are in one file rather than three because they are one subject
+ * said three ways, and a role that is called «منصب» to staff and «مهمّة» to its
+ * holder is two features wearing one name.
+ *
+ * The wording changes with the audience even where the fact does not. The
+ * administrator's lede is about the table («ما شغله هذا المتطوّع… لا يُستبدل
+ * منصب بآخر»); the volunteer's is addressed to them and says what will not be
+ * taken away from them. Same rule, different person being spoken to.
+ *
+ * ── THE EMPTY STATE SAYS WHAT WOULD FILL IT ────────────────────────────────
+ *
+ * The client's section 58, and it is the reason `mine.panelEmpty` is a sentence
+ * rather than a zero. A volunteer who has never been given a responsibility and
+ * meets «٠» on their own dashboard has been marked rather than informed. The
+ * three states are kept apart deliberately: nothing ever recorded
+ * (`panelEmpty`), nothing held right now but a record behind them
+ * (`panelNoneCurrent`), and something held now. Collapsing the middle one into
+ * the first would tell somebody who ran a committee for two years that no role
+ * has ever been recorded for them, which is false and reads as the association
+ * having forgotten.
  */
 
 export type VolunteerRoleStrings = {
@@ -138,6 +163,38 @@ export type VolunteerRoleStrings = {
     unavailable: string;
     db: string;
   };
+
+  /**
+   * The volunteer reading their own record: the dashboard panel and the page
+   * behind it. Addressed to «أنت», never to «هذا المتطوّع».
+   */
+  mine: {
+    kicker: string;
+    // ---- the dashboard panel, which shows CURRENT roles only
+    panelTitle: string;
+    panelLede: string;
+    /** Nothing has ever been recorded. Says what would fill the panel. */
+    panelEmpty: string;
+    /** Nothing held right now, but there is a record behind them. */
+    panelNoneCurrent: string;
+    seeAll: string;
+
+    // ---- the full timeline
+    pageTitle: string;
+    pageLede: string;
+    pageEmpty: string;
+    currentHeading: string;
+    pastHeading: string;
+    /** Who writes this record, and what to do when it is wrong. */
+    recordedNote: string;
+    back: string;
+  };
+
+  /**
+   * The heading over a volunteer's roles on «صنّاع الاستمرارية» — the one
+   * surface a stranger reads. Short, because it sits on a card.
+   */
+  publicHeading: string;
 };
 
 export const volunteerRolesAr: VolunteerRoleStrings = {
@@ -244,6 +301,33 @@ export const volunteerRolesAr: VolunteerRoleStrings = {
     unavailable: 'قاعدة البيانات غير متاحة الآن.',
     db: 'تعذّر الحفظ الآن. حاول مرّة أخرى.',
   },
+
+  mine: {
+    kicker: 'سجلّي في الجمعية',
+
+    panelTitle: 'مهامي ومناصبي',
+    panelLede: 'ما تشغله الآن داخل الجمعية.',
+    /* Not «٠ مناصب». It names the thing that would put a line here, so the
+       emptiness reads as a beginning rather than as a shortfall. */
+    panelEmpty:
+      'لم يُسجَّل لك بعد منصب أو مهمّة. يظهر هنا أوّل ما تتولّى مسؤوليةً في لجنة أو مشروع أو فريق ويدوّنها الطاقم الإداري في سجلّك.',
+    panelNoneCurrent:
+      'لا تشغل الآن منصباً أو مهمّة. ما شغلته سابقاً باقٍ في سجلّك كما هو.',
+    seeAll: 'السجلّ الكامل',
+
+    pageTitle: 'مهامي ومناصبي',
+    pageLede:
+      'ما شغلته داخل الجمعية بتواريخه: ما تشغله الآن أوّلاً، ثمّ ما سبق، من الأحدث إلى الأقدم. لا يُمحى من هنا شيء — حين يخلفك أحد في منصب يُقفَل سطرك بتاريخه ويبقى في سجلّك.',
+    pageEmpty:
+      'لا شيء في هذا السجلّ بعد. يمتلئ حين تُسنَد إليك مسؤولية في لجنة أو مشروع أو فريق، فيدوّنها الطاقم الإداري بتواريخها وتظهر لك هنا.',
+    currentHeading: 'ما أشغله الآن',
+    pastHeading: 'ما شغلته سابقاً',
+    recordedNote:
+      'يُدوَّن هذا السجلّ من قِبَل الطاقم الإداري. إن نقص منه شيء أو ورد فيه ما ليس بصحيح، راسل الجمعية ليُصحَّح.',
+    back: 'العودة إلى حسابي',
+  },
+
+  publicHeading: 'مناصب ومهام',
 };
 
 export const volunteerRolesEn: VolunteerRoleStrings = {
@@ -350,6 +434,33 @@ export const volunteerRolesEn: VolunteerRoleStrings = {
     unavailable: 'The database is not available right now.',
     db: 'That could not be saved just now. Try again.',
   },
+
+  mine: {
+    kicker: 'My record',
+
+    panelTitle: 'My roles and responsibilities',
+    panelLede: 'What you hold inside Takaful right now.',
+    /* Not "0 roles". It names the thing that would put a line here, so the
+       emptiness reads as a beginning rather than as a shortfall. */
+    panelEmpty:
+      'No role or responsibility is recorded for you yet. One appears here the first time you take charge of something in a committee, a project or a team and a member of staff writes it onto your record.',
+    panelNoneCurrent:
+      'You are not holding a role or a responsibility right now. What you held before stays on your record exactly as it is.',
+    seeAll: 'The full record',
+
+    pageTitle: 'My roles and responsibilities',
+    pageLede:
+      'What you have been inside Takaful, with dates: what you hold now first, then what you held before, newest first. Nothing is erased from here — when somebody succeeds you, your line is closed with its date and stays on your record.',
+    pageEmpty:
+      'There is nothing on this record yet. It fills up as the association hands you responsibility in a committee, a project or a team, and a member of staff writes each one down with its dates.',
+    currentHeading: 'What I hold now',
+    pastHeading: 'What I held before',
+    recordedNote:
+      'This record is written by the association’s staff. If something is missing from it, or something on it is not right, write to the association and it will be corrected.',
+    back: 'Back to my account',
+  },
+
+  publicHeading: 'Roles and responsibilities',
 };
 
 export const volunteerRoleDictionaries: Record<Locale, VolunteerRoleStrings> = {
