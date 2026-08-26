@@ -393,7 +393,7 @@ export const protectingVulnerable: CourseContent = {
             ar: [
               'الشخص يُشير بأيّ طريقة — مباشرة أو ضمنية — إلى أفكار إيذاء النفس أو الانتحار، حتى لو قدّمها كمزحة أو تراجع عنها فور قولها',
               'طفل في خطر مباشر أو عُثر عليه في وضع غير آمن أو مع شخص غير موثوق أو بعد غياب غير مبرّر',
-              'إفصاح عن اعتداء جنسي حدث خلال الأربع وعشرين ساعة الأخيرة، لأن هناك إجراءات طبية وقانونية حسّاسة ضيّقة الوقت',
+              'إفصاح عن اعتداء جنسي حدث خلال الأيام الخمسة الأخيرة، لأن هناك إجراءات طبية حسّاسة للوقت: الوقاية الدوائية من فيروس نقص المناعة تبدأ خلال ٧٢ ساعة من التعرّض، ومنع الحمل الطارئ خلال ١٢٠ ساعة. كلّما كان التصعيد أبكر كانت الخيارات الطبية أوسع، ولا تفترض أن الوقت فات',
               'خطر وشيك من عنف جسدي: تهديد مباشر أو صريح أو وضع يوحي بأن العنف سيقع قريباً',
               'الشخص يُصرح بأنه لن يكون بأمان حين يعود إلى مكان إقامته أو إلى شخص معيّن',
               'أيّ موقف يجعلك تشعر في داخلك بأن شيئاً ما ليس صحيحاً حتى لو لم تستطع تحديده — الشكّ الصادق وحده كافٍ للإبلاغ',
@@ -401,7 +401,7 @@ export const protectingVulnerable: CourseContent = {
             en: [
               'The person indicates in any way — directly or implicitly — thoughts of self-harm or suicide, even if presented as a joke or immediately withdrawn',
               'A child is in immediate danger or has been found in an unsafe situation, with an untrustworthy person, or after an unexplained absence',
-              'Disclosure of sexual assault that occurred within the last twenty-four hours, because there are time-sensitive medical and legal procedures involved',
+              'Disclosure of sexual assault that occurred within the last five days, because there are time-critical medical procedures: HIV post-exposure prophylaxis starts within 72 hours of exposure, and emergency contraception within 120 hours. The earlier the escalation, the wider the medical options — and never assume the window has closed',
               'Imminent risk of physical violence: a direct or explicit threat, or a situation suggesting violence is about to occur',
               'The person states they will not be safe when they return to their place of residence or to a specific person',
               'Any situation where you feel internally that something is not right, even if you cannot specify it — genuine doubt alone is sufficient reason to report',
