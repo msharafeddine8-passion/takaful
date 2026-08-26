@@ -50,6 +50,31 @@ export async function grantRoleAction(formData: FormData): Promise<void> {
   const actor = await requireCapability('members.manage');
   if (actor.id === userId) return;
 
+  /*
+   * Only a super_admin may make another one.
+   *
+   * `members.manage` is held by program_admin as well, and super_admin was in
+   * the list of grantable roles — so any program_admin could hand super_admin
+   * to an account they controlled and hold every capability on the platform,
+   * including certificates.revoke and the audit trail. The self-grant guard
+   * above did not stop it: granting it to a second account they own is one
+   * more click.
+   *
+   * A program_admin managing members is the intended job. Deciding who else
+   * gets to do everything is not the same job, and the difference is exactly
+   * what a privilege boundary is.
+   */
+  if (role === 'super_admin' && !actor.roles.includes('super_admin')) {
+    await audit({
+      actorId: actor.id,
+      action: 'role.grant_refused',
+      targetType: 'user',
+      targetId: userId,
+      newValue: { role, reason: 'only a super_admin may grant super_admin' },
+    });
+    return;
+  }
+
   await execute(
     `INSERT INTO user_roles (user_id, role, scope_type, granted_by)
      VALUES ($1, $2, 'self', $3)`,
@@ -83,6 +108,42 @@ export async function revokeRoleAction(formData: FormData): Promise<void> {
     [roleId],
   );
   if (!row) return;
+
+  /*
+   * And only a super_admin may end another one's standing.
+   *
+   * The mirror of the grant guard, and the more dangerous half: without it a
+   * program_admin could revoke every super_admin on the platform, leaving
+   * nobody able to grant the role back. The suspension path already refuses to
+   * strand the last administrator; role revocation had no such rule at all.
+   */
+  if (row.role === 'super_admin' && !actor.roles.includes('super_admin')) {
+    await audit({
+      actorId: actor.id,
+      action: 'role.revoke_refused',
+      targetType: 'user',
+      targetId: row.user_id,
+      previousValue: { role: row.role, reason: 'only a super_admin may revoke super_admin' },
+    });
+    return;
+  }
+
+  /*
+   * Never end the last one. Nobody could grant it back, and the platform would
+   * need a hand edit in the database to recover — the same reasoning the
+   * suspension guard below already applies to the same person.
+   */
+  if (row.role === 'super_admin') {
+    const others = await queryOne<{ n: number }>(
+      `SELECT count(*)::INTEGER AS n
+         FROM user_roles r JOIN users u ON u.id = r.user_id
+        WHERE r.role = 'super_admin' AND r.user_id <> $1
+          AND u.status = 'active'
+          AND (r.valid_until IS NULL OR r.valid_until > now())`,
+      [row.user_id],
+    );
+    if ((others?.n ?? 0) === 0) return;
+  }
 
   await execute(
     'UPDATE user_roles SET valid_until = now() WHERE id = $1 AND valid_until IS NULL',
