@@ -590,6 +590,9 @@ try {
 } finally {
   console.log('\n--- cleanup ---');
   for (const sql of [
+    /* Migrations 044/045: achievements refuses a plain DELETE, and this asks
+     * for the exception by name. Transaction-scoped, so it ends here. */
+    "SET LOCAL takaful.allow_delete = 'on'",
     'DELETE FROM certificates WHERE user_id = $1',
     'DELETE FROM achievements WHERE user_id = $1',
     'DELETE FROM level_progress WHERE user_id = $1',

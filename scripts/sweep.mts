@@ -129,10 +129,31 @@ const references = [
 
 let failures = 0;
 for (const u of stale) {
+  /*
+   * ONE TRANSACTION PER ACCOUNT, AND IT IS NOT OPTIONAL.
+   *
+   * Migrations 044 and 045 make achievements and impact_points refuse a plain
+   * DELETE, with one deliberate way through: SET LOCAL takaful.allow_delete.
+   * SET LOCAL only means anything inside a transaction — outside one Postgres
+   * warns and does nothing — and this loop used to run every statement in its
+   * own implicit transaction, so the setting expired before the next line. The
+   * first version of this fix put the SET at the top of the list and the sweep
+   * silently went on failing.
+   *
+   * A SAVEPOINT per statement keeps what the loop had before: one refusal does
+   * not abandon the rest, and a table that does not exist at this migration
+   * level is skipped rather than aborting everything after it.
+   */
+  await c.query('BEGIN');
+  await c.query("SET LOCAL takaful.allow_delete = 'on'");
+
   for (const sql of references) {
     try {
+      await c.query('SAVEPOINT one');
       await c.query(sql, [u.id]);
+      await c.query('RELEASE SAVEPOINT one');
     } catch (error) {
+      await c.query('ROLLBACK TO SAVEPOINT one').catch(() => {});
       const e = error as { code?: string; message?: string };
       // A table that does not exist yet is not a failure — the sweep runs
       // against databases at different migration levels.
@@ -141,6 +162,7 @@ for (const u of stale) {
       failures += 1;
     }
   }
+  await c.query('COMMIT');
 }
 
 for (const u of stale) {

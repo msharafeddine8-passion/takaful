@@ -83,13 +83,44 @@ console.log('1. silence is a no');
 
 console.log('\n2. the schema and the code agree about the default');
 {
+  /*
+   * READ THE LATEST MIGRATION THAT TOUCHES IT, NOT THE ONE THAT CREATED IT.
+   *
+   * This read only 033 and asserted the defaults it set — hidden, and birthday
+   * greetings off. Migration 038 changed both, deliberately, after the
+   * association decided that appearing is the ordinary state. This check went
+   * on passing, because 033's text has not changed and never will: an audit
+   * found it green while describing a schema that no longer exists.
+   *
+   * A check that reads a superseded file is worse than no check. It reports
+   * agreement between the code and a database it is not looking at.
+   */
   const sql = readFileSync(new URL('../migrations/033_visibility.sql', import.meta.url), 'utf8');
-  check("the column defaults to 'hidden'", /public_visibility\s+TEXT\s+NOT NULL\s+DEFAULT\s+'hidden'/i.test(sql),
-    'a default that drifted from DEFAULT_VISIBILITY would be decided by the database, silently');
+  const later = readFileSync(new URL('../migrations/038_visible_by_default.sql', import.meta.url), 'utf8');
+
+  check('the current default is name_and_photo, set by 038',
+    /public_visibility\s+SET DEFAULT\s+'name_and_photo'/i.test(later),
+    'the association decided appearing is the ordinary state; 033 said hidden');
+  check('birthday greetings now default to on',
+    /birthday_greetings\s+SET DEFAULT\s+TRUE/i.test(later));
+
+  /*
+   * DEFAULT_VISIBILITY stays 'hidden' and that is not a contradiction. It is
+   * the fallback for a value this build cannot read — a null from a row that
+   * predates the column, a typo, a value from a future migration — and failing
+   * closed there is right whatever the column default happens to be.
+   */
+  check('the code still fails closed on a value it cannot read',
+    visibilityFrom('something nobody has taught this build') === 'hidden',
+    'the column default is a decision about people; this is what to do with unreadable data');
+
+  check('038 only ever stood in for silence',
+    /visibility_chosen_at IS NULL/.test(later),
+    'it must never turn "nobody asked" into "they chose"');
+
   check('the CHECK allows exactly the three the code knows',
     VISIBILITY_CHOICES.every((c) => sql.includes(`'${c}'`)),
     VISIBILITY_CHOICES.join(', '));
-  check('birthday greetings default to off', /birthday_greetings\s+BOOLEAN\s+NOT NULL\s+DEFAULT\s+FALSE/i.test(sql));
   check('the migration adds no birth date and no age to profiles',
     !/ADD COLUMN[^;]*(date_of_birth|birth_date|\bage\b|is_minor)/i.test(sql),
     'a flag on profiles saying which volunteers are children is far easier to leak than a date in a table nothing renders from');

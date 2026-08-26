@@ -276,6 +276,9 @@ try {
   }
   for (const id of made) {
     for (const sql of [
+      /* Migrations 044/045: achievements refuses a plain DELETE, and this asks
+       * for the exception by name. Transaction-scoped, so it ends here. */
+      "SET LOCAL takaful.allow_delete = 'on'",
       'DELETE FROM achievements WHERE user_id = $1',
       'DELETE FROM hour_allocations WHERE user_id = $1',
       'DELETE FROM hour_entries WHERE user_id = $1 OR verified_by = $1',
