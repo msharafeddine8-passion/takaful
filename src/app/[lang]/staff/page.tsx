@@ -17,6 +17,7 @@ import { awardDictionaries } from '@/lib/dictionaries/awards';
 import { learningAnalytics } from '@/lib/dictionaries/learning-analytics';
 import { practical } from '@/lib/dictionaries/practical';
 import { challengeLevels } from '@/lib/dictionaries/challenge-levels';
+import { adminProfile } from '@/lib/dictionaries/admin-profile';
 
 export async function generateMetadata(props: PageProps<'/[lang]/staff'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -201,6 +202,25 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
               {/* Its own dictionary module, like the links above — see the
                   header of src/lib/dictionaries/challenge-levels.ts. */}
               {challengeLevels(lang).staff.goQueue}
+            </Link>
+          )}
+          {/*
+            The definitions behind «حقول الملفّ» on every member page. Gated on
+            challenges.manage rather than members.manage, matching the actions:
+            a definition is on nobody's file in particular and on everybody's
+            profile in general, which is the same act as announcing a challenge
+            to every volunteer — see the head of lib/actions/admin-profile.ts.
+            Without a link here the page would exist and nobody would arrive at
+            it.
+          */}
+          {can(user, 'challenges.manage') && (
+            <Link
+              href={`/${lang}/staff/profile-fields`}
+              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
+            >
+              {/* Its own dictionary module, like the links above — see the
+                  header of src/lib/dictionaries/admin-profile.ts. */}
+              {adminProfile(lang).defs.title}
             </Link>
           )}
           {can(user, 'members.manage') && (

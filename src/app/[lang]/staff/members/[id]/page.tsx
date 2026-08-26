@@ -31,6 +31,11 @@ import {
   viewerOf,
 } from '@/lib/volunteer-roles';
 import { VolunteerRoles, type ArchivedRole } from '@/components/staff/VolunteerRoles';
+import { adminProfile } from '@/lib/dictionaries/admin-profile';
+import { notesAbout } from '@/lib/admin-notes';
+import { fieldDefs, valuesFor } from '@/lib/profile-fields';
+import { AdminNotes, type ArchivedNote } from '@/components/staff/AdminNotes';
+import { ProfileFieldValues } from '@/components/staff/ProfileFieldValues';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -173,6 +178,63 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
       }),
     )
   ).filter((entry): entry is ArchivedRole => entry !== null);
+
+  /*
+   * The private file and the association's own columns.
+   *
+   * Three of these four are the modules': notesAbout takes ONE argument and it
+   * is the subject — lib/admin-notes.ts has no reader that takes a viewer, and
+   * that absence is what keeps "the subject never reads their own notes" a
+   * property of the code rather than of this page. fieldDefs() returns the live
+   * definitions in the order the forms show them, and valuesFor() filters the
+   * answers in SQL against `user`'s own audience rather than fetching everything
+   * and declining to render some of it.
+   *
+   * The fourth is the one query this page owns: which notes are archived, and
+   * when. admin-notes.ts deliberately has no archived-list reader — its exported
+   * surface is four functions and probe-admin-profile asserts exactly that — so
+   * the drawer's rows are read here, the same way the archived roles above are.
+   * archived_at and created_at are TIMESTAMPTZ and take the Beirut correction;
+   * nothing downstream rebuilds a Date from the text they produce.
+   */
+  const [notes, archivedNotes, customDefs, customAnswers] = await Promise.all([
+    notesAbout(id),
+    query<{
+      id: string;
+      body: string;
+      author_name: string | null;
+      written_on: string;
+      archived_on: string;
+    }>(
+      /* Aliases snake_case and unquoted, like every other query on this page:
+       * Postgres folds an unquoted alias to lower case, so `AS writtenOn` would
+       * arrive as `writtenon` and read as undefined. The mapping is below.
+       *
+       * LEFT JOIN and one column from profiles, matching notesAbout — a missing
+       * profile row must not make a note vanish, and a convenience SELECT would
+       * put profiles_sensitive one careless JSX line from a screen. */
+      `SELECT n.id, n.body, a.full_name AS author_name,
+              to_char(n.created_at  AT TIME ZONE 'Asia/Beirut', 'YYYY-MM-DD') AS written_on,
+              to_char(n.archived_at AT TIME ZONE 'Asia/Beirut', 'YYYY-MM-DD') AS archived_on
+         FROM admin_notes n
+         LEFT JOIN profiles a ON a.user_id = n.author_id
+        WHERE n.user_id = $1 AND n.archived_at IS NOT NULL
+        ORDER BY n.archived_at DESC`,
+      [id],
+    ),
+    fieldDefs(),
+    valuesFor(id, user),
+  ]);
+
+  const archivedNoteList: ArchivedNote[] = archivedNotes.map((row) => ({
+    id: row.id,
+    body: row.body,
+    // '' rather than the id, exactly as toNote does. A UUID on a screen is
+    // noise that looks like data.
+    authorName: row.author_name ?? '',
+    writtenOn: row.written_on,
+    archivedOn: row.archived_on,
+  }));
 
   const held = new Set(roles.map((r) => r.role));
   const heldStages = new Set(stages.map((s) => s.stage));
@@ -509,6 +571,45 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
           kindSuggestions={kindRows.map((r) => r.role_type)}
           canManage={can(user, 'members.manage')}
           t={volunteerRoleStrings(lang)}
+        />
+
+        {/*
+          * The private file, under the roles it belongs beside.
+          *
+          * `canManage` is true here by construction — the page returned
+          * `t.forbidden` above for anybody without members.manage, which is the
+          * same capability the three note actions assert — and it is passed
+          * rather than hardcoded so the section stays honest if this page is
+          * ever opened to a reader who cannot write.
+          *
+          * The two warnings the schema cannot hold are in the component, beside
+          * the box somebody types into: the volunteer never reads these, and a
+          * safeguarding concern goes to safeguarding_records instead.
+          */}
+        <AdminNotes
+          lang={lang}
+          userId={id}
+          notes={notes}
+          archived={archivedNoteList}
+          canManage={can(user, 'members.manage')}
+          t={adminProfile(lang).notes}
+        />
+
+        {/*
+          * The association's own columns, filled in for this person.
+          *
+          * The definitions are declared in /staff/profile-fields behind
+          * challenges.manage; filling one in for somebody is editing that
+          * person's record, so it sits here behind members.manage — which is
+          * exactly the split setFieldValuesAction makes.
+          */}
+        <ProfileFieldValues
+          lang={lang}
+          userId={id}
+          defs={customDefs}
+          answers={customAnswers}
+          canManage={can(user, 'members.manage')}
+          t={adminProfile(lang).values}
         />
 
         {/*
