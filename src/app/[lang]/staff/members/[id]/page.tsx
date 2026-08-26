@@ -23,6 +23,14 @@ import { ConfirmSubmit } from '@/components/staff/ConfirmSubmit';
 import { CarriedHoursForm, RecogniseCourseForm } from '@/components/staff/PriorCreditForms';
 import { COURSES } from '@/lib/courses';
 import { memberProfile } from '@/lib/dictionaries/member-profile';
+import { volunteerRoleStrings } from '@/lib/dictionaries/volunteer-roles';
+import {
+  rolesFor,
+  roleForAdmin,
+  roleTitleSuggestions,
+  viewerOf,
+} from '@/lib/volunteer-roles';
+import { VolunteerRoles, type ArchivedRole } from '@/components/staff/VolunteerRoles';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -116,6 +124,55 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
     // Null for a learner, which is a normal state rather than a gap.
     journeyFor(id),
   ]);
+
+  /*
+   * What this person has BEEN in the association, which is a different subject
+   * from what they may DO in the software — migration 046 is explicit about it,
+   * and `roles` above is the other one. Read in its own block so the split
+   * stays visible.
+   *
+   * Three of these four are the module's, and they do all the work: rolesFor
+   * applies the visibility rule and the current-first ordering that matches
+   * idx_vr_person, roleTitleSuggestions reads back the titles that have been
+   * used before as a TYPEAHEAD and never a permitted set, and roleForAdmin maps
+   * an archived row with the same date handling as a live one.
+   *
+   * The fourth is the one query this page owns: which of a person's rows are
+   * archived, why, and when. lib/volunteer-roles.ts deliberately has no
+   * archived-list reader — every function there filters archives out — so the
+   * ids are collected here and handed back to roleForAdmin rather than mapped a
+   * second time. archived_at is a TIMESTAMPTZ, so it takes the Beirut
+   * correction; started_on and ended_on are DATEs and must never be given one.
+   */
+  const [roleTimeline, titleSuggestions, kindRows, archivedRows] = await Promise.all([
+    rolesFor(id, viewerOf(user)),
+    roleTitleSuggestions('', 30),
+    query<{ role_type: string }>(
+      `SELECT DISTINCT role_type FROM volunteer_roles
+        WHERE archived_at IS NULL AND role_type IS NOT NULL AND btrim(role_type) <> ''
+        ORDER BY role_type
+        LIMIT 50`,
+    ),
+    query<{ id: string; archive_reason: string | null; archived_on: string }>(
+      `SELECT id, archive_reason,
+              to_char(archived_at AT TIME ZONE 'Asia/Beirut', 'YYYY-MM-DD') AS archived_on
+         FROM volunteer_roles
+        WHERE user_id = $1 AND archived_at IS NOT NULL
+        ORDER BY archived_at DESC`,
+      [id],
+    ),
+  ]);
+
+  const archivedRoles: ArchivedRole[] = (
+    await Promise.all(
+      archivedRows.map(async (row) => {
+        const role = await roleForAdmin(row.id);
+        return role
+          ? { role, reason: row.archive_reason, archivedOn: row.archived_on }
+          : null;
+      }),
+    )
+  ).filter((entry): entry is ArchivedRole => entry !== null);
 
   const held = new Set(roles.map((r) => r.role));
   const heldStages = new Set(stages.map((s) => s.stage));
@@ -430,6 +487,29 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
             </button>
           </form>
         )}
+
+        {/*
+          * What this person has been inside the association, with dates.
+          *
+          * Placed after the certificates and before the carried-forward panel,
+          * which is where the client's own description puts it: the record of
+          * the person first, then the corrections staff make to it.
+          *
+          * `canManage` is true here by construction — the page returned
+          * `t.forbidden` above for anybody without members.manage — and it is
+          * passed anyway rather than hardcoded, so that the section stays
+          * honest if this page is ever opened to a reader who cannot write.
+          */}
+        <VolunteerRoles
+          lang={lang}
+          userId={id}
+          roles={roleTimeline}
+          archived={archivedRoles}
+          titleSuggestions={titleSuggestions}
+          kindSuggestions={kindRows.map((r) => r.role_type)}
+          canManage={can(user, 'members.manage')}
+          t={volunteerRoleStrings(lang)}
+        />
 
         {/*
           * What the association knows and this platform never saw.
