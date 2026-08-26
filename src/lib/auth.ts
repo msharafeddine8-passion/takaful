@@ -7,6 +7,22 @@ import { execute, query, queryOne, transaction } from './db';
 export const SESSION_COOKIE = 'tkf_session';
 const SESSION_DAYS = 30;
 
+/*
+ * The idle window, alongside the absolute one above.
+ *
+ * Fourteen and not one: this is a volunteer platform reached mostly from
+ * phones, often weekly rather than daily, and a window that signs somebody out
+ * between two activities teaches them that the site logs you out — which ends
+ * with the password written somewhere worse than a cookie.
+ *
+ * Fourteen and not thirty, because thirty is the absolute expiry and an idle
+ * rule equal to it is not a rule.
+ */
+const SESSION_IDLE_DAYS = 14;
+
+/** How stale last_seen_at may get before it is worth a write. See currentUser. */
+const TOUCH_AFTER_MINUTES = 10;
+
 export type Role =
   | 'registered_user'
   | 'volunteer'
@@ -102,23 +118,59 @@ export async function currentUser(): Promise<SessionUser | null> {
   const token = store.get(SESSION_COOKIE)?.value;
   if (!token) return null;
 
+  const hashed = hashToken(token);
   const row = await queryOne<{
     id: string;
     email: string;
     locale: 'ar' | 'en';
     status: 'active' | 'suspended' | 'deactivated';
     full_name: string;
+    stale: boolean;
   }>(
-    `SELECT u.id, u.email, u.locale, u.status, p.full_name
+    /*
+     * Two clocks, and a session has to satisfy both.
+     *
+     * expires_at is the absolute one: thirty days from signing in, whatever
+     * happens. last_seen_at is the idle one, and until now it was a column
+     * nothing wrote and nothing read — so a phone left on a bus stayed signed
+     * in to somebody's volunteer record for a month, with children's
+     * safeguarding material behind that cookie.
+     *
+     * `stale` comes back rather than a second query: the row is already here,
+     * and asking Postgres whether it is time to write is cheaper than asking
+     * it again afterwards.
+     */
+    `SELECT u.id, u.email, u.locale, u.status, p.full_name,
+            s.last_seen_at < now() - ($3 || ' minutes')::interval AS stale
        FROM sessions s
        JOIN users u    ON u.id = s.user_id
        JOIN profiles p ON p.user_id = u.id
-      WHERE s.token_hash = $1 AND s.expires_at > now()
+      WHERE s.token_hash = $1
+        AND s.expires_at > now()
+        AND s.last_seen_at > now() - ($2 || ' days')::interval
       LIMIT 1`,
-    [hashToken(token)],
+    [hashed, String(SESSION_IDLE_DAYS), String(TOUCH_AFTER_MINUTES)],
   );
 
   if (!row || row.status !== 'active') return null;
+
+  /*
+   * Touch it, but not on every request.
+   *
+   * currentUser() runs on every authenticated page render. Writing
+   * last_seen_at each time would be a write per page view on a pooled Neon
+   * connection, to keep a column that is only ever read to the day. Once every
+   * few minutes carries the same meaning at a fraction of the cost.
+   *
+   * Not awaited, and failures are swallowed: this is bookkeeping. A write that
+   * loses a race with another tab has written the same value, and one that
+   * fails outright must not turn a signed-in volunteer's page into an error.
+   */
+  if (row.stale) {
+    void execute('UPDATE sessions SET last_seen_at = now() WHERE token_hash = $1', [
+      hashed,
+    ]).catch(() => {});
+  }
 
   const roleRows = await query<{ role: Role }>(
     `SELECT role FROM user_roles
