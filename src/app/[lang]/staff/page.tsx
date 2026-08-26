@@ -17,8 +17,52 @@ import { awardDictionaries } from '@/lib/dictionaries/awards';
 import { learningAnalytics } from '@/lib/dictionaries/learning-analytics';
 import { practical } from '@/lib/dictionaries/practical';
 import { challengeLevels } from '@/lib/dictionaries/challenge-levels';
-import { adminProfile } from '@/lib/dictionaries/admin-profile';
-import { orgGroups } from '@/lib/dictionaries/org-groups';
+import { projectsAdmin } from '@/lib/dictionaries/projects-admin';
+import { partners } from '@/lib/dictionaries/partners';
+import { staffHub } from '@/lib/dictionaries/staff-hub';
+
+/**
+ * Where a member of staff arrives, and what they can see from it.
+ *
+ * ── THE ROW OF EIGHTEEN PILLS IS GONE ──────────────────────────────────────
+ *
+ * It was a flat `flex-wrap` of identical rounded buttons, and eighteen things
+ * of equal weight is a list nobody reads: people found a screen by remembering
+ * where its button sat, which is not navigation — it is recall, and it fails the
+ * moment a nineteenth arrives and shifts the row. The volunteer side had exactly
+ * this problem and exactly this fix; components/account/AccountNav.tsx is the
+ * precedent and its header carries the argument in full.
+ *
+ * So the page now reads in three tiers, in the order somebody actually needs
+ * them: what is WAITING FOR A DECISION (the two queue cards, unchanged), then
+ * the figures, then everything else grouped under six headings named for what
+ * the reader came looking for. The groups are built as data below rather than
+ * written out as JSX, so a screen added to the association appears in one array
+ * entry and cannot land in the wrong place by being pasted in the wrong div.
+ *
+ * ── TWO SCREENS ARE DELIBERATELY NOT LISTED ────────────────────────────────
+ *
+ * /staff/groups (committees and teams) and /staff/profile-fields (the custom
+ * field definitions) HAVE BEEN REMOVED FROM THIS HUB ON PURPOSE. DO NOT ADD
+ * THEM BACK because they look missing — they are missing, and that is the fix.
+ *
+ * The client, who is the administrator this page is for, said in as many words
+ * that committees, teams and custom fields were the parts of this platform that
+ * had become complicated and confusing, and asked for less. Nothing was deleted
+ * to answer that: both routes still exist, still work, still enforce the same
+ * capabilities, and everything either of them ever wrote is still in the
+ * database and still rendered wherever it was rendered before. A role attached
+ * to a committee still shows its link; a custom field with a value still shows
+ * on the member page. They simply stopped being advertised on the one screen
+ * every member of staff opens first, so that the fourteen things people use are
+ * not sitting beside two things one person configured once.
+ *
+ * They remain reachable by URL — /staff/groups and /staff/profile-fields — and
+ * that is the whole of the change. If the association later wants either back
+ * on the hub, the right move is to ask the client first and then add an entry to
+ * the `groups` array below, not to conclude from an empty-looking hub that
+ * somebody forgot.
+ */
 
 export async function generateMetadata(props: PageProps<'/[lang]/staff'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -69,6 +113,143 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
   const o = await overview();
   const waiting = o.applicationsOpen + o.hoursPending;
 
+  /*
+   * The hub, as data.
+   *
+   * Every entry carries its own `show`, which is the same capability check the
+   * links carried when they were a flat row — nothing was loosened and nothing
+   * was tightened by the regrouping. Empty groups are dropped below, so a
+   * trainer who holds only `practical.review` sees one heading and one link
+   * rather than six headings and five empty columns.
+   *
+   * Labels come from each feature's own dictionary module, exactly as before;
+   * only the six GROUP headings are new, and they live in
+   * dictionaries/staff-hub.ts for the reason its header gives.
+   */
+  const g = staffHub(lang).groups;
+  const at = (path: string) => `/${lang}/staff${path}`;
+  const groups: { title: string; items: { href: string; label: string; show: boolean }[] }[] = [
+    {
+      /* The people, and the two lists of them. The applications queue is not
+         here: it is a decision waiting, and it is a card at the top. */
+      title: g.volunteers,
+      items: [
+        {
+          href: at('/roster'),
+          label: dict.account.staff.roster.title,
+          show: can(user, 'applications.review'),
+        },
+        { href: at('/members'), label: d.goMembers, show: can(user, 'members.manage') },
+      ],
+    },
+    {
+      /* Where the volunteering actually happens. Projects sits here rather than
+         under the public pages because the screen's subject is who has taken
+         charge of what — the same roles table read against a different noun,
+         which is why lib/actions/projects.ts gates it on members.manage — and
+         putting a project on the public site is a consequence of running one. */
+      title: g.field,
+      items: [
+        {
+          href: at('/activities'),
+          label: dict.account.activities.manageTitle,
+          show: can(user, 'activities.manage'),
+        },
+        {
+          href: at('/projects'),
+          label: projectsAdmin(lang).title,
+          show: can(user, 'members.manage'),
+        },
+      ],
+    },
+    {
+      /* Five screens, three capabilities, one heading — because «الأكاديمية» is
+         what the association calls the whole of its training and a coordinator
+         looking for any of these is looking for that. The two `practical.review`
+         entries are the only things under /staff an `instructor` can reach at
+         all; see the note on isStaff() in lib/authz.ts for why losing them from
+         this page would mean losing them entirely. */
+      title: g.academy,
+      items: [
+        {
+          href: at('/challenges'),
+          label: challengeDictionaries[lang].manageTitle,
+          show: can(user, 'challenges.manage'),
+        },
+        {
+          href: at('/practical'),
+          label: practical(lang).goQueue,
+          show: can(user, 'practical.review'),
+        },
+        {
+          href: at('/decision-runs'),
+          label: challengeLevels(lang).staff.goQueue,
+          show: can(user, 'practical.review'),
+        },
+        {
+          href: at('/journey'),
+          label: t.journeyBuilder.title,
+          show: can(user, 'members.manage'),
+        },
+        {
+          /* Gated on programme.edit rather than reports.read because the page is
+             a list of things to go and rewrite — see the header of
+             app/[lang]/staff/learning/page.tsx. */
+          href: at('/learning'),
+          label: learningAnalytics(lang).title,
+          show: can(user, 'programme.edit'),
+        },
+      ],
+    },
+    {
+      title: g.recognition,
+      items: [
+        {
+          href: at('/recognition'),
+          label: recognitionAdmin(lang).title,
+          show: can(user, 'members.manage'),
+        },
+        {
+          /* Deliberately not gated. The monthly shortlist is meant to be argued
+             over in a room, and a field supervisor who cannot press the button
+             can still say whose month it was. The decision forms themselves are
+             gated on awards.decide inside the page. */
+          href: at('/awards'),
+          label: awardDictionaries[lang].manageTitle,
+          show: true,
+        },
+      ],
+    },
+    {
+      /* One entry, and it earns its own heading. A partner is public content
+         about the association and not a record about a person — nothing in that
+         feature writes or reads a volunteer_role, which is why
+         lib/actions/partners.ts gates it on challenges.manage and not on
+         members.manage. Filing it with the members' screens would put the one
+         button on this page that publishes to strangers in among the ones that
+         do not. */
+      title: g.publicPages,
+      items: [
+        {
+          href: at('/partners'),
+          label: partners(lang).staffTitle,
+          show: can(user, 'challenges.manage'),
+        },
+      ],
+    },
+    {
+      title: g.records,
+      items: [
+        { href: at('/reports'), label: dict.account.reports.title, show: can(user, 'reports.read') },
+        { href: at('/audit'), label: d.goAudit, show: can(user, 'audit.read') },
+      ],
+    },
+  ];
+
+  const visible = groups
+    .map((group) => ({ ...group, items: group.items.filter((item) => item.show) }))
+    .filter((group) => group.items.length > 0);
+
   return (
     <Section>
       <Container className="max-w-5xl">
@@ -113,172 +294,44 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
           <Stat label={d.certificates} value={String(o.certificates)} />
         </div>
 
-        <div className="mt-10 flex flex-wrap gap-3">
-          {can(user, 'applications.review') && (
-            <Link
-              href={`/${lang}/staff/roster`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {dict.account.staff.roster.title}
-            </Link>
-          )}
-          {can(user, 'members.manage') && (
-            <Link
-              href={`/${lang}/staff/members`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {d.goMembers}
-            </Link>
-          )}
-          {can(user, 'activities.manage') && (
-            <Link
-              href={`/${lang}/staff/activities`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {dict.account.activities.manageTitle}
-            </Link>
-          )}
-          {can(user, 'challenges.manage') && (
-            <Link
-              href={`/${lang}/staff/challenges`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {/* Imported from the challenges dictionary directly rather than
-                  spliced into types.ts/ar.ts/en.ts — see the header of
-                  src/lib/dictionaries/challenges.ts. */}
-              {challengeDictionaries[lang].manageTitle}
-            </Link>
-          )}
-          {can(user, 'members.manage') && (
-            <Link
-              href={`/${lang}/staff/recognition`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {/* Same reason as the challenges link above — its own dictionary
-                  module, not a splice into types.ts/ar.ts/en.ts. */}
-              {recognitionAdmin(lang).title}
-            </Link>
-          )}
-          {/* Deliberately not gated. The monthly shortlist is meant to be
-              argued over in a room, and a field supervisor who cannot press
-              the button can still say whose month it was. The decision forms
-              themselves are gated on awards.decide inside the page. */}
-          <Link
-            href={`/${lang}/staff/awards`}
-            className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-          >
-            {/* Its own dictionary module, like the two links above — see the
-                header of src/lib/dictionaries/awards.ts. */}
-            {awardDictionaries[lang].manageTitle}
-          </Link>
-          {/*
-            The one link an `instructor` can follow. They hold neither
-            members.manage nor hours.verify, so before practical tasks existed
-            there was nothing under /staff for them at all — see the note on
-            isStaff() in lib/authz.ts.
+        {/*
+          * The rest of the hub, grouped and named.
+          *
+          * A <nav> with a heading per group, laid out the same way
+          * AccountGroups does it on the volunteer dashboard — one column at
+          * 375px, two from sm, three from lg — so the two halves of this
+          * platform navigate alike. Each link is min-h-11 (44px) and the
+          * groups collapse to a single readable column on a phone; nothing
+          * here has a min-width, so the page never scrolls sideways.
+          *
+          * Rendered from `visible`, which has already dropped the entries this
+          * reader has no capability for and then dropped any heading left with
+          * nothing under it.
           */}
-          {can(user, 'practical.review') && (
-            <Link
-              href={`/${lang}/staff/practical`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {/* Its own dictionary module, like the links above — see the
-                  header of src/lib/dictionaries/practical.ts. */}
-              {practical(lang).goQueue}
-            </Link>
-          )}
-          {/*
-            Decision runs that ended in `review`. Same capability as the
-            practical queue and for the same reason — reading a learner's work
-            and forming a judgement about it — so the trainer, supervisor or
-            coordinator who would actually have the conversation can reach it.
-            Without a link here the page would exist and nobody would arrive at
-            it, which is the failure isStaff() is annotated against in authz.ts.
-          */}
-          {can(user, 'practical.review') && (
-            <Link
-              href={`/${lang}/staff/decision-runs`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {/* Its own dictionary module, like the links above — see the
-                  header of src/lib/dictionaries/challenge-levels.ts. */}
-              {challengeLevels(lang).staff.goQueue}
-            </Link>
-          )}
-          {/*
-            The definitions behind «حقول الملفّ» on every member page. Gated on
-            challenges.manage rather than members.manage, matching the actions:
-            a definition is on nobody's file in particular and on everybody's
-            profile in general, which is the same act as announcing a challenge
-            to every volunteer — see the head of lib/actions/admin-profile.ts.
-            Without a link here the page would exist and nobody would arrive at
-            it.
-          */}
-          {can(user, 'challenges.manage') && (
-            <Link
-              href={`/${lang}/staff/profile-fields`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {/* Its own dictionary module, like the links above — see the
-                  header of src/lib/dictionaries/admin-profile.ts. */}
-              {adminProfile(lang).defs.title}
-            </Link>
-          )}
-          {/*
-            The committees and teams, and the leadership history read off the
-            roles that point at them. Gated on members.manage, matching every
-            action behind the screen — the head of lib/actions/org-groups.ts
-            argues why it is the roles' capability and not challenges.manage.
-            Without a link here the page would exist and nobody would arrive at
-            it, which is the failure isStaff() is annotated against in authz.ts.
-          */}
-          {can(user, 'members.manage') && (
-            <Link
-              href={`/${lang}/staff/groups`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {/* Its own dictionary module, like the links above — see the
-                  header of src/lib/dictionaries/org-groups.ts. */}
-              {orgGroups(lang).title}
-            </Link>
-          )}
-          {can(user, 'members.manage') && (
-            <Link
-              href={`/${lang}/staff/journey`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {t.journeyBuilder.title}
-            </Link>
-          )}
-          {can(user, 'reports.read') && (
-            <Link
-              href={`/${lang}/staff/reports`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {dict.account.reports.title}
-            </Link>
-          )}
-          {can(user, 'programme.edit') && (
-            <Link
-              href={`/${lang}/staff/learning`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {/* Its own dictionary module, like the links above. Gated on
-                  programme.edit rather than reports.read because the page is a
-                  list of things to go and rewrite — see the header of
-                  src/app/[lang]/staff/learning/page.tsx. */}
-              {learningAnalytics(lang).title}
-            </Link>
-          )}
-          {can(user, 'audit.read') && (
-            <Link
-              href={`/${lang}/staff/audit`}
-              className="rounded-full border border-line px-6 py-3 text-[0.95rem] font-bold transition-colors hover:bg-surface-2"
-            >
-              {d.goAudit}
-            </Link>
-          )}
-        </div>
+        <nav aria-label={staffHub(lang).navLabel} className="mt-12">
+          <p className="max-w-[62ch] text-[0.92rem] text-ink-3">{staffHub(lang).groupsLede}</p>
+          <div className="mt-5 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {visible.map((group) => (
+              <div key={group.title}>
+                <h2 className="mb-2 text-[0.74rem] font-extrabold tracking-[0.14em] text-ink-3">
+                  {group.title}
+                </h2>
+                <ul className="space-y-1">
+                  {group.items.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href as Parameters<typeof Link>[0]['href']}
+                        className="flex min-h-11 items-center rounded-xl px-3.5 py-2.5 text-[0.94rem] font-semibold text-ink-2 transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </nav>
       </Container>
     </Section>
   );

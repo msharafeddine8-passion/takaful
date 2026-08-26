@@ -8,8 +8,8 @@ import {
   restoreRoleAction,
 } from '@/lib/actions/volunteer-roles';
 import type { VolunteerRoleStrings } from '@/lib/dictionaries/volunteer-roles';
-import type { OrgGroupStrings } from '@/lib/dictionaries/org-groups';
-import { VolunteerRoleForm, type GroupChoice, type RoleFormValues } from './VolunteerRoleForm';
+import type { ProjectAdminStrings } from '@/lib/dictionaries/projects-admin';
+import { VolunteerRoleForm, type EntityChoice, type RoleFormValues } from './VolunteerRoleForm';
 
 /**
  * «المناصب والمهام» on a member's page: the timeline, and the four things an
@@ -80,11 +80,11 @@ function lineOf(item: { ar: string; en: string }, lang: Locale): string {
  * What a role was attached to, as one readable string.
  *
  * A role that points at a row shows that row's NAME when the page could resolve
- * one — migration 054 made committees and teams rows, so «لجنة الإعلام» is now
- * available where only the word «group» used to be. Anything else still falls
- * back to the kind: projects have no table yet (migration 046), so there is
- * nothing to join against for them, and a bare UUID on a profile is noise that
- * looks like data.
+ * one — migration 054 made committees and teams rows and migration 055 made
+ * projects rows, so «لجنة الإعلام» and «مسارك» are both available where only
+ * the words «group» and «project» used to be. Anything else still falls back to
+ * the kind: an activity has no list passed to this page, and a bare UUID on a
+ * profile is noise that looks like data.
  */
 function entityOf(role: VolunteerRole, names: Map<string, string>): string | null {
   const entity = role.entity;
@@ -161,8 +161,8 @@ export function VolunteerRoles({
   archived,
   titleSuggestions,
   kindSuggestions,
-  groupChoices,
-  groupText,
+  entityChoices,
+  entityText,
   canManage,
   t,
 }: {
@@ -174,18 +174,19 @@ export function VolunteerRoles({
   titleSuggestions: { titleAr: string; titleEn: string }[];
   kindSuggestions: string[];
   /**
-   * The committees and teams that have rows, with their names already in this
-   * page's language. Offered by the form BESIDE the free-text box, never in
-   * place of it, and used here to print a linked role's entity as a name.
+   * The committees, teams and projects that have rows, with their names already
+   * in this page's language. Offered by the form BESIDE the free-text box, never
+   * in place of it, and used here to print a linked role's entity as a name.
    */
-  groupChoices: GroupChoice[];
-  groupText: OrgGroupStrings['roleForm'];
+  entityChoices: EntityChoice[];
+  entityText: ProjectAdminStrings['roleForm'];
   canManage: boolean;
   t: VolunteerRoleStrings;
 }) {
   /* Built once for the whole list rather than searched per row: a volunteer
-   * with nine roles would otherwise scan the group list nine times. */
-  const groupNames = new Map(groupChoices.map((choice) => [choice.id, choice.label]));
+   * with nine roles would otherwise scan the list nine times. Ids from the two
+   * tables share one map safely because they are UUIDs. */
+  const entityNames = new Map(entityChoices.map((choice) => [choice.id, choice.label]));
 
   return (
     <section className="mt-10">
@@ -204,8 +205,8 @@ export function VolunteerRoles({
               userId={userId}
               titleSuggestions={titleSuggestions}
               kindSuggestions={kindSuggestions}
-              groupChoices={groupChoices}
-              groupText={groupText}
+              entityChoices={entityChoices}
+              entityText={entityText}
               t={t}
             />
           </div>
@@ -221,7 +222,7 @@ export function VolunteerRoles({
       ) : (
         <ol className="mt-5 space-y-4">
           {roles.map((role) => {
-            const attachedTo = entityOf(role, groupNames);
+            const attachedTo = entityOf(role, entityNames);
             return (
             <li
               key={role.id}
@@ -313,8 +314,8 @@ export function VolunteerRoles({
                       role={toFormValues(role)}
                       titleSuggestions={titleSuggestions}
                       kindSuggestions={kindSuggestions}
-                      groupChoices={groupChoices}
-                      groupText={groupText}
+                      entityChoices={entityChoices}
+                      entityText={entityText}
                       t={t}
                     />
                   </Disclosure>

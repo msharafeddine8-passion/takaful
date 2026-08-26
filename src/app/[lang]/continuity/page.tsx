@@ -14,6 +14,9 @@ import {
 } from '@/lib/continuity';
 import { achievementByCode } from '@/lib/achievements';
 import { formatNumber } from '@/lib/format';
+import { publicRoleTitles } from '@/lib/continuity-roles';
+import { volunteerRoleStrings } from '@/lib/dictionaries/volunteer-roles';
+import { RoleChips } from '@/components/RoleChips';
 
 /**
  * صنّاع الاستمرارية — a page of thanks.
@@ -36,6 +39,15 @@ import { formatNumber } from '@/lib/format';
  * profile page this renders its empty state — which explains that, rather than
  * looking broken. Nothing on this page decides visibility for itself; every
  * field reads a flag consentFor set.
+ *
+ * ROLES ARE THE ONE THING ON THIS CARD THAT CONSENTFOR DOES NOT DECIDE, and
+ * that is a second permission rather than an exception being carved out. A role
+ * carries a `visibility` column of its own, so being nameable here and having a
+ * particular responsibility published are two separate answers and BOTH have to
+ * be yes. lib/continuity-roles.ts resolves the pair — one function, three gates
+ * written out in the order they are applied, including the minor exclusion that
+ * the rest of this card gets for free from publicIdentity() and that roles do
+ * not. What reaches this file is a Map of id to plain strings.
  */
 
 export async function generateMetadata(
@@ -74,7 +86,29 @@ export default async function ContinuityPage(props: PageProps<'/[lang]/continuit
   // One clock reading for the whole page. beirutToday, not the server's own
   // date: whether somebody is still seventeen is decided by the calendar the
   // association lives in, and the server runs in GMT.
-  const roll = buildRoll(await continuityRows(), lang, beirutToday());
+  const today = beirutToday();
+  const rows = await continuityRows();
+  const roll = buildRoll(rows, lang, today);
+
+  /*
+   * The chips beside the badges, for the people the roll already kept.
+   *
+   * The set of ids is passed in rather than the rows being asked again: it IS
+   * the answer publicIdentity() gave through consentFor(), and re-deriving it
+   * here would be a second opinion about who may be named. `today` is the same
+   * reading the roll was built with, so one render cannot judge two people by
+   * two calendars — which is what decides who is a child.
+   *
+   * The three gates and the reason for each are in lib/continuity-roles.ts.
+   * Nothing about them is restated here, on purpose: a rule written in two
+   * places is a rule that gets corrected in one.
+   */
+  const roleTitles = await publicRoleTitles(
+    rows,
+    new Set(roll.map((person) => person.id)),
+    lang,
+    today,
+  );
 
   /*
    * The menus are built from the roll, not from the whole badge holding.
@@ -171,7 +205,16 @@ export default async function ContinuityPage(props: PageProps<'/[lang]/continuit
               unordered markup holding unplaced people. */}
           {shown.map((person) => (
             <li key={person.id}>
-              <PersonCard person={person} lang={lang} t={t} />
+              {/* `?? []` is the whole of the withholding on this line: somebody
+                  with no public role, somebody whose roles are marked for
+                  volunteers only, and somebody the minor rule protected are all
+                  simply not in the Map, and the card cannot tell them apart. */}
+              <PersonCard
+                person={person}
+                roles={roleTitles.get(person.id) ?? []}
+                lang={lang}
+                t={t}
+              />
             </li>
           ))}
         </ul>
@@ -241,9 +284,21 @@ function Field({ id, label, children }: { id: string; label: string; children: R
 }
 
 function PersonCard({
-  person, lang, t,
+  person, roles, lang, t,
 }: {
   person: ContinuityPerson;
+  /**
+   * Current, public role titles, already resolved into this page's language and
+   * already through all three gates in lib/continuity-roles.ts. Plain strings
+   * and never VolunteerRole rows — a description, an entity id and the role's
+   * own visibility column have no business in a public template.
+   *
+   * Held as a prop rather than on ContinuityPerson because that type is an
+   * allowlist with a probe behind it: scripts/probe-continuity.mts asserts the
+   * exact key set toPublicPerson returns, and quietly widening it is how a
+   * field nobody meant to publish ends up published.
+   */
+  roles: readonly string[];
   lang: Locale;
   t: ContinuityStrings;
 }) {
@@ -305,20 +360,41 @@ function PersonCard({
         <Fact label={t.certificates} value={formatNumber(person.certificates, lang)} />
       )}
 
-      {badges.length > 0 && (
-        <div className="mt-4 border-t border-line pt-3.5">
-          <p className="text-[0.78rem] font-extrabold tracking-[0.08em] text-ink-3">{t.badges}</p>
-          <ul className="mt-2 flex list-none flex-wrap gap-1.5">
-            {badges.map((def) => (
-              <li
-                key={def.code}
-                className="inline-flex items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-1 text-[0.78rem] font-bold ring-1 ring-line"
-              >
-                <span aria-hidden>{def.icon}</span>
-                {def.title[lang]}
-              </li>
-            ))}
-          </ul>
+      {/*
+        * The roles and the badges, inside ONE rule and not two.
+        *
+        * The client asked for the positions «next to the badges», and a second
+        * bordered block underneath the first is not next to anything — it is a
+        * separate feature sharing a card. Sharing the divider and the vertical
+        * rhythm is what makes the two read as one answer to "what is this
+        * person": what they have been given, and what they have earned.
+        *
+        * The roles come first. A badge is a figure the engine reached; a role
+        * is a responsibility a person was handed, and it is the thing the
+        * association would say about somebody out loud.
+        */}
+      {(roles.length > 0 || badges.length > 0) && (
+        <div className="mt-4 space-y-3.5 border-t border-line pt-3.5">
+          <RoleChips titles={roles} heading={volunteerRoleStrings(lang).publicHeading} />
+
+          {badges.length > 0 && (
+            <div>
+              <p className="text-[0.78rem] font-extrabold tracking-[0.08em] text-ink-3">
+                {t.badges}
+              </p>
+              <ul className="mt-2 flex list-none flex-wrap gap-1.5">
+                {badges.map((def) => (
+                  <li
+                    key={def.code}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-1 text-[0.78rem] font-bold ring-1 ring-line"
+                  >
+                    <span aria-hidden>{def.icon}</span>
+                    {def.title[lang]}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </article>

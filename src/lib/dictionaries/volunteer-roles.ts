@@ -128,6 +128,18 @@ export type VolunteerRoleStrings = {
   entityNameLabel: string;
   entityNameHint: string;
   entityLinkedNote: string;
+  /**
+   * The one `<summary>` on the form, and the reason the form is now four boxes.
+   *
+   * The client looked at twelve fields at once and said the feature was too
+   * complicated. Nothing was removed to answer that — every field still posts
+   * under the same name and the actions read the identical FormData — but
+   * eleven of them now sit behind this word. It is phrased as an offer and not
+   * as a warning: «تفاصيل إضافية» rather than «حقول متقدّمة», because an
+   * administrator who reads "advanced" decides the box is not for them.
+   */
+  moreDetail: string;
+  moreDetailHint: string;
   startLabel: string;
   endLabel: string;
   precisionLabel: string;
@@ -170,6 +182,12 @@ export type VolunteerRoleStrings = {
    */
   mine: {
     kicker: string;
+    /**
+     * The label in the account navigation, deliberately shorter than
+     * pageTitle. A heading can explain itself; a label in a phone's bottom bar
+     * has room for about two words.
+     */
+    navLabel: string;
     // ---- the dashboard panel, which shows CURRENT roles only
     panelTitle: string;
     panelLede: string;
@@ -261,6 +279,9 @@ export const volunteerRolesAr: VolunteerRoleStrings = {
   entityNameLabel: 'الجهة المرتبط بها — اختياري',
   entityNameHint: 'اسم اللجنة أو المشروع أو الفريق كما يُعرف. اتركه فارغاً إن لم يكن مرتبطاً بشيء.',
   entityLinkedNote: 'هذا السطر مرتبط بسجلّ قائم في المنصّة، ولا يُحرَّر اسمه من هنا.',
+  moreDetail: 'تفاصيل إضافية (اختياري)',
+  moreDetailHint:
+    'لا شيء ممّا في الداخل مطلوب. اسم المنصب وتاريخاه يكفيان لتسجيله، وما يبقى فارغاً لا يظهر على الصفحة.',
   startLabel: 'تاريخ البداية',
   endLabel: 'تاريخ الانتهاء',
   precisionLabel: 'ما تعرفه من التاريخ',
@@ -304,6 +325,7 @@ export const volunteerRolesAr: VolunteerRoleStrings = {
 
   mine: {
     kicker: 'سجلّي في الجمعية',
+    navLabel: 'مناصبي',
 
     panelTitle: 'مهامي ومناصبي',
     panelLede: 'ما تشغله الآن داخل الجمعية.',
@@ -394,6 +416,9 @@ export const volunteerRolesEn: VolunteerRoleStrings = {
   entityNameLabel: 'What it was attached to — optional',
   entityNameHint: 'The name of the committee, project or team as it is known. Leave it empty if it was attached to nothing.',
   entityLinkedNote: 'This line points at a record held in the platform, so its name is not edited here.',
+  moreDetail: 'More detail (optional)',
+  moreDetailHint:
+    'Nothing inside is required. A title and its two dates are enough to record a role, and whatever is left empty does not appear on the page.',
   startLabel: 'Start date',
   endLabel: 'End date',
   precisionLabel: 'How much of the date is known',
@@ -437,6 +462,7 @@ export const volunteerRolesEn: VolunteerRoleStrings = {
 
   mine: {
     kicker: 'My record',
+    navLabel: 'My roles',
 
     panelTitle: 'My roles and responsibilities',
     panelLede: 'What you hold inside Takaful right now.',

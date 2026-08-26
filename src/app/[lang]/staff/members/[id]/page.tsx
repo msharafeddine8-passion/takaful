@@ -32,7 +32,8 @@ import {
 } from '@/lib/volunteer-roles';
 import { VolunteerRoles, type ArchivedRole } from '@/components/staff/VolunteerRoles';
 import { groupName, groups } from '@/lib/org-groups';
-import { orgGroups } from '@/lib/dictionaries/org-groups';
+import { allProjects, projectName } from '@/lib/projects';
+import { projectsAdmin } from '@/lib/dictionaries/projects-admin';
 import { adminProfile } from '@/lib/dictionaries/admin-profile';
 import { notesAbout } from '@/lib/admin-notes';
 import { fieldDefs, valuesFor } from '@/lib/profile-fields';
@@ -151,7 +152,7 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
    * second time. archived_at is a TIMESTAMPTZ, so it takes the Beirut
    * correction; started_on and ended_on are DATEs and must never be given one.
    */
-  const [roleTimeline, titleSuggestions, kindRows, archivedRows, liveGroups] = await Promise.all([
+  const [roleTimeline, titleSuggestions, kindRows, archivedRows, liveGroups, liveProjects] = await Promise.all([
     rolesFor(id, viewerOf(user)),
     roleTitleSuggestions('', 30),
     query<{ role_type: string }>(
@@ -180,14 +181,40 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
      * branch when the list cannot represent what a role points at.
      */
     groups({ includeInactive: true }),
+    /*
+     * And the projects, since migration 055 made them rows too. Same rule, same
+     * reason: offered BESIDE the free-text box and never in place of it.
+     *
+     * Unpublished projects are included on purpose — a project not yet on the
+     * public site is still a project somebody is running, and refusing to record
+     * that until it launches is exactly the developer-shaped delay this feature
+     * exists to remove. Archived ones are left out (the default), because a role
+     * should not be newly attached to a row that has been withdrawn.
+     */
+    allProjects(),
   ]);
 
-  /* Names resolved here, in this page's language, so that nothing from the
-   * 'server-only' org-groups module reaches the client component below. */
-  const groupChoices = liveGroups.map((group) => ({
-    id: group.id,
-    label: groupName(group, lang),
-  }));
+  /*
+   * Names resolved here, in this page's language, so that nothing from the
+   * 'server-only' org-groups and projects modules reaches the client component
+   * below. `kind` is what the role's entity_kind will be written as, and
+   * `section` is the <optgroup> heading — the picker is one select with two
+   * headings, because a role has one entity.
+   */
+  const entityChoices = [
+    ...liveGroups.map((group) => ({
+      kind: 'group',
+      id: group.id,
+      label: groupName(group, lang),
+      section: projectsAdmin(lang).roleForm.groupsOptgroup,
+    })),
+    ...liveProjects.map((project) => ({
+      kind: 'project',
+      id: project.id,
+      label: projectName(project, lang),
+      section: projectsAdmin(lang).roleForm.projectsOptgroup,
+    })),
+  ];
 
   const archivedRoles: ArchivedRole[] = (
     await Promise.all(
@@ -590,8 +617,8 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
           archived={archivedRoles}
           titleSuggestions={titleSuggestions}
           kindSuggestions={kindRows.map((r) => r.role_type)}
-          groupChoices={groupChoices}
-          groupText={orgGroups(lang).roleForm}
+          entityChoices={entityChoices}
+          entityText={projectsAdmin(lang).roleForm}
           canManage={can(user, 'members.manage')}
           t={volunteerRoleStrings(lang)}
         />

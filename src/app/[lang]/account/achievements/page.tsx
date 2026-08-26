@@ -21,6 +21,32 @@ import {
   nextUp,
   type AchievementKind,
 } from '@/lib/achievements';
+import { rolesFor, viewerOf } from '@/lib/volunteer-roles';
+import { roleTitle } from '@/lib/volunteer-role-view';
+import { volunteerRoleStrings } from '@/lib/dictionaries/volunteer-roles';
+import { RoleChips } from '@/components/RoleChips';
+
+/**
+ * The badge wall, and — since the client asked for it — what the volunteer
+ * currently IS, in the same shapes, at the top of it.
+ *
+ * A role is not an achievement and must never become one: nothing recomputes
+ * it, nothing thresholds it, and lib/achievements.ts knows nothing about the
+ * roles table. What the two share is the question a volunteer opens this page
+ * to ask — "what does the association hold about me?" — and answering half of
+ * it here and the other half on a page they have to go and find is how the
+ * roles feature ended up feeling like a separate product.
+ *
+ * The chips go ABOVE the badge grid rather than under it. A responsibility
+ * somebody was handed outranks a figure an engine reached, and the first thing
+ * on the page should be the thing the association would say about them out
+ * loud.
+ *
+ * viewerOf(user) and never ANONYMOUS: this is the reader's own record, so they
+ * get the volunteer tier — the same answer /account/roles gives, from the same
+ * function, so the two screens cannot disagree about which of their roles they
+ * are allowed to know about.
+ */
 
 export async function generateMetadata(
   props: PageProps<'/[lang]/account/achievements'>,
@@ -67,10 +93,20 @@ export default async function AchievementsPage(
    */
   await recomputeAchievements(user.id).catch(() => {});
 
-  const [history, standing] = await Promise.all([
+  const [history, standing, roles] = await Promise.all([
     achievementHistory(user.id),
     standingFor(user.id),
+    rolesFor(user.id, viewerOf(user)),
   ]);
+
+  /* Current only. What somebody held before is a timeline and belongs on the
+     page that is one — a row of chips cannot say «من ٢٠٢١ حتى ٢٠٢٣», and a past
+     role rendered without its dates is a claim about the present. `filter` and
+     never `sort`: rolesFor already returned current first. */
+  const roleNames = roles
+    .filter((role) => role.isCurrent)
+    .map((role) => roleTitle(role, lang));
+  const roleText = volunteerRoleStrings(lang);
 
   const live = history.filter((a) => a.revoked_at === null);
   const withdrawn = history.filter((a) => a.revoked_at !== null);
@@ -85,6 +121,15 @@ export default async function AchievementsPage(
           {t.title}
         </h1>
         <p className="mt-3 max-w-[60ch] text-[1.02rem] leading-relaxed text-ink-2">{t.lede}</p>
+
+        {/* Renders nothing at all when there is nothing held — see RoleChips.
+            Most volunteers hold no role, and «لا مناصب» above a wall of badges
+            would mark them rather than inform them. */}
+        <RoleChips
+          titles={roleNames}
+          heading={roleText.mine.currentHeading}
+          className="mt-6"
+        />
 
         {live.length === 0 ? (
           <div className="mt-8">

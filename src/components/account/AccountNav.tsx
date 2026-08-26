@@ -14,6 +14,7 @@ import type { Dictionary } from '@/lib/dictionaries';
  * import along with the module.
  */
 import { passportStrings } from '@/lib/dictionaries/passport';
+import { volunteerRoleStrings } from '@/lib/dictionaries/volunteer-roles';
 
 /**
  * Getting around the account, without a wall of identical buttons.
@@ -36,6 +37,7 @@ import { passportStrings } from '@/lib/dictionaries/passport';
 export type NavKey =
   | 'dashboard' | 'journey' | 'learning' | 'activities' | 'hours'
   | 'achievements' | 'leaderboard' | 'certificates' | 'card' | 'passport'
+  | 'roles'
   | 'notifications' | 'profile' | 'safeguarding';
 
 type Item = { key: NavKey; href: string; label: string };
@@ -64,8 +66,21 @@ export function accountNav(lang: Locale, dict: Dictionary): {
   return {
     groups: [
       {
+        /*
+         * Roles belong here and not under what somebody has earned.
+         *
+         * A certificate is a thing you were given; a role is a thing you are
+         * being trusted with, and "where I stand" is the question it answers.
+         * It shipped reachable only from a panel on the dashboard, which meant
+         * the one page telling a volunteer what the association has asked of
+         * them could not be found from anywhere else.
+         */
         title: n.groupWhereIStand,
-        items: [dashboard, journey],
+        items: [
+          dashboard,
+          journey,
+          { key: 'roles', href: at('/roles'), label: volunteerRoleStrings(lang).mine.navLabel },
+        ],
       },
       {
         title: n.groupWhatIDo,
