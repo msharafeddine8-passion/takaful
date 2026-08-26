@@ -22,6 +22,13 @@ export type RecognitionAdminStrings = {
   recomputeAll: string;
   recomputeAllHint: string;
   preview: string;
+  pointsTitle: string;
+  pointsLede: string;
+  pointsPreview: string;
+  pointsApply: string;
+  pointsSummary: string;
+  pointsNothing: string;
+  pointsMore: string;
   previewHint: string;
   previewSummary: string;
   previewNothing: string;
@@ -84,6 +91,17 @@ export const recognitionAdminAr: RecognitionAdminStrings = {
   recomputeAll: 'أعد الاحتساب للجميع',
   recomputeAllHint: 'يمرّ على كل الحسابات واحداً واحداً. قد يستغرق دقيقة.',
   preview: 'اعرض ما سيتغيّر أولاً',
+
+  pointsTitle: 'إعادة احتساب النقاط',
+  pointsLede:
+    'النقاط تُمنح لحظة وقوع ما استحقّها، وهذا يعني أن ما لم تشهده المنصّة لا يترك أثراً: '
+    + 'ساعات أُدخلت من دفتر ورقي، أو سجلّ حضور مُلئ بعد أسابيع. هذا يسدّ تلك الفجوة وحدها. '
+    + 'لا يسحب نقطة أبداً — السحب تصحيح يوقّعه شخص، لا كنسة تُنقص رصيداً بلا تفسير.',
+  pointsPreview: 'اعرض ما سيُضاف',
+  pointsApply: 'نفّذ الاحتساب',
+  pointsSummary: '{people} شخصاً · {rows} سطراً · {points} نقطة',
+  pointsNothing: 'السجلّ مطابق أصلاً. لا شيء ليُضاف.',
+  pointsMore: 'و{n} سطراً غيرها لم تُعرض هنا.',
   previewHint:
     'يقرأ ما يقرأه الاحتساب ويطبّق المقارنة نفسها، ولا يكتب شيئاً: لا سجلّ ولا إشعار '
     + 'ولا أثر في التدقيق. اعرضه قبل أن تشغّل الاحتساب على الجميع.',
@@ -200,6 +218,19 @@ export const recognitionAdminEn: RecognitionAdminStrings = {
   recomputeAll: 'Recompute everybody',
   recomputeAllHint: 'Walks every account in turn. May take a minute.',
   preview: 'Show what would change',
+
+  pointsTitle: 'Recompute points',
+  pointsLede:
+    'Points are granted at the moment the thing that earned them happens, which means '
+    + 'anything the platform did not witness leaves no trace — hours entered from a paper '
+    + 'ledger, a register filled in weeks late. This closes that gap and nothing else. It '
+    + 'never takes a point away: that is a correction somebody signs, not a sweep that '
+    + 'quietly lowers a total with nothing to explain it.',
+  pointsPreview: 'Show what would be added',
+  pointsApply: 'Run the recompute',
+  pointsSummary: '{people} people · {rows} rows · {points} points',
+  pointsNothing: 'The ledger already matches. There is nothing to add.',
+  pointsMore: 'and {n} more rows not listed here.',
   previewHint:
     'Reads what the recompute reads and applies the same comparison, and writes nothing: '
     + 'no row, no notification, no audit line. Run it before recomputing everybody.',

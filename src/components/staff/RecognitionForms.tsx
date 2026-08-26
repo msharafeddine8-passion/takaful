@@ -4,8 +4,8 @@ import { useActionState, useState } from 'react';
 import {
   recomputeOneAction, recomputeAllAction, previewAllAction,
   grantBadgesAction, withdrawBadgesAction, retireBadgeAction, liftRetirementAction,
-  findPeopleAction,
-  type AdminState, type PreviewState, type SearchState, type Found,
+  findPeopleAction, previewPointsAction, applyPointsAction,
+  type AdminState, type PreviewState, type SearchState, type Found, type PointsState,
 } from '@/lib/actions/recognition-admin';
 import { MIN_REASON } from '@/lib/recognition-check';
 import type { RecognitionAdminStrings } from '@/lib/dictionaries/recognition-admin';
@@ -36,6 +36,7 @@ const field =
 const empty: AdminState = {};
 const noPreview: PreviewState = {};
 const noSearch: SearchState = {};
+const noPoints: PointsState = {};
 
 /**
  * One badge as the picker needs it.
@@ -177,6 +178,80 @@ function PreviewList({ title, rows, total, t }: {
         <p className="mt-2 text-[0.82rem] text-ink-3">
           {t.previewMore.replace('{n}', String(total - rows.length))}
         </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * The points ledger, previewed and then written.
+ *
+ * Two separate forms with two separate states rather than one with a mode.
+ * Pressing "show me" and pressing "do it" are different acts, and a single
+ * control that changes meaning after the first press is how somebody applies
+ * something they meant to look at.
+ */
+export function RecomputePoints({ lang, t }: { lang: Locale; t: RecognitionAdminStrings }) {
+  const [preview, previewForm, previewing] = useActionState(previewPointsAction, noPoints);
+  const [applied, applyForm, applying] = useActionState(applyPointsAction, noPoints);
+  const plan = preview.plan;
+  const shown = applied.error || applied.ok ? applied : preview;
+
+  return (
+    <div className="mt-5 space-y-4">
+      {shown.error && (
+        <p role="alert" className="rounded-xl border-2 border-danger bg-danger/10 p-4 text-[0.92rem] font-bold">
+          {t.errors[shown.error] ?? t.errors.unavailable}
+        </p>
+      )}
+      {applied.ok && (
+        <p role="status" className="rounded-xl border-2 border-ok bg-ok/10 p-4 text-[0.92rem] font-bold">
+          {t.done} — <span dir="ltr">{applied.ok}</span>
+        </p>
+      )}
+
+      <form action={previewForm}>
+        <input type="hidden" name="lang" value={lang} />
+        <Submit pending={previewing} label={t.pointsPreview} t={t} />
+      </form>
+
+      {plan && (
+        <div role="status" className="rounded-2xl border border-line bg-surface-2 p-5">
+          <p className="text-[0.95rem] font-extrabold">
+            {t.pointsSummary
+              .replace('{people}', String(plan.people))
+              .replace('{rows}', String(plan.rows))
+              .replace('{points}', String(plan.points))}
+          </p>
+          {plan.rows === 0 ? (
+            <p className="mt-2 text-[0.9rem] text-ink-2">{t.pointsNothing}</p>
+          ) : (
+            <>
+              <ul className="mt-3 space-y-1 text-[0.88rem]">
+                {plan.sample.map((row) => (
+                  <li key={row.key}>
+                    {row.name}
+                    <span className="text-ink-3" dir="ltr">
+                      {' '}· {row.period} · {row.kind} · +{row.points}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {/* Said out loud. The totals above are the whole figure; this
+                  list is not, and a preview read as complete when it is not is
+                  the one mistake a preview cannot afford. */}
+              {plan.rows > plan.sample.length && (
+                <p className="mt-2 text-[0.82rem] text-ink-3">
+                  {t.pointsMore.replace('{n}', String(plan.rows - plan.sample.length))}
+                </p>
+              )}
+              <form action={applyForm} className="mt-4">
+                <input type="hidden" name="lang" value={lang} />
+                <Submit pending={applying} label={t.pointsApply} t={t} />
+              </form>
+            </>
+          )}
+        </div>
       )}
     </div>
   );

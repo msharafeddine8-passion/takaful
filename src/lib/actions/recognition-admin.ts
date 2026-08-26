@@ -9,6 +9,7 @@ import { notify } from '@/lib/notify';
 import { recomputeAchievements, ACHIEVEMENTS } from '@/lib/achievements';
 import { checkGrant, checkWithdraw, codesFrom, MIN_REASON } from '@/lib/recognition-check';
 import { previewRecomputeAll, type Preview } from '@/lib/recognition-overview';
+import { planPoints, applyPoints, type PointsPlan } from '@/lib/points-recompute';
 
 /**
  * Running the recognition system, from the staff side.
@@ -162,6 +163,57 @@ export async function previewAllAction(
 }
 
 export type PreviewState = { error?: string; preview?: Preview };
+
+export type PointsState = { error?: string; ok?: string; plan?: PointsPlan };
+
+/**
+ * What recomputing the points ledger would write, without writing it.
+ *
+ * A separate pair of buttons from the badge recompute, because they are not
+ * the same operation and conflating them would hide that. Badges are derived
+ * and can be withdrawn as well as granted; points are a ledger that is only
+ * ever added to, and a point taken back is a correction row somebody signs.
+ */
+export async function previewPointsAction(
+  _prev: PointsState,
+  _formData: FormData,
+): Promise<PointsState> {
+  if (!isDbConfigured()) return { error: 'unavailable' };
+  await requireCapability('members.manage');
+  /* No audit line. A preview writes nothing, and a log full of "somebody
+   * looked" is a log nobody reads. */
+  return { plan: await planPoints() };
+}
+
+/**
+ * Writes the points people are owed for work the platform did not witness.
+ *
+ * Every grant elsewhere happens as a side effect of the event that earned it,
+ * which is right and cheap — and it means hours entered from a paper ledger, or
+ * a register filled in weeks late, move the figures the leaderboard reads and
+ * award nothing. This closes that gap and nothing else.
+ */
+export async function applyPointsAction(
+  _prev: PointsState,
+  formData: FormData,
+): Promise<PointsState> {
+  const lang = localeOf(formData);
+  if (!isDbConfigured()) return { error: 'unavailable' };
+
+  const actor = await requireCapability('members.manage');
+  const { rows, points } = await applyPoints();
+
+  await audit({
+    actorId: actor.id,
+    action: 'points.recomputed',
+    targetType: 'system',
+    targetId: 'all',
+    newValue: { rows, points },
+  });
+
+  revalidatePath(`/${lang}/staff/recognition`);
+  return { ok: `${rows} · +${points}` };
+}
 
 /**
  * Taking a badge out of circulation.

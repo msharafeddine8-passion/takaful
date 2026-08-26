@@ -14,7 +14,8 @@ import { formatDate } from '@/lib/when';
 import { VOLUNTEER_STANDING } from '@/lib/account-state';
 import { recognitionAdmin } from '@/lib/dictionaries/recognition-admin';
 import {
-  RecomputeOne, RecomputeAll, PreviewAll, GrantBadge, WithdrawBadge, BadgeCirculation,
+  RecomputeOne, RecomputeAll, PreviewAll, RecomputePoints,
+  GrantBadge, WithdrawBadge, BadgeCirculation,
 } from '@/components/staff/RecognitionForms';
 
 /**
@@ -137,6 +138,14 @@ export default async function StaffRecognitionPage(
               <RecomputeAll lang={lang} t={t} />
             </div>
           </div>
+        </section>
+
+        <section className="mt-6 rounded-2xl border border-line bg-surface p-6">
+          <h2 className="text-[1.05rem] font-extrabold">{t.pointsTitle}</h2>
+          <p className="mt-2 max-w-[62ch] text-[0.92rem] leading-relaxed text-ink-2">
+            {t.pointsLede}
+          </p>
+          <RecomputePoints lang={lang} t={t} />
         </section>
 
         <section className="mt-6 rounded-2xl border border-line bg-surface p-6">

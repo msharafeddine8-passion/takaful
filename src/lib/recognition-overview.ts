@@ -1,6 +1,7 @@
 import 'server-only';
 import { query } from './db';
 import { ACHIEVEMENTS, standingFor, type AchievementDef } from './achievements';
+import { inCirculation, retiredCodesFrom } from './badge-circulation';
 
 /**
  * What the recognition panel shows before anybody presses anything.
@@ -67,9 +68,16 @@ export async function badgeStandings(): Promise<BadgeStanding[]> {
  *
  * The association's own rule for this system, written into the brief: never run
  * a backfill against production before showing a preview. This is that preview.
- * It reads exactly what the recompute reads and applies exactly the same
- * comparison, and it writes nothing at all — no INSERT, no UPDATE, no
- * notification, no audit line. A preview that leaves a trace is not a preview.
+ * It writes nothing at all — no INSERT, no UPDATE, no notification, no audit
+ * line. A preview that leaves a trace is not a preview.
+ *
+ * It must apply the SAME three filters recomputeAchievements applies —
+ * retirement, hand-granted badges, and the threshold comparison — and for a
+ * while it did not. It iterated the raw catalogue, so it reported withdrawals
+ * for badges a person had deliberately granted and changes for badges that had
+ * been taken out of circulation. An audit found it. The rule is that any filter
+ * added to the engine has to be added here in the same change, because this is
+ * the screen somebody approves the engine from.
  *
  * Same cost as the real thing, which is why it is a button and not something
  * the page does on load.
@@ -90,19 +98,42 @@ export async function previewRecomputeAll(sample = 40): Promise<Preview> {
   const wouldEarn: Array<{ name: string; code: string }> = [];
   const wouldWithdraw: Array<{ name: string; code: string }> = [];
 
+  /*
+   * Read once, exactly as the engine reads it. This was missing and the
+   * preview was lying because of it: recomputeAchievements iterates
+   * inCirculation(ACHIEVEMENTS, retired), so a retired badge is skipped
+   * entirely — while this iterated the raw catalogue and cheerfully reported
+   * grants and withdrawals the engine would never perform.
+   *
+   * A preview that does not match the thing it previews is worse than no
+   * preview, because the association's rule is to look before backfilling and
+   * this is what they would have been looking at.
+   */
+  const retired = retiredCodesFrom(
+    (
+      await query<{ code: string; lifted_at: Date | null }>(
+        'SELECT code, lifted_at FROM badge_retirements',
+      )
+    ),
+  );
+  const inPlay = inCirculation(ACHIEVEMENTS, retired);
+
   for (const person of people) {
     const standing = await standingFor(person.id);
-    const held = new Map(
-      (
-        await query<{ code: string; revoked_at: Date | null }>(
-          'SELECT code, revoked_at FROM achievements WHERE user_id = $1',
-          [person.id],
-        )
-      ).map((r) => [r.code, r.revoked_at]),
+    const rows = await query<{ code: string; revoked_at: Date | null; automatic: boolean }>(
+      'SELECT code, revoked_at, automatic FROM achievements WHERE user_id = $1',
+      [person.id],
+    );
+    const held = new Map(rows.map((r) => [r.code, r.revoked_at]));
+    /* The engine leaves a standing hand-granted badge alone; so must this, or
+     * the preview offers to withdraw somebody's deliberate award. */
+    const byHand = new Set(
+      rows.filter((r) => !r.automatic && r.revoked_at === null).map((r) => r.code),
     );
     const name = person.full_name ?? person.id;
 
-    for (const def of ACHIEVEMENTS) {
+    for (const def of inPlay) {
+      if (byHand.has(def.code)) continue;
       const qualifies = standing[def.kind] >= def.threshold;
       const has = held.has(def.code);
       const isRevoked = has && held.get(def.code) !== null;

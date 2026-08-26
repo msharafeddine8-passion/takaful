@@ -25,6 +25,7 @@
 import {
   POINTS, COMMITMENT_MIN_ACTIVITIES, pointsForMinutes, periodOf,
   isActiveMonth, earnsCommitment, awardsForMonth, awardKey, newAwardsOnly,
+  presentMinutes,
   type Award,
 } from '../src/lib/impact.ts';
 
@@ -168,6 +169,40 @@ console.log('\n7. periods');
   check('periods sort as text in date order',
     ['2026-01', '2025-12', '2026-10'].sort().join() === '2025-12,2026-01,2026-10');
 }
+
+console.log('\ncarried-over hours, and what a month may claim');
+
+/*
+ * A carry-over is years of service recorded against one date, because that is
+ * the only date anybody has. In this database two entries of a hundred hours
+ * each sit in January 2024.
+ *
+ * They count fully towards hours points — the service happened, and the
+ * association entered it deliberately. They must not count towards the awards
+ * that are about a MONTH. "Active in January 2024", awarded off a filing
+ * decision, is a claim about a person the data does not support, and the same
+ * lump would go on to earn a commitment award for a month in which nothing was
+ * registered and nothing attended.
+ */
+check('hours points count every minute, carried or not', pointsForMinutes(6000) === 1000);
+check('but a month made only of carried hours claims no presence',
+  presentMinutes(6000, 6000) === 0);
+check('so it is not an active month',
+  !isActiveMonth({ minutes: presentMinutes(6000, 6000), attended: 0, registered: 0 }));
+check('and it earns no commitment award',
+  !earnsCommitment({ minutes: presentMinutes(6000, 6000), attended: 0, registered: 0 }));
+
+/* A month that mixes both keeps the part actually worked in it. */
+check('a mixed month counts only what was worked in it', presentMinutes(6600, 6000) === 600);
+check('and that is enough to make it active',
+  isActiveMonth({ minutes: presentMinutes(6600, 6000), attended: 0, registered: 0 }));
+
+/* An attendance stands on its own: somebody who turned up and logged no hours
+ * was present, whatever the minutes say. */
+check('an attendance makes a month active with no minutes at all',
+  isActiveMonth({ minutes: presentMinutes(6000, 6000), attended: 1, registered: 1 }));
+
+check('nothing ever goes negative', presentMinutes(60, 600) === 0);
 
 /* ------------------------------------------------------------------ */
 if (holes.length) {

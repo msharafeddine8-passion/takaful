@@ -77,6 +77,27 @@ export type MonthFacts = {
  * "updated a profile": those are use of a website, and this is meant to
  * recognise volunteering.
  */
+/**
+ * The minutes a month may claim presence for.
+ *
+ * Carried-over hours are a lump: years of service recorded against a single
+ * date because that is the only date anybody has. One entry can be a hundred
+ * hours dated January 2024.
+ *
+ * They count fully towards hours points — service given before the platform
+ * existed is still service, and the association entered it on purpose. They
+ * must not count towards the awards that are about a MONTH: "you were active
+ * in January 2024" and "you kept every commitment you made that month" are
+ * claims about a month somebody worked, and a carry-over is a filing decision
+ * rather than a month.
+ *
+ * Separated out here, rather than left as a subtraction inside the recompute,
+ * so a probe can hold it without a database.
+ */
+export function presentMinutes(totalMinutes: number, carriedMinutes: number): number {
+  return Math.max(0, totalMinutes - carriedMinutes);
+}
+
 export function isActiveMonth(f: MonthFacts): boolean {
   return f.minutes > 0 || f.attended > 0;
 }
