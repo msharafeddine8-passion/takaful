@@ -70,6 +70,27 @@ export type MilestoneStrings = {
     listFinalJoin: string;
   };
   milestones: Record<MilestoneCode, MilestoneCopy>;
+  /**
+   * One message for somebody who crossed several milestones at once.
+   *
+   * The loop that sends these fired once per code, which is right for the
+   * ordinary case — you reach one thing, you are told about that thing. It is
+   * wrong for the case it actually meets most often: a volunteer of several
+   * years opens their account for the first time and the platform, catching up
+   * on everything at once, sends them eleven separate messages in a minute
+   * about work they did in 2022. That is not eleven congratulations, it is
+   * being shouted at by a bookkeeping job.
+   *
+   * `{list}` is filled with the milestone titles, joined with `birthday.listJoin`
+   * and `birthday.listFinalJoin` — the same joins the birthday banner uses,
+   * because Arabic joins a list one way and there is no reason for this file to
+   * hold two answers.
+   */
+  several: {
+    title: string;
+    /** Carries {list}. */
+    body: string;
+  };
   preferences: {
     title: string;
     lede: string;
@@ -94,6 +115,12 @@ export const milestonesAr: MilestoneStrings = {
      * after it with no space, which is why the space sits before it. */
     listJoin: ' و',
     listFinalJoin: ' و',
+  },
+  several: {
+    title: 'محطّات في سجلّك',
+    /* Addressed to somebody who did the work long ago and is only now being
+     * told, so it thanks rather than congratulates a surprise. */
+    body: 'سجّلنا لك: {list}. بعضها عن عمل قديم لم يكن مسجّلاً هنا من قبل، وهذه المرة الأولى التي يظهر فيها.',
   },
   milestones: {
     'first-activity': {
@@ -190,6 +217,10 @@ export const milestonesEn: MilestoneStrings = {
     greetingTitle: 'Today is your birthday 🎂',
     listJoin: ', ',
     listFinalJoin: ' and ',
+  },
+  several: {
+    title: 'Milestones on your record',
+    body: 'Recorded for you: {list}. Some of it is for work from before it was kept here, and this is the first time it has shown.',
   },
   milestones: {
     'first-activity': {

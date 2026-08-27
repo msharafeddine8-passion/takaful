@@ -384,12 +384,13 @@ export async function runMilestones(
       [userId, earned, today],
     );
 
-    const announced: MilestoneCode[] = [];
-    /* Iterated in catalogue order rather than in the order the database
-     * returned them, so somebody who crosses two at once is told about them in
-     * the order they were reached. */
-    for (const code of earned) {
-      if (!rows.some((r) => r.code === code)) continue;
+    /* Catalogue order rather than the order the database returned them, so
+     * somebody who crosses two at once reads them in the order they happened. */
+    const announced = earned.filter((code) => rows.some((r) => r.code === code));
+    if (announced.length === 0) return [];
+
+    if (announced.length === 1) {
+      const code = announced[0];
       const ar = milestoneDictionaries.ar.milestones[code];
       const en = milestoneDictionaries.en.milestones[code];
       await notifyIn(client, {
@@ -401,8 +402,60 @@ export async function runMilestones(
         bodyEn: en.body,
         link: '/account/achievements',
       });
-      announced.push(code);
+      return announced;
     }
+
+    /*
+     * SEVERAL AT ONCE IS ONE MESSAGE, NOT SEVERAL.
+     *
+     * This loop sent one notification per code, which is right when somebody
+     * reaches a thing and is told about that thing. It is wrong for the case it
+     * meets most often: a volunteer of several years opens their account for
+     * the first time, the platform catches up on everything at once, and eleven
+     * separate messages land in a minute about work done in 2022. Measured on
+     * this database — one person was owed exactly eleven.
+     *
+     * That is not eleven congratulations. It is a bookkeeping job shouting.
+     *
+     * The milestones are still each recorded in milestone_events — the row is
+     * the record, the notification is only the telling — so nothing about
+     * somebody's history is collapsed here. Only the announcement is.
+     */
+    /*
+     * A milestone title is written to stand alone — "A first activity", "Ten
+     * hours" — so inlining it mid-sentence gives "and A first certificate",
+     * with a capital in the middle of a clause. Arabic has no such problem and
+     * is left exactly as authored.
+     *
+     * Guarded rather than blanket: only lowered when the second character is
+     * already lower case, so an acronym or a proper noun in a future title
+     * survives intact.
+     */
+    const inline = (title: string): string =>
+      /^[A-Z][a-z]/.test(title) ? title[0].toLowerCase() + title.slice(1) : title;
+
+    const join = (list: string[], t: typeof milestoneDictionaries.ar): string =>
+      list.length <= 1
+        ? (list[0] ?? '')
+        : list.slice(0, -1).join(t.birthday.listJoin) + t.birthday.listFinalJoin + list[list.length - 1];
+
+    const ar = milestoneDictionaries.ar;
+    const en = milestoneDictionaries.en;
+    await notifyIn(client, {
+      userId,
+      kind: 'milestone.reached',
+      titleAr: ar.several.title,
+      titleEn: en.several.title,
+      bodyAr: ar.several.body.replace(
+        '{list}',
+        join(announced.map((c) => ar.milestones[c].title), ar),
+      ),
+      bodyEn: en.several.body.replace(
+        '{list}',
+        join(announced.map((c) => inline(en.milestones[c].title)), en),
+      ),
+      link: '/account/achievements',
+    });
     return announced;
   });
 }
