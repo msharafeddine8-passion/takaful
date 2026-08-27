@@ -142,20 +142,20 @@ export const volunteerLifecycle: CourseContent = {
           },
           options: [
             {
-              ar: '«وقت جزئي مرن يناسب الجداول المزدحمة»',
-              en: '"Flexible part time to fit busy schedules"',
+              ar: '«وقت جزئي مرن يناسب الجداول المزدحمة، ويمكن تعديل الالتزام في أيّ وقت بالتنسيق مع فريق البرنامج»',
+              en: '"Flexible part time to fit busy schedules, and the commitment can be adjusted at any time in coordination with the programme team"',
             },
             {
               ar: '«ست ساعات أسبوعياً: أربع ساعات جلسات أسرية يومَي الثلاثاء والخميس، وساعتان توثيق وإعداد»',
               en: '"Six hours a week: four hours of family sessions on Tuesdays and Thursdays, and two hours of documentation and preparation"',
             },
             {
-              ar: '«حضور منتظم حسب البرنامج الأسبوعي»',
-              en: '"Regular attendance according to the weekly programme"',
+              ar: '«حضور منتظم بحسب البرنامج الأسبوعي المعلن على لوحة المقرّ»',
+              en: '"Regular attendance according to the weekly programme posted on the office board"',
             },
             {
-              ar: '«ثلاث إلى عشر ساعات أسبوعياً تقريباً حسب الحاجة»',
-              en: '"Three to ten hours a week approximately, as needed"',
+              ar: '«ثلاث إلى عشر ساعات أسبوعياً تقريباً بحسب حاجة البرنامج وكثافة الحالات، وتُتّفق الأيام مع المنسّق في مطلع كل شهر»',
+              en: '"Three to ten hours a week approximately, depending on programme need and case load, with the days agreed with the coordinator at the start of each month"',
             },
           ],
           correct: 1,
@@ -259,20 +259,20 @@ export const volunteerLifecycle: CourseContent = {
           },
           options: [
             {
-              ar: 'لا شيء — الأداء الجيّد دليل كافٍ على أنها تسير بشكل صحيح',
-              en: 'Nothing — good performance is sufficient evidence she is on track',
+              ar: 'لا شيء — الأداء الجيّد في المهام الصغيرة دليل كافٍ على أنها تسير بشكل صحيح، وكثرة الأسئلة ليست مقياساً للاندماج',
+              en: 'Nothing — good performance on small tasks is sufficient evidence she is on track, and asking a lot of questions is not a measure of integration',
             },
             {
               ar: 'اجلس معها في لقاء قصير غير رسمي واسألها مباشرة ما الذي فاجأها، وما الذي يبدو مختلفاً عمّا توقّعت، وما الذي تحتاج توضيحاً',
               en: 'Sit with her in a short informal meeting and ask directly what surprised her, what seems different from what she expected, and what needs clarifying',
             },
             {
-              ar: 'أخبر رفيقها أن يبادر بالحديث معها أكثر',
-              en: 'Tell her buddy to initiate more conversation with her',
+              ar: 'أخبر رفيقها المكلَّف بمرافقتها أن يُكثر من الحديث معها في أوقات الاستراحة وأن ينقل إليك ما يلتقطه من ملاحظات عن اندماجها في الفريق',
+              en: 'Tell the buddy assigned to accompany her to talk with her more during breaks and to pass on to you whatever observations he picks up about how she is settling into the team',
             },
             {
-              ar: 'انتظر مراجعة نهاية الشهر الرسمية',
-              en: 'Wait for the formal end-of-month review',
+              ar: 'انتظر مراجعة نهاية الشهر الرسمية، فهي المساحة المخصّصة لهذا النوع من الحديث',
+              en: 'Wait for the formal end-of-month review, since that is the space designated for this kind of conversation',
             },
           ],
           correct: 1,
@@ -348,8 +348,8 @@ export const volunteerLifecycle: CourseContent = {
           },
           options: [
             {
-              ar: 'لا تذكره الآن ما دام لم يُحدث ضرراً فعلياً — ستتدخّل حين يكون هناك أثر ملموس',
-              en: 'Do not raise it now since it has caused no actual harm — you will intervene when there is a tangible effect',
+              ar: 'لا تذكره الآن ما دام لم يُحدث ضرراً فعلياً — ستتدخّل حين يكون هناك أثر ملموس على سير الأنشطة أو على التزام بقية الفريق',
+              en: 'Do not raise it now since it has caused no actual harm — you will intervene when there is a tangible effect on how the activities run or on the rest of the team’s commitment',
             },
             {
               ar: 'اذكره في اللقاء الفردي القريب: «لاحظت تأخّرك في بعض الأوقات — هل ثمة صعوبة في الوصول في الوقت المحدّد؟»',
@@ -360,8 +360,8 @@ export const volunteerLifecycle: CourseContent = {
               en: 'Send him a formal written note about punctuality',
             },
             {
-              ar: 'اذكر الأمر أمام الفريق في الاجتماع القادم كتذكير عامّ للجميع',
-              en: 'Raise the matter before the team at the next meeting as a general reminder to everyone',
+              ar: 'اذكر الأمر أمام الفريق في الاجتماع القادم كتذكير عامّ للجميع بأهمية الالتزام بمواعيد بدء الأنشطة، دون أن تُسمّي أحداً بعينه',
+              en: 'Raise the matter before the team at the next meeting as a general reminder to everyone about the importance of arriving on time for activities, without naming anyone in particular',
             },
           ],
           correct: 1,
@@ -454,20 +454,20 @@ export const volunteerLifecycle: CourseContent = {
           },
           options: [
             {
-              ar: 'تختار من عاينتهم شخصياً وتعرف مجهودهم من تجربتك المباشرة معهم',
-              en: 'You choose those you personally observed and whose effort you know from your direct experience with them',
+              ar: 'تختار من عاينتهم شخصياً خلال الفصل وتعرف مجهودهم من تجربتك المباشرة معهم، فأنت الأقرب إلى العمل اليومي',
+              en: 'You choose those you personally observed through the term and whose effort you know from your direct experience with them, since you are closest to the daily work',
             },
             {
               ar: 'تطلب من كل متطوّع ترشيح زميل مع ذكر سبب محدّد، ثم تُراجع الترشيحات مع المشرفين وفق معايير معلنة مسبقاً لاختيار من يستحقّ',
               en: 'You ask each volunteer to nominate a colleague with a specific reason, then review nominations with supervisors according to pre-announced criteria to select who merits recognition',
             },
             {
-              ar: 'تُكرّم من أتمّ أعلى عدد من ساعات التطوّع فقط لأن ذلك موضوعي',
-              en: 'You recognise whoever completed the highest number of volunteer hours only, because it is objective',
+              ar: 'تُكرّم من أتمّ أعلى عدد من ساعات التطوّع المسجّلة في النظام فقط، لأن الرقم موضوعي ولا يقبل الجدل',
+              en: 'You recognise whoever completed the highest number of logged volunteer hours only, because the number is objective and beyond dispute',
             },
             {
-              ar: 'لا تُكرّم أحداً بالاسم تفادياً للمقارنة وما تُسبّبه من توتّر في الفريق',
-              en: 'You recognise nobody by name to avoid comparison and the team tension it causes',
+              ar: 'لا تُكرّم أحداً بالاسم، وتكتفي بشكر جماعي في اللقاء الختامي وبطاقة موحّدة لكل متطوّع، تفادياً للمقارنة وما تُسبّبه من توتّر داخل الفريق',
+              en: 'You recognise nobody by name, and settle for a collective thank-you at the closing meeting and an identical card for every volunteer, to avoid comparison and the tension it causes inside the team',
             },
           ],
           correct: 1,
@@ -559,20 +559,20 @@ export const volunteerLifecycle: CourseContent = {
           },
           options: [
             {
-              ar: 'تُنهي علاقته فوراً لأن السرية خطّ أحمر لا استثناء له',
-              en: 'End his relationship immediately because confidentiality is a red line with no exceptions',
+              ar: 'تُنهي علاقته فوراً وتُبلغ الأسرة المتضرّرة بأنه لم يعد ضمن الفريق، لأن السرية خطّ أحمر لا يحتمل استثناءً ولا تدرّجاً في العقوبة مهما كانت النيّة',
+              en: 'End his relationship immediately and inform the affected family that he is no longer part of the team, because confidentiality is a red line that admits no exception and no graduated sanction',
             },
             {
-              ar: 'تتجاوز الأمر بهدوء لأنه غير مقصود ولا داعي لرفع التوتّر',
-              en: 'Quietly overlook it because it was unintentional and there is no need to raise tension',
+              ar: 'تتجاوز الأمر بهدوء وتكتفي بتذكير شفهي في نهاية المناوبة، لأنه غير مقصود ولا داعي لرفع التوتّر',
+              en: 'Quietly overlook it and settle for a verbal reminder at the end of the shift, because it was unintentional and there is no need to raise tension',
             },
             {
               ar: 'تُجري محادثة فردية موثّقة تُوضّح فيها ما جرى وأثره والتوقّعات المستقبلية، وتُخضعه لإشراف أوثق في مناطق السرية، وتُوثّق الإنذار في ملفّه',
               en: 'Hold a documented one-to-one clarifying what happened, its effect and future expectations, increase supervision in confidentiality areas, and document the warning in his file',
             },
             {
-              ar: 'تُخبر بقيّة الفريق حتى يكونوا على حذر معه في التعامل',
-              en: 'Tell the rest of the team so they are careful in dealing with him',
+              ar: 'تُخبر بقيّة الفريق بما جرى حتى يكونوا على حذر معه في التعامل مع ملفّات الأسر، وتترك له فرصة تصحيح الأمر بنفسه',
+              en: 'Tell the rest of the team what happened so they are careful with him around family files, and leave him the chance to put it right himself',
             },
           ],
           correct: 2,
@@ -655,16 +655,16 @@ export const volunteerLifecycle: CourseContent = {
           },
           options: [
             {
-              ar: 'إرسال رسالة شكر بالبريد الإلكتروني',
-              en: 'Sending a thank-you message by email',
+              ar: 'إرسال رسالة شكر بالبريد الإلكتروني تُعدّد إنجازاتها خلال الأشهر الستة وتُثني على التزامها تجاه الفريق',
+              en: 'Sending a thank-you message by email that lists her achievements over the six months and praises her commitment to the team',
             },
             {
               ar: 'تسليمها شهادة خبرة موضوعية وإجراء مقابلة توديع وإغلاق ملفّها بالتوثيق الكامل',
               en: 'Delivering an objective experience reference, conducting an exit interview and closing her file with full documentation',
             },
             {
-              ar: 'الإعلان عن نجاح البرنامج على وسائل التواصل الاجتماعي',
-              en: 'Announcing the success of the programme on social media',
+              ar: 'الإعلان عن نجاح البرنامج على وسائل التواصل الاجتماعي مع صورة جماعية للفريق وذكر أسماء المتطوّعين المشاركين',
+              en: 'Announcing the success of the programme on social media with a group photo of the team and the names of the volunteers who took part',
             },
             {
               ar: 'استقطاب متطوّعة بديلة في أقرب وقت',

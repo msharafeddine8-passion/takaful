@@ -842,7 +842,7 @@ export const en: Dictionary = {
       coursesCountOne: '1 course',
       coursesCountTwo: '2 courses',
       coursesCountFew: '{n} courses',
-      levelDoneOf: 'Completed {done} of {total} courses',
+      levelDoneOf: 'Completed {done} of {total}',
       electivesTitle: 'Elective courses',
       electivesLede:
         'Extra courses outside the path levels — not required to complete it, and open to take at any time.',
@@ -927,11 +927,45 @@ export const en: Dictionary = {
       earnedOn: 'Earned on',
       nextTitle: 'Next',
       remainingHours: '{n} to go',
-      remainingCertificates: '{n} more certificates to go',
-      remainingYears: '{n} more years to go',
-      remainingCourses: '{n} more courses',
-      remainingActivities: '{n} more activities',
-      remainingStages: '{n} more stages',
+      /* English inflects twice, not five times, so `two`, `few`, `many` and
+         `other` repeat one sentence. They are written out rather than shared
+         by reference so both locales hold identical key sets — the rule
+         scripts/probe-a11y checks and dictionaries/lms.ts explains. */
+      remainingCertificates: {
+        one: '1 more certificate to go',
+        two: '{n} more certificates to go',
+        few: '{n} more certificates to go',
+        many: '{n} more certificates to go',
+        other: '{n} more certificates to go',
+      },
+      remainingYears: {
+        one: '1 more year to go',
+        two: '{n} more years to go',
+        few: '{n} more years to go',
+        many: '{n} more years to go',
+        other: '{n} more years to go',
+      },
+      remainingCourses: {
+        one: '1 more course',
+        two: '{n} more courses',
+        few: '{n} more courses',
+        many: '{n} more courses',
+        other: '{n} more courses',
+      },
+      remainingActivities: {
+        one: '1 more activity',
+        two: '{n} more activities',
+        few: '{n} more activities',
+        many: '{n} more activities',
+        other: '{n} more activities',
+      },
+      remainingStages: {
+        one: '1 more stage',
+        two: '{n} more stages',
+        few: '{n} more stages',
+        many: '{n} more stages',
+        other: '{n} more stages',
+      },
       revokedNote:
         'This was withdrawn because the figures behind it changed. The record stays — we do not erase what happened.',
       showRevoked: 'Withdrawn',
@@ -958,7 +992,7 @@ export const en: Dictionary = {
       certificate: 'Certificate',
       historyTitle: 'Attempt history',
       ongoing: 'Attempt open',
-      answeredOf: 'You answered {n} questions',
+      answeredOf: 'Questions answered: {n}',
       empty: 'You have not opened a course yet.',
     },
     portal: {
@@ -987,9 +1021,29 @@ export const en: Dictionary = {
       markAllRead: 'Mark all as read',
       unread: 'New',
       justNow: 'just now',
-      minutesAgo: '{n} minutes ago',
-      hoursAgo: '{n} hours ago',
-      daysAgo: '{n} days ago',
+      /* English inflects twice; the forms repeat so both locales hold the
+         same key set, which is what the probes check. */
+      minutesAgo: {
+        zero: 'just now',
+        one: 'a minute ago',
+        two: '{n} minutes ago',
+        few: '{n} minutes ago',
+        many: '{n} minutes ago',
+      },
+      hoursAgo: {
+        zero: 'just now',
+        one: 'an hour ago',
+        two: '{n} hours ago',
+        few: '{n} hours ago',
+        many: '{n} hours ago',
+      },
+      daysAgo: {
+        zero: 'today',
+        one: 'a day ago',
+        two: '{n} days ago',
+        few: '{n} days ago',
+        many: '{n} days ago',
+      },
     },
     safeguarding: {
       kicker: 'Safety details',
@@ -1146,7 +1200,7 @@ export const en: Dictionary = {
       title: 'Volunteering opportunities',
       lede: 'Upcoming activities you can join. Their hours count toward your journey once verified.',
       none: 'No opportunities right now. Check back soon.',
-      spots: 'places',
+      spots: '{taken} / {capacity} places',
       full: 'Full',
       waitlist: 'Waiting list',
       hoursValue: 'volunteering hours',
@@ -1264,7 +1318,7 @@ export const en: Dictionary = {
         noteLabel: 'What it covers',
         hoursNoteHint: 'e.g. field volunteering 2021–2024, from the committee records',
         hoursSubmit: 'Add the hours',
-        hoursDone: 'Added {minutes} minutes',
+        hoursDone: 'Added {minutes}',
         courseHeading: 'A course already completed',
         courseLabel: 'Course',
         coursePlaceholder: 'Choose a course',

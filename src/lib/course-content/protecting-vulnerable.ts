@@ -121,10 +121,10 @@ export const protectingVulnerable: CourseContent = {
             en: 'You notice that Fatima, one of the activity beneficiaries, repeatedly appears with bruising on her arms and always says she fell. What is the right step?',
           },
           options: [
-            { ar: 'تسألها بشكل مباشر عمّا يجري في بيتها حتى تعرف الحقيقة وتتمكّن من المساعدة', en: 'Ask her directly what is going on at home so you can learn the truth and help' },
+            { ar: 'تسألها بشكل مباشر عمّا يجري في بيتها حتى تعرف الحقيقة وتتمكّن من مساعدتها بنفسك دون تأخير', en: 'Ask her directly what is going on at home so you can learn the truth and help her yourself without delay' },
             { ar: 'تُسجّل ملاحظاتك بالتفصيل وتُبلّغ المشرف في نفس اليوم', en: 'Record your observations in detail and report to the supervisor the same day' },
-            { ar: 'تنتظر تكرار الأمر مرّة ثالثة قبل التصرّف حتى تكون متأكّداً', en: 'Wait for it to happen a third time before acting so you can be certain' },
-            { ar: 'تتحدّث مع صديقاتها في النشاط لتعرف ما يعرفنه عنها', en: 'Talk to her friends in the activity to find out what they know about her' },
+            { ar: 'تنتظر تكرار الأمر مرّة ثالثة قبل التصرّف حتى تكون متأكّداً من أنّ ما تراه ليس مجرّد صدفة', en: 'Wait for it to happen a third time before acting so you can be certain that what you are seeing is not just coincidence' },
+            { ar: 'تتحدّث مع صديقاتها لتعرف ما يعرفنه', en: 'Talk to her friends to find out what they know' },
           ],
           correct: 1,
           feedback: {
@@ -196,8 +196,8 @@ export const protectingVulnerable: CourseContent = {
           },
           options: [
             {
-              ar: 'تقبّل قوله «بخير» وتمضي، فهو بالغ راشد ويستطيع الاعتراض بنفسه إذا أراد ولا تُفرض المساعدة على أحد',
-              en: 'Accept his "I\'m fine" and move on — he is an adult who can object if he wants to, and help is not to be forced on anyone',
+              ar: 'تقبّل قوله «بخير» وتمضي، فهو بالغ راشد ويستطيع الاعتراض بنفسه إذا أراد ولا تُفرض المساعدة على أحد مهما بدت ملاحظاتك مقلقة',
+              en: 'Accept his "I\'m fine" and move on — he is an adult who can object if he wants to, and help is not to be forced on anyone however worrying your observations look',
             },
             {
               ar: 'تسأل الابن مباشرةً عن طبيعة علاقته مع والده وعن سبب توتّر والده في حضوره',
@@ -205,8 +205,8 @@ export const protectingVulnerable: CourseContent = {
             },
             { ar: 'توثّق ما لاحظته بدقّة، تُبلّغ المشرف، وتحرص على أن يتضمّن كل لقاء قادم وقتاً منفرداً مع السيد يوسف حين يكون ذلك ممكناً', en: 'Document what you observed precisely, report to the supervisor, and ensure every future meeting includes time alone with Mr Yusuf when possible' },
             {
-              ar: 'تتّصل بخدمات حماية المسنّين مباشرةً الآن دون إخبار مشرفك، فالوقت ثمين والمسار الرسمي أسرع من التسلسل الداخلي',
-              en: 'Contact older adults\' protection services directly now without informing your supervisor — time matters and the official route is faster than the internal chain',
+              ar: 'تتّصل بخدمات حماية المسنّين مباشرةً الآن دون إخبار مشرفك، فالوقت ثمين والمسار الرسمي أسرع من التسلسل الداخلي في مثل هذه الحالات',
+              en: 'Contact older adults\' protection services directly now without informing your supervisor — time matters and the official route is faster than the internal chain in cases like this',
             },
           ],
           correct: 2,
@@ -305,10 +305,10 @@ export const protectingVulnerable: CourseContent = {
             en: 'Nour told you she wants help accessing a women\'s shelter, but urgently asked you not to tell her brother who drives her to the activity. What do you do?',
           },
           options: [
-            { ar: 'تتّصل بالملجأ الآن وتعطيهم اسمها وعنوانها الكاملَين لتسريع الأمر', en: 'Call the shelter now and give them her full name and address to speed things up' },
+            { ar: 'تتّصل بالملجأ الآن وتعطيهم اسمها وعنوانها الكاملَين لتسريع الأمر، قبل أن تتراجع أو يتغيّر وضعها في البيت أو يمتلئ المكان ويضيع عليها', en: 'Call the shelter now and give them her full name and home address to speed things up, before she changes her mind, or her situation at home shifts, or the shelter fills up and the place is gone' },
             { ar: 'تُخبر الأخ لأن سلامتها مسؤوليته بحكم القرابة', en: 'Tell her brother because her safety is his responsibility by virtue of family ties' },
             { ar: 'تتّبع توجيهاتها: تنسّق مع الملجأ بالمعلومات التي أذنت بها فقط، وتتحقّق معها من طريقة التواصل الأكثر أماناً في وضعها', en: 'Follow her direction: coordinate with the shelter using only the information she has authorised, and confirm with her the safest means of contact given her situation' },
-            { ar: 'تعتذر وتقول إن المنظمة لا تعمل في مثل هذه الحالات', en: 'Apologise and say the organisation does not handle such cases' },
+            { ar: 'تعتذر وتقول إن المنظمة لا تعمل في مثل هذه الحالات، وتنصحها بأن تبحث بنفسها عن جهة مختصّة لأنّ تدخّلك قد يزيد الأمر تعقيداً عليها', en: 'Apologise and say the organisation does not handle such cases, advising her to look for a specialist body herself since your involvement might only complicate things further for her' },
           ],
           correct: 2,
           feedback: {
@@ -462,10 +462,10 @@ export const protectingVulnerable: CourseContent = {
             en: 'Which of the following correctly conveys information to a supervisor when escalating?',
           },
           options: [
-            { ar: '«أعتقد أن أحمد يُعنّف زوجته، أشعر بذلك من طريقة كلامها»', en: '"I think Ahmad is abusing his wife — I can sense it from the way she speaks"' },
+            { ar: '«أعتقد أن أحمد يُعنّف زوجته، أشعر بذلك من طريقة كلامها ومن نظرتها حين يدخل القاعة، وأنا أعرف هذه العائلة منذ سنوات»', en: '"I think Ahmad is abusing his wife — I can sense it from the way she speaks and from her look when he walks into the hall, and I have known this family for years"' },
             { ar: '«قالت زينب في الساعة الثانية: إذا رجعت البيت الليلة ما راح تكون مشكلة صغيرة — هذا ما قالته بالحرف»', en: '"Zainab said at two o\'clock: if I go home tonight it won\'t be a small problem — those were her exact words"' },
             { ar: '«أحمد يبدو عدوانياً لكنه ربما كان متعباً من العمل»', en: '"Ahmad seems aggressive but he was probably just tired from work"' },
-            { ar: '«زينب تبكي كثيراً ولا أعرف لماذا، ربما مشكلة عائلية عادية»', en: '"Zainab cries a lot and I don\'t know why — probably a normal family issue"' },
+            { ar: '«زينب تبكي كثيراً ولا أعرف لماذا، ربما مشكلة عائلية عادية مثل التي تمرّ بها معظم العائلات في مثل هذه الظروف المعيشية»', en: '"Zainab cries a lot and I don\'t know why — probably a normal family issue like the ones most families are going through in these living conditions"' },
           ],
           correct: 1,
           feedback: {

@@ -44,12 +44,37 @@ export const VISIBILITY_CHOICES = ['hidden', 'display_name', 'name_and_photo'] a
 export type VisibilityChoice = (typeof VISIBILITY_CHOICES)[number];
 
 /**
- * What somebody who has never answered gets. Matches the column default in
- * migration 033, and is asserted against it by the probe — a default that
- * drifted between the schema and the code would mean the two disagree about
- * consent, and the database would win silently.
+ * What a stored value becomes when it will not parse. NOT the column default.
+ *
+ * It was both, and the comment here used to say so — "matches the column
+ * default in migration 033… a default that drifted between the schema and the
+ * code would mean the two disagree about consent, and the database would win
+ * silently". Migration 038 then changed the column default to
+ * `name_and_photo`, and the drift that sentence warns about is exactly what
+ * happened.
+ *
+ * `hidden` is still right FOR THIS JOB. Handed a value it cannot read, the only
+ * safe answer is to publish nothing; failing closed about consent is not a
+ * default, it is a refusal. What was wrong was one constant answering two
+ * questions — see PLATFORM_DEFAULT_VISIBILITY below.
  */
 export const DEFAULT_VISIBILITY: VisibilityChoice = 'hidden';
+
+/**
+ * What the platform actually gives an account that has never answered.
+ *
+ * Migration 038 made appearing the ordinary state and moved every account with
+ * no recorded answer onto it. This constant is that decision, written where the
+ * code can read it, and it must be changed in step with the column default in
+ * any later migration.
+ *
+ * Only one thing asks: whether somebody sits in a visibility nobody chose AND
+ * the platform never gave them, which is the signature of a hand-edited row.
+ * Asking it against DEFAULT_VISIBILITY instead made that alarm fire on 38 of
+ * the 40 profiles that exist — true of almost everybody, and therefore an
+ * alarm about nothing.
+ */
+export const PLATFORM_DEFAULT_VISIBILITY: VisibilityChoice = 'name_and_photo';
 
 export function isVisibilityChoice(value: unknown): value is VisibilityChoice {
   return typeof value === 'string' && (VISIBILITY_CHOICES as readonly string[]).includes(value);

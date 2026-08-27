@@ -77,8 +77,8 @@ export const levelThreeChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تكتب المقترح فوراً — عندك رأي واضح من المجتمع، والمنسّق أدرى بالمنطقة منك، وأي تأخير قد يفوّت موعد التمويل الذي لن يتكرّر هذا العام',
-              en: 'Write the proposal immediately — you have a clear community view, the coordinator knows the area better than you, and any delay risks missing a funding window that will not come again this year',
+              ar: 'تكتب المقترح فوراً — عندك رأي واضح من المجتمع، والمنسّق أدرى بالمنطقة منك، وأي تأخير قد يفوّت موعد التمويل الذي لن يتكرّر هذا العام ولا العام القادم',
+              en: 'Write the proposal immediately — you have a clear community view, the coordinator knows the area better than you, and any delay risks missing a funding window that will not come again this year or the next',
             },
             {
               ar: 'تشرح للمنسّق أن خمسة أشخاص من معارفك لا يمثّلون المجتمع المستهدف، وتطلب يومين إضافيين لمقابلة فئات أخرى على الأقل قبل أي مقترح',
@@ -89,8 +89,8 @@ export const levelThreeChallenge: CourseContent = {
               en: 'Write "based on community consultation" in the proposal and proceed without clarification',
             },
             {
-              ar: 'تستبدل التقييم باستطلاع على وسائل التواصل الاجتماعي لتوسيع العيّنة بسرعة',
-              en: 'Replace the assessment with a social media poll to quickly broaden the sample',
+              ar: 'تستبدل التقييم باستطلاع على وسائل التواصل الاجتماعي لتوسيع العيّنة بسرعة، فالاستطلاع يصل إلى مئات الشباب خلال ساعات والعيّنة الأكبر أكثر تمثيلاً من بضع مقابلات فردية',
+              en: 'Replace the assessment with a social media poll to quickly broaden the sample — a poll reaches hundreds of young people within hours, and a larger sample is more representative than a handful of individual interviews',
             },
           ],
           correct: 1,
@@ -113,8 +113,8 @@ export const levelThreeChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تختار ما تراه شخصياً أهمّ وتبرّر ذلك بخبرتك في العمل مع الشباب',
-              en: 'Choose what you personally find most important and justify it with your experience working with youth',
+              ar: 'تختار ما تراه شخصياً أهمّ وتبرّر ذلك بخبرتك في العمل مع الشباب في هذه المنطقة تحديداً وبما سمعته من المنسّق عن أولويات الجمعية في هذه المرحلة',
+              en: 'Choose what you personally find most important and justify it with your experience working with youth in this area specifically and with what you heard from the coordinator about the association\'s priorities at this stage',
             },
             {
               ar: 'تختار الاحتياج الأكثر ظهوراً في التقييم بحسب عدد من ذكروه وعمقه، وتذكر الاحتياجات الأخرى في المقترح كتوصيات لمراحل مستقبلية',
@@ -178,8 +178,8 @@ export const levelThreeChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'عدد المشاركين الذين يحضرون النشاط التالي بناءً على هذه التجربة',
-              en: 'The number of participants who attend the next activity based on this experience',
+              ar: 'عدد المشاركين الذين يحضرون النشاط التالي بناءً على هذه التجربة، مقارنةً بعدد من حضروا الجولة السابقة من المبادرة نفسها وبالهدف العددي المتّفق عليه',
+              en: 'The number of participants who attend the next activity based on this experience, compared with the number who attended the previous round of the same initiative and with the numerical target agreed at the start',
             },
             {
               ar: 'نسبة المشاركين الذين يُظهرون إتقان المهارة المستهدفة في تمرين تقييمي موحّد في نهاية المبادرة، مقاساً بمعيار محدّد مسبقاً',
@@ -214,16 +214,16 @@ export const levelThreeChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'توافق — الالتزام القوي يبني ثقة المجتمع ويميّز الجمعية',
-              en: 'Agree — strong commitment builds community trust and distinguishes the association',
+              ar: 'توافق — الالتزام القوي يبني ثقة المجتمع ويميّز الجمعية عن غيرها، والمموّل يقرأ نبرة المقترح قبل تفاصيله فجملة جريئة كهذه ترفع فرص القبول',
+              en: 'Agree — strong commitment builds community trust and sets the association apart, and the funder reads the tone of a proposal before its details, so a bold sentence like this raises the chance of approval',
             },
             {
               ar: 'تعتذر بأدب عن الجملة وتقترح بديلاً: «سنعمل وفق الموارد المتّفق عليها والإطار الزمني المحدّد وسنوثّق أي تغيير ونُبلّغ المعنيّين»',
               en: 'Politely decline the sentence and propose a replacement: "We will work within agreed resources and the defined timeline, and will document and communicate any changes"',
             },
             {
-              ar: 'تقبل الجملة لأن المنسّق أعلى منك ولا يصحّ لك الاعتراض على خياراته اللغوية',
-              en: 'Accept the sentence because the coordinator outranks you and it is not your place to object to his language choices',
+              ar: 'تقبل الجملة لأن المنسّق أعلى منك ولا يصحّ لك الاعتراض على خياراته اللغوية في وثيقة سيوقّعها هو ويتحمّل مسؤوليتها أمام المموّل والجمعية',
+              en: 'Accept the sentence because the coordinator outranks you and it is not your place to object to his language choices in a document he will sign and answer for before the funder and the association',
             },
             {
               ar: 'تُزيل خانة الالتزامات من المقترح بأكملها لتجنّب الإشكال',
@@ -289,8 +289,8 @@ export const levelThreeChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تثق بوعده وتحتسبه ضمن الفريق — الناس أحياناً مشغولون وينتظمون عند التنفيذ',
-              en: 'Trust his word and count him in the team — people are sometimes busy and pull together at delivery',
+              ar: 'تثق بوعده وتحتسبه ضمن الفريق — الناس أحياناً مشغولون وينتظمون عند التنفيذ، وإبعاده الآن قد يُفقدك متطوّعاً جيداً في مبادرات قادمة',
+              en: 'Trust his word and count him in the team — people are sometimes busy and pull together at delivery, and dropping him now could cost you a good volunteer on future initiatives',
             },
             {
               ar: 'تتحدّث إليه مباشرةً: إن لم يستطع الالتزام بما تبقّى من تحضير، تتفق معه على تقليص دوره أو استبداله الآن — قبل أن يضيق الوقت',
@@ -301,8 +301,8 @@ export const levelThreeChallenge: CourseContent = {
               en: 'Inform the coordinator and leave them to decide what to do about Maher',
             },
             {
-              ar: 'تُقسّم دوره سرّاً على الآخرين دون إعلامه لتجنّب الإحراج',
-              en: 'Quietly divide his role among the others without telling him to avoid embarrassment',
+              ar: 'تُقسّم دوره سرّاً على الآخرين دون إعلامه لتجنّب إحراجه أمام الفريق، وتضمن في الوقت نفسه ألّا تبقى أي مهمة بلا مسؤول عنها يوم الفعالية',
+              en: 'Quietly divide his role among the others without telling him, to avoid embarrassing him in front of the team and at the same time to guarantee that no task is left without an owner on the day of the event',
             },
           ],
           correct: 1,
@@ -333,12 +333,12 @@ export const levelThreeChallenge: CourseContent = {
               en: 'Return to the agreed success indicator in the proposal: which order is more likely to achieve it based on evidence or comparable past experience?',
             },
             {
-              ar: 'تقسمان: تبدأ الجلسة الأولى بطريقتك والثانية بطريقتها ثم تقيسان',
-              en: 'Split it: the first session runs your way, the second hers, then you measure',
+              ar: 'تقسمان الأمر: تبدأ الجلسة الأولى بطريقتك والثانية بطريقتها، ثم تقيسان النتيجة وتعتمدان الترتيب الذي أعطى أثراً أوضح في الجولة القادمة',
+              en: 'Split it: the first session runs your way and the second hers, then you measure the result and adopt the order that gave the clearer effect in the next round',
             },
             {
-              ar: 'تتركان القرار للمنسّق الذي لم يحضر الاجتماع لأنه الأعلى سلطةً',
-              en: 'Leave the decision to the coordinator who was not at the meeting because he has the highest authority',
+              ar: 'تتركان القرار للمنسّق الذي لم يحضر الاجتماع لأنه الأعلى سلطةً، وقرار يأتي من فوق يُعفي كلًّا منكما من خلاف قد يمتدّ إلى تنفيذ الجلسات',
+              en: 'Leave the decision to the coordinator who was not at the meeting because he has the highest authority, and a ruling from above spares you both a disagreement that could carry into the delivery of the sessions',
             },
           ],
           correct: 1,
@@ -377,16 +377,16 @@ export const levelThreeChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تسألها عن اسم الشخص وما طلبه بالتحديد لتقدير خطورة الوضع قبل أن تقرّر الإبلاغ',
-              en: 'Ask her the person\'s name and exactly what he requested in order to assess the seriousness before deciding whether to report',
+              ar: 'تسألها عن اسم الشخص وما طلبه بالتحديد لتقدير خطورة الوضع قبل أن تقرّر الإبلاغ، فبلاغ بلا تفاصيل كافية قد يُهمَل عند مسؤول الحماية وأنت تريد أن تُسلّمه صورة مكتملة',
+              en: 'Ask her the person\'s name and exactly what he requested in order to assess the seriousness before deciding whether to report — a referral without enough detail may be set aside by the safeguarding focal point, and you want to hand over a complete picture',
             },
             {
               ar: 'تشكرها على ثقتها، تُطمئنها أنك ستتابع الأمر، تدوّن ما قالته بكلماتها بدون أسئلة إضافية، وتبلّغ مسؤول الحماية قبل نهاية الفعالية',
               en: 'Thank her for trusting you, reassure her you will follow up, write down exactly what she said in her own words without extra questions, and report to the safeguarding focal point before the event ends',
             },
             {
-              ar: 'توقف الفعالية فوراً وتجمع الفريق لمناقشة الموضوع والتقرير ما يجب فعله',
-              en: 'Stop the event immediately and gather the team to discuss the matter and decide what to do',
+              ar: 'توقف الفعالية فوراً وتجمع الفريق لمناقشة الموضوع وتقرير ما يجب فعله، فموضوع بهذه الخطورة لا يصحّ أن ينفرد به شخص واحد والفريق كله يحتاج أن يكون على علم',
+              en: 'Stop the event immediately and gather the team to discuss the matter and decide what to do — a matter this serious should not rest with one person, and the whole team needs to know about it so that nobody leaves the girl on her own',
             },
             {
               ar: 'تتّصل بوالديها الآن لإعلامهم بما أخبرتك به',
@@ -413,8 +413,8 @@ export const levelThreeChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تشرح لها القصة كاملة — هي زميلة ثقة وتستحق أن تعلم حتى تكون في صورة الوضع',
-              en: 'Explain the full situation — she is a trusted colleague and deserves to know to stay informed',
+              ar: 'تشرح لها القصة كاملة — هي زميلة ثقة وتستحق أن تعلم حتى تكون في صورة الوضع وتساعدك في متابعته',
+              en: 'Explain the full situation — she is a trusted colleague and deserves to know so that she stays informed and can help you follow it up',
             },
             {
               ar: 'تقول لها: «هناك موضوع أحلته إلى الجهة المعنية وسيُتابَع — هذا كل ما أستطيع قوله الآن»',
@@ -425,8 +425,8 @@ export const levelThreeChallenge: CourseContent = {
               en: 'Deny that anything happened to maintain comfort and avoid anxiety in the team',
             },
             {
-              ar: 'تطلب منها أن تذهب وتسأل ليلى مباشرةً لأنها ربما تفيد في التحقيق',
-              en: 'Ask her to go speak directly to Layla because she might help in the investigation',
+              ar: 'تطلب منها أن تذهب وتسأل ليلى مباشرةً لأنها أقرب إليها سنّاً وربما تُخرج منها تفاصيل قد تفيد في التحقيق',
+              en: 'Ask her to go and speak to Layla directly because she is closer to her in age and may draw out details that are useful to the investigation',
             },
           ],
           correct: 1,
@@ -478,8 +478,8 @@ export const levelThreeChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تكتب ما طلبه المنسّق — الحضور فعلاً كان جيداً وهو المؤشّر الأساسي',
-              en: 'Write what the coordinator asked — attendance genuinely was good and is the main indicator',
+              ar: 'تكتب ما طلبه المنسّق — الحضور فعلاً كان جيداً وهو المؤشّر الأساسي الذي يهتمّ به المموّل، وأرقام التقييم يمكن أن تُذكر في تقرير داخلي لاحق',
+              en: 'Write what the coordinator asked — attendance genuinely was good and is the main indicator the funder cares about, and the assessment numbers can go in a later internal report',
             },
             {
               ar: 'تكتب الأرقام الحقيقية: حضور مرتفع (٢٨/٣٠)، اكتمال تمرين التقييم جزئي (١٥/٣٠)، وتُحلّل الفجوة وتقترح معالجتها في الجولة القادمة',
@@ -514,8 +514,8 @@ export const levelThreeChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تردّ عليه أن التقييمات الأخرى كانت إيجابية وأن رأيه لا يمثّل الأغلبية',
-              en: 'Reply that other evaluations were positive and his view does not represent the majority',
+              ar: 'تردّ عليه أن التقييمات الأخرى كانت إيجابية وأن رأيه لا يمثّل الأغلبية، وتشرح له أن المبادرة صُمّمت وفق ما ظهر في تقييم الاحتياج لا وفق تفضيل فردي لأي مشارك',
+              en: 'Reply that other evaluations were positive and his view does not represent the majority, and explain that the initiative was designed around what emerged in the needs assessment rather than around any one participant\'s preference',
             },
             {
               ar: 'تُسجّل الشكوى في النظام الرسمي، تشكره على ملاحظته، تتحقّق إن كانت تكشف عن فجوة في التقييم الأولي لم تنتبه لها، وتُدرجها في توصيات الجولة القادمة',
@@ -550,8 +550,8 @@ export const levelThreeChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تنتظر حتى تتأكّد أكثر أو تصلك شكوى رسمية قبل التحرّك',
-              en: 'Wait until you are more certain or receive a formal complaint before acting',
+              ar: 'تنتظر حتى تتأكّد أكثر أو تصلك شكوى رسمية قبل التحرّك، فالإبلاغ عن متطوّع خطوة ثقيلة وقد تُدمّر سمعة شخص لم يفعل شيئاً إن تبيّن أن ما لاحظته مجرّد انطباع خاطئ',
+              en: 'Wait until you are more certain or receive a formal complaint before acting — reporting a volunteer is a heavy step, and it could destroy the reputation of someone who did nothing wrong if what you noticed turns out to be a mistaken impression',
             },
             {
               ar: 'تُبعد المتطوّع بهدوء عن تلك المجموعة فوراً، تُدوّن ما لاحظته بدقة، وتُبلّغ مسؤول الحماية قبل نهاية الفعالية — بصرف النظر عن غياب الشكوى الرسمية',
@@ -590,16 +590,16 @@ export const levelThreeChallenge: CourseContent = {
               en: 'Add a community verification step immediately after writing the proposal — before submitting it — to confirm the final design reflects what was reported in the assessment',
             },
             {
-              ar: 'تُجري تقييم احتياج أطول في المرة القادمة لجمع بيانات أكثر',
-              en: 'Conduct a longer needs assessment next time to gather more data',
+              ar: 'تُجري تقييم احتياج أطول في المرة القادمة لجمع بيانات أكثر، على افتراض أن سبب الفجوة هو نقص المعلومات في البداية وأن حجم البيانات وحده كفيل بمنع أي انحراف لاحق في التصميم',
+              en: 'Conduct a longer needs assessment next time to gather more data, on the assumption that the gap was caused by insufficient information at the start and that data volume alone will prevent any later drift in the design',
             },
             {
               ar: 'تُعطي المجتمع دوراً في تحرير المقترح النهائي كاملاً',
               en: 'Give the community a role in editing the full final proposal',
             },
             {
-              ar: 'تبدأ التنفيذ من تقييم الاحتياج مباشرةً بلا مقترح مكتوب لتجنّب الانفصال بين المرحلتين',
-              en: 'Begin implementation directly from the needs assessment without a written proposal to avoid the disconnect between stages',
+              ar: 'تبدأ التنفيذ من تقييم الاحتياج مباشرةً بلا مقترح مكتوب لتجنّب الانفصال بين المرحلتين، لأن المستند المكتوب هو أصل المشكلة وإلغاؤه يجعل التنفيذ أقرب إلى صوت المجتمع',
+              en: 'Begin implementation directly from the needs assessment without a written proposal to avoid the disconnect between stages, since the written document is the root of the problem and removing it brings implementation closer to the community voice',
             },
           ],
           correct: 0,

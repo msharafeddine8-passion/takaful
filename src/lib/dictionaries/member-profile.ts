@@ -303,8 +303,15 @@ export const memberProfileAr: MemberProfileStrings = {
     name_and_photo: 'يظهر باسمه وصورته',
   },
   visibilityChose: 'اختار هذا بنفسه في {date}.',
+  /* «والافتراضي هو الإخفاء» was true until migration 038 and is now the
+     opposite of what happens: the association decided that appearing is the
+     ordinary state, the default became name_and_photo, and every account that
+     had never answered was moved to it. Staff reading this line have to know
+     which way the silence falls, because it is the line they will be looking
+     at the day somebody asks why their name is on the internet. */
   visibilityNeverChose:
-    'لم يُسأل قطّ. القيمة الافتراضية هي التي تتكلّم عنه، لا هو — والافتراضي هو الإخفاء.',
+    'لم يُسأل قطّ. القيمة الافتراضية هي التي تتكلّم عنه، لا هو — والافتراضي منذ قرار الجمعية '
+    + 'هو الظهور، فسكوتُه ليس موافقةً منه.',
   visibilityUnexplained:
     'يظهر علنياً ولا سجلّ لموافقته. هذا لا ينبغي أن يحدث: كل مسار يكتب الاختيار يكتب وقته معه.',
   visibilityMinor:
@@ -362,17 +369,24 @@ export const memberProfileAr: MemberProfileStrings = {
     + 'وتُراجَع في المكتب.',
 
   counts: {
+    /* Nominative, like the eight sets below it. These two were accusative —
+       «نشاطاً واحداً» — which reads correctly only after «حضر». They are also
+       shown under «سجَّل على» and «تخلّف عن», where a preposition governs the
+       genitive and an accusative is a case error; and each figure stands in
+       its own box under its label rather than continuing the label's sentence,
+       so the bare nominative is what the layout wants anyway. The tamyiz forms
+       (few/many) are accusative in every frame and are unchanged. */
     activities: {
       zero: 'لا أنشطة',
-      one: 'نشاطاً واحداً',
-      two: 'نشاطين',
+      one: 'نشاط واحد',
+      two: 'نشاطان',
       few: '{n} أنشطة',
       many: '{n} نشاطاً',
     },
     attended: {
       zero: 'لا شيء',
-      one: 'نشاطاً واحداً',
-      two: 'نشاطين',
+      one: 'نشاط واحد',
+      two: 'نشاطان',
       few: '{n} أنشطة',
       many: '{n} نشاطاً',
     },
@@ -575,8 +589,8 @@ export const memberProfileEn: MemberProfileStrings = {
   },
   visibilityChose: 'They chose this themselves on {date}.',
   visibilityNeverChose:
-    'Never asked. The default is speaking for them rather than they for themselves — and the '
-    + 'default is hidden.',
+    'Never asked. The default is speaking for them rather than they for themselves — and since '
+    + 'the association decided, the default is to appear. Their silence is not their consent.',
   visibilityUnexplained:
     'Listed publicly with no record of consent. This should not be possible: every path that '
     + 'writes the choice writes the time with it.',

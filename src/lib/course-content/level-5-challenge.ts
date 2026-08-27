@@ -106,8 +106,8 @@ Choosing the right indicator from the outset determines what you will measure ov
           },
           options: [
             {
-              ar: 'تُسلّم الإطار كاملاً الآن مستنداً إلى افتراضاتك وبيانات مشاريع مشابهة، وتعدّل لاحقاً إن احتجت',
-              en: 'Submit the full framework now based on your assumptions and data from similar projects, and revise later if needed',
+              ar: 'تُسلّم الإطار كاملاً الآن مستنداً إلى افتراضاتك وبيانات مشاريع مشابهة في المنطقة نفسها، وتعدّل الأرقام لاحقاً إن أظهرت جلسة التشاور خلاف ذلك، فمهلة الممول هي القيد المُلزم',
+              en: 'Submit the full framework now based on your assumptions and data from similar projects in the same area, and revise the figures later if the consultation shows otherwise, since the donor deadline is the binding constraint',
             },
             {
               ar: 'تتواصل مع الممول، تشرح أن الإطار بلا تشاور سيُضعف جودة المشروع، وتقترح تسليم إطار مؤقّت الآن يُستكمل بعد جلسة التشاور',
@@ -150,8 +150,8 @@ Choosing the right indicator from the outset determines what you will measure ov
               en: 'Number of hygiene training hours delivered by the team to the community',
             },
             {
-              ar: 'مستوى رضا المستفيدين عن أنشطة المشروع في استبيان الختام',
-              en: 'Level of beneficiary satisfaction with project activities in the closing survey',
+              ar: 'مستوى رضا المستفيدين عن أنشطة المشروع وجودة المياه في استبيان الختام الذي يُوزَّع على كل أسرة مشاركة',
+              en: 'Level of beneficiary satisfaction with project activities and water quality in the closing survey distributed to every participating household',
             },
           ],
           correct: 1,
@@ -213,8 +213,8 @@ Tomorrow morning's donor meeting is not an obstacle — it is an opportunity for
           },
           options: [
             {
-              ar: 'تنتظر حتى تتأكّد أكثر — لا تريد الإضرار بعلاقة شراكة بنيتها على مدى أشهر بناءً على معلومة ناقصة',
-              en: 'Wait until you are more certain — you do not want to damage a partnership built over months on incomplete information',
+              ar: 'تنتظر حتى تتأكّد أكثر — لا تريد الإضرار بعلاقة شراكة بنيتها على مدى أشهر بناءً على معلومة ناقصة وصلتك في آخر اللّيل',
+              en: 'Wait until you are more certain — you do not want to damage a partnership built over months on incomplete information that reached you late at night',
             },
             {
               ar: 'تتصل بالشريك وتطلب وقف الاستخدام فوراً، توثّق الاكتشاف والخطوات كتابياً، وتُبلغ الممول غداً بشفافية',
@@ -328,8 +328,8 @@ The difference between a leader who applies risk management in practice and one 
               en: 'Prepare an options analysis, present it to your team and the community, and get written donor approval before implementing any change in scope',
             },
             {
-              ar: 'تُضيّق النطاق من جانبك فوراً بالتوقّف عن خدمة القرى الأبعد دون إخبار أحد',
-              en: 'Narrow scope immediately on your own by stopping service to the more remote villages without telling anyone',
+              ar: 'تُضيّق النطاق من جانبك فوراً بالتوقّف عن خدمة القرى الأبعد دون إخبار أحد، لأن الوقت لا يتّسع لدورة موافقات جديدة',
+              en: 'Narrow the scope immediately on your own by stopping service to the more remote villages without telling anyone, because there is no time for a fresh approval cycle',
             },
             {
               ar: 'تُوقف المشروع كلياً وتُعيد المبلغ المتبقّي للممول لحين حلّ مشكلة التمويل',
@@ -368,8 +368,8 @@ The difference between a leader who applies risk management in practice and one 
               en: 'Ask the team to work twice as hard to make up for the delay when the materials arrive',
             },
             {
-              ar: 'تُعيد رسم الجدول الزمني من جانبك وتمتصّ التأخير في المدة دون إخبار الممول',
-              en: 'Redraw the timeline on your own and absorb the delay into the duration without informing the donor',
+              ar: 'تُعيد رسم الجدول الزمني من جانبك وتمتصّ التأخير في المدة المتبقية دون إخبار الممول، على أن تشرح الأمر في التقرير الربعي',
+              en: 'Redraw the timeline on your own and absorb the delay into the remaining duration without informing the donor, explaining it in the quarterly report instead',
             },
           ],
           correct: 1,
@@ -427,16 +427,16 @@ Good field adaptation begins with documentation: how many women reported the pro
           },
           options: [
             {
-              ar: 'تُكمل التنفيذ وفق الخطة المعتمدة — التعديل بعد الموافقة معقّد جداً ويهدّد موعد الإنجاز',
-              en: 'Complete implementation according to the approved plan — adjusting after approval is too complicated and threatens the completion date',
+              ar: 'تُكمل التنفيذ وفق الخطة المعتمدة — التعديل بعد الموافقة معقّد جداً ويهدّد موعد الإنجاز، وطلب أي تغيير الآن سيُقرأ كضعف في التخطيط الأوّلي ويُضعف فرص التمويل المستقبلي',
+              en: 'Complete implementation according to the approved plan — adjusting after approval is too complicated and threatens the completion date, and requesting any change now would be read as weakness in the initial planning and would harm future funding chances',
             },
             {
               ar: 'توثّق المخاوف بتفاصيل دقيقة، تُقيّم البدائل التقنية التي اقترحتها النساء، وتطلب من الممول موافقة على تعديل محدود مع مبرّر موثّق',
               en: 'Document the concerns in precise detail, assess the technical alternatives the women suggested, and request donor approval for a limited adjustment with documented justification',
             },
             {
-              ar: 'تُعدّل المواقع من جانبك فوراً بحجّة أن سلامة المستفيدين أهم من الموافقة الإدارية',
-              en: 'Adjust the locations on your own immediately, arguing that beneficiary safety is more important than administrative approval',
+              ar: 'تُعدّل المواقع من جانبك فوراً بحجّة أن سلامة المستفيدين أهم من الموافقة الإدارية، وأن الممول سيقبل الأمر الواقع لاحقاً ما دام المبرّر الإنساني واضحاً وموثّقاً',
+              en: 'Adjust the locations on your own immediately, arguing that beneficiary safety is more important than administrative approval and that the donor will accept the fait accompli later as long as the humanitarian justification is clear and documented',
             },
             {
               ar: 'تعقد جلسة إضافية لإقناع النساء بأن المواقع الأصلية آمنة كافياً',
@@ -506,8 +506,8 @@ A new partner who hears a pitch that includes what was not achieved, with object
           },
           options: [
             {
-              ar: 'تُقدّم فقط الستين بالمئة التي أُنجزت كنتائج ناجحة وتتفادى ذكر الأسباب التي أثّرت في النتائج',
-              en: 'Present only the sixty percent achieved as successful results and avoid mentioning the reasons that affected the results',
+              ar: 'تُقدّم فقط الستين بالمئة التي أُنجزت كنتائج ناجحة وتتفادى ذكر الأسباب التي أثّرت في النتائج، لأن ذكر النواقص أمام شريك محتمل سيُضعف موقفك التفاوضي ويدفعه إلى منظمة أخرى',
+              en: 'Present only the sixty percent achieved as successful results and avoid mentioning the reasons that affected the results, because raising shortfalls in front of a prospective partner would weaken your negotiating position and push them towards another organisation',
             },
             {
               ar: 'تُقدّم النتائج كاملة بما فيها ما لم يُنجز، مع سرد موضوعي للأسباب والقرارات المتّخذة، والدروس المستفادة، وتوصيات للمشروع القادم',
@@ -518,8 +518,8 @@ A new partner who hears a pitch that includes what was not achieved, with object
               en: 'Recalculate the indicators in a way that makes sixty percent appear closer to one hundred',
             },
             {
-              ar: 'تُحيل الشريك إلى التقرير النهائي فقط وتمتنع عن أي عرض شفهي لتفادي الأسئلة المحرجة',
-              en: 'Refer the partner to the final report only and refrain from any verbal presentation to avoid uncomfortable questions',
+              ar: 'تُحيل الشريك إلى التقرير النهائي فقط وتمتنع عن أي عرض شفهي لتفادي الأسئلة المحرجة، معتبراً أن الوثيقة المكتوبة تكفي وحدها وأن النقاش المباشر يفتح باب تأويلات لا تخدم المنظمة',
+              en: 'Refer the partner to the final report only and refrain from any verbal presentation to avoid uncomfortable questions, considering the written document sufficient on its own and that direct discussion opens the door to interpretations that do not serve the organisation',
             },
           ],
           correct: 1,
@@ -542,8 +542,8 @@ A new partner who hears a pitch that includes what was not achieved, with object
           },
           options: [
             {
-              ar: 'تُعلّق على الفارق في وجه الممول فوراً لتحمي موقفك وتُقلّل من شأن ملاحظة الزميل',
-              en: 'Comment on the discrepancy in front of the donor immediately to protect your position and minimise the colleague\'s remark',
+              ar: 'تُعلّق على الفارق في وجه الممول فوراً لتحمي موقفك وتُقلّل من شأن ملاحظة الزميل، لأن الاعتراف بالخطأ في هذه اللحظة سيُفقدك هيبة القيادة أمام الممول وأمام بقية الفريق الحاضر',
+              en: 'Comment on the discrepancy in front of the donor immediately to protect your position and minimise the colleague\'s remark, because admitting an error at this moment would cost you leadership authority in front of the donor and the rest of the team present',
             },
             {
               ar: 'تشكر الزميل بلغة هادئة، تعترف بالفارق أمام الممول، وتعد بمراجعة كاملة لبيانات الأداء ترفعها بعد الاجتماع خلال أربع وعشرين ساعة',
@@ -554,8 +554,8 @@ A new partner who hears a pitch that includes what was not achieved, with object
               en: 'Say both figures are correct because they measure different aspects of the indicator',
             },
             {
-              ar: 'تُنهي العرض بسرعة وتتفادى الموضوع ريثما تتحقّق من البيانات خارج الاجتماع',
-              en: 'End the presentation quickly and avoid the subject until you can verify the data outside the meeting',
+              ar: 'تُنهي العرض بسرعة وتتفادى الموضوع ريثما تتحقّق من البيانات خارج الاجتماع، معتبراً أن مناقشة الأرقام أمام الممول الآن ستُطيل الاجتماع وتفتح ملفات أخرى لا داعي لفتحها',
+              en: 'End the presentation quickly and avoid the subject until you can verify the data outside the meeting, considering that discussing the figures in front of the donor now would prolong the meeting and open other files that need not be opened',
             },
           ],
           correct: 1,

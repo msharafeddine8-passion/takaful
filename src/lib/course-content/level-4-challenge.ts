@@ -97,8 +97,8 @@ export const levelFourChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تتجاهله — المهم هو الموضوع الذي سيُناقَش لا أين يجلس الناس، والتدخّل في مقاعد راشدين قبل أن تبدأ قد يبدو وصايةً',
-              en: 'Ignore it — what matters is the subject to be discussed, not where people sit, and moving adults around before you have begun can look patronising',
+              ar: 'تتجاهله — المهم هو الموضوع الذي سيُناقَش لا أين يجلس الناس، والتدخّل في مقاعد راشدين قبل أن تبدأ قد يبدو وصايةً، والجو سيتحسّن وحده حالما يبدأ النقاش',
+              en: 'Ignore it — what matters is the subject to be discussed, not where people sit, moving adults around before you have begun can look patronising, and the atmosphere will sort itself out once the discussion starts',
             },
             {
               ar: 'تقترح بهدوء إعادة الترتيب بحيث يتناوب الجلوس بين الطرفين، وتشرح بجملة واحدة أن هذا الأسلوب يسهّل تدفق الحوار',
@@ -109,8 +109,8 @@ export const levelFourChallenge: CourseContent = {
               en: 'Ask everyone to stand and reseat themselves randomly without giving a reason — explaining it invites debate, whereas a silent instruction passes more quickly',
             },
             {
-              ar: 'تبدأ الاجتماع وتتدخّل في موضوع الجلوس فقط إذا بدا الخلاف واضحاً، فيكون لتدخّلك سبب يراه الجميع',
-              en: 'Start the meeting and address the seating only if visible conflict breaks out, so your intervention has a reason everyone in the room can see',
+              ar: 'تبدأ الاجتماع وتتدخّل في الجلوس فقط إذا ظهر الخلاف، فيكون لتدخّلك سبب واضح',
+              en: 'Start the meeting and address the seating only if conflict breaks out, so your intervention has a visible reason',
             },
           ],
           correct: 1,
@@ -129,8 +129,8 @@ export const levelFourChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تطلب منه تأجيل هذه النقطة إلى بند «متفرقات» لأنها ليست في الأجندة الرئيسية، وتَعِده بما يتبقّى من وقت في نهاية الجلسة',
-              en: 'Ask him to defer this point to "any other business" because it is not in the main agenda, promising him whatever time is left at the end of the session',
+              ar: 'تطلب تأجيلها إلى بند «متفرقات» لأنها ليست في الأجندة، وتَعِده بما يتبقّى من وقت',
+              en: 'Ask him to defer it to "any other business" since it is not on the agenda, promising whatever time is left',
             },
             {
               ar: 'تشكره على طرح المسألة، وتقترح تخصيص وقت محدد لها مباشرة بعد البند الأول، وتطلب من الجميع تدوينها',
@@ -196,8 +196,8 @@ export const levelFourChallenge: CourseContent = {
               en: 'Reframe what the Al-Fajr coordinator said in neutral language and open the floor to both: "It seems there is a concern that the distribution did not reflect the earlier understanding. Let us hear both perspectives"',
             },
             {
-              ar: 'تقترح تشكيل لجنة مشتركة صغيرة لمراجعة أرقام الربع الماضي بعد الاجتماع، فتُخرج الأرقام من الطاولة الآن وتُبقي الجلسة على ما يمكن الاتفاق عليه اليوم',
-              en: 'Propose forming a small joint committee to review last quarter\'s numbers after the meeting, taking the figures off the table now and keeping the session on what can be agreed today',
+              ar: 'تقترح لجنة مشتركة لمراجعة أرقام الربع الماضي بعد الاجتماع، وتُبقي الجلسة على ما يمكن الاتفاق عليه اليوم',
+              en: 'Propose a small joint committee to review last quarter\'s numbers after the meeting, keeping the session on what can be agreed today',
             },
             {
               ar: 'توضّح للجميع أن اجتماعاً بلا توثيق لا يُنتج اتفاقاً قابلاً للإثبات، وتطلب تجاوز الربع الماضي والانتقال إلى المستقبل، فلا سبيل لحسم رواية على أخرى بلا محضر',
@@ -232,8 +232,8 @@ export const levelFourChallenge: CourseContent = {
               en: 'Acknowledge the problem yourself on behalf of the whole process to move the meeting forward — you are the one party here who loses nothing by admitting it',
             },
             {
-              ar: 'تقترح استراحة خمس دقائق لتهدئة الجو، فالنقاش بلغ حدّاً لن تُفيد فيه أي صياغة قبل أن يهدأ الجميع',
-              en: 'Propose a five-minute break to let the atmosphere settle — the discussion has reached a point where no wording will help until everyone has cooled down',
+              ar: 'تقترح استراحة خمس دقائق، فلا صياغة تنفع قبل أن يهدأ الجميع',
+              en: 'Propose a five-minute break — no wording will help until everyone has cooled down',
             },
           ],
           correct: 0,
@@ -279,8 +279,8 @@ export const levelFourChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تقاطع منسّق الفجر في منتصف جملته وتعطي الكلمة لمنسّقة الأمل، فالوقت يمرّ وهو أخذ منه سبعين بالمئة، والمقاطعة هي اللغة الوحيدة التي يفهمها من يقاطع غيره',
-              en: 'Interrupt the Al-Fajr coordinator mid-sentence and give the floor to the Al-Amal coordinator — time is running, he has taken seventy per cent of it, and interruption is the only language someone who interrupts others understands',
+              ar: 'تقاطع منسّق الفجر في منتصف جملته وتعطي الكلمة لمنسّقة الأمل، فالوقت يمرّ وهو أخذ منه سبعين بالمئة، والمقاطعة هي اللغة الوحيدة التي يفهمها من يقاطع غيره، وأنت من يدير وقت الجلسة',
+              en: 'Interrupt the Al-Fajr coordinator mid-sentence and give the floor to the Al-Amal coordinator — time is running, he has taken seventy per cent of it, interruption is the only language someone who interrupts others understands, and you are the one managing the session clock',
             },
             {
               ar: 'تنتظر توقّفاً طبيعياً ثم تقول: «شكراً. قبل المتابعة، أودّ أن نسمع النقطة التي بدت نادية تريد قولها، ثم نُعطي الكلمة لأحمد في نهاية الطاولة الذي لم تكن لديه فرصة بعد»',
@@ -327,8 +327,8 @@ export const levelFourChallenge: CourseContent = {
               en: 'Summarise his point clearly and then ask both parties: "How does what Ahmad said connect to what you have been discussing?"',
             },
             {
-              ar: 'تُدرج ملاحظته في ورقة البنود المتفرقة وتُكمل النقاش الرئيسي، فتضمن أنها مسجّلة ولا يضيع وقت البند الأول الذي لم يُحسم بعد',
-              en: 'Add his observation to the any other business paper and continue the main discussion, guaranteeing it is on record without losing the time of the first item, still unsettled',
+              ar: 'تُدرج ملاحظته في ورقة المتفرقات وتُكمل النقاش الرئيسي، فتضمن أنها مسجّلة',
+              en: 'Add his observation to the any other business paper and continue the main discussion, so it is on record',
             },
           ],
           correct: 2,
@@ -370,8 +370,8 @@ export const levelFourChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تسأله مباشرة: «لماذا اخترت عشرين بالمئة تحديداً وليس أي رقم آخر؟» فإذا لم يكن للرقم أساس محسوب ظهر ذلك أمام الجميع، وإذا كان له أساس عرفتم على ماذا تتفاوضون',
-              en: 'Ask him directly: "Why did you choose twenty per cent specifically and not any other number?" — if the figure has no calculated basis that becomes visible to the room, and if it has one you now know what you are negotiating over',
+              ar: 'تسأله مباشرة: «لماذا اخترت عشرين بالمئة تحديداً وليس أي رقم آخر؟» فإذا لم يكن للرقم أساس محسوب ظهر ذلك أمام الجميع، وإذا كان له أساس عرفتم على ماذا تتفاوضون، ولا يخسر أحد شيئاً من سؤال مباشر',
+              en: 'Ask him directly: "Why did you choose twenty per cent specifically and not any other number?" — if the figure has no calculated basis that becomes visible to the room, if it has one you now know what you are negotiating over, and nobody loses anything from a direct question',
             },
             {
               ar: 'تقول: «أفهم أن هناك قلقاً حقيقياً من أن التوزيع لم يعكس ما اتُّفق عليه. إذا تمكّنا من معالجة هذا القلق بآلية موثَّقة وملزِمة للطرفين، هل يبقى الرقم تحديداً شرطاً صارماً؟»',
@@ -406,8 +406,8 @@ export const levelFourChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تنتقل فوراً إلى البند التالي لاستثمار الزخم الإيجابي قبل أن يتراجع، فالتوقّف للتلخيص الآن قد يُعيد فتح ما أُغلق للتوّ',
-              en: 'Move immediately to the next item to capitalise on the positive momentum before it fades — stopping to summarise now risks reopening what has only just closed',
+              ar: 'تنتقل فوراً إلى البند التالي لاستثمار الزخم، فالتلخيص الآن قد يُعيد فتح ما أُغلق',
+              en: 'Move to the next item at once to use the momentum — summarising now risks reopening what has just closed',
             },
             {
               ar: 'تُلخّص ما اتُّفق عليه بصوت واضح وتسأل الثلاثة: «هل هذا يعكس ما وصلنا إليه؟» ثم تُسجّله في محضر الاجتماع أمام الجميع',
@@ -418,8 +418,8 @@ export const levelFourChallenge: CourseContent = {
               en: 'Ask each party to restate in their own words what they understood, going round the table one by one until every person has confirmed the wording matches theirs',
             },
             {
-              ar: 'تعتبر الاتفاق منعقداً وتُكمل البنود المتبقية لأن الوقت يضغط، وقد وافق الطرفان أمام الغرفة كلّها فلا حاجة إلى تثبيت إضافي',
-              en: 'Consider the agreement concluded and complete the remaining items because time is pressing — both parties agreed in front of the whole room, so no further confirmation is needed',
+              ar: 'تعتبر الاتفاق منعقداً وتُكمل البنود لأن الوقت يضغط، فقد وافق الطرفان أمام الجميع',
+              en: 'Consider the agreement concluded and finish the remaining items, since both parties agreed in front of the whole room',
             },
           ],
           correct: 1,
@@ -461,8 +461,8 @@ export const levelFourChallenge: CourseContent = {
           },
           options: [
             {
-              ar: 'تعدّه موافقاً وتُسجّله كذلك في المحضر وتُغلق الاجتماع، فقد قال إنه موافق والمراجعة القانونية تفصيل إداري داخلي يخصّ منظمته',
-              en: 'Count him as having agreed, record him as such in the minutes and close the meeting — he said he agrees, and legal review is an internal administrative detail for his own organisation',
+              ar: 'تعدّه موافقاً وتُسجّله كذلك في المحضر وتُغلق الاجتماع، فقد قال إنه موافق والمراجعة القانونية تفصيل إداري داخلي يخصّ منظمته، والتحفّظ الذي لا يُكتب في المحضر لا وجود له بعد انتهاء الجلسة',
+              en: 'Count him as having agreed, record him as such in the minutes and close the meeting — he said he agrees, legal review is an internal administrative detail for his own organisation, and a reservation left out of the minutes stops existing once the session ends',
             },
             {
               ar: 'تقول: «ممتاز. نُسجّل موافقتك المبدئية ونُحدّد خمسة أيام عمل كموعد نهائي للحصول على تأكيدك الكامل — مع تحديد من تتواصل معه في حال احتجت معلومات إضافية. هل هذا مناسب؟»',

@@ -182,7 +182,7 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'ارفض باحترام وأسرع في إنجاز الاتفاقية — الصرف دون عقد يُعرّضك لمخاطر قانونية وتدقيقية خطيرة', en: 'Decline respectfully and expedite completing the agreement — disbursement without a contract exposes you to serious legal and audit risks' },
-            { ar: 'قبل الأموال بإيصال مؤقّت ووقّع الاتفاقية لاحقاً، واحفظها في حساب مقيّد حتى التوقيع', en: 'Accept the funds with a temporary receipt and sign the agreement later, holding them in a restricted account until signature' },
+            { ar: 'قبل الأموال بإيصال مؤقّت ووقّع الاتفاقية لاحقاً، واحفظها في حساب مقيّد لا يُصرف منه شيء حتى التوقيع', en: 'Accept the funds with a temporary receipt and sign the agreement later, holding them in a restricted account from which nothing is spent until signature' },
             { ar: 'استشر المحامي أولاً وإن لم يردّ في يومين وافق، فنافذة المانح لا تنتظر', en: 'Consult the lawyer first and if no reply within two days, agree — the funder\'s window will not wait' },
           ],
           correct: 0,
@@ -201,7 +201,7 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'تحدَّث مع الرئيس بشكل خاص: وضّح الإشكال الهيكلي بلغة بناءة واتّفقا على آلية للتواصل تحترم الصلاحيات', en: 'Speak with the chair privately: explain the structural problem in constructive language and agree on a communication mechanism that respects authorities' },
-            { ar: 'أبلغ المجلس كاملاً فوراً لوضع حدٍّ للتدخّل، فتجاوز الصلاحيات مسألة حوكمة لا خلاف شخصي', en: 'Inform the full board immediately to put a stop to the interference — bypassing authority is a governance matter, not a personal disagreement' },
+            { ar: 'أبلغ المجلس كاملاً فوراً لوضع حدٍّ للتدخّل، فتجاوز الصلاحيات مسألة حوكمة لا خلاف شخصي ولا يصحّ حلّها في الغرف المغلقة', en: 'Inform the full board immediately to put a stop to the interference — bypassing authority is a governance matter, not a personal disagreement, and it should not be settled behind closed doors' },
             { ar: 'اقبل الوضع لأن رئيس المجلس له صلاحية أعلى، ولأن الاعتراض في بداية ولايتك يُكلّفك دعمه', en: 'Accept the situation because the board chair has higher authority, and objecting early in your tenure costs you his support' },
           ],
           correct: 0,
@@ -282,7 +282,7 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'ارفض إعطاء بيانات الهوية وعرض بيانات مجمَّعة مجهولة الهوية — هذا يُحقّق هدف التنسيق دون انتهاك الخصوصية', en: 'Decline to share identity data and offer anonymised aggregate data — this achieves the coordination goal without privacy violation' },
-            { ar: 'وافق لأن الشريك جزء من المنظومة المشتركة وله حق المعرفة', en: 'Agree because the partner is part of the shared ecosystem and has a right to know' },
+            { ar: 'وافق لأن الشريك جزء من المنظومة المشتركة وله حق المعرفة، وتأخير التنسيق يُكلّف الأسر خدمة قد تصلها من جهتين أو لا تصلها أصلاً', en: 'Agree because the partner is part of the shared ecosystem and has a right to know, and delaying coordination costs families a service they may receive twice or not at all' },
             { ar: 'اطلب موافقة المستفيدين أولاً ثم أرسل البيانات', en: 'Request beneficiary consent first then send the data' },
           ],
           correct: 0,
@@ -301,7 +301,7 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'ناقش الشرط مع المانح بوضوح: ما المبرّر؟ هل هو قيمي أم تنافسي؟ وقرّر على أساس مهمّتك وليس على أساس الضغط', en: 'Discuss the condition with the funder clearly: what is the rationale? Is it values-based or competitive? Decide based on your mission, not on pressure' },
-            { ar: 'وافق الشرط لأن التمويل يُمكّنك من خدمة المجتمع بطرق أخرى', en: 'Accept the condition because funding enables you to serve the community through other means' },
+            { ar: 'وافق الشرط لأن التمويل يُمكّنك من خدمة المجتمع بطرق أخرى، والاحتياج المحدّد يمكن إحالته إلى جهة ثالثة تُغطّيه دون أن تخسر البرنامج كلّه', en: 'Accept the condition because the funding enables you to serve the community in other ways, and the specific need can be referred to a third party to cover without losing the whole programme' },
             { ar: 'ادخل الشراكة دون إبلاغ المانح', en: 'Enter the partnership without informing the funder' },
           ],
           correct: 0,
@@ -363,7 +363,7 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'تقبّل المسؤولية الإجمالية كمسؤول تنفيذي، تواصل مع المستفيد بجدية، وابدأ تحقيقاً داخلياً مستقلاً', en: 'Accept overall responsibility as executive officer, engage the beneficiary seriously, and begin an independent internal investigation' },
-            { ar: 'أوضح للمستفيد أن الأمر يتعلّق بموظّف وليس بالمنظّمة', en: 'Clarify to the beneficiary that the matter involves an employee, not the organisation' },
+            { ar: 'أوضح للمستفيد أن الأمر يتعلّق بتصرّف موظّف بعينه وليس بسياسة المنظّمة، واعرض عليه متابعة الشكوى مع مسؤول مباشر غير هذا الموظّف', en: 'Clarify to the beneficiary that the matter involves one employee\'s conduct and not organisational policy, and offer to pursue the complaint with a supervisor other than that employee' },
             { ar: 'أحِل الأمر فوراً للمحامي لتجنّب الشكوى العلنية', en: 'Immediately refer the matter to the lawyer to avoid a public complaint' },
           ],
           correct: 0,
@@ -382,7 +382,7 @@ export const levelSixChallenge: CourseContent = {
           },
           options: [
             { ar: 'اعترف بالثغرة التدريبية للمجلس والمستفيد، أنجز التدريب الناقص فوراً، وعالج الموقف مع الموظّف بعدالة تأخذ الغياب التدريبي بعين الاعتبار', en: 'Acknowledge the training gap to the board and beneficiary, complete the missing training immediately, and address the situation with the employee fairly, taking the training absence into account' },
-            { ar: 'أنجز التدريب الناقص وأنهِ عقد الموظّف لأنه أساء رغم ذلك', en: 'Complete the missing training and end the employee\'s contract because they erred regardless' },
+            { ar: 'أنجز التدريب الناقص لكل الفريق فوراً وأنهِ عقد الموظّف لأنه أساء التعامل رغم ذلك، فالتدريب يشرح الخطأ ولا يُبرّره أمام المستفيد ولا أمام المجلس', en: 'Complete the missing training for the whole team immediately and end the employee\'s contract because they mistreated the beneficiary regardless — training explains the error but does not excuse it before the beneficiary or the board' },
             { ar: 'لا تُشر إلى غياب التدريب علناً لأنه يُضعف موقف الجمعية', en: 'Do not publicly mention the training absence as it weakens the organisation\'s position' },
           ],
           correct: 0,

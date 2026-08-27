@@ -93,9 +93,15 @@ export const continuityAr: ContinuityStrings = {
   showing: 'الظاهرون هنا: {n}',
   noMatch: 'لا أحد ضمن هذه التصفية.',
   emptyTitle: 'لم يظهر أحد بعد',
+  /* Both of this file's consent sentences predate migration 038, which made
+     appearing the default for every account that had never answered. «قبل
+     موافقته الصريحة» describes a platform that no longer exists, and an empty
+     state that explains the emptiness by a missing consent would now be
+     explaining it wrongly — the page is empty because nobody matches the 2023
+     cut-off yet, not because nobody has agreed. */
   emptyBody:
-    'لا يُنشر اسم أي متطوّع على هذه الصفحة قبل موافقته الصريحة على ذلك. ' +
-    'الصفحة جاهزة، وتبدأ الأسماء بالظهور فور وصول الموافقات.',
+    'لا يظهر على هذه الصفحة إلا من يسمح إعداد الظهور في حسابه بذلك. ' +
+    'الصفحة جاهزة، وتبدأ الأسماء بالظهور متى انطبقت شروطها على أحد.',
   unavailable: 'تعذّر عرض هذه الصفحة الآن. جرّب بعد قليل.',
 
   since: 'مع الجمعية منذ',
@@ -108,7 +114,7 @@ export const continuityAr: ContinuityStrings = {
   unnamed: 'متطوّع في الجمعية',
 
   privacyNote:
-    'يظهر هنا من وافق على نشر بياناته وحده. غياب اسم عن هذه الصفحة لا يقول شيئاً ' +
+    'يظهر هنا من يسمح إعداد الظهور في حسابه بذلك وحده. غياب اسم عن هذه الصفحة لا يقول شيئاً ' +
     'عن صاحبه ولا عن عطائه.',
 };
 
@@ -137,8 +143,8 @@ export const continuityEn: ContinuityStrings = {
   noMatch: 'Nobody matches this filter.',
   emptyTitle: 'Nobody is shown yet',
   emptyBody:
-    'No volunteer is named on this page without having agreed to it first. ' +
-    'The page is ready, and people will appear here as their consent arrives.',
+    'Only volunteers whose visibility setting allows it are named on this page. ' +
+    'The page is ready, and people will appear here as they meet what it asks.',
   unavailable: 'This page cannot be shown right now. Please try again shortly.',
 
   since: 'With the association since',
@@ -151,7 +157,7 @@ export const continuityEn: ContinuityStrings = {
   unnamed: 'A volunteer of the association',
 
   privacyNote:
-    'Only people who agreed to have their details published appear here. A name that is ' +
+    'Only people whose visibility setting allows it appear here. A name that is ' +
     'absent from this page says nothing about that person, or about what they gave.',
 };
 

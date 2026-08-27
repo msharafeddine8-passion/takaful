@@ -125,8 +125,8 @@ export const inclusionAndAccessibility: CourseContent = {
               en: 'Unconscious bias based on prior expectations or images of who is suited to those tasks',
             },
             {
-              ar: 'خطأ إداري بسيط لا علاقة له بالتحيّز أو التوقّعات المسبقة',
-              en: 'A simple administrative error unrelated to bias or prior expectations',
+              ar: 'خطأ إداري بسيط لا علاقة له بالتحيّز أو التوقّعات المسبقة، وكان يمكن تفاديه بقائمة توزيع مكتوبة',
+              en: 'A simple administrative error unrelated to bias or prior expectations, which a written assignment list would have prevented',
             },
             {
               ar: 'اجتهاد معقول يمكن تبريره بالخبرة الإدارية العامة',
@@ -206,16 +206,16 @@ export const inclusionAndAccessibility: CourseContent = {
           },
           options: [
             {
-              ar: 'الاستمرار في تنظيم النشاط كما هو، فالمهمّ أن الفعالية ناجحة والعدد جيّد',
-              en: 'Continue running the activity as it is — what matters is that it is successful and numbers are good',
+              ar: 'الاستمرار في تنظيم النشاط كما هو، فالمهمّ أن الفعالية ناجحة والعدد جيّد، وسيأتي غيرهم من تلقاء أنفسهم مع الوقت',
+              en: 'Continue running the activity as it is — what matters is that it is successful and numbers are good, and others will come along on their own in time',
             },
             {
               ar: 'الحديث مباشرة مع أشخاص من فئات غائبة لفهم ما الذي جعل المشاركة صعبة أو غير مشجّعة',
               en: 'Speak directly with people from absent groups to understand what made participation difficult or unappealing',
             },
             {
-              ar: 'توسيع قنوات نشر الإعلان في الدورة القادمة وإضافة منصات تواصل اجتماعي جديدة',
-              en: 'Expand the announcement to more channels next time and add new social media platforms',
+              ar: 'توسيع قنوات نشر الإعلان في الدورة القادمة وإضافة منصات تواصل اجتماعي جديدة حتى يصل الإعلان إلى أكبر عدد ممكن',
+              en: 'Expand the announcement to more channels next time and add new social media platforms so it reaches as many people as possible',
             },
             {
               ar: 'تقليل شروط المشاركة وإزالة أي متطلّبات قد تُحبّط التسجيل',
@@ -319,8 +319,8 @@ export const inclusionAndAccessibility: CourseContent = {
               en: 'Automatically provide a sign language interpreter without asking, as this is usually the best option',
             },
             {
-              ar: 'كتابة ملخّص لكل ما يُقال على لوح أبيض بارز خلال الورشة',
-              en: 'Write a summary of everything said on a prominent whiteboard throughout the workshop',
+              ar: 'كتابة ملخّص لكل ما يُقال على لوح أبيض بارز خلال الورشة ليتابع من يحتاج ذلك بالقراءة',
+              en: 'Write a summary of everything said on a prominent whiteboard throughout the workshop so anyone who needs to can follow by reading',
             },
           ],
           correct: 1,
@@ -408,8 +408,8 @@ export const inclusionAndAccessibility: CourseContent = {
           },
           options: [
             {
-              ar: 'أن خمس عشرة دقيقة غير كافية وكان يجب أن يكون الوقت الإضافي أطول من ذلك',
-              en: 'That fifteen minutes is insufficient and the extra time should have been longer',
+              ar: 'أن خمس عشرة دقيقة غير كافية وكان يجب أن يكون الوقت الإضافي أطول من ذلك بحسب طبيعة الصعوبة لديها وطول التمارين الكتابية',
+              en: 'That fifteen minutes is insufficient and the extra time should have been longer, depending on the nature of her particular difficulty and on the length of the written exercises',
             },
             {
               ar: 'أن الإعلان كشف معلومة شخصية خاصة دون إذنها وجعل الترتيب استثناءً ملفتاً ومحرجاً',
@@ -508,12 +508,12 @@ export const inclusionAndAccessibility: CourseContent = {
               en: 'Holding consultations with representatives from the neighbourhood at the design stage before any core decisions are made',
             },
             {
-              ar: 'توزيع استبانة على النساء بعد إطلاق البرنامج لتقييم مدى رضاهن عن الخدمات المقدَّمة',
-              en: 'Distributing a survey to women after the programme launches to assess their satisfaction with services delivered',
+              ar: 'توزيع استبانة على النساء بعد إطلاق البرنامج لتقييم مدى رضاهن عن الخدمات المقدَّمة وتحسينها لاحقاً',
+              en: 'Distributing a survey to women after the programme launches to assess their satisfaction with services delivered and improve them later',
             },
             {
-              ar: 'إشراك ممثّلة واحدة من الحيّ في اجتماع اللجنة التوجيهية كضيفة مدعوّة لمرّة واحدة',
-              en: 'Including one representative from the neighbourhood in one committee meeting as an invited guest on a single occasion',
+              ar: 'إشراك ممثّلة واحدة من الحيّ في اجتماع اللجنة التوجيهية كضيفة مدعوّة',
+              en: 'Including one representative from the neighbourhood in one committee meeting as an invited guest',
             },
           ],
           correct: 1,
@@ -540,8 +540,8 @@ export const inclusionAndAccessibility: CourseContent = {
               en: 'That meetings take longer and become less efficient when multiple representatives are present',
             },
             {
-              ar: 'أن المجتمعات المختلفة لا ترحّب عموماً بمشاركة ممثّليها في اجتماعات مع منظمات من خارجها',
-              en: 'That different communities generally do not welcome their representatives participating in meetings with external organisations',
+              ar: 'أن المجتمعات المختلفة لا ترحّب عموماً بمشاركة ممثّليها في اجتماعات مع منظمات من خارجها وتفضّل التعامل معها عبر وسيط واحد معروف',
+              en: 'That different communities generally do not welcome their representatives participating in meetings with external organisations and prefer to deal with them through a single known intermediary',
             },
             {
               ar: 'أن هذا النهج يُكلّف المنظمة أكثر لوجستياً مقارنة بالبدائل المتاحة',

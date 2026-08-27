@@ -88,7 +88,7 @@ export const partnerships: CourseContent = {
           options: [
             { ar: 'ترتيب تنفيذي: أنت تُقدّم خدمة لهم — وهذا يحتاج اتفاقية تنفيذية لا مذكّرة تفاهم', en: 'An implementation arrangement: you are providing a service — this needs an implementation agreement, not a memorandum of understanding' },
             { ar: 'شراكة كاملة لأن كلاً منكما يُساهم بشيء حقيقي: هم يُقدّمون المستلزمات وأنت تُقدّم الوصول الميداني والمتطوّعين', en: 'A full partnership because each of you contributes something real: they contribute the supplies and you contribute the field reach and the volunteers' },
-            { ar: 'تعاون غير رسمي لا يحتاج توثيقاً سوى إيصال تسليم يُوقَّع في نهاية كل يوم توزيع', en: 'Informal cooperation that requires no documentation beyond a delivery receipt signed at the end of each distribution day' },
+            { ar: 'تعاون غير رسمي لا يحتاج توثيقاً سوى إيصال تسليم في نهاية كل يوم', en: 'Informal cooperation that requires no documentation beyond a delivery receipt at the end of each day' },
           ],
           correct: 0,
           feedback: {
@@ -106,7 +106,7 @@ export const partnerships: CourseContent = {
           },
           options: [
             { ar: 'ما المشكلة المشتركة التي لا نستطيع أياً منا حلّها منفرداً بكفاءة مماثلة؟', en: 'What is the shared problem neither of us can solve alone with equal efficiency?' },
-            { ar: 'هل للجمعية الأخرى سمعة جيّدة في المجال؟', en: 'Does the other organisation have a good reputation in the field?' },
+            { ar: 'هل للجمعية الأخرى سمعة جيّدة في المجال، فالشراكة مع اسم محترم تفتح لنا أبواباً كثيرة؟', en: 'Does the other organisation have a good reputation in the field, since partnering with a respected name opens many doors for us?' },
             { ar: 'هل لديهم تمويل يمكن الاستفادة منه عبر الشراكة؟', en: 'Do they have funding that can be accessed through partnership?' },
           ],
           correct: 0,
@@ -169,7 +169,7 @@ export const partnerships: CourseContent = {
           options: [
             { ar: 'تصرّ بلطف: الثقة لا تلغي الوضوح، وبند الملكية يحمي الطرفين معاً عند أي تغيير مستقبلي', en: 'Insist politely: trust does not replace clarity, and an ownership clause protects both parties at any future change' },
             { ar: 'توافق لأن إصرارك في هذه المرحلة المبكّرة يُشير إلى عدم الثقة وقد يُكلّفك علاقة استغرق بناؤها سنة', en: 'Agree, because insisting at this early stage signals distrust and may cost you a relationship that took a year to build' },
-            { ar: 'تُرجئ الموضوع حتى تتّضح الشراكة بعد أول نشاط مشترك، ثم تُضيف البند لاحقاً كملحق للمذكّرة', en: 'Defer the issue until the partnership becomes clearer after the first joint activity, and then add the clause as an annex' },
+            { ar: 'تُرجئ الموضوع حتى تتّضح الشراكة، ثم تُضيف البند لاحقاً كملحق للمذكّرة', en: 'Defer the issue until the partnership becomes clearer, then add the clause later as an annex' },
           ],
           correct: 0,
           feedback: {
@@ -187,7 +187,7 @@ export const partnerships: CourseContent = {
           },
           options: [
             { ar: 'يُعطي أي طرف حق النقض الدائم ويحوّل الشراكة إلى علاقة يصعب الخروج منها', en: 'It gives either party permanent veto power and turns the partnership into a relationship that is difficult to exit' },
-            { ar: 'لا مشكلة — التراضي أفضل دائماً من القرار الفردي لأنه يمنع أي طرف من الانسحاب في لحظة غضب', en: 'No problem — mutual agreement is always better than a unilateral decision because it stops either side from walking away in anger' },
+            { ar: 'لا مشكلة — التراضي أفضل لأنه يمنع الانسحاب في لحظة غضب', en: 'No problem — mutual agreement is better because it stops either side from walking away in anger' },
             { ar: 'المشكلة هي أن بلوغ التراضي يستغرق وقتاً، وهذا يؤخّر الخروج في اللحظة التي تتطلّب فيها الطوارئ قراراً سريعاً', en: 'The problem is that reaching mutual agreement takes time, which delays the exit at the very moment an emergency requires a fast decision' },
           ],
           correct: 0,
@@ -234,7 +234,7 @@ export const partnerships: CourseContent = {
           options: [
             { ar: 'أُفصح عن وجود تضارب مصالح محتمل وأُحيل القرار لشخص محايد مع الالتزام بالإجراءات المعتادة', en: 'Declare the potential conflict of interest and refer the decision to a neutral person while following normal procedures' },
             { ar: 'تمنحه الأولوية لأن الشراكة تستوجب التكافل المتبادل، ولأن والده دعم الجمعية سنوات طويلة دون مقابل', en: 'Give him priority because partnership requires mutual solidarity, and because his father has supported the organisation for years' },
-            { ar: 'ترفض الطلب رفضاً قاطعاً في حينه وتُبلّغ المجلس فوراً باعتباره محاولة لاستخدام الشراكة لمنفعة شخصية', en: 'Firmly refuse the request on the spot and report it to the board at once as an attempt to use the partnership for personal gain' },
+            { ar: 'ترفض الطلب رفضاً قاطعاً وتُبلّغ المجلس فوراً بمحاولة استغلال الشراكة', en: 'Firmly refuse the request and report it to the board at once as an attempted misuse of the partnership' },
           ],
           correct: 0,
           feedback: {
@@ -252,8 +252,8 @@ export const partnerships: CourseContent = {
           },
           options: [
             { ar: 'ناقش الطلب بجدية، وثّق الاتفاق الجديد كملحق مكتوب للمذكّرة الأصلية، وأبلغ أصحاب المصلحة', en: 'Discuss the request seriously, document the new agreement as a written annex to the original MOU, and inform stakeholders' },
-            { ar: 'وافق شفهياً لأن الظرف طارئ والشريك موثوق، ورتّب الأوراق بعد أن ينقضي ضغط الحالة الطارئة', en: 'Agree verbally because the situation is urgent and the partner is trusted, and put the paperwork in order once the emergency has passed' },
-            { ar: 'ارفض لأن المذكّرة لا تُجيز التمديد، وأي تغيير يستلزم اتفاقية جديدة يوقّعها مجلسا الطرفين', en: 'Refuse because the MOU does not permit extension, and any change would require a whole new agreement signed by both boards' },
+            { ar: 'وافق شفهياً لأن الظرف طارئ والشريك موثوق منذ سنوات، ورتّب الأوراق بعد أن ينقضي ضغط الحالة الطارئة', en: 'Agree verbally because the situation is urgent and the partner has been trusted for years, and put the paperwork in order once the emergency has passed' },
+            { ar: 'ارفض لأن المذكّرة لا تُجيز التمديد، وأي تغيير يستلزم اتفاقية جديدة', en: 'Refuse because the MOU does not permit extension, and any change would require a whole new agreement' },
           ],
           correct: 0,
           feedback: {
@@ -299,7 +299,7 @@ export const partnerships: CourseContent = {
           options: [
             { ar: 'ناقش صراحةً وحدّد: هل هناك مشكلة مشتركة جديدة تستوجب الشراكة؟ إن لا، أنهِ بأدب واحترام', en: 'Discuss openly and define: is there a new shared problem warranting partnership? If not, close politely and respectfully' },
             { ar: 'استمرّ لأن العلاقة الجيّدة مع جهة موثوقة قيمة بحد ذاتها، ولأن مشكلة مشتركة جديدة ستظهر حتماً مع الوقت', en: 'Continue because a good relationship with a trusted organisation is a value in itself, and a new shared problem is bound to appear with time' },
-            { ar: 'أنهِ الشراكة فوراً لأن مبرّرها الأصلي انتفى، والاستمرار بعده يُهدر وقت الفريقين بلا مقابل', en: 'End the partnership immediately because its original rationale is gone, and continuing would only waste both teams\' time' },
+            { ar: 'أنهِ الشراكة فوراً لأن مبرّرها الأصلي انتفى، والاستمرار يُهدر وقت الفريقين', en: 'End the partnership immediately because its original rationale is gone, and continuing wastes both teams\' time' },
           ],
           correct: 0,
           feedback: {
@@ -317,7 +317,7 @@ export const partnerships: CourseContent = {
           },
           options: [
             { ar: 'أعد للاتفاقية الأصلية: ما المبرّر الذي تمّت الشراكة من أجله وهل هو قائم؟ الحوار المبني على الحقائق أفضل من الردّ على الاتهام', en: 'Return to the original agreement: what was the rationale for the partnership and does it still exist? A fact-based dialogue is better than responding to an accusation' },
-            { ar: 'اعتذر عن الطريقة التي وصل بها الخبر، واسحب إشعار الإنهاء، وأجّل الموضوع بضعة أشهر حتى يهدأ التوتّر قبل طرحه مجدّداً بهدوء', en: 'Apologise for the way the news landed, withdraw the termination notice, and postpone the whole question for a few months so the tension has time to settle before you raise it again' },
+            { ar: 'اعتذر عن الطريقة التي وصل بها الخبر، واسحب إشعار الإنهاء، وأجّل الموضوع بضعة أشهر حتى يهدأ التوتّر قبل طرحه مجدّداً بصيغة أليَن وأكثر دبلوماسية', en: 'Apologise for the way the news landed, withdraw the termination notice, and postpone the whole question for a few months so the tension has time to settle before you raise it again in a gentler, more diplomatic form' },
             { ar: 'أبلغ المجلس وسلّمه إدارة النزاع، فاتهام بخيانة الثقة أعلى من مستوى المنسّقَين اللذين وقّعا الاتفاقية أصلاً', en: 'Notify the board and hand them the dispute to manage, since an accusation of betrayed trust sits above the level of the two coordinators who signed the agreement' },
           ],
           correct: 0,
@@ -373,7 +373,7 @@ export const partnerships: CourseContent = {
           options: [
             { ar: 'لا — ضعف سياسة الحماية يُعرّض المستفيدين للخطر ويعني أنك قد تكون شريكاً في ضرر', en: 'No — weak protection policy puts beneficiaries at risk and means you may become a partner in harm' },
             { ar: 'نعم، بشرط إضافة بند حماية في مذكّرة التفاهم', en: 'Yes, provided a protection clause is added to the MOU' },
-            { ar: 'نعم، التمويل الوفير يُمكّن من تعزيز الحماية داخل الشراكة', en: 'Yes, ample funding enables strengthening protection within the partnership' },
+            { ar: 'نعم، التمويل الوفير يُمكّن من تعزيز سياسة الحماية داخل الشراكة وتدريب فريقهم عليها لاحقاً', en: 'Yes, ample funding enables strengthening the protection policy within the partnership and training their team on it later' },
           ],
           correct: 0,
           feedback: {
@@ -392,7 +392,7 @@ export const partnerships: CourseContent = {
           options: [
             { ar: 'إضافة شراكة جديدة دون مراجعة القدرة التشغيلية الحالية يُضعف جودة إدارة جميع الشراكات', en: 'Adding a new partnership without reviewing current operational capacity weakens the quality of managing all partnerships' },
             { ar: 'سبع شراكات هي الحدّ الأقصى المقبول في العمل المجتمعي، وتجاوز هذا الحدّ مخالف للممارسة الجيّدة', en: 'Seven partnerships is the maximum number acceptable in community work, and going beyond it breaches recognised good practice' },
-            { ar: 'الفرص الذهبية دائماً مشكوك في أمرها، وأي شراكة تُعرض بهذا الحماس تستحقّ الرفض من حيث المبدأ', en: 'Golden opportunities are always suspect, and any partnership offered with that much enthusiasm deserves to be refused on principle' },
+            { ar: 'الفرص الذهبية دائماً مشكوك في أمرها، وأي شراكة تُعرض بهذا الحماس تستحقّ الرفض', en: 'Golden opportunities are always suspect, and any partnership offered with that much enthusiasm deserves refusal' },
           ],
           correct: 0,
           feedback: {

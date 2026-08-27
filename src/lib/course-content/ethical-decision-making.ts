@@ -112,13 +112,19 @@ export const ethicalDecisionMaking: CourseContent = {
             en: 'A volunteer tells you two programme beneficiaries are repeatedly arguing and asks you for an immediate decision. What is your first step?',
           },
           options: [
-            { ar: 'تُقرّر فصل المستفيدَيْن عن بعضهما في الأنشطة فوراً لتهدئة الموقف', en: 'Immediately decide to separate the two beneficiaries in activities to calm things down' },
+            {
+              ar: 'تُقرّر فصل المستفيدَيْن عن بعضهما في الأنشطة فوراً لتهدئة الموقف، فإيقاف الاحتكاك بينهما أسرع ما يُعيد النشاط إلى مساره ويمنع تصاعد الخلاف أمام بقية المشاركين',
+              en: 'Immediately decide to separate the two beneficiaries in activities to calm things down, since stopping the friction between them is the fastest way to get the activity back on track and prevent the dispute escalating in front of the other participants',
+            },
             {
               ar: 'تُحدّد أولاً ما القرار المطلوب منك فعلاً: هل هو قرار تشغيلي يومي أم حالة تحتاج تقييماً اجتماعياً متخصّصاً بصلاحية مختلفة',
               en: 'First identify what decision is actually being asked: is it a daily operational call or a situation needing specialist social assessment with different authority',
             },
             { ar: 'تُبلّغ الإدارة فوراً وتتجنّب الدخول في الموضوع', en: 'Report immediately to management and avoid getting involved' },
-            { ar: 'تتحدّث إلى كل مستفيد على انفراد وتحاول التوصّل إلى حلّ', en: 'Speak privately to each beneficiary and try to reach a solution' },
+            {
+              ar: 'تتحدّث إلى كل مستفيد على انفراد وتحاول التوصّل إلى حلّ، فالاستماع لكل طرف على حدة يكشف جذر الخلاف ويسمح بتسويته ودّياً قبل أن يصبح ملفّاً رسمياً',
+              en: 'Speak privately to each beneficiary and try to reach a solution, since hearing each side separately reveals the root of the dispute and lets you settle it amicably before it becomes a formal case',
+            },
           ],
           correct: 1,
           feedback: {
@@ -221,12 +227,18 @@ export const ethicalDecisionMaking: CourseContent = {
             en: 'Your budget covers only one family from three equally eligible families by formal criteria. How do you evaluate the alternatives before deciding?',
           },
           options: [
-            { ar: 'تختار العائلة الأقدم في قائمة الانتظار لأن ذلك المعيار الأوضح والأعدل', en: 'Choose the family that has waited longest because that is the clearest and fairest criterion' },
+            {
+              ar: 'تختار العائلة الأقدم في قائمة الانتظار لأن ذلك المعيار الأوضح والأعدل، فالانتظار الأطول يستحقّ الأولوية ويُجنّبك اتّهاماً بالمحاباة حين تُسأل عن أساس اختيارك',
+              en: 'Choose the family that has waited longest because that is the clearest and fairest criterion, since longer waiting deserves priority and shields you from any accusation of favouritism when you are asked how you chose',
+            },
             {
               ar: 'تُقيّم الوضع الفوري لكل عائلة، وتفحص إن كانت إحداها تملك إمكانية إحالة لمصدر تمويل آخر، ثم توثّق أساس قرارك بما فيه ما لم تستطع تقييمه',
               en: 'Assess each family\'s immediate situation, check whether any can be referred to another funding source, then document the basis of your decision including what you could not assess',
             },
-            { ar: 'تُوزّع المبلغ بالتساوي على الثلاث لأن ذلك الأكثر عدالةً وأقلّ إحراجاً', en: 'Divide the amount equally among the three as the most equitable and least awkward approach' },
+            {
+              ar: 'تُوزّع المبلغ بالتساوي على الثلاث لأن ذلك الأكثر عدالةً وأقلّ إحراجاً، فتقسيمه يمنع أن تخرج أيّ عائلة بلا شيء ويُبقي ثقة العائلات الثلاث بالبرنامج',
+              en: 'Divide the amount equally among the three as the most equitable and least awkward approach, since splitting it means no family leaves with nothing and all three keep their trust in the programme',
+            },
             { ar: 'ترفع الأمر للمدير لأن القرار حسّاس ويتجاوز مستواك', en: 'Escalate to your manager because the decision is sensitive and exceeds your level' },
           ],
           correct: 1,
@@ -299,7 +311,10 @@ export const ethicalDecisionMaking: CourseContent = {
             en: 'You have just heard that a new family has applied for support. As soon as you heard their name, before reading any other information, you found yourself assuming their situation is "probably less urgent" than others. Which bias is at work here?',
           },
           options: [
-            { ar: 'تحيّز التوفّر — لأن اسمهم يُذكّرك بعائلة مشابهة', en: 'Availability bias — because their name reminds you of a similar family' },
+            {
+              ar: 'تحيّز التوفّر — لأن اسمهم يُذكّرك بعائلة مشابهة سبق أن تعاملت معها وكان وضعها أقلّ إلحاحاً ممّا بدا في البداية',
+              en: 'Availability bias — because their name reminds you of a similar family you dealt with before whose situation turned out to be less urgent than it first appeared',
+            },
             { ar: 'تحيّز الحاضر — لأنك تميل لتأجيل التعامل معهم', en: 'Present bias — because you are inclined to postpone dealing with them' },
             {
               ar: 'تحيّز المجموعة الداخلية — تقييم أوّلي مبنيّ على إشارة هويّة لا على معلومات فعلية عن الوضع',
@@ -379,8 +394,14 @@ export const ethicalDecisionMaking: CourseContent = {
             en: 'In the middle of a busy activity a volunteer tells you a participant has refused to sit next to another and is asking for an immediate decision. Everyone is waiting. What do you do?',
           },
           options: [
-            { ar: 'تقرّر فوراً بناءً على أول فكرة تخطر ببالك لأن التردّد أمام الجميع سيُضعف ثقتهم بك', en: 'Decide immediately based on the first idea that comes to mind because hesitating in front of everyone will undermine their confidence in you' },
-            { ar: 'تترك الأمر للمتطوّع الذي أبلغك لأنه أقرب للموقف ويعرف التفاصيل', en: 'Leave the matter to the volunteer who told you because they are closer to the situation and know the details' },
+            {
+              ar: 'تقرّر فوراً بناءً على أول فكرة تخطر ببالك لأن التردّد أمام الجميع سيُضعف ثقتهم بك، وقرار سريع ولو كان ناقصاً أهون من صمت أمام مجموعة تنتظر',
+              en: 'Decide immediately based on the first idea that comes to mind because hesitating in front of everyone will undermine their confidence in you, and a quick decision even if incomplete is better than silence in front of a waiting group',
+            },
+            {
+              ar: 'تترك الأمر للمتطوّع الذي أبلغك لأنه أقرب للموقف ويعرف التفاصيل، وهو من سيتابع الأمر معهما بعد انتهاء النشاط على أيّ حال',
+              en: 'Leave the matter to the volunteer who told you because they are closer to the situation and know the details, and they are the one who will follow it up with them after the activity anyway',
+            },
             {
               ar: 'تقول «لحظة» وتمشي خطوتين جانباً لتسمّي ما تشعر به وتُحدّد القرار الفعلي قبل أن تستجيب بصوت مرتبك',
               en: 'Say "one moment" and step two steps aside to name what you feel and identify the actual decision before responding with a flustered voice',
@@ -481,7 +502,10 @@ export const ethicalDecisionMaking: CourseContent = {
           },
           options: [
             { ar: 'تحديد من يتحمّل مسؤولية النتائج التي جاءت دون التوقّعات وما العواقب المترتّبة', en: 'Identify who bears responsibility for the results that fell below expectations and what consequences follow' },
-            { ar: 'إثبات أن القرار كان صحيحاً في ضوء ما كان متاحاً وقتها ودفع أي نقد محتمل', en: 'Demonstrate that the decision was correct in light of what was available at the time and deflect potential criticism' },
+            {
+              ar: 'إثبات أن القرار كان صحيحاً في ضوء ما كان متاحاً وقتها ودفع أي نقد محتمل، حتى لا تتردّد الإدارة في تفويضك بقرارات مشابهة لاحقاً',
+              en: 'Demonstrate that the decision was correct in light of what was available at the time and deflect potential criticism, so that management does not hesitate to delegate similar decisions to you later',
+            },
             {
               ar: 'فهم الفجوة بين الافتراضات وقت القرار والواقع بعد التنفيذ، واستخلاص ما يُغيَّر في المرّة القادمة',
               en: 'Understand the gap between assumptions at decision time and reality after delivery, and draw out what to change next time',

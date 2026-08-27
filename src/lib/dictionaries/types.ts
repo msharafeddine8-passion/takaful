@@ -1,6 +1,24 @@
-import type { LmsStrings } from './lms';
+import type { LmsStrings, PluralForms } from './lms';
 
 export type Stat = { value: string; label: string };
+
+/**
+ * The five forms `countPhrase` in lib/when.ts asks for. Only few/many carry
+ * {n}; the other three spell the count out, because «١ دورة» is not how
+ * Arabic says one of something.
+ *
+ * Declared here rather than imported from one of the satellite dictionaries so
+ * that the main three files do not depend on a namespace that may be spliced
+ * in or out; challenge-levels.ts, passport.ts and volunteer-roles.ts each
+ * declare an identical one locally, for the reason their headers give.
+ */
+export type CountForms = {
+  zero: string;
+  one: string;
+  two: string;
+  few: string;
+  many: string;
+};
 
 export type Area = {
   slug: string;
@@ -789,13 +807,23 @@ export type Account = {
     emptyCta: string;
     earnedOn: string;
     nextTitle: string;
-    /** One per kind: a bare number leaves "4 to go" meaning nothing. */
+    /**
+     * One per kind: a bare number leaves "4 to go" meaning nothing.
+     *
+     * All but the hours one are `PluralForms`, for the reason
+     * dictionaries/lms.ts gives at length and `remainingLevels` already
+     * follows. Every badge threshold here is small — 1, 3, 5, 10, 20 — so the
+     * remainder that reaches these templates is very often 1 or 2, and «باقي 1
+     * دورات» is the error a fixed plural makes at exactly the commonest value.
+     * `remainingHours` stays a plain string because {n} arrives from
+     * formatDuration already inflected.
+     */
     remainingHours: string;
-    remainingCourses: string;
-    remainingCertificates: string;
-    remainingYears: string;
-    remainingActivities: string;
-    remainingStages: string;
+    remainingCourses: PluralForms;
+    remainingCertificates: PluralForms;
+    remainingYears: PluralForms;
+    remainingActivities: PluralForms;
+    remainingStages: PluralForms;
     revokedNote: string;
     showRevoked: string;
   };
@@ -849,9 +877,20 @@ export type Account = {
     markAllRead: string;
     unread: string;
     justNow: string;
-    minutesAgo: string;
-    hoursAgo: string;
-    daysAgo: string;
+    /**
+     * Relative time, declined.
+     *
+     * These were «منذ {n} دقيقة» / «{n} ساعة» / «{n} يوم» — the eleven-and-above
+     * shape — and the values that actually reach them are two to fifty-nine
+     * minutes and two to twenty-three hours, so the band that was written for
+     * was the band that almost never occurs. `countPhrase` in lib/when.ts
+     * picks the form; the zero form is unreachable because `justNow` covers
+     * anything under two minutes, and it is spelled out anyway rather than
+     * left blank.
+     */
+    minutesAgo: CountForms;
+    hoursAgo: CountForms;
+    daysAgo: CountForms;
   };
   /** The short record every volunteer must have, however they arrived. */
   safeguarding: {

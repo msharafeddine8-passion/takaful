@@ -111,16 +111,16 @@ export const meetingsAndFacilitation: CourseContent = {
           },
           options: [
             {
-              ar: 'قراءة محضر الاجتماع السابق (١٠ د) — تحديثات من كلّ شخص (٣٠ د) — نقاش التقرير (٢٥ د) — أسئلة ومتفرّقات (١٥ د) — تحديد موعد الاجتماع القادم (١٠ د)',
-              en: 'Reading the previous minutes (10 min) — Updates from each person (30 min) — Discussion of the report (25 min) — Questions and miscellaneous (15 min) — Setting the next meeting date (10 min)',
+              ar: 'قراءة محضر الاجتماع السابق (١٠ د) — تحديثات من كلّ شخص (٣٠ د) — نقاش التقرير (٢٥ د) — أسئلة ومتفرّقات وما يستجدّ (١٥ د) — تحديد موعد الاجتماع القادم (١٠ د)',
+              en: 'Reading the previous minutes (10 min) — Updates from each person (30 min) — Discussion of the report (25 min) — Questions, miscellaneous and any other business (15 min) — Setting the next meeting date (10 min)',
             },
             {
               ar: 'الاتفاق على خطة الشهر القادم (٤٥ د) — مراجعة ميزانية الربع الأول واتخاذ قرار بشأن البند الثالث (٣٠ د) — تحديث سريع عن النشاطات الجارية (١٥ د)',
               en: 'Agree on next month\'s plan (45 min) — Review Q1 budget and decide on item 3 (30 min) — Quick update on ongoing activities (15 min)',
             },
             {
-              ar: 'اجتماع مفتوح بلا جدول — كلّ شخص يطرح ما يراه مهمّاً، والوقت يُقسَّم بحسب ما يظهر في الغرفة',
-              en: 'Open meeting with no agenda — each person raises whatever they think is important, and the time is divided according to what comes up in the room',
+              ar: 'اجتماع مفتوح بلا جدول — كلّ شخص يطرح ما يراه مهمّاً، والوقت يُقسَّم بحسب ما يظهر في الغرفة، لأنّ الجدول المسبق يُقيّد النقاش ويمنع الأفكار الجديدة من الظهور',
+              en: 'Open meeting with no agenda — each person raises whatever they think is important, and the time is divided according to what comes up in the room, since a fixed agenda constrains the discussion and stops new ideas from surfacing',
             },
             {
               ar: 'عرض تقديمي من المنسّق عن وضع المشروع، ثمّ نقاش حرّ بلا وقت محدّد لكلّ متحدّث',
@@ -331,8 +331,8 @@ export const meetingsAndFacilitation: CourseContent = {
               en: '"Is there anyone who would like to add something or offer a different perspective?"',
             },
             {
-              ar: '«أعتقد أنّ الجميع متّفق ما دام لا أحد اعترض — هل نصوّت؟»',
-              en: '"I think everyone agrees, since nobody has objected — shall we put it to a vote?"',
+              ar: '«أعتقد أنّ الجميع متّفق ما دام لا أحد اعترض»',
+              en: '"I think everyone agrees, since nobody has objected"',
             },
             {
               ar: '«ما رأيك أنتَ، أنتَ صامت منذ البداية؟» — موجّهاً السؤال لأحد الصامتين',
@@ -583,8 +583,8 @@ export const meetingsAndFacilitation: CourseContent = {
           },
           options: [
             {
-              ar: 'تنتظر حتى ينتهي ثمّ تسأل بشكل عام «هل هناك تعليقات أخرى؟» وتترك المجال لمن يريد',
-              en: 'Wait until they finish and then ask the room generally "Are there other comments?", leaving the floor to whoever wants it',
+              ar: 'تنتظر حتى ينتهي ثمّ تسأل بشكل عام «هل هناك تعليقات أخرى؟» وتترك المجال لمن يريد حتى لا تبدو منحازاً ضدّ أحد',
+              en: 'Wait until they finish and then ask the room generally "Are there other comments?", leaving the floor to whoever wants it so that you do not appear biased against anyone',
             },
             {
               ar: 'تقطعه في منتصف الكلام وتعطي الكلام لشخص آخر لم يتكلّم بعد، حتى يرى الجميع أنّ الوقت موزّع بالتساوي',
@@ -760,8 +760,8 @@ export const meetingsAndFacilitation: CourseContent = {
           },
           options: [
             {
-              ar: 'ترسل ملخّصاً يضمّ ما تفهمه من البند الثاني وتأمل أن يوافق الجميع، وتُسقط البند الثالث لأنّ الوقت لم يتّسع له أصلاً',
-              en: 'Send a summary with your own understanding of item two and hope everyone agrees, and drop item three altogether since there was never time for it',
+              ar: 'ترسل ملخّصاً يضمّ ما تفهمه من البند الثاني وتأمل أن يوافق الجميع عليه في صمت، وتُسقط البند الثالث لأنّ الوقت لم يتّسع له أصلاً',
+              en: 'Send a summary with your own understanding of item two and hope everyone silently agrees with it, and drop item three altogether since there was never time for it',
             },
             {
               ar: 'تمدّد الاجتماع لعشر دقائق، تُغلق البند الثاني صراحةً بإقرار الجميع، وتحدّد موعد اجتماع ثانٍ قصير للبند الثالث',
@@ -849,8 +849,8 @@ export const meetingsAndFacilitation: CourseContent = {
           },
           options: [
             {
-              ar: 'تردّ بأن ما كتبته هو ما فهمته وتطلب منه أن يُكمل المهمّة كما هي',
-              en: 'Reply that what you wrote is what you understood and ask them to complete the task as written',
+              ar: 'تردّ بأن ما كتبته هو ما فهمته وتطلب منه أن يُكمل المهمّة كما هي، لأنّ الملخّص المكتوب هو المرجع الرسمي الوحيد بعد انتهاء الاجتماع',
+              en: 'Reply that what you wrote is what you understood and ask them to complete the task as written, since the written summary is the only official record once the meeting has ended',
             },
             {
               ar: 'تحذف البند الثالث من الملخّص تفادياً للخلاف',
@@ -938,8 +938,8 @@ export const meetingsAndFacilitation: CourseContent = {
           },
           options: [
             {
-              ar: 'تنتظر حتى ينتهي الشيخ وتأمل أن تتكلّم امرأة من تلقاء نفسها',
-              en: 'Wait until the elder finishes and hope a woman will speak up on her own',
+              ar: 'تنتظر حتى ينتهي الشيخ وتأمل أن تتكلّم امرأة من تلقاء نفسها، لأنّ التدخّل في ترتيب الكلام قد يُفهَم على أنّه قلّة احترام لمكانته في الحارة',
+              en: 'Wait until the elder finishes and hope a woman will speak up on her own, since intervening in the speaking order might be read as disrespect for his standing in the neighbourhood',
             },
             {
               ar: 'تقاطعه مباشرةً وتطلب من النساء الكلام',
@@ -970,8 +970,8 @@ export const meetingsAndFacilitation: CourseContent = {
           },
           options: [
             {
-              ar: 'توافق على الفور لأن الحاضرين يعرفون ثقافتهم أكثر منك',
-              en: 'Agree immediately because the participants know their culture better than you do',
+              ar: 'توافق على الفور لأن الحاضرين يعرفون ثقافتهم أكثر منك، ولأنّ أيّ اعتراض من ميسّر غريب عن الحارة سيُفقده ثقة الحاضرين ويُفشل الجلسة كلّها منذ لحظتها الأولى',
+              en: 'Agree immediately because the participants know their culture better than you do, and because any objection from a facilitator who is a stranger to the neighbourhood would cost him the room\'s trust and wreck the whole session from its very first moment',
             },
             {
               ar: 'ترفض الاقتراح وتشرح أن كل الأصوات متساوية',

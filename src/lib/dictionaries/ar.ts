@@ -480,7 +480,12 @@ export const ar: Dictionary = {
       pendingLabel: 'بانتظار المراجعة',
       stageLabel: 'المرحلة الحالية',
       notStarted: 'لم تبدأ بعد',
-      stageOf: 'من ٦',
+      /* Latin, because the numerator right above it is: the tile prints the
+         stage as String(stage) — «3» — and «3 … من ٦» is one fraction written
+         in two number systems. Figures on this platform are Latin throughout
+         (see the note at the head of lib/when.ts); Arabic-Indic digits are for
+         prose, and this is not prose. */
+      stageOf: 'من 6',
       logTitle: 'تسجيل مشاركة',
       dateLabel: 'التاريخ',
       durationLabel: 'المدّة',
@@ -698,7 +703,9 @@ export const ar: Dictionary = {
     programme: {
       title: 'إدارة البرنامج التدريبي',
       lede: 'المستويات والدورات. التعديل هنا يسبق أي إعادة زرع ولا يُدهس.',
-      courseCount: 'دورة',
+      /* A tile label above a figure — «دورة» singular read as "Course: 41".
+         English says "courses" here for the same reason. */
+      courseCount: 'عدد الدورات',
       statusDraft: 'مسودّة',
       statusReview: 'قيد المراجعة',
       statusPublished: 'منشورة',
@@ -834,7 +841,11 @@ export const ar: Dictionary = {
       coursesCountOne: 'دورة واحدة',
       coursesCountTwo: 'دورتان',
       coursesCountFew: '{n} دورات',
-      levelDoneOf: 'أنجزت {done} من {total} دورات',
+      /* No noun after the number: {total} is 1 for the orientation station and
+         6 for every level, and «من 1 دورات» is ungrammatical. The heading this
+         chip sits beside already carries the counted noun through
+         courseCountLabel, so dropping it here loses nothing. */
+      levelDoneOf: 'أنجزت {done} من {total}',
       electivesTitle: 'دورات اختيارية',
       electivesLede:
         'دورات إضافية خارج مستويات المسار — لا تُشترط لإتمامه، وتستطيع أخذها في أي وقت.',
@@ -919,11 +930,41 @@ export const ar: Dictionary = {
       earnedOn: 'حصلت عليه في',
       nextTitle: 'القادم',
       remainingHours: 'باقي {n}',
-      remainingCertificates: 'بقيت لك {n} شهادات',
-      remainingYears: 'بقيت لك {n} سنوات',
-      remainingCourses: 'باقي {n} دورات',
-      remainingActivities: 'باقي {n} أنشطة',
-      remainingStages: 'باقي {n} مراحل',
+      remainingCertificates: {
+        one: 'بقيت لك شهادة واحدة',
+        two: 'بقيت لك شهادتان',
+        few: 'بقيت لك {n} شهادات',
+        many: 'بقيت لك {n} شهادة',
+        other: 'بقيت لك {n} شهادة',
+      },
+      remainingYears: {
+        one: 'بقيت لك سنة واحدة',
+        two: 'بقيت لك سنتان',
+        few: 'بقيت لك {n} سنوات',
+        many: 'بقيت لك {n} سنة',
+        other: 'بقيت لك {n} سنة',
+      },
+      remainingCourses: {
+        one: 'بقيت لك دورة واحدة',
+        two: 'بقيت لك دورتان',
+        few: 'بقيت لك {n} دورات',
+        many: 'بقيت لك {n} دورة',
+        other: 'بقيت لك {n} دورة',
+      },
+      remainingActivities: {
+        one: 'بقي لك نشاط واحد',
+        two: 'بقي لك نشاطان',
+        few: 'بقيت لك {n} أنشطة',
+        many: 'بقي لك {n} نشاطاً',
+        other: 'بقي لك {n} نشاط',
+      },
+      remainingStages: {
+        one: 'بقيت لك مرحلة واحدة',
+        two: 'بقيت لك مرحلتان',
+        few: 'بقيت لك {n} مراحل',
+        many: 'بقيت لك {n} مرحلة',
+        other: 'بقيت لك {n} مرحلة',
+      },
       revokedNote:
         'سُحب هذا الإنجاز لأن المعطيات التي بُني عليها تغيّرت. السجل يبقى — لا نمحو ما حصل.',
       showRevoked: 'إنجازات مسحوبة',
@@ -950,7 +991,12 @@ export const ar: Dictionary = {
       certificate: 'الشهادة',
       historyTitle: 'سجل المحاولات',
       ongoing: 'محاولة مفتوحة',
-      answeredOf: 'أجبت على {n} سؤالًا',
+      /* «{n} سؤالًا» is the singular accusative, which belongs to eleven and
+         above; no course in the academy asks more than eighteen questions and
+         most ask five to ten, so it was wrong nearly every time it rendered.
+         The label goes in front of the number instead — see the same fix in
+         components/CourseFinish.tsx, which had the same bug. */
+      answeredOf: 'الأسئلة المُجاب عنها: {n}',
       empty: 'لم تفتح أي دورة بعد.',
     },
     portal: {
@@ -979,9 +1025,27 @@ export const ar: Dictionary = {
       markAllRead: 'تعليم الكل كمقروء',
       unread: 'جديد',
       justNow: 'الآن',
-      minutesAgo: 'منذ {n} دقيقة',
-      hoursAgo: 'منذ {n} ساعة',
-      daysAgo: 'منذ {n} يوم',
+      minutesAgo: {
+        zero: 'الآن',
+        one: 'منذ دقيقة',
+        two: 'منذ دقيقتين',
+        few: 'منذ {n} دقائق',
+        many: 'منذ {n} دقيقة',
+      },
+      hoursAgo: {
+        zero: 'الآن',
+        one: 'منذ ساعة',
+        two: 'منذ ساعتين',
+        few: 'منذ {n} ساعات',
+        many: 'منذ {n} ساعة',
+      },
+      daysAgo: {
+        zero: 'اليوم',
+        one: 'منذ يوم',
+        two: 'منذ يومين',
+        few: 'منذ {n} أيام',
+        many: 'منذ {n} يومًا',
+      },
     },
     safeguarding: {
       kicker: 'بيانات السلامة',
@@ -1081,9 +1145,12 @@ export const ar: Dictionary = {
       save: 'حفظ الحضور',
       saving: 'جارٍ الحفظ…',
       confirmSave: 'تأكيد الحفظ',
-      saved: 'تم حفظ سجل الحضور بنجاح — {n} متطوّع.',
+      /* Both counts label-first rather than «{n} متطوّع»: a sheet holds
+         anything from one name to eighty, and «5 متطوّع» is as wrong as
+         «5 volunteer». The number after a colon is right at every value. */
+      saved: 'تم حفظ سجل الحضور بنجاح — عدد المتطوّعين: {n}.',
       cappedToActivity: 'خُفِّضت بعض المدد لتساوي مدة النشاط.',
-      warnUnset: 'بقي {n} متطوّع بلا تحديد. اضغط مرة أخرى للحفظ من دونهم.',
+      warnUnset: 'بقي بلا تحديد {n} من المتطوّعين. اضغط مرة أخرى للحفظ من دونهم.',
       warnEditing: 'أنت تعدّل سجلّاً محفوظاً؛ ستتغيّر ساعات المتطوّعين تبعاً لذلك. اضغط مرة أخرى للتأكيد.',
       exportCsv: 'تصدير السجل (CSV)',
       errors: {
@@ -1137,7 +1204,12 @@ export const ar: Dictionary = {
       title: 'الفرص المتاحة',
       lede: 'أنشطة قادمة تقدر تشارك فيها. ساعاتها تُحتسب في مسارك بعد اعتمادها.',
       none: 'لا فرص متاحة حاليًا. تابعنا قريبًا.',
-      spots: 'مقعد',
+      /* «0 / 20 مقعد» was wrong for most capacities: Arabic pluralises the
+         counted noun between three and ten, so «5 مقاعد» and «20 مقعد» are
+         two different words and one template cannot be both. The label moves
+         in front of the counter instead, which is correct at every number and
+         keeps the denominator the empty-states note asks for. */
+      spots: 'المقاعد: {taken} / {capacity}',
       full: 'اكتمل العدد',
       waitlist: 'قائمة الانتظار',
       hoursValue: 'ساعات تطوّع',
@@ -1253,7 +1325,7 @@ export const ar: Dictionary = {
         noteLabel: 'ماذا تغطّي',
         hoursNoteHint: 'مثال: تطوّع ميداني ٢٠٢١–٢٠٢٤، بحسب سجلّات اللجنة',
         hoursSubmit: 'أضف الساعات',
-        hoursDone: 'أُضيفت {minutes} دقيقة',
+        hoursDone: 'أُضيفت {minutes}',
         courseHeading: 'دورة أتمّها قبل الموقع',
         courseLabel: 'الدورة',
         coursePlaceholder: 'اختر دورة',

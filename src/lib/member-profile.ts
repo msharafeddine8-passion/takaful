@@ -33,7 +33,12 @@
  */
 
 import { formatMemberNumber, type MatchStrength } from './roster-match';
-import { isMinorOn, visibilityFrom, DEFAULT_VISIBILITY, type VisibilityChoice } from './visibility';
+import {
+  isMinorOn,
+  visibilityFrom,
+  PLATFORM_DEFAULT_VISIBILITY,
+  type VisibilityChoice,
+} from './visibility';
 
 /** A plain calendar day. Never a timestamp — see `calendarDate`. */
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -174,13 +179,28 @@ export type VisibilityState = {
   /** When they last set it. A timestamp about a setting, not about a person. */
   chosenAt: string | null;
   /**
-   * Listed publicly with no record of anybody asking.
+   * In a visibility nobody chose and the platform never gave them.
    *
    * Should be impossible — the only path that writes the choice writes the
-   * timestamp with it — so it means either a hand-edited row or a bug in that
-   * path. Either way it is a person appearing on a public page without
-   * recorded consent, which is the one fault on this page worth interrupting
-   * somebody about.
+   * timestamp with it — so it means a hand-edited row or a bug in that path.
+   *
+   * WHAT IT IS MEASURED AGAINST, AND WHY THAT CHANGED
+   *
+   * It compared against DEFAULT_VISIBILITY, which is `hidden`. Right until
+   * migration 038 made appearing the ordinary state and moved every account
+   * that had never answered onto `name_and_photo`. From that moment the test
+   * read "publicly listed and never asked" as an anomaly when it had just
+   * become the association's deliberate policy — so the red alarm, whose words
+   * are «هذا لا ينبغي أن يحدث», fired on 38 of the 40 profiles that exist.
+   *
+   * An alarm true of almost everybody is not an alarm, and worse, it buries the
+   * one case it was built for.
+   *
+   * DEFAULT_VISIBILITY stays `hidden` and is NOT the thing to change: it is the
+   * fail-closed answer to "this stored value will not parse", and failing
+   * closed is right there. What was missing is a separate fact — the state the
+   * platform itself hands a new account. Two different questions had been
+   * sharing one constant.
    */
   unexplained: boolean;
 };
@@ -195,7 +215,7 @@ export function visibilityState(
     choice,
     everChose,
     chosenAt: everChose ? String(chosenAt).trim() : null,
-    unexplained: choice !== DEFAULT_VISIBILITY && !everChose,
+    unexplained: choice !== PLATFORM_DEFAULT_VISIBILITY && !everChose,
   };
 }
 

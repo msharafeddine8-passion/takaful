@@ -109,8 +109,8 @@ export const communityNeeds: CourseContent = {
           },
           options: [
             {
-              ar: 'جهة تلاحظ معدلات تسرّب عالية في المدارس وتقرّر إنشاء برنامج دعم أكاديمي',
-              en: 'An organisation notices high school dropout rates and decides to start an academic-support programme',
+              ar: 'جهة تلاحظ معدلات تسرّب عالية في المدارس وتقرّر إنشاء برنامج دعم أكاديمي لأن الأرقام تُظهر أن هذا هو الحلّ',
+              en: 'An organisation notices high school dropout rates and decides to start an academic-support programme because the figures show that is the answer',
             },
             {
               ar: 'أمهات في جلسة نقاش يقلن إن أطفالهن يتركون المدرسة لأنهم يعملون صباحاً لمساعدة الأسرة',
@@ -205,8 +205,8 @@ export const communityNeeds: CourseContent = {
               en: 'Individual interviews with women who completed the sessions and with women who left in the first two weeks',
             },
             {
-              ar: 'ملاحظة حضور الجلسات وتسجيل نسب الغياب أسبوعياً لتحديد الأسبوع الذي يبدأ عنده الانقطاع بدقّة',
-              en: 'Observing session attendance and recording absence rates weekly to pinpoint the week at which the drop-off begins',
+              ar: 'ملاحظة الحضور وتسجيل نسب الغياب أسبوعياً',
+              en: 'Observing attendance and recording weekly absence rates',
             },
           ],
           correct: 1,
@@ -302,8 +302,8 @@ export const communityNeeds: CourseContent = {
               en: 'The mother may not disclose issues about her child in his presence, and her answers may influence his',
             },
             {
-              ar: 'الوقت سيتضاعف لأن كليهما سيتكلّمان، وستحتاج موعداً ثانياً لإكمال ما لم يُقَل في الجلسة',
-              en: 'The session will take twice as long because both will speak, and you will need a second appointment to finish',
+              ar: 'الوقت سيتضاعف لأن كليهما سيتكلّمان وستحتاج موعداً ثانياً',
+              en: 'The session will take twice as long because both speak, and you will need a second appointment',
             },
           ],
           correct: 1,
@@ -378,8 +378,8 @@ export const communityNeeds: CourseContent = {
               en: 'The sample reflects the intermediary\'s choices rather than the whole community, and entire groups\' voices are missing from the assessment',
             },
             {
-              ar: 'العدد عشرون أسرة صغير جداً لأي تقييم موثوق، وكان على الفريق مضاعفة العيّنة قبل استخلاص أي نتيجة',
-              en: 'Twenty families is too small a number for any reliable assessment, and the team should have doubled the sample before drawing conclusions',
+              ar: 'عشرون أسرة عدد صغير جداً، وكان على الفريق مضاعفة العيّنة',
+              en: 'Twenty families is too small a sample, and the team should have doubled it',
             },
           ],
           correct: 1,
@@ -455,8 +455,8 @@ export const communityNeeds: CourseContent = {
           },
           options: [
             {
-              ar: 'البرنامج يسير بشكل ممتاز والمشاركون راضون عنه بصورة واسعة، ويمكن تسجيل الشكوى الوحيدة كحالة فردية',
-              en: 'The programme is running excellently and participants are widely satisfied, so the single complaint can be recorded as an isolated case',
+              ar: 'البرنامج يسير بشكل ممتاز والمشاركون راضون، ويمكن تسجيل الشكوى الوحيدة كحالة فردية',
+              en: 'The programme is running excellently and participants are satisfied, so the single complaint can be recorded as an isolated case',
             },
             {
               ar: 'على الأرجح آلية الشكاوى غير مُعلنة كفاية أو غير آمنة أو لم تُثبت جدواها بعد — وهذا يستدعي مراجعة',
@@ -551,8 +551,8 @@ export const communityNeeds: CourseContent = {
               en: 'The team member forgot and was not committed enough, and reminding the whole team of its follow-up responsibility at the next meeting will stop it recurring',
             },
             {
-              ar: 'الشكوى الشفهية لا تلزم الفريق بالردّ الرسمي، فمهلة الردّ لا تبدأ إلا بشكوى تُقدَّم عبر القناة المعلَنة',
-              en: 'A verbal complaint does not oblige the team to a formal reply, since the response clock starts only with a complaint filed through the announced channel',
+              ar: 'الشكوى الشفهية لا تلزم الفريق بالردّ الرسمي، فمهلة الردّ تبدأ عند القناة المعلَنة',
+              en: 'A verbal complaint does not oblige the team to a formal reply, since the response clock starts at the announced channel',
             },
             {
               ar: 'لا يوجد بروتوكول يُحوّل الشكاوى الشفهية إلى سجلّ مكتوب بمسؤول ومهلة — فالمشكلة هيكلية لا فردية',

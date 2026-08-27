@@ -116,7 +116,7 @@ export const monitoringAndEvaluation: CourseContent = {
           options: [
             { ar: 'ما الدليل على أن التغيير حدث، وما نسبته التي تُعزى لتدخّلكم تحديداً؟', en: 'What is the evidence that change occurred, and what share of it is attributable specifically to your intervention?' },
             { ar: 'كيف وصلتم إلى هذا العدد الكبير — هل عُدّت كل أسرة على حدة أم قُدّر الرقم من كمّيات الطرود الموزّعة؟', en: 'How did you reach such a large number — was each family counted separately, or was the figure estimated from the quantities distributed?' },
-            { ar: 'هل يكفي هذا الرقم لبلوغ الأهداف السنوية المتّفق عليها مع المانح؟', en: 'Is this figure enough to meet the annual objectives agreed with the funder?' },
+            { ar: 'هل يكفي هذا الرقم لبلوغ الأهداف المتّفق عليها مع المانح؟', en: 'Is this figure enough to meet the objectives agreed with the funder?' },
           ],
           correct: 0,
           feedback: {
@@ -191,7 +191,7 @@ export const monitoringAndEvaluation: CourseContent = {
           options: [
             { ar: 'لا يوجد خط أساس للمقارنة، فلا يمكن إثبات أن الوعي ارتفع أو تغيّر', en: 'There is no baseline to compare against, so it is impossible to prove awareness rose or changed' },
             { ar: 'المشكلة في الصياغة فقط — "رفع الوعي" مؤشّر غير قابل للقياس أصلاً، فيكفي إعادة صياغة الجملة بدل السعي لقياسها', en: 'The problem is only in the wording — "raising awareness" cannot be measured at all, so the claim needs rephrasing rather than evidence' },
-            { ar: 'لا مشكلة — كشوف الحضور وعدد الكتيّبات الموزّعة أدلّة كافية على أن الوعي قد ارتفع', en: 'No problem — the attendance registers and the number of booklets distributed are sufficient evidence that awareness rose' },
+            { ar: 'لا مشكلة — كشوف الحضور والكتيّبات دليل كافٍ على ارتفاع الوعي', en: 'No problem — attendance registers and booklets are enough evidence that awareness rose' },
           ],
           correct: 0,
           feedback: {
@@ -209,7 +209,7 @@ export const monitoringAndEvaluation: CourseContent = {
           },
           options: [
             { ar: 'نسبة التقارير المكتملة (لها كل عناصر التقرير الجيّد) مقارنة بما قبل التدريب', en: 'Percentage of reports that are complete (containing all good-report elements) compared to before training' },
-            { ar: 'عدد التقارير المكتوبة خلال الأشهر الثلاثة التالية للتدريب ونسبة ما سُلّم منها في موعده', en: 'Number of reports written in the three months after training and the proportion of them submitted on time' },
+            { ar: 'عدد التقارير المكتوبة خلال الأشهر الثلاثة التالية للتدريب', en: 'Number of reports written in the three months after training' },
             { ar: 'رضا المشرفين عن التقارير على مقياس من ١ إلى ١٠ يُجمع في نهاية كل شهر ويُقارن بين الفرق', en: 'Supervisor satisfaction with reports on a scale of 1 to 10, collected at each month end and compared across teams' },
           ],
           correct: 0,
@@ -273,7 +273,7 @@ export const monitoringAndEvaluation: CourseContent = {
           options: [
             { ar: 'تذكر النتائج مع تحفّظ واضح: معدّل الاستجابة المنخفض يُضعف تمثيلية البيانات', en: 'Mention the results with a clear caveat: the low response rate weakens the representativeness of the data' },
             { ar: 'لا تستخدمها — ٢٢٪ أدنى من أن يُبنى عليها استنتاج، فتُترك جانباً ويُعاد الاستبيان في الدورة القادمة بعيّنة أوسع', en: 'Do not use them — 22% is too low to build any conclusion on, so leave them out and repeat the survey next cycle with a wider sample' },
-            { ar: 'تستخدمها بشكل كامل لأن من أجابوا اختاروا ذلك طوعاً، والإجابة الطوعية أصدق من إجابة مفروضة', en: 'Use them fully because those who answered chose to do so voluntarily, and a voluntary answer is more candid than a forced one' },
+            { ar: 'تستخدمها كاملةً لأن من أجابوا اختاروا ذلك طوعاً وبصدق', en: 'Use them fully because those who answered chose to do so voluntarily and candidly' },
           ],
           correct: 0,
           feedback: {
@@ -292,7 +292,7 @@ export const monitoringAndEvaluation: CourseContent = {
           options: [
             { ar: 'تُبرز هذا الفرق في التقرير وتحلّله — فهو قد يكشف احتياجاً تصميمياً مختلفاً', en: 'Highlight this difference in the report and analyse it — it may reveal a different design need' },
             { ar: 'تحسب المعدّل الإجمالي فقط لأن التقرير لا يحتاج هذا القدر من التعقيد والمانح طلب رقماً واحداً', en: 'Calculate only the overall average because the report does not need this much complexity and the funder asked for one figure' },
-            { ar: 'تستبعد بيانات المجموعة الأقل عدداً للحصول على صورة أوضح وعيّنة أكثر تجانساً', en: 'Exclude the data of the smaller group to get a clearer picture and a sample that is more homogeneous' },
+            { ar: 'تستبعد بيانات المجموعة الأقل عدداً للحصول على عيّنة أكثر تجانساً', en: 'Exclude the data of the smaller group to get a more homogeneous sample' },
           ],
           correct: 0,
           feedback: {
@@ -346,7 +346,7 @@ export const monitoringAndEvaluation: CourseContent = {
           },
           options: [
             { ar: 'تُقدّم ٧٠٪ بكل تفاصيل ما أُنجز وما لم يُنجز، مع تحليل الأسباب والدروس المستفادة', en: 'Present 70% with full details of what was and was not delivered, along with cause analysis and lessons learned' },
-            { ar: 'تُقدّم النتائج المكتملة فقط وتُرجئ ذكر الناقص لتقرير لاحق', en: 'Present only completed results and defer mention of shortfall to a later report' },
+            { ar: 'تُقدّم النتائج المكتملة فقط وتُرجئ ذكر الناقص لتقرير لاحق حتى لا يفقد المانح ثقته في المشروع', en: 'Present only completed results and defer mention of the shortfall to a later report so the funder does not lose confidence in the project' },
             { ar: 'تُعيد تعريف الأهداف لتُلاءم ما أُنجز فعلاً وتُقدّم ١٠٠٪', en: 'Redefine the targets to match what was actually delivered and present 100%' },
           ],
           correct: 0,
@@ -366,7 +366,7 @@ export const monitoringAndEvaluation: CourseContent = {
           options: [
             { ar: 'يمكن تقديم النتائج السلبية بلغة بنّاءة دون تغيير الحقائق أو إخفاء الأرقام', en: 'Negative results can be presented in constructive language without changing facts or hiding figures' },
             { ar: 'الصياغة الإيجابية مقبولة دائماً لأن الهدف تشجيع الفريق والمانح على مواصلة العمل', en: 'Positive framing is always acceptable because the goal is to encourage the team and the funder to keep going' },
-            { ar: 'يجب رفض أي تعديل على الصياغة ما لم يوافق عليه المانح كتابةً قبل إرسال التقرير', en: 'Any change to the wording must be refused unless the funder approves it in writing before the report is sent' },
+            { ar: 'يجب رفض أي تعديل على الصياغة ما لم يوافق عليه المانح كتابةً', en: 'Any change to the wording must be refused unless the funder approves it in writing' },
           ],
           correct: 0,
           feedback: {
@@ -444,7 +444,7 @@ export const monitoringAndEvaluation: CourseContent = {
           },
           options: [
             { ar: 'تُدرج في جدول المشروع الجديد تجنّب تدريبات كثيفة في الشهر الكريم وتُثبّت السبب في وثيقة التخطيط', en: 'Include in the new project schedule avoiding intensive training during Ramadan and document the reason in the planning document' },
-            { ar: 'تنتظر حتى تتأكّد من أن هذا يُثبَّت في السياق الجديد أيضاً', en: 'Wait until you confirm this applies in the new context too' },
+            { ar: 'تنتظر حتى تتأكّد من أن هذا يُثبَّت في السياق الجديد أيضاً، فالدرس المستخلص من مشروع واحد قد لا ينطبق على غيره', en: 'Wait until you confirm this applies in the new context too, since a lesson drawn from a single project may not hold for a different one' },
             { ar: 'تضع ملاحظة في التقرير المؤسّسي وتتركها للفريق ليقرّر', en: 'Add a note in the institutional report and leave it to the team to decide' },
           ],
           correct: 0,

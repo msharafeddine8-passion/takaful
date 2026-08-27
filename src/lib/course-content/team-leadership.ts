@@ -225,16 +225,16 @@ export const teamLeadership: CourseContent = {
           },
           options: [
             {
-              ar: 'تُعطيها لأحمد لأنه الأفضل بها ولا بديل',
-              en: 'Give it to Ahmad because he is the best and there is no substitute',
+              ar: 'تُعطيها لأحمد لأنه الأفضل فيها، وتطلب منه إعادة ترتيب أولويات أسبوعه لأن المهمة تستحقّ',
+              en: 'Give it to Ahmad because he is the best at it, and ask him to reorder the priorities of his week because the task warrants it',
             },
             {
               ar: 'تُعطيها لليلى وتدعمها بالتحضير والتدريب المسبق',
               en: 'Give it to Leila and support her with preparation and prior coaching',
             },
             {
-              ar: 'تُؤدّيها بنفسك حتى لا تُرهق أيّاً منهما',
-              en: 'Do the task yourself so as not to burden either of them',
+              ar: 'تُؤدّيها بنفسك حتى لا تُرهق أيّاً منهما في أسبوع مزدحم',
+              en: 'Do the task yourself so as not to burden either of them during a busy week',
             },
             {
               ar: 'تؤجّل المهمة حتى يتوفّر أحمد',
@@ -324,16 +324,16 @@ export const teamLeadership: CourseContent = {
           },
           options: [
             {
-              ar: 'موافق، التعب يُضعف التفكير وغداً أفضل',
-              en: 'Fine — tiredness dulls thinking and tomorrow is better',
+              ar: 'موافق، فالتعب يُضعف التفكير والنقاش غداً سيكون أوضح وأنفع للجميع',
+              en: 'Fine — tiredness dulls thinking and tomorrow the discussion will be clearer and more useful for everyone',
             },
             {
               ar: 'عشر دقائق الآن: سؤال واحد عمّا نجح وسؤال واحد عمّا نُغيّره، ثم قرار واحد ننصرف بعده',
               en: 'Ten minutes now: one question on what worked, one on what we change, then one decision and we leave',
             },
             {
-              ar: 'تكتب أنت ملاحظاتك بمفردك وترسلها للفريق لاحقاً',
-              en: 'Write up your notes alone and send them to the team later',
+              ar: 'تكتب أنت ملاحظاتك بمفردك الليلة وترسلها للفريق غداً صباحاً حتى لا نُثقل على أحد بعد يوم طويل',
+              en: 'Write up your notes alone tonight and send them to the team tomorrow morning so nobody is burdened after a long day',
             },
             {
               ar: 'لا داعي للنقاش إن سار النشاط بشكل معقول',
@@ -515,8 +515,8 @@ export const teamLeadership: CourseContent = {
           },
           options: [
             {
-              ar: 'تُبلّغ المسؤول مباشرةً لأن التكرار يثبت وجود مشكلة',
-              en: 'Report to the supervisor directly because repetition proves there is a problem',
+              ar: 'تُبلّغ المسؤول مباشرةً لأن التكرار يثبت وجود مشكلة تتجاوز صلاحياتك',
+              en: 'Report to the supervisor directly because repetition proves a problem beyond your authority',
             },
             {
               ar: 'تُجري معه محادثة خاصة تسأل عن السبب وتتّفقان على ما يتغيّر وتُوثّق الاتّفاق',
@@ -527,8 +527,8 @@ export const teamLeadership: CourseContent = {
               en: 'Give his tasks to someone else and say nothing',
             },
             {
-              ar: 'تُذكّره علناً في اجتماع الفريق حتى يفهم الجميع أن التقصير له نتائج',
-              en: 'Remind him publicly in the team meeting so everyone understands that shortfall has consequences',
+              ar: 'تُذكّره علناً في اجتماع الفريق حتى يفهم الجميع أن التقصير له نتائج، وحتى لا يضطرّ أحد إلى تكرار الحديث معه',
+              en: 'Remind him publicly in the team meeting so everyone understands that shortfall has consequences, and so nobody has to have the conversation with him twice',
             },
           ],
           correct: 1,
@@ -555,12 +555,12 @@ export const teamLeadership: CourseContent = {
               en: 'Documentation of two direct conversations and what was agreed in each',
             },
             {
-              ar: 'قائمة بكل المهام التي لم يُنجزها منذ انضمامه',
-              en: 'A list of every task he has failed to complete since joining',
+              ar: 'قائمة مفصّلة بكل المهام التي لم يُنجزها منذ انضمامه ومواعيد تسليم كلٍّ منها',
+              en: 'A detailed list of every task he has failed to complete since joining, with the due date of each one',
             },
             {
-              ar: 'تقرير موقَّع من أعضاء آخرين في الفريق يؤكّد المشكلة',
-              en: 'A report signed by other team members confirming the problem',
+              ar: 'تقرير موقَّع من ثلاثة أعضاء آخرين في الفريق يؤكّد وجود المشكلة وتكرارها',
+              en: 'A report signed by three other team members confirming that the problem exists and recurs',
             },
           ],
           correct: 1,

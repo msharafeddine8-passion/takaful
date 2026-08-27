@@ -112,7 +112,7 @@ export const trainingOfTrainers: CourseContent = {
             en: 'Which of the following most accurately describes how adults learn?',
           },
           options: [
-            { ar: 'يتعلّمون أفضل حين يتلقّون معلومات منظّمة من خبير يشرح بالتفصيل', en: 'They learn best when they receive organised information from an expert who explains in detail' },
+            { ar: 'يتعلّمون أفضل حين يتلقّون معلومات منظّمة من خبير يشرح بالتفصيل ويُجيب عن الأسئلة في نهاية العرض', en: 'They learn best when they receive organised information from an expert who explains in detail and answers questions at the end of the presentation' },
             { ar: 'يتعلّمون أفضل حين يربطون المحتوى بتجاربهم ويُطبّقونه مباشرة في سياق حقيقي', en: 'They learn best when they connect content to their own experience and apply it immediately in a real context' },
             { ar: 'التعلّم عند الكبار لا يختلف عن التعلّم عند الأطفال في شيء جوهري', en: 'Learning in adults is no different from learning in children in any fundamental way' },
             { ar: 'الدافع الخارجي كالشهادة كافٍ وحده لضمان التعلّم الفعلي والمستدام', en: 'External motivation like a certificate alone is sufficient to ensure genuine and lasting learning' },
@@ -201,7 +201,7 @@ export const trainingOfTrainers: CourseContent = {
           options: [
             { ar: 'تُعدّ تدريباً على مهارات الكتابة الواضحة وتبدأ تطبيقه فوراً', en: 'Prepare a clear writing skills session and start delivering it immediately' },
             { ar: 'تطلب أمثلة على تقارير ضعيفة وتسأل المتطوّعين عن تجربتهم لتفهم أين الفجوة فعلاً', en: 'Ask for examples of weak reports and ask the volunteers about their experience to understand where the gap actually is' },
-            { ar: 'تُرسل استبياناً لقياس رضا المتطوّعين عن التدريب السابق الذي أُجري', en: 'Send a satisfaction survey about the previous training that was conducted' },
+            { ar: 'تُرسل استبياناً لقياس رضا المتطوّعين عن التدريب السابق الذي أُجري قبل ستة أشهر وتنتظر النتائج قبل أيّ قرار', en: 'Send a survey measuring volunteer satisfaction with the previous training conducted six months ago and wait for the results before any decision' },
             { ar: 'تُقرّر أن المشكلة في القالب وتطلب نموذجاً جديداً للتقارير', en: 'Decide the problem is the template and request a new report form' },
           ],
           correct: 1,
@@ -281,10 +281,10 @@ export const trainingOfTrainers: CourseContent = {
             en: 'Which of these is an objectively measurable learning objective?',
           },
           options: [
-            { ar: 'يفهم المشارك مبادئ التواصل الفعّال مع المستفيدين في مواقف التوتر', en: 'The participant understands the principles of effective communication with beneficiaries in tense situations' },
-            { ar: 'يُدرك المشارك أهمية الحصول على الموافقة المستنيرة قبل جمع البيانات', en: 'The participant appreciates the importance of obtaining informed consent before data collection' },
+            { ar: 'يفهم المشارك مبادئ التواصل الفعّال مع المستفيدين في مواقف التوتر والضغط الشديد داخل الميدان', en: 'The participant understands the principles of effective communication with beneficiaries in tense and highly pressured situations in the field' },
+            { ar: 'يُدرك المشارك أهمية الحصول على الموافقة المستنيرة قبل جمع أيّ بيانات عن المستفيدين', en: 'The participant appreciates the importance of obtaining informed consent before collecting any data about beneficiaries' },
             { ar: 'يملأ المشارك نموذج الموافقة المستنيرة كاملاً وبشكل صحيح قبل بدء أيّ مقابلة', en: 'The participant fully and correctly completes the informed consent form before beginning any interview' },
-            { ar: 'يتعلّم المشارك كيف يحمي بيانات المستفيدين من أيّ استخدام غير مصرّح به', en: 'The participant learns how to protect beneficiary data from any unauthorised use' },
+            { ar: 'يتعلّم المشارك كيف يحمي بيانات المستفيدين', en: 'The participant learns how to protect beneficiary data' },
           ],
           correct: 2,
           feedback: {
@@ -520,10 +520,10 @@ export const trainingOfTrainers: CourseContent = {
             en: 'You want to train volunteers on documenting field visits. Which design best achieves the objective?',
           },
           options: [
-            { ar: 'تشرح خطوات التوثيق في عرض تقديمي مفصّل ثم توزّع النموذج للمراجعة', en: 'Explain the documentation steps in a detailed presentation then distribute the form for review' },
-            { ar: 'تُحاضر عن أهمية التوثيق وأثره على جودة البيانات وثقة المموّلين', en: 'Lecture on the importance of documentation and its effect on data quality and donor confidence' },
+            { ar: 'تشرح خطوات التوثيق في عرض تقديمي مفصّل ثم توزّع النموذج عليهم لمراجعته في البيت قبل الزيارة القادمة', en: 'Explain the documentation steps in a detailed presentation, then hand out the form for them to review at home before the next visit' },
+            { ar: 'تُحاضر عن أهمية التوثيق وأثره على جودة البيانات وعلى ثقة المموّلين بالمنظمة على المدى الطويل', en: 'Lecture on the importance of documentation and its effect on data quality and on donor confidence in the organisation over the long term' },
             { ar: 'تعطيهم سيناريو زيارة حقيقية يملؤون فيها النموذج ثم تناقش ما كتبوه معاً', en: 'Give them a real visit scenario, they fill in the form, then you discuss together what they wrote' },
-            { ar: 'توزّع النموذج وتطلب منهم قراءة التعليمات المطبوعة بشكل فردي ثم السؤال', en: 'Distribute the form and ask them to read the printed instructions individually then ask questions' },
+            { ar: 'توزّع النموذج وتطلب منهم قراءة التعليمات المطبوعة', en: 'Distribute the form and ask them to read the printed instructions' },
           ],
           correct: 2,
           feedback: {
@@ -593,7 +593,7 @@ export const trainingOfTrainers: CourseContent = {
             en: 'You finished a training session and received a satisfaction survey averaging 4.8 out of 5. What does this tell you about how successful the training was?',
           },
           options: [
-            { ar: 'التدريب نجح ويمكن الاستنتاج بثقة أن المشاركين تعلّموا ما يلزمهم لعملهم', en: 'The training succeeded and you can confidently conclude that participants learned what they need for their work' },
+            { ar: 'التدريب نجح ويمكن الاستنتاج بثقة أن المشاركين تعلّموا ما يلزمهم لعملهم وأنهم سيُطبّقونه عند عودتهم إلى الميدان في الأسبوع نفسه', en: 'The training succeeded and you can confidently conclude that participants learned what they need for their work and will apply it as soon as they return to the field in the same week' },
             { ar: 'يعني فقط أن المشاركين أُعجبوا بتجربة الجلسة، وهو أوّل مستوى من أربعة مستويات للتقييم والأقلّ دلالة على التعلّم الحقيقي', en: 'It means only that participants enjoyed the session experience, which is the first of four evaluation levels and the least indicative of real learning' },
             { ar: 'نتيجة ممتازة تُثبت أن المدرّب استخدم أساليب تنويع متنوّعة ومناسبة', en: 'An excellent result proving the trainer used varied and appropriate methods' },
             { ar: 'يعني أن المشاركين سيُغيّرون سلوكهم في العمل خلال الأسبوع التالي للجلسة', en: 'It means participants will change their behaviour at work during the week following the session' },
@@ -698,7 +698,7 @@ export const trainingOfTrainers: CourseContent = {
             en: 'An experienced volunteer is leaving the association next month after five years. Which action best preserves the institutional knowledge she carries?',
           },
           options: [
-            { ar: 'تطلب منها كتابة تقرير شامل عن كل ما عملت فيه خلال خمس سنوات قبل يوم مغادرتها', en: 'Ask her to write a comprehensive report on everything she worked on over five years before her last day' },
+            { ar: 'تطلب منها كتابة تقرير شامل عن كل ما عملت فيه خلال خمس سنوات قبل يوم مغادرتها، على أن يشمل المشاريع والشركاء والدروس المستفادة وتوصياتها للمرحلة القادمة', en: 'Ask her to write a comprehensive report on everything she worked on over five years before her last day, covering the projects, the partners, the lessons learned and her recommendations for the next phase of the programme' },
             { ar: 'تُقيم جلسة تسليم رسمية مع الإدارة يُوقَّع فيها على ملفّ استلام وتسليم', en: 'Hold a formal handover session with management in which a handover document is signed' },
             { ar: 'تُجري معها محادثة موجَّهة بأسئلة ثلاثة محدّدة — ما الذي نجح، ما الذي فشل ولماذا، وما الذي تتمنّى لو أخبرها أحد به في بدايتها — وتُوثَّق الإجابات فوراً', en: 'Conduct a guided conversation with three specific questions — what worked, what failed and why, and what she wishes someone had told her at the start — and document the answers immediately' },
             { ar: 'تطلب منها تدريب خليفتها شفهياً في الأسبوع الأخير قبل مغادرتها', en: 'Ask her to train her replacement verbally during the last week before she leaves' },

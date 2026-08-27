@@ -141,16 +141,16 @@ export const emotionalIntelligence: CourseContent = {
           },
           options: [
             {
-              ar: 'الردّ فوراً بتفصيل ودقّة لإثبات أنّ النقد غير دقيق',
-              en: 'Respond immediately and in detail to show the criticism is inaccurate',
+              ar: 'الردّ فوراً بتفصيل ودقّة لإثبات أنّ النقد غير دقيق قبل أن يصدّقه بقيّة الفريق',
+              en: 'Respond immediately and in detail to show the criticism is inaccurate before the rest of the team believes it',
             },
             {
               ar: 'الانتباه إلى الانفعال الداخلي وإعطاء نفسك لحظة قبل الردّ',
               en: 'Notice your internal reaction and give yourself a moment before you respond',
             },
             {
-              ar: 'الصمت التام وعدم الردّ على النقد لتجنّب تصعيد الموقف',
-              en: 'Stay completely silent and give no response to the criticism to avoid escalating',
+              ar: 'الصمت التام وعدم الردّ على النقد لتجنّب تصعيد الموقف أمام المجموعة',
+              en: 'Stay completely silent and give no response to the criticism to avoid escalating in front of the group',
             },
             {
               ar: 'طلب تأجيل الاجتماع وإعادة النقاش في يوم آخر',
@@ -262,8 +262,8 @@ export const emotionalIntelligence: CourseContent = {
               en: '"That sounds genuinely painful. What has been making you feel this way?"',
             },
             {
-              ar: '«كلّنا نشعر بهذا أحياناً — الأمور ستتحسّن مع الوقت»',
-              en: '"We all feel that sometimes — things will improve with time"',
+              ar: '«كلّنا نشعر بهذا أحياناً — الأمور ستتحسّن»',
+              en: '"We all feel that sometimes — things will improve"',
             },
             {
               ar: '«سأتكلّم مع القيادة وسأضمن أن يُشار إلى جهودك في الاجتماع القادم»',
@@ -360,8 +360,8 @@ export const emotionalIntelligence: CourseContent = {
           },
           options: [
             {
-              ar: '«هذا غير مقبول — يجب أن تعرف مدى أهمية تسجيل الحضور للتقرير وللتمويل»',
-              en: '"This is not acceptable — you should know how important attendance registration is for the report and for the funding"',
+              ar: '«هذا غير مقبول — يجب أن تعرف مدى أهمية تسجيل الحضور للتقرير وللتمويل، وهذا أمر يعرفه كلّ من في الفريق»',
+              en: '"This is not acceptable — you should know how important attendance registration is for the report and for the funding, and that is something everyone on the team knows"',
             },
             {
               ar: '«شكراً لأمانتك. ما الذي أدّى إلى نسيان التسجيل هذه المرّة وكيف نتجنّبه في المرّات القادمة؟»',
@@ -473,8 +473,8 @@ export const emotionalIntelligence: CourseContent = {
           },
           options: [
             {
-              ar: '«آسف إن كنتَ زعلتَ — ما كانت قصدي أوقفك، كنت متحمّساً جداً للنقاش وحريصاً على الوقت»',
-              en: '"Sorry if you were upset — I did not mean to stop you, I was just very excited about the discussion and watching the clock"',
+              ar: '«آسف إن كنتَ زعلتَ — ما كانت قصدي أوقفك، كنت متحمّساً جداً للنقاش وحريصاً على الوقت، ولو عرفتُ أنّك ستأخذها هكذا لانتبهتُ أكثر»',
+              en: '"Sorry if you were upset — I did not mean to stop you, I was just very excited about the discussion and watching the clock, and if I had known you would take it this way I would have been more careful"',
             },
             {
               ar: '«قاطعتُك أمام الجميع وجعلتُك تشعر أنّ فكرتك لم تُكتمَل. هذا لم يكن عادلاً وأنا آسف. لن أفعل هذا مجدّداً»',
@@ -559,8 +559,8 @@ export const emotionalIntelligence: CourseContent = {
           },
           options: [
             {
-              ar: 'إخباره أنّ الأمور ستكون مختلفة تماماً في النشاط القادم وأنّك ستستشيره في كل شيء',
-              en: 'Tell him that things will be completely different in the next activity and that you will consult him on everything',
+              ar: 'إخباره أنّ الأمور ستكون مختلفة تماماً في النشاط القادم وأنّك ستستشيره في كل شيء، لأنّ وعداً واضحاً منك كافٍ لطمأنته',
+              en: 'Tell him that things will be completely different in the next activity and that you will consult him on everything, since a clear promise from you is enough to reassure him',
             },
             {
               ar: 'الاعتراف بما حدث في النشاط السابق، ثم إشراكه فعلياً في أوّل قرار تصميمي يخصّ النشاط القادم',
@@ -603,8 +603,8 @@ export const emotionalIntelligence: CourseContent = {
               en: 'Organising regular team-building activities to strengthen social bonds between members',
             },
             {
-              ar: 'مشاركة الفريق بكلّ المعلومات التفصيلية عن كلّ قرار تتّخذه الإدارة لتعزيز الشفافية',
-              en: 'Sharing all the detailed information about every management decision with the team to enhance transparency',
+              ar: 'مشاركة الفريق بكلّ المعلومات التفصيلية عن كلّ قرار تتّخذه الإدارة فور اتّخاذه لتعزيز الشفافية',
+              en: 'Sharing all the detailed information about every management decision with the team as soon as it is taken to enhance transparency',
             },
           ],
           correct: 1,

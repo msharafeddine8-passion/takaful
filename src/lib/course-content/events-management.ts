@@ -335,8 +335,8 @@ export const eventsManagement: CourseContent = {
               en: 'Accept everyone and hope not all will actually turn up on the day, since the usual no-show rate at events like this is about a quarter',
             },
             {
-              ar: 'إلغاء الفعالية لأن التنظيم وصل إلى طريق مسدود، وتأجيلها إلى تاريخ لاحق أسلم من إقامتها في مكان لا يتّسع',
-              en: 'Cancel the event because the organisation has reached a dead end, and postponing to a later date is safer than holding it in a venue that does not fit',
+              ar: 'إلغاء الفعالية لأن التنظيم وصل إلى طريق مسدود، والتأجيل أسلم من مكان لا يتّسع',
+              en: 'Cancel the event: organising has hit a dead end, and postponing is safer than a venue that does not fit',
             },
           ],
           correct: 1,
@@ -407,12 +407,12 @@ export const eventsManagement: CourseContent = {
           },
           options: [
             {
-              ar: 'تعتذر منه وتشرح أن الفعالية للأسف غير مناسبة له هذه المرة',
-              en: 'Apologise and explain that the event is unfortunately not suitable for him this time',
+              ar: 'تعتذر وتشرح أن الفعالية غير مناسبة له هذه المرة',
+              en: 'Apologise and explain the event is not suitable for him this time',
             },
             {
-              ar: 'تخصّص متطوّعَين يحملانه عبر الدرج حين يصل وعند مغادرته',
-              en: 'Assign two volunteers to carry him up the stairs when he arrives and back down when he leaves',
+              ar: 'تخصّص متطوّعَين يحملانه عبر الدرج حين يصل وعند مغادرته، فالترتيب ممكن ولا يستدعي تغيير المكان',
+              en: 'Assign two volunteers to carry him up the stairs when he arrives and back down when he leaves, since that is workable and avoids changing the venue',
             },
             {
               ar: 'تبحث عن قاعة بديلة في الطابق الأرضي أو تغيّر المكان كاملاً',
@@ -513,8 +513,8 @@ export const eventsManagement: CourseContent = {
           },
           options: [
             {
-              ar: 'تخمّن إجابة منطقية حتى لا تبدو غير مفيد أمامه',
-              en: 'Guess a plausible answer so you do not look unhelpful in front of him',
+              ar: 'تخمّن إجابة منطقية حتى لا تبدو غير مفيد أمامه، فهو ينتظر إجابة الآن ويمكن تصحيحها لاحقاً إن لزم',
+              en: 'Guess a plausible answer so you do not look unhelpful in front of him, since he is waiting for an answer now and it can be corrected later if needed',
             },
             {
               ar: 'تقول «لا أعرف» وتكمل عملك',
@@ -611,16 +611,16 @@ export const eventsManagement: CourseContent = {
           },
           options: [
             {
-              ar: 'لا تتدخّل لأن هذا ليس دورك بالتحديد ولا تريد أن تتجاوز حدودك',
-              en: 'Do not intervene because this is not specifically your role and you do not want to overstep your boundaries',
+              ar: 'لا تتدخّل لأن هذا ليس دورك بالتحديد ولا تريد أن تتجاوز حدودك، فالتنبيه من غير المخوّل يُربك المتطوّع ويُضعف تسلسل المسؤولية في الفريق',
+              en: 'Do not intervene because this is not specifically your role and you do not want to overstep your boundaries, since a correction from someone unauthorised confuses the volunteer and weakens the chain of responsibility in the team',
             },
             {
               ar: 'تنبّهه بهدوء الآن بأن التصوير يحتاج إلى إذن مسبق من الأهل، وإن لم يستجب تُبلّغ منسّق الفعالية فوراً',
               en: 'Remind him quietly now that photography requires prior parental consent, and if he does not respond report it to the event coordinator immediately',
             },
             {
-              ar: 'تنتظر انتهاء الفعالية وتذكره في جلسة التقييم',
-              en: 'Wait until the event ends and mention it in the evaluation session',
+              ar: 'تنتظر انتهاء الفعالية وتذكره في جلسة التقييم، لأن مقاطعة متطوّع أمام المشاركين تُحرجه وجلسة التقييم مكان تصحيح السلوك',
+              en: 'Wait until the event ends and mention it in the evaluation session, since interrupting a volunteer in front of participants embarrasses him and the evaluation is the right place to correct behaviour',
             },
             {
               ar: 'تطلب منه إيقاف الهاتف وحذف الصور الآن',
@@ -708,8 +708,8 @@ export const eventsManagement: CourseContent = {
               en: 'Good as a start but it is enough to add one question about what could be improved',
             },
             {
-              ar: 'الأهم هو رأي المشاركين في الاستبانة وما قاله المتطوّع ثانوي',
-              en: 'What matters most is participant feedback in the survey and what the volunteer said is secondary',
+              ar: 'الأهم هو رأي المشاركين في الاستبانة وما قاله المتطوّع ثانوي، فالمشاركون عاشوا التجربة من الخارج ورأيهم أقرب إلى قياس الأثر',
+              en: 'What matters most is participant feedback in the survey and what the volunteer said is secondary, since participants experienced the event from the outside and their view is closer to measuring impact',
             },
           ],
           correct: 1,

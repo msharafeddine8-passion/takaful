@@ -114,8 +114,8 @@ export const lifeSkills: CourseContent = {
               en: 'The problem is that four hours is too short for registration, an activity and a distribution — the fix is to run the day until three, not to rearrange what is in it',
             },
             {
-              ar: 'الخطأ أنها لم تُكتب بالتشاور مع الفريق، فمن ينفّذ الخطوات أعرف بزمنها الحقيقي ممّن كتبها على الورق',
-              en: 'The problem is that it was not written with the team — whoever runs the steps knows their real timings better than whoever wrote them on paper',
+              ar: 'الخطأ أنها لم تُكتب بالتشاور مع الفريق، فمن ينفّذ الخطوات أعرف بزمنها',
+              en: 'The problem is that it was not written with the team — whoever runs the steps knows the real timings',
             },
           ],
           correct: 1,
@@ -176,8 +176,8 @@ export const lifeSkills: CourseContent = {
           question: { ar: 'ماذا تفعل؟', en: 'What do you do?' },
           options: [
             {
-              ar: 'تشرب قهوة وتكمل — باقٍ ساعتان فقط، والانسحاب الآن يترك اثني عشر طفلاً بلا مشرف',
-              en: 'Get a coffee and carry on — only two hours left, and pulling out now leaves twelve children unsupervised',
+              ar: 'تشرب قهوة وتكمل — باقٍ ساعتان فقط',
+              en: 'Get a coffee and carry on — only two hours left',
             },
             {
               ar: 'تُخبر المنسّقة فوراً وتطلب أن يشاركك أحد في المجموعة أو يستبدلك',
@@ -188,8 +188,8 @@ export const lifeSkills: CourseContent = {
               en: 'Split the group and hand half to a colleague without telling anyone — six children are easier to hold than twelve',
             },
             {
-              ar: 'تكمل وتنتبه أكثر، وتخبر المنسّقة في نهاية اليوم حتى لا تُربك النشاط في منتصفه',
-              en: 'Carry on and concentrate harder, and tell the coordinator at the end of the day rather than disrupt the activity halfway',
+              ar: 'تكمل وتنتبه أكثر وتخبر المنسّقة في نهاية اليوم',
+              en: 'Carry on and concentrate harder, and tell the coordinator at day’s end',
             },
           ],
           correct: 1,
@@ -274,12 +274,12 @@ export const lifeSkills: CourseContent = {
               en: 'Ask her privately how she actually is, suggest a rest or a lighter role, and tell the coordinator the team needs a different distribution',
             },
             {
-              ar: 'لا تتدخّل — هذا شأنها الشخصي، والسؤال عن زميلة لم تطلب شيئاً قد يبدو فضولاً أو مراقبةً لأدائها',
-              en: 'Stay out of it — that is her own business, and asking a colleague who has not asked for anything can come across as prying or as monitoring her',
+              ar: 'لا تتدخّل — هذا شأنها الشخصي، والسؤال عن زميلة لم تطلب شيئاً قد يبدو فضولاً',
+              en: 'Stay out of it — that is her own business, and asking a colleague who has not asked for anything can seem like prying',
             },
             {
-              ar: 'تُبلّغ عنها لأن كلامها عن المستفيدين غير مقبول ويجب أن يُعالَج كمسألة سلوك قبل أن يسمعه الأهالي',
-              en: 'Report her, because talking about people we serve that way is unacceptable and should be handled as a conduct matter before a family hears it',
+              ar: 'تُبلّغ عنها لأن كلامها عن المستفيدين يجب أن يُعالَج كمسألة سلوك',
+              en: 'Report her, because talking that way about the people we serve is a conduct matter',
             },
           ],
           correct: 1,
@@ -365,11 +365,11 @@ export const lifeSkills: CourseContent = {
               en: 'Thank him for saying so, ask what he can actually manage, and build the schedule around his answer',
             },
             {
-              ar: 'تطلب منه أن يصبر شهراً حتى ينتهي الموسم، ثم تُراجعان الوضع حين يهدأ الجدول',
-              en: 'Ask him to hold on for a month until the season ends, then review it once the schedule quietens',
+              ar: 'تطلب منه أن يصبر شهراً حتى ينتهي الموسم، فأغلب حالات التعب تزول من نفسها بعد الذروة',
+              en: 'Ask him to hold on for a month until the season ends, since most tiredness passes on its own once the peak is over',
             },
             {
-              ar: 'تقبل توقّفه فوراً حتى لا تضغط عليه، وتشكره على ما قدّمه وتتركه يعود متى شاء',
+              ar: 'تقبل توقّفه فوراً حتى لا تضغط عليه، وتتركه يعود متى شاء',
               en: 'Accept that he is stopping, immediately, so as not to pressure him, and leave the door open',
             },
             {
@@ -444,8 +444,8 @@ export const lifeSkills: CourseContent = {
               en: 'Say yes, because the team is short-handed and you do not want to let them down',
             },
             {
-              ar: 'لا تردّ حتى يجدوا شخصاً آخر دون أن تضطرّ إلى رفض صريح',
-              en: 'Do not reply, so they find someone else without you having to refuse outright',
+              ar: 'لا تردّ حتى يجدوا شخصاً آخر دون رفض صريح',
+              en: 'Do not reply, so they find someone else without refusing',
             },
           ],
           correct: 1,
@@ -499,8 +499,8 @@ export const lifeSkills: CourseContent = {
           },
           options: [
             {
-              ar: 'أن تنام جيداً قبل يوم ميداني وتصل إليه قادراً على الانتباه',
-              en: 'Sleeping properly before a field day so you arrive able to pay attention',
+              ar: 'أن تنام جيداً قبل يوم ميداني وتصل إليه قادراً على الانتباه طوال اليوم',
+              en: 'Sleeping properly before a field day so you arrive able to pay attention all day',
             },
             {
               ar: 'ألّا يُطلب من متطوّع واحد أن يشرف على اثني عشر طفلاً وحده',
@@ -511,8 +511,8 @@ export const lifeSkills: CourseContent = {
               en: 'Telling the coordinator you feel exhausted before it turns into an absence',
             },
             {
-              ar: 'أن تضع حدوداً لأوقات تواصلك وتلتزم بها بعد النشاط',
-              en: 'Setting boundaries around when you are contactable, and keeping to them',
+              ar: 'أن تضع حدوداً لأوقات تواصلك',
+              en: 'Setting boundaries around when you are contactable',
             },
           ],
           correct: 1,

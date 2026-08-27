@@ -154,13 +154,13 @@ export const volunteeringFoundations: CourseContent = {
             en: 'A university requires a student to complete 40 hours of community service to graduate, and they choose to spend it with an association. Is this volunteering?',
           },
           options: [
-            { ar: 'نعم، لأن العمل نفسه خدمة للمجتمع', en: 'Yes — the work itself serves the community' },
+            { ar: 'نعم، لأن العمل نفسه خدمة للمجتمع ولأن الجمعية استفادت من ساعاته فعلياً', en: 'Yes — the work itself serves the community, and the association genuinely benefited from those hours' },
             { ar: 'نعم، لأنه لم يتقاضَ أجراً', en: 'Yes — they were not paid' },
             {
               ar: 'لا، لأن معيار الإرادة الحرة غير متحقّق — الخدمة شرط للتخرّج',
               en: 'No — the free-will criterion fails; the service is a graduation requirement',
             },
-            { ar: 'لا، لأن الطلاب لا يُعدّون متطوعين', en: 'No — students cannot be volunteers' },
+            { ar: 'لا، لأن الطلاب لا يُعدّون متطوعين ما داموا يؤدّون العمل ضمن متطلّبات دراستهم الجامعية', en: 'No — students cannot be volunteers as long as they are doing the work as part of their university requirements' },
           ],
           correct: 2,
           feedback: {
@@ -358,8 +358,8 @@ export const volunteeringFoundations: CourseContent = {
           },
           options: [
             {
-              ar: 'توافق لتفادي المشكلات وضمان استمرار العمل في المنطقة',
-              en: 'Agree, to avoid trouble and keep working in the area',
+              ar: 'توافق لتفادي المشكلات وضمان استمرار العمل في المنطقة، ثم تعالج الأمر مع مشرفك بعد انتهاء التوزيع',
+              en: 'Agree, to avoid trouble and keep the work going in the area, then raise it with your supervisor once the distribution is over',
             },
             { ar: 'ترفض علناً وبحدّة أمام الحاضرين', en: 'Refuse sharply and publicly in front of everyone' },
             {
@@ -465,8 +465,8 @@ export const volunteeringFoundations: CourseContent = {
           },
           options: [
             {
-              ar: 'تشارك رغم الألم حتى لا تبدو متهرّباً أمام الفريق',
-              en: 'Join in despite the pain, so you do not look like you are avoiding work',
+              ar: 'تشارك رغم الألم حتى لا تبدو متهرّباً أمام الفريق، وتُخفّف من حركتك قدر ما تستطيع',
+              en: 'Join in despite the pain so you do not look like you are avoiding work, and move as little as you can manage',
             },
             {
               ar: 'تبلغ المشرف بوضعك وتطلب مهمة بديلة — هذا حقّك وواجبك معاً',
@@ -588,8 +588,8 @@ export const volunteeringFoundations: CourseContent = {
           },
           options: [
             {
-              ar: 'تعطيها رقمك لأن رفضك سيجرح مشاعرها',
-              en: 'Give her your number, because refusing would hurt her feelings',
+              ar: 'تعطيها رقمك لأن رفضك سيجرح مشاعرها في لحظة هي فيها بحاجة إلى من يسمعها ويطمئنها',
+              en: 'Give her your number, because refusing would hurt her feelings at a moment when she needs someone to listen to her and reassure her',
             },
             { ar: 'تعطيها رقماً خاطئاً لتتجنّب الإحراج', en: 'Give a wrong number to avoid embarrassment' },
             {
@@ -782,12 +782,12 @@ export const volunteeringFoundations: CourseContent = {
           },
           options: [
             {
-              ar: 'تنشرها لأن الصورة إيجابية ولا تُظهر أي أذى',
-              en: 'Post it — the image is positive and shows no harm',
+              ar: 'تنشرها لأن الصورة إيجابية ولا تُظهر أي أذى، وهي تُظهر عمل الجمعية في صورة حسنة أمام الناس',
+              en: 'Post it — the image is positive, shows no harm, and puts the association’s work in a good light in front of people',
             },
             {
-              ar: 'تنشرها بعد إخفاء وجوه الأطفال بالتشويش',
-              en: 'Post it after blurring the children’s faces',
+              ar: 'تنشرها بعد إخفاء وجوه الأطفال بالتشويش، فالتشويش يكفي لحماية هويّتهم ويُغني عن أخذ أيّ إذن',
+              en: 'Post it after blurring the children’s faces — blurring is enough to protect their identity and removes the need for any permission',
             },
             {
               ar: 'لا تنشرها؛ الصور تُسلَّم للمنظمة، ولا تُنشر إلا بإذن خطّي من أولياء الأمور',

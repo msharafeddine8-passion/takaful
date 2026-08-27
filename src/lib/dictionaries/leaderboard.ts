@@ -187,10 +187,16 @@ export const leaderboardAr: LeaderboardStrings = {
   ties:
     'الأرقام المتساوية تأخذ المرتبة نفسها. ترتيب الأسماء داخل المرتبة الواحدة أبجدي، ' +
     'وتقدُّم اسم على آخر فيها لا يعني شيئاً.',
+  /* «إلا من وافق على نشر اسمه» stopped being true at migration 038. The
+     association made appearing the ordinary state and moved every account that
+     had never answered onto it, so this page now lists people who consented to
+     nothing — and a page claiming otherwise makes a promise on their behalf.
+     What it says instead is what the setting actually controls, and it still
+     tells a hidden reader that their own position is theirs alone. */
   privacyNote:
-    'تُعرض أعلى عشر مراتب فقط، ولا يظهر فيها إلا من وافق على نشر اسمه. ومن لم يوافق ' +
-    'يرى موقعه هو وحده ولا يراه سواه. لا تعرض هذه الصفحة مركزاً أخيراً، ولا غياباً، ' +
-    'ولا ساعات مرفوضة، ولا مقارنة بأسبوع مضى.',
+    'تُعرض أعلى عشر مراتب فقط، ولا يظهر فيها إلا من يسمح إعداد الظهور في حسابه بذلك. ' +
+    'ومن أخفى اسمه يرى موقعه هو وحده ولا يراه سواه. لا تعرض هذه الصفحة مركزاً أخيراً، ' +
+    'ولا غياباً، ولا ساعات مرفوضة، ولا مقارنة بأسبوع مضى.',
   visibilityHint: 'اختيارك لما يُنشر عنك تغيّره متى شئت من',
   visibilityLink: 'صفحة حسابك',
 
@@ -292,9 +298,10 @@ export const leaderboardEn: LeaderboardStrings = {
     'Equal figures hold equal positions. Names within one position are in alphabetical order, and ' +
     'one coming before another there means nothing at all.',
   privacyNote:
-    'Only the top ten positions are shown, and only people who agreed to have their name published ' +
-    'appear in them. Anyone who did not agree still sees their own position, and nobody else does. ' +
-    'This page shows no last place, no absences, no rejected hours and no comparison with last week.',
+    'Only the top ten positions are shown, and only people whose visibility setting allows it ' +
+    'appear in them. Anyone who has hidden their name still sees their own position, and nobody ' +
+    'else does. This page shows no last place, no absences, no rejected hours and no comparison ' +
+    'with last week.',
   visibilityHint: 'You can change what is published about you at any time from',
   visibilityLink: 'your account page',
 

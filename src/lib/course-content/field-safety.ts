@@ -150,12 +150,12 @@ export const fieldSafety: CourseContent = {
             en: 'In a risk assessment for a children’s activity, which do you deal with first?',
           },
           options: [
-            { ar: 'انقطاع الكهرباء أثناء النشاط — نادر، أثره بسيط', en: 'A power cut during the activity — rare, minor impact' },
+            { ar: 'انقطاع الكهرباء أثناء النشاط في قاعة لها نوافذ كبيرة — نادر، أثره بسيط', en: 'A power cut during the activity in a hall with large windows — rare, minor impact' },
             {
               ar: 'الباب المفتوح على شارع تمرّ فيه سيارات — متوقّع، أثره جسيم',
               en: 'A door opening onto a street with passing cars — expected, serious impact',
             },
-            { ar: 'نقص عدد الكراسي — متوقّع، أثره بسيط', en: 'Not enough chairs — expected, minor impact' },
+            { ar: 'نقص عدد الكراسي فيجلس بعض الأطفال على الأرض طوال الجلسة — متوقّع، أثره بسيط', en: 'Not enough chairs, so some of the children sit on the floor for the whole session — expected, minor impact' },
             { ar: 'زلزال — نادر جداً، أثره جسيم', en: 'An earthquake — very rare, serious impact' },
           ],
           correct: 1,
@@ -394,7 +394,7 @@ export const fieldSafety: CourseContent = {
           options: [
             { ar: 'بوصف ما حدث بالتفصيل حتى يفهموا خطورته', en: 'By describing what happened in detail so they grasp how serious it is' },
             { ar: 'بموقعك بالضبط وأقرب معلم معروف', en: 'With your exact location and the nearest known landmark' },
-            { ar: 'باسمك واسم الجمعية', en: 'With your name and the association’s name' },
+            { ar: 'باسمك واسم الجمعية والنشاط الذي تشرف عليه اليوم', en: 'With your name, the association’s name, and the activity you are running today' },
             { ar: 'بعدد المصابين', en: 'With the number of casualties' },
           ],
           correct: 1,
@@ -451,13 +451,13 @@ export const fieldSafety: CourseContent = {
             en: 'The only available hall is on the second floor with no lift, and one participant uses a wheelchair. What is the decision?',
           },
           options: [
-            { ar: 'يُقام النشاط ويُخصَّص متطوّعان لحمله عند الحاجة', en: 'Hold the activity and assign two volunteers to carry him if needed' },
+            { ar: 'يُقام النشاط ويُخصَّص متطوّعان لحمله عند الحاجة، ويُتّفق معهما مسبقاً على مسار السلّم وعلى مكان وقوف كلٍّ منهما، ويُبلَّغ هو بالترتيب', en: 'Hold the activity and assign two volunteers to carry him if needed, agreeing with them in advance on the staircase route and where each of them will stand, and telling him the arrangement' },
             {
               ar: 'يُغيَّر المكان — الحمل في حالة طوارئ خطر عليه وعلى من يحمله، والمكان الذي لا يستطيع أحد مغادرته وحده غير آمن له',
               en: 'Change the venue — carrying someone during an emergency endangers him and whoever carries him, and a place somebody cannot leave unaided is not safe for them',
             },
             { ar: 'يُقام النشاط ويُعتذر منه هذه المرّة', en: 'Hold the activity and leave him out this once' },
-            { ar: 'يُقام النشاط في الطابق الثاني ويُنقل هو إلى الطابق الأرضي بنشاط منفصل', en: 'Hold it on the second floor and give him a separate activity on the ground floor' },
+            { ar: 'يُقام النشاط في الطابق الثاني ويُنقل هو إلى الطابق الأرضي بنشاط منفصل يُعدّه متطوّع آخر، ويلتقي الفريقان في استراحة منتصف الجلسة', en: 'Hold it on the second floor and give him a separate activity on the ground floor run by another volunteer, with the two groups meeting together at the break in the middle of the session' },
           ],
           correct: 1,
           feedback: {
@@ -517,12 +517,12 @@ export const fieldSafety: CourseContent = {
             en: 'The street door came open during an activity and a volunteer noticed and shut it before anyone approached. Is it reported?',
           },
           options: [
-            { ar: 'لا — لم يقع شيء ولا داعي لإثارة قلق', en: 'No — nothing happened and there is no need to worry anyone' },
+            { ar: 'لا — لم يقع شيء ولا داعي لإثارة قلق الأهالي والفريق على أمر انتهى في ثوانٍ دون أن يقترب منه أحد', en: 'No — nothing happened and there is no need to worry the families and the team about something that was over in seconds without anyone going near it' },
             {
               ar: 'نعم — يُسجَّل كـ«ما كاد يحدث»، لأنه يعني أن الإجراء المتّفق عليه لم يُنفَّذ وسيتكرّر',
               en: 'Yes — it is logged as a near miss, because it means the agreed action was not carried out and will not be next time either',
             },
-            { ar: 'يُذكر شفهياً في نهاية اليوم إن تذكّره أحد', en: 'Mention it verbally at the end of the day if somebody remembers' },
+            { ar: 'يُذكر شفهياً في نهاية اليوم إن تذكّره أحد، فالتسجيل الكتابي يُترك للحوادث التي وقع فيها ضرر فعلي', en: 'Mention it verbally at the end of the day if somebody remembers, since written logging is kept for incidents where actual harm occurred' },
             { ar: 'يُبلَّغ فقط إن تكرّر مرّة ثانية', en: 'Report it only if it happens a second time' },
           ],
           correct: 1,

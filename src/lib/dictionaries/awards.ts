@@ -130,8 +130,13 @@ export const awardsAr: AwardStrings = {
     'ما إن تختار الجمعية أول تقدير شهري حتى يظهر هنا، مع سبب الاختيار كما كُتب.',
   unavailable: 'هذه الصفحة غير متاحة حالياً.',
   citation: 'سبب الاختيار',
+  /* Was «إلا من وافق على إظهار اسمه». Migration 038 made appearing the default
+     for anybody who had never answered, so the page can no longer say consent
+     was given — only that the setting permits it. The safeguarding half of the
+     sentence is untouched: it is an absolute rule and lib/visibility.ts
+     enforces it after the choice, whatever the choice was. */
   privacyNote:
-    'لا يظهر هنا إلا من وافق على إظهار اسمه على الصفحات العامة، ولا تُنشر أسماء القاصرين ' +
+    'لا يظهر هنا إلا من يسمح إعداد الظهور في حسابه بذلك، ولا تُنشر أسماء القاصرين ' +
     'ولا صورهم مهما كان الخيار المسجَّل.',
 
   names: {
@@ -225,7 +230,7 @@ export const awardsEn: AwardStrings = {
   unavailable: 'This page is not available at the moment.',
   citation: 'Why them',
   privacyNote:
-    'Only people who agreed to be named on public pages appear here, and no minor is ever ' +
+    'Only people whose visibility setting allows it appear here, and no minor is ever ' +
     'named or photographed whatever setting is stored.',
 
   names: {

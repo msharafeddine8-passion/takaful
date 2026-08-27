@@ -99,13 +99,17 @@ export const recognitionAdminAr: RecognitionAdminStrings = {
     + 'لا يسحب نقطة أبداً — السحب تصحيح يوقّعه شخص، لا كنسة تُنقص رصيداً بلا تفسير.',
   pointsPreview: 'اعرض ما سيُضاف',
   pointsApply: 'نفّذ الاحتساب',
-  pointsSummary: '{people} شخصاً · {rows} سطراً · {points} نقطة',
+  /* Label first, number after — the convention dictionaries/impact-admin.ts
+     and dictionaries/leaderboard.ts both keep. «{n} شخصاً» is the singular
+     accusative and belongs to eleven and above; a preview that finds three
+     people printed «3 شخصاً», which is the same error as "3 person". */
+  pointsSummary: 'الأشخاص: {people} · الأسطر: {rows} · النقاط: {points}',
   pointsNothing: 'السجلّ مطابق أصلاً. لا شيء ليُضاف.',
-  pointsMore: 'و{n} سطراً غيرها لم تُعرض هنا.',
+  pointsMore: 'وثمّة أسطر أخرى لم تُعرض هنا، عددها {n}.',
   previewHint:
     'يقرأ ما يقرأه الاحتساب ويطبّق المقارنة نفسها، ولا يكتب شيئاً: لا سجلّ ولا إشعار '
     + 'ولا أثر في التدقيق. اعرضه قبل أن تشغّل الاحتساب على الجميع.',
-  previewSummary: '{accounts} حساباً · سيُمنح {earn} · سيُسحب {withdraw}',
+  previewSummary: 'الحسابات: {accounts} · سيُمنح {earn} · سيُسحب {withdraw}',
   previewNothing: 'كل شيء مطابق أصلاً. تشغيل الاحتساب لن يغيّر شيئاً.',
   previewEarn: 'سيُمنح',
   previewWithdraw: 'سيُسحب',

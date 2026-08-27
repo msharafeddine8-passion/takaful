@@ -118,16 +118,16 @@ export const sustainabilityAndResources: CourseContent = {
               en: 'Financial — because it depended on one source and ended when it did',
             },
             {
-              ar: 'البشرية — لأن المعلّمين غادروا مع انتهاء العقد',
-              en: 'Human — because the teachers left when the contract ended',
+              ar: 'البشرية — لأن المعلّمين المدرَّبين غادروا جميعاً مع انتهاء العقد ولم يبقَ من يواصل',
+              en: 'Human — because the trained teachers all left when the contract ended and nobody was left to carry on',
             },
             {
               ar: 'التشغيلية — لأن الأنظمة لم تكن موثّقة',
               en: 'Operational — because the systems were not documented',
             },
             {
-              ar: 'كلّها بالتساوي، ولا يمكن تحديد النوع الأضعف',
-              en: 'All equally — it is impossible to identify the weakest type',
+              ar: 'كلّها بالتساوي، فأنواع الاستدامة الثلاثة مترابطة ولا يمكن تحديد الأضعف منها',
+              en: 'All equally — the three types of sustainability are interlinked, so the weakest cannot be identified',
             },
           ],
           correct: 0,
@@ -201,8 +201,8 @@ export const sustainabilityAndResources: CourseContent = {
               en: 'Wait for the final decision before taking any action, to avoid a false alarm',
             },
             {
-              ar: 'إرسال خطاب للمانح يطلب التجديد الفوري والتهديد بإغلاق البرنامج',
-              en: 'Send the funder a letter demanding immediate renewal and threatening to close the programme',
+              ar: 'إرسال خطاب للمانح يطلب التجديد الفوري والتهديد بإغلاق البرنامج وما يترتّب عليه من انقطاع الخدمة عن المستفيدين',
+              en: 'Send the funder a letter demanding immediate renewal and threatening to close the programme and the interruption of service to beneficiaries that would follow',
             },
             {
               ar: 'البدء فوراً بمراجعة التكاليف الأساسية وتحديد مصادر بديلة محتملة وخطة تقليص إن لزم',
@@ -294,8 +294,8 @@ export const sustainabilityAndResources: CourseContent = {
           },
           options: [
             {
-              ar: 'تطلب منها المساعدة بشكل غير رسمي ودون توثيق حتى لا تُعقَّد الأمور',
-              en: 'Ask for her help informally without documentation to keep things simple',
+              ar: 'تطلب منها المساعدة بشكل غير رسمي ودون توثيق حتى لا تُعقَّد الأمور، وتشكرها بهدية رمزية في نهاية المشروع حين تكتمل المواد',
+              en: 'Ask for her help informally and without documentation to keep things simple, and thank her with a token gift at the end of the project when the materials are finished',
             },
             {
               ar: 'تتجنّب الطلب منها لأن الاستفادة من المستفيدين أمر غير أخلاقي',
@@ -410,8 +410,8 @@ export const sustainabilityAndResources: CourseContent = {
           },
           options: [
             {
-              ar: 'تمديد المشروع لستة أشهر إضافية لإعداد المنظمة المحلية',
-              en: 'Extend the project by six months to prepare the local organisation',
+              ar: 'تمديد المشروع لستة أشهر إضافية لإعداد المنظمة المحلية، فالتمديد أسهل من إعادة التفاوض على خطة الانتقال ويمنح الجميع وقتاً كافياً',
+              en: 'Extend the project by six months to prepare the local organisation, since an extension is easier than renegotiating the transition plan and gives everyone more time',
             },
             {
               ar: 'تسليم الملفّات كما هي مع تقرير ختامي وإغلاق المشروع في موعده',
@@ -495,16 +495,16 @@ export const sustainabilityAndResources: CourseContent = {
           },
           options: [
             {
-              ar: 'تُبقي الرقم في التقارير وتحاول بلوغه بأيّ طريقة ممكنة',
-              en: 'Keep the number in reports and try to reach it by any means possible',
+              ar: 'تُبقي الرقم في التقارير وتحاول بلوغه بأيّ طريقة ممكنة، فتعديل المؤشّر يُضعف ثقة المانح بالمنظمة',
+              en: 'Keep the number in reports and try to reach it by any means possible, since revising the target would weaken the funder\'s confidence in the organisation',
             },
             {
               ar: 'تُبلّغ المانح فوراً بالفجوة والسبب وتقترح تعديل المؤشر أو الطريقة',
               en: 'Notify the funder immediately of the gap, its cause, and propose adjusting the target or method',
             },
             {
-              ar: 'تُكمل المشروع وتشرح في التقرير النهائي لماذا لم يُحقَّق الهدف',
-              en: 'Complete the project and explain in the final report why the target was not met',
+              ar: 'تُكمل المشروع على قدر إمكانياتك الحقيقية وتشرح في التقرير النهائي لماذا لم يُحقَّق الهدف العددي المعلن',
+              en: 'Complete the project to the limit of your real capacity and explain in the final report why the stated numerical target was not met',
             },
             {
               ar: 'تنهي المشروع مبكّراً لأن الهدف أصبح غير قابل للتحقيق',
@@ -534,12 +534,12 @@ export const sustainabilityAndResources: CourseContent = {
           },
           options: [
             {
-              ar: 'استخدام صورة طفل مجهول الهوية وعليه نداء عاطفي دون موافقته أو موافقة أسرته',
-              en: 'Using an unidentified child\'s photo with an emotional appeal, without their or their family\'s consent',
+              ar: 'استخدام صورة طفل مجهول الهوية وعليه نداء عاطفي دون موافقته أو موافقة أسرته، فلا أحد يستطيع التعرّف عليه',
+              en: 'Using an unidentified child\'s photo with an emotional appeal, without their or their family\'s consent, since nobody can recognise the child anyway',
             },
             {
-              ar: 'وصف المشروع بأنه «سيُنهي الفقر في المنطقة» لأن الجملة أكثر جاذبية',
-              en: 'Describing the project as "ending poverty in the region" because the sentence is more attractive',
+              ar: 'وصف المشروع بأنه «سيُنهي الفقر في المنطقة» لأن الجملة أكثر جاذبية والمانحون يستجيبون للوعود الكبيرة',
+              en: 'Describing the project as "ending poverty in the region" because the sentence is more attractive and donors respond better to bold claims',
             },
             {
               ar: 'تقديم قصّة حقيقية بموافقة صاحبها ووصف دقيق لما سيحقّقه التبرّع',

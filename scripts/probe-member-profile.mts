@@ -277,21 +277,50 @@ check('attendance can never exceed what was registered for',
  * ------------------------------------------------------------------ */
 console.log('\n5. public visibility');
 
+/*
+ * WHAT THIS SECTION ASSERTS CHANGED WHEN MIGRATION 038 DID.
+ *
+ * It used to read: hidden is the default, so hidden-with-no-answer is
+ * ordinary, and publicly-listed-with-no-answer is the fault worth an alarm.
+ *
+ * 038 inverted the platform's default to `name_and_photo` and moved every
+ * account that had never answered onto it. The old assertions then described a
+ * world that no longer existed — and the alarm they guarded, whose words are
+ * «هذا لا ينبغي أن يحدث», fired on 38 of the 40 profiles that exist. An alarm
+ * true of almost everybody is an alarm about nothing, and it buried the one
+ * case it was built for.
+ *
+ * The invariant it holds now: the flag means "in a visibility nobody chose AND
+ * the platform never handed out" — the signature of a hand-edited row. Which
+ * value that is follows PLATFORM_DEFAULT_VISIBILITY, and DEFAULT_VISIBILITY
+ * stays `hidden` for its own separate job, the fail-closed answer to a stored
+ * value that will not parse.
+ */
 const never = visibilityState('hidden', null);
-eq('the stored default is hidden', never.choice, 'hidden');
+eq('an unreadable or absent value still resolves to hidden', never.choice, 'hidden');
 check('and somebody who never answered is marked as never having answered',
   !never.everChose);
-check('which is not itself a fault', !never.unexplained);
+check('hidden with no recorded answer is now the anomaly',
+  never.unexplained,
+  'nobody chose it and 038 does not hand it out — so a row is sitting where no path puts one');
 
 const chose = visibilityState('display_name', '2026-03-01T10:00:00.000Z');
 check('somebody who set it themselves is recorded as having done so', chose.everChose);
 eq('with when they did it', chose.chosenAt, '2026-03-01T10:00:00.000Z');
 
-/* Should be impossible: every path that writes the choice writes the time with
- * it. It means a hand-edited row or a bug in that path, and either way it is a
- * person on a public page with no recorded consent. */
-check('a public listing with no record of consent is flagged as a fault',
-  visibilityState('name_and_photo', null).unexplained);
+check('the state 038 hands out is NOT flagged, even with no answer recorded',
+  !visibilityState('name_and_photo', null).unexplained,
+  'the association decided this; a red alarm on it is the platform second-guessing its own policy');
+
+/*
+ * CONTROL. The two checks above are both about `unexplained` being false for
+ * the ordinary case; if the flag were hard-wired to false they would both pass
+ * and the alarm would be gone with nothing to show for it. This is the case it
+ * still has to catch: a value nobody chose and no migration hands out.
+ */
+check('CONTROL: a visibility nobody chose and nothing hands out IS still flagged',
+  visibilityState('display_name', null).unexplained,
+  'every path that writes the choice writes the timestamp with it, so this is a hand-edited row');
 
 eq('an unrecognised stored value resolves to the private option',
   visibilityState('everything', '2026-03-01T10:00:00.000Z').choice, 'hidden');
