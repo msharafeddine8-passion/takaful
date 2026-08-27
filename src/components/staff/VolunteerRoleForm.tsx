@@ -6,6 +6,7 @@ import {
   updateRoleAction,
   type RoleFormState,
 } from '@/lib/actions/volunteer-roles';
+import { NEW_ROLE_VISIBILITY } from '@/lib/volunteer-role-view';
 import type { DatePrecision, Visibility } from '@/lib/volunteer-role-view';
 import type { Locale } from '@/lib/i18n';
 import type { VolunteerRoleStrings } from '@/lib/dictionaries/volunteer-roles';
@@ -428,7 +429,7 @@ function Fields({
         role.entityId ||
         role.description ||
         role.achievements.length > 0 ||
-        role.visibility !== 'volunteers',
+        role.visibility !== NEW_ROLE_VISIBILITY,
     );
   const [detailOpen, setDetailOpen] = useState(carriesDetail);
 
@@ -831,7 +832,11 @@ function Fields({
             <select
               id={`${uid}-visibility`}
               name="visibility"
-              defaultValue={was('visibility', role?.visibility) || 'volunteers'}
+              /* NEW_ROLE_VISIBILITY, not the column's default: a new role is
+                 offered as public because that is what recording one is for,
+                 while an existing role keeps whatever it was set to. The two
+                 are different questions — see the constant. */
+              defaultValue={was('visibility', role?.visibility) || NEW_ROLE_VISIBILITY}
               className={FIELD}
             >
               {/* The three values migration 046's chk_vr_visibility permits, and

@@ -90,6 +90,30 @@ export function isVisibility(value: unknown): value is Visibility {
  */
 export const DEFAULT_ROLE_VISIBILITY: Visibility = 'volunteers';
 
+/**
+ * What the ADD-A-ROLE FORM offers before anybody touches the control.
+ *
+ * A different question from the one above, and it must not share that constant.
+ * DEFAULT_ROLE_VISIBILITY answers "this stored value will not parse" and stays
+ * inward, because failing closed about who may be seen is a refusal rather than
+ * a default. This one answers "an administrator is recording that somebody ran
+ * a committee — who is that for?", and the association's answer is everyone.
+ *
+ * The first four roles ever entered were all left on the inward default and
+ * then appeared nowhere the director expected them. Nobody opens a control to
+ * confirm the value already sitting in it: a default that has to be overridden
+ * on every single use is not a default, it is a trap.
+ *
+ * This widens nothing on its own. A role marked public still shows only where
+ * publicIdentity() has already cleared the PERSON, and never for anybody
+ * treatAsMinor() answers true for — see continuity-roles.ts, which asks both
+ * gates before it consults this value at all.
+ *
+ * A safeguarding responsibility is exactly what the per-role control is for,
+ * and it is on the same form, one field away.
+ */
+export const NEW_ROLE_VISIBILITY: Visibility = 'public';
+
 export function visibilityFrom(value: unknown): Visibility {
   return isVisibility(value) ? value : DEFAULT_ROLE_VISIBILITY;
 }

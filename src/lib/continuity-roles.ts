@@ -117,8 +117,25 @@ export async function publicRoleTitles(
        * must see exactly what a stranger sees, or the page is only private
        * until an administrator opens it. */
       const roles = await rolesFor(row.id, ANONYMOUS);
+      /*
+       * PAST ROLES BELONG HERE TOO, and leaving them out was the point missed.
+       *
+       * This filtered to `isCurrent`, which reads as caution and is actually
+       * the opposite of what this page is for. «صنّاع الاستمرارية» thanks the
+       * people the association's continuity was built on — and somebody who
+       * chaired a committee for two years and handed it on is precisely that
+       * person. Showing only what they hold today erases the reason they are
+       * on the page.
+       *
+       * It is also the rule migration 046 exists to protect, applied one layer
+       * up: a successor does not replace a predecessor in the table, so a
+       * predecessor must not vanish from the card either.
+       *
+       * rolesFor already returns current first, then newest start, so the cap
+       * keeps a serving role ahead of a finished one without anything here
+       * sorting, ranking or counting.
+       */
       const titles = roles
-        .filter((role) => role.isCurrent)
         .slice(0, ROLE_CHIP_LIMIT)
         .map((role) => roleTitle(role, lang));
       return [row.id, titles] as const;

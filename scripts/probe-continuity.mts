@@ -438,8 +438,22 @@ check('no key holds the same literal in both languages',
   arKeys.filter((k) => continuityAr[k as keyof typeof continuityAr] === continuityEn[k as keyof typeof continuityEn]).join(', '));
 check('the count template carries its placeholder in both languages',
   continuityAr.showing.includes('{n}') && continuityEn.showing.includes('{n}'));
-check('the empty state explains consent rather than looking broken',
-  continuityAr.emptyBody.includes('موافقته') && /consent|agreed/i.test(continuityEn.emptyBody));
+/*
+ * The empty state must say WHY it is empty, not merely be empty.
+ *
+ * It looked for «موافقته» and /consent|agreed/, which was right while the page
+ * said «لا يُنشر اسم أي متطوّع قبل موافقته الصريحة». Migration 038 made
+ * appearing the ordinary state and stopped asking, so that sentence had become
+ * a claim about a consent nobody gave. The copy was corrected and this
+ * assertion went red for the honest wording — the test was pinning the lie.
+ *
+ * What it holds now is the property that mattered underneath: the reason names
+ * the VISIBILITY SETTING, which is a thing the reader can go and change, rather
+ * than leaving a blank page that reads as a fault.
+ */
+check('the empty state says why it is empty rather than looking broken',
+  /الظهور/.test(continuityAr.emptyBody) && /visibility/i.test(continuityEn.emptyBody),
+  'it names the setting, which is something a reader can act on');
 
 check('the strings live outside types.ts / ar.ts / en.ts',
   !/continuity/i.test(read('src/lib/dictionaries/types.ts')),
@@ -472,10 +486,30 @@ check('the query imposes no order that could read as a ranking',
 check('only non-revoked certificates are counted', data.includes("c.revoked_at IS NULL"));
 
 const lib = read('src/lib/continuity.ts');
+
+/*
+ * Comments stripped before both of these, and the reason is the failure that
+ * exposed it: this went red because the PAGE'S OWN COMMENT explains that
+ * consent is asked through consentFor(). The prose describing the rule tripped
+ * the test for the rule.
+ *
+ * A probe that reads source as text has to read the CODE as text. The same
+ * mistake was made and fixed earlier the same day in probe-sql-aliases, where a
+ * comment containing the string being banned turned it red.
+ */
+const pageCode = strip(page);
+
+/* CONTROL: a stripper that returned nothing would make the check below pass
+ * while reading an empty string — the shape that made four assertions in
+ * probe-volunteer-roles green against nothing at all. */
+check("CONTROL: stripping comments left the page's code behind",
+  pageCode.length > 500 && pageCode.includes('buildRoll('),
+  `${pageCode.length} chars`);
+
 check('the page asks about consent through buildRoll and nowhere else',
-  page.includes('buildRoll(') && !page.includes('consentFor('));
+  pageCode.includes('buildRoll(') && !pageCode.includes('consentFor('));
 check('and consentFor has exactly one caller',
-  (lib.match(/consentFor\(/g) ?? []).length === 2,
+  (libCode.match(/consentFor\(/g) ?? []).length === 2,
   'its definition and the single call in buildRoll');
 check('the consent decision is delegated, not reimplemented',
   /from '@\/lib\/visibility'/.test(lib) &&
