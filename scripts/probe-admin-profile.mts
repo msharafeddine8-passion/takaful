@@ -31,10 +31,7 @@
  * deliberate transaction with SET LOCAL takaful.allow_delete = 'on' in it.
  */
 
-import { readFileSync, existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { join } from 'node:path';
-
+import { repoSource } from './source-text.mts';
 import {
   FIELD_KINDS,
   MAX_TEXT,
@@ -63,11 +60,13 @@ function check(what: string, passed: boolean, detail: unknown = ''): void {
   console.log(`  ${passed ? 'ok      ' : 'HOLE    '} ${line}`);
 }
 
-const REPO = fileURLToPath(new URL('..', import.meta.url));
-const readSource = (...parts: string[]): string => {
-  const path = join(REPO, ...parts);
-  return existsSync(path) ? readFileSync(path, 'utf8') : '';
-};
+/*
+ * Reads go through the shared reader, which normalises CRLF to LF; see the
+ * header of scripts/source-text.mts for the two failures that paid for it. It
+ * returns '' for a file that is not there, so every use below asserts the
+ * length before asserting anything about the contents.
+ */
+const readSource = (...parts: string[]): string => repoSource(...parts);
 
 /**
  * The same file with its comments removed.
@@ -509,6 +508,14 @@ console.log('\n7. the write path checks who the caller is, and the log does not 
 
   // The validator is where the values go, and the action does not second-guess it.
   const fieldsCode = codeOf(readSource('src', 'lib', 'profile-fields.ts'));
+  /*
+   * CONTROL, and it comes first: everything in this block is a regex over
+   * `fieldsCode`, and half of them are satisfied by an absence. Read nothing
+   * and the two negative clauses below go green on their own.
+   */
+  check('CONTROL: profile-fields.ts was actually found and read',
+    fieldsCode.length > 200 && /export async function setValues/.test(fieldsCode),
+    fieldsCode.length === 0 ? 'read nothing' : `${fieldsCode.length} chars of code`);
   check('setValues re-reads every definition from the database',
     /FROM profile_field_defs d WHERE d\.id = ANY\(\$1::uuid\[\]\)/.test(fieldsCode),
     'validating against a definition that arrived in the same request proves nothing');
@@ -533,9 +540,21 @@ console.log('\n7. the write path checks who the caller is, and the log does not 
     && /SELECT 1 FROM profile_field_values WHERE field_id = \$1 LIMIT 1/.test(fieldsCode)
     && /reason: 'kind-locked'/.test(fieldsCode),
     'retire the field and declare a new one; the old answers stay answers to the old question');
+  /*
+   * Both offsets are required to EXIST before they are compared.
+   *
+   * `indexOf` answers −1 for something it cannot find, and −1 is less than
+   * every real offset. So a file that had lost its `FOR UPDATE` entirely —
+   * which is precisely the defect this line exists to catch — would have
+   * satisfied `-1 < n` and reported the lock as correctly placed.
+   */
+  const lockAt = fieldsCode.indexOf('FOR UPDATE');
+  const lockedAt = fieldsCode.indexOf("reason: 'kind-locked'");
   check('and that check sits inside the same transaction as the row lock',
-    fieldsCode.indexOf('FOR UPDATE') < fieldsCode.indexOf("reason: 'kind-locked'"),
-    'an answer arriving between the check and the UPDATE must not slip past it');
+    lockAt !== -1 && lockedAt !== -1 && lockAt < lockedAt,
+    lockAt === -1 ? 'no FOR UPDATE anywhere in the module'
+      : lockedAt === -1 ? "no reason: 'kind-locked' anywhere in the module"
+        : 'an answer arriving between the check and the UPDATE must not slip past it');
 }
 
 /* ------------------------------------------------------------------ */

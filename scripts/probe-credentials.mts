@@ -35,9 +35,7 @@
  */
 import { Client } from 'pg';
 import { randomUUID } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { join } from 'node:path';
+import { repoSource } from './source-text.mts';
 import {
   issueCourseCredential,
   issueLevelCredential,
@@ -70,16 +68,15 @@ const HOLDER = 'متطوّع الاختبار';
 /** A day before the cutover, derived so a moved cutover cannot strand it. */
 const PRE_CUTOVER = new Date(Date.parse(RUN_REQUIRED_FROM) - 86_400_000).toISOString();
 
-const REPO = fileURLToPath(new URL('..', import.meta.url));
 /*
- * Line endings normalised on the way in. The repository checks out CRLF on
- * Windows, and the first version of the reads below anchored on "\n}\n" — which
- * matches nothing in a CRLF file, so five assertions about the issuer went red
- * while the issuer was perfectly correct. A probe that fails on a line ending
- * teaches the next person to distrust it.
+ * Line endings normalised on the way in, now by the one shared reader. The
+ * repository checks out CRLF on Windows, and the first version of the reads
+ * below anchored on "\n}\n" — which matches nothing in a CRLF file, so five
+ * assertions about the issuer went red while the issuer was perfectly correct.
+ * A probe that fails on a line ending teaches the next person to distrust it.
+ * See scripts/source-text.mts.
  */
-const credentialsSource = readFileSync(
-  join(REPO, 'src', 'lib', 'programme', 'credentials.ts'), 'utf8').replace(/\r\n/g, '\n');
+const credentialsSource = repoSource('src', 'lib', 'programme', 'credentials.ts');
 
 /** The file with its prose removed, so an assertion is about code, not comments. */
 const codeOf = (src: string): string =>
@@ -217,7 +214,17 @@ try {
    */
   const issuerCode = codeOf(credentialsSource);
   const levelIssuer = /export async function issueLevelCredential[\s\S]*?\n}\n/.exec(issuerCode)?.[0] ?? '';
-  check('the level issuer is there to read', levelIssuer.length > 0, `${levelIssuer.length} chars`);
+  /*
+   * CONTROL, and it has to come first. Two of the checks below are negatives
+   * over this slice — "never reads the run outcome", "names a verdict at all" —
+   * and both are true of the empty string, so an unfound function would report
+   * the guarantee as kept while reading nothing.
+   */
+  check('CONTROL: the level issuer body was actually found and read',
+    levelIssuer.length > 200 && /level_challenge_runs/.test(levelIssuer),
+    levelIssuer.length === 0
+      ? 'read nothing — the "never names a verdict" check below would pass vacuously'
+      : `${levelIssuer.length} chars`);
   check('it asks the runs table whether a run is finished',
     /level_challenge_runs/.test(levelIssuer) && /finished_at IS NOT NULL/.test(levelIssuer));
   /*

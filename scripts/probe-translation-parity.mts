@@ -37,7 +37,14 @@
  * rather than importing them, so it cannot be fooled by a re-export.
  */
 
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync as readFileSyncRaw, readdirSync } from 'node:fs';
+import { normaliseNewlines } from './source-text.mts';
+/* readFileSync is shadowed with a normalising wrapper: git checks src/ out
+ * with CRLF on Windows, which turns a newline-anchored regex below into a silent
+ * pass and once made four negative assertions read an empty string. One
+ * shadow covers every call site in this file. See scripts/source-text.mts. */
+const readFileSync = (p: Parameters<typeof readFileSyncRaw>[0], enc: 'utf8'): string =>
+  normaliseNewlines(readFileSyncRaw(p, enc));
 import path from 'node:path';
 
 let ok = 0;

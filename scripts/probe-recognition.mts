@@ -43,7 +43,14 @@ console.log('\n1. what is recognised without a human');
 /* Read out of the action source rather than imported: roster.ts carries
  * 'use server', so importing it from a plain script pulls in the whole server
  * runtime. Reading the file is blunt, but it checks what actually ships. */
-import { readFileSync } from 'node:fs';
+import { readFileSync as readFileSyncRaw } from 'node:fs';
+import { normaliseNewlines } from './source-text.mts';
+/* readFileSync is shadowed with a normalising wrapper: git checks src/ out
+ * with CRLF on Windows, which turns a newline-anchored regex below into a silent
+ * pass and once made four negative assertions read an empty string. One
+ * shadow covers every call site in this file. See scripts/source-text.mts. */
+const readFileSync = (p: Parameters<typeof readFileSyncRaw>[0], enc: 'utf8'): string =>
+  normaliseNewlines(readFileSyncRaw(p, enc));
 import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));

@@ -17,8 +17,12 @@
  * no database and cannot be fooled by whatever happens to be in one.
  */
 
-import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+
+/* Every read below is a text assertion over application source, so it goes
+ * through the shared reader, which normalises CRLF to LF. See the header of
+ * scripts/source-text.mts for the two failures that paid for it. */
+import { readSource } from './source-text.mts';
 import {
   cardStatusOf, monthOf, toPublicCard, NEVER_PUBLIC,
 } from '../src/lib/card-view.ts';
@@ -175,7 +179,7 @@ check('no output ever contains a day component',
  * ------------------------------------------------------------------ */
 console.log('\n6. the token cannot be counted to');
 
-const certs = readFileSync(`${ROOT}src/lib/certificates.ts`, 'utf8');
+const certs = readSource(`${ROOT}src/lib/certificates.ts`);
 check('lookup is by card_token, not by membership number',
   certs.includes('WHERE p.card_token = $1'));
 check('the old findMember lookup is gone entirely',
@@ -184,24 +188,24 @@ check('the old findMember lookup is gone entirely',
 check('the token is shape-checked before it reaches SQL',
   /\[0-9a-f\]\{32,\}/.test(certs));
 
-const verifyPage = readFileSync(`${ROOT}src/app/[lang]/verify/page.tsx`, 'utf8');
+const verifyPage = readSource(`${ROOT}src/app/[lang]/verify/page.tsx`);
 check('the public verify page no longer accepts ?member=',
   !/searchParams[\s\S]{0,200}member/.test(verifyPage) && !verifyPage.includes('findMember'));
 
-const migration = readFileSync(`${ROOT}migrations/026_card_token.sql`, 'utf8');
+const migration = readSource(`${ROOT}migrations/026_card_token.sql`);
 check('the token comes from a CSPRNG, not from a counter or a timestamp',
   migration.includes('gen_random_bytes'));
 check('and is at least 16 bytes', /gen_random_bytes\(\s*(1[6-9]|[2-9]\d)\s*\)/.test(migration));
 check('a uniqueness constraint makes collision impossible rather than unlikely',
   migration.includes('CREATE UNIQUE INDEX'));
 
-const cardPage = readFileSync(`${ROOT}src/app/[lang]/account/card/page.tsx`, 'utf8');
+const cardPage = readSource(`${ROOT}src/app/[lang]/account/card/page.tsx`);
 check('the card QR points at the token route',
   cardPage.includes('/verify/card/${profile.card_token}'));
 check('and never falls back to the membership number',
   !cardPage.includes('verify?member='));
 
-const publicPage = readFileSync(`${ROOT}src/app/[lang]/verify/card/[token]/page.tsx`, 'utf8');
+const publicPage = readSource(`${ROOT}src/app/[lang]/verify/card/[token]/page.tsx`);
 check('the public card page renders only what toPublicCard returns',
   publicPage.includes('toPublicCard(row)') && !publicPage.includes('row.'),
   'reading row fields directly would bypass the allowlist');

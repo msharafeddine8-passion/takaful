@@ -44,7 +44,14 @@
  * row inserted here against production could never be removed again.
  */
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync as readFileSyncRaw, existsSync } from 'node:fs';
+import { normaliseNewlines } from './source-text.mts';
+/* readFileSync is shadowed with a normalising wrapper: git checks src/ out
+ * with CRLF on Windows, which turns a newline-anchored regex below into a silent
+ * pass and once made four negative assertions read an empty string. One
+ * shadow covers every call site in this file. See scripts/source-text.mts. */
+const readFileSync = (p: Parameters<typeof readFileSyncRaw>[0], enc: 'utf8'): string =>
+  normaliseNewlines(readFileSyncRaw(p, enc));
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
@@ -938,8 +945,28 @@ console.log('\n10. a volunteer can actually get to it, staff can read it, and th
   check('a reviewer can open one run and read what was actually met',
     readerPage.length > 0 && /runForReview\(/.test(readerPage) && /\bwalk\(/.test(readerPage),
     'rebuilt from the stored seed by the engine, not from anything re-derived here');
+  /*
+   * The hub links to the queue — asserted through its own path helper rather
+   * than by matching a literal.
+   *
+   * This read /staff\/decision-runs/ and went red when the hub was
+   * restructured from a flat list of eighteen links into six named groups: the
+   * href is built as at('/decision-runs') now, so the two halves of the path
+   * never sit next to each other in the source. Nothing about the link had
+   * changed. A probe that matches the SHAPE of code rather than the fact it
+   * encodes goes red on every refactor, and a probe that cries wolf is one
+   * somebody eventually loosens.
+   *
+   * Both halves are required, so it still fails if the link is deleted, and
+   * also if `at` stops producing a staff path — the second being how a green
+   * version of this check could otherwise be lying.
+   */
+  const hubBuildsStaffPaths = /`\/\$\{lang\}\/staff\$\{path\}`/.test(staffHub);
+  const hubLinksToQueue =
+    /at\(['"`]\/decision-runs['"`]\)/.test(staffHub) || /staff\/decision-runs/.test(staffHub);
   check('and staff are linked to the queue from the page they start on',
-    /staff\/decision-runs/.test(staffHub), 'the staff hub');
+    hubBuildsStaffPaths && hubLinksToQueue,
+    hubBuildsStaffPaths ? 'the staff hub' : 'the hub no longer builds its paths with at()');
   check('the queue refuses before it reads other people\'s runs', (() => {
     const code = codeOf(queuePage);
     const guard = code.indexOf('can(user,');

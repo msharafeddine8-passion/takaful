@@ -51,7 +51,14 @@
  */
 import { Client } from 'pg';
 import { randomUUID } from 'node:crypto';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync as readFileSyncRaw, existsSync } from 'node:fs';
+import { normaliseNewlines } from './source-text.mts';
+/* readFileSync is shadowed with a normalising wrapper: git checks src/ out
+ * with CRLF on Windows, which turns a newline-anchored regex below into a silent
+ * pass and once made four negative assertions read an empty string. One
+ * shadow covers every call site in this file. See scripts/source-text.mts. */
+const readFileSync = (p: Parameters<typeof readFileSyncRaw>[0], enc: 'utf8'): string =>
+  normaliseNewlines(readFileSyncRaw(p, enc));
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 

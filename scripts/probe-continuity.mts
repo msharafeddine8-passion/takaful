@@ -25,8 +25,9 @@
  * by whatever happens to be in a database on the day it runs.
  */
 
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+/* Source read through the shared reader, so a CRLF checkout cannot turn a
+ * `\n`-anchored regex below into a silent pass. See scripts/source-text.mts. */
+import { REPO, readSource } from './source-text.mts';
 import {
   BADGE_LIMIT, CONSENT_NONE, DEFAULT_SORT, SORTS,
   beirutToday, buildRoll, consentFor, filterRoll, joiningYears, notableBadges, parseFilter,
@@ -51,8 +52,7 @@ const eq = (what: string, got: unknown, want: unknown, note = '') => {
   check(what, same, same ? note : `got ${JSON.stringify(got)}, wanted ${JSON.stringify(want)}`);
 };
 
-const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const read = (p: string) => readFileSync(`${ROOT}${p}`, 'utf8');
+const read = (p: string) => readSource(`${REPO}${p}`);
 
 /*
  * A file with its comments taken out.
@@ -402,7 +402,16 @@ check('the page never renders a number it was not given',
  * that uses it — so this reads the rendered order out of Frame itself: the
  * sentence, then the slot everything else fills.
  */
-const frame = code.slice(code.indexOf('function Frame('));
+const frameAt = code.indexOf('function Frame(');
+const frame = frameAt === -1 ? '' : code.slice(frameAt);
+/*
+ * CONTROL, and it comes first. `indexOf` returns −1 when Frame is renamed, and
+ * `slice(-1)` is one character: every check below would then be reasoning about
+ * a closing brace. An unfound region is a HOLE, not a quiet pass.
+ */
+check('CONTROL: the Frame component was actually found and sliced',
+  frame.length > 200 && frame.includes('{children}'),
+  frame.length === 0 ? 'function Frame( is not in the page' : `${frame.length} chars`);
 check('the page says it is not a ranking, above everything the reader will sort',
   frame.includes('t.notRanked') && frame.indexOf('t.notRanked') < frame.indexOf('{children}'));
 

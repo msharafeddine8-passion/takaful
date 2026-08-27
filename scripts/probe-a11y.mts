@@ -22,10 +22,11 @@
  *   npx tsx --env-file=.env.local scripts/probe-a11y.mts
  */
 
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { readSource } from './source-text.mts';
 import { lmsAr, lmsEn } from '../src/lib/dictionaries/lms.ts';
 
 /* ------------------------------------------------------------------ *
@@ -72,8 +73,16 @@ function walk(dir: string, extensions: string[]): string[] {
   return found;
 }
 
+/*
+ * Every read goes through the shared reader, which normalises CRLF to LF.
+ *
+ * It matters more here than almost anywhere: this probe reports LINE NUMBERS,
+ * and it computes them by slicing the same string it matched against. Two
+ * readers with two ideas of what a newline is would report a defect on a line
+ * that does not contain it. See scripts/source-text.mts.
+ */
 function read(file: string): string {
-  return readFileSync(file, 'utf8');
+  return readSource(file);
 }
 
 /** Same length, same newlines, no content — so offsets and line numbers hold. */

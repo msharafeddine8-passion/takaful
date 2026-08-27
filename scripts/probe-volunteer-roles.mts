@@ -34,7 +34,14 @@
  * PURE: no database, no network, no clock. Every date here is text.
  */
 
-import { readFileSync } from 'node:fs';
+import { readFileSync as readFileSyncRaw } from 'node:fs';
+import { normaliseNewlines } from './source-text.mts';
+/* readFileSync is shadowed with a normalising wrapper: git checks src/ out
+ * with CRLF on Windows, which turns a newline-anchored regex below into a silent
+ * pass and once made four negative assertions read an empty string. One
+ * shadow covers every call site in this file. See scripts/source-text.mts. */
+const readFileSync = (p: Parameters<typeof readFileSyncRaw>[0], enc: 'utf8'): string =>
+  normaliseNewlines(readFileSyncRaw(p, enc));
 import { fileURLToPath } from 'node:url';
 import {
   ANONYMOUS,
@@ -348,9 +355,38 @@ console.log('\n7. ending a role keeps the role');
    * catching, because it would not throw, it would simply erase a piece of
    * somebody's history and return ok.
    */
-  const source = readFileSync(`${ROOT}src/lib/volunteer-roles.ts`, 'utf8');
+  /*
+   * `.replace(/\r\n/g, '\n')` is not tidiness — the probe was silently blind
+   * without it.
+   *
+   * git checks these files out with CRLF on Windows, so `indexOf('\n}\n')`
+   * found nothing, `slice(0, -1 + 1)` returned the EMPTY STRING, and every
+   * assertion below ran against nothing at all. The two positive checks failed
+   * and said so. The four NEGATIVE ones — "endRole does not touch the title",
+   * and its siblings — passed, because `!/title_ar/.test('')` is true.
+   *
+   * So the half of this section that guards somebody's history from being
+   * erased was green while reading an empty string. That is worse than the
+   * failure that exposed it, and it is the exact shape this file writes
+   * CONTROL assertions against elsewhere.
+   */
+  const source = readFileSync(`${ROOT}src/lib/volunteer-roles.ts`, 'utf8').replace(/\r\n/g, '\n');
   const endFn = source.slice(source.indexOf('export async function endRole'));
-  const endBody = endFn.slice(0, endFn.indexOf('\n}\n') + 1);
+  const closes = endFn.indexOf('\n}\n');
+  const endBody = closes === -1 ? '' : endFn.slice(0, closes + 1);
+
+  /*
+   * CONTROL, and it has to come first: a negative assertion over an empty
+   * string is a pass that means nothing. If the function cannot be found and
+   * sliced, every check after this one is void, so the void is the hole.
+   */
+  check(
+    'CONTROL: the endRole body was actually found and read',
+    endBody.length > 200 && /UPDATE volunteer_roles/.test(endBody),
+    endBody.length === 0
+      ? 'read nothing — the four "does NOT touch" checks below would pass vacuously'
+      : `${endBody.length} chars`,
+  );
 
   check('endRole sets is_current to false', /is_current\s*=\s*false/.test(endBody));
   check('endRole writes the end date and its precision',

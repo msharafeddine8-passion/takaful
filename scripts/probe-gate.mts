@@ -45,9 +45,10 @@
  */
 import { Client } from 'pg';
 import { randomUUID } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { join } from 'node:path';
+/* Source read through the shared reader: a CRLF checkout would otherwise let
+ * the `\n}`-anchored slice below quietly return nothing, and the negative
+ * assertion over it would pass. See scripts/source-text.mts. */
+import { repoSource } from './source-text.mts';
 import {
   snapshotFor,
   decide,
@@ -104,8 +105,7 @@ const withRun = (snapshot: Snapshot, ...levels: number[]): Snapshot => ({
   runs: new Set([...snapshot.runs, ...levels]),
 });
 
-const REPO = fileURLToPath(new URL('..', import.meta.url));
-const gateSource = readFileSync(join(REPO, 'src', 'lib', 'programme', 'gate.ts'), 'utf8');
+const gateSource = repoSource('src', 'lib', 'programme', 'gate.ts');
 
 await c.connect();
 const learner = randomUUID();
@@ -274,6 +274,16 @@ try {
    * end would be held back by the thing the exercise exists to surface.
    */
   const runQuery = /export async function levelsWithFinishedRun[\s\S]*?\n}/.exec(gateSource)?.[0] ?? '';
+  /*
+   * CONTROL, before the two checks that depend on it. The second of them is a
+   * negative — "never asks how it went" — and `!/outcome/.test('')` is true, so
+   * a slice that found nothing would report the guarantee as kept.
+   */
+  check('CONTROL: the levelsWithFinishedRun body was actually found and read',
+    runQuery.length > 100 && /SELECT/i.test(runQuery),
+    runQuery.length === 0
+      ? 'read nothing — "never asks how it went" below would pass vacuously'
+      : `${runQuery.length} chars`);
   check('the gate reads that set from the runs table', /level_challenge_runs/.test(runQuery));
   check('and asks only whether the run is finished, never how it went',
     /finished_at IS NOT NULL/.test(runQuery) && !/outcome/.test(runQuery),
