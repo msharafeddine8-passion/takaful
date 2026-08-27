@@ -170,7 +170,17 @@ export default async function StaffRosterPage(props: PageProps<'/[lang]/staff/ro
           * help was "grant role: volunteer", which granted a role and no
           * standing at all.
           */}
-        <section className="mt-12 rounded-2xl border border-line bg-surface-2 p-6">
+        {/*
+          * `id`, so one screen elsewhere can send a reader to THIS box rather
+          * than to the page. The staff members list finds accounts whose name
+          * matches an unclaimed roster line, and for those the choice below is
+          * already settled: they have a number the association gave them and
+          * must keep it, which is what this box does and what the next one
+          * emphatically does not. Every other finding it reports links to the
+          * page and no further, so the reviewer meets both boxes and makes the
+          * choice themselves.
+          */}
+        <section id="link-roster" className="mt-12 rounded-2xl border border-line bg-surface-2 p-6">
           <h2 className="text-[1.05rem] font-extrabold">{t.linkTitle}</h2>
           <p className="mt-2 max-w-[62ch] text-[0.94rem] leading-relaxed text-ink-2">
             {t.linkLede}

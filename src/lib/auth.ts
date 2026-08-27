@@ -34,17 +34,42 @@ export type Role =
   | 'program_admin'
   | 'super_admin';
 
-export type MembershipStatus =
-  | 'registered_user'
-  | 'course_participant'
-  | 'volunteer_applicant'
-  | 'volunteer_candidate'
-  | 'accepted_volunteer'
-  | 'active_volunteer'
-  | 'inactive_volunteer'
-  | 'volunteer_alumni'
-  | 'suspended'
-  | 'rejected';
+/**
+ * Every membership status there is, in the order the CHECK constraint in
+ * migration 001 lists them — roughly the order somebody moves through them.
+ *
+ * A VALUE and not only a type, because a type is erased before anything can
+ * read it. The staff filter needs to offer every status without a second copy
+ * of the list living in a page: a hand-written `<option>` list is a list that
+ * silently stops mentioning a status the day one is added here, and the filter
+ * that quietly cannot find «متطوّع سابق» is worse than no filter at all. The
+ * type below is derived from this array, so the two cannot disagree.
+ *
+ * `dict.account.statuses` has one label per member and its StatusLabels type
+ * names the same ten keys, so a status added here without a label is a type
+ * error in the dictionary rather than a raw `volunteer_alumni` on the screen.
+ */
+export const MEMBERSHIP_STATUSES = [
+  'registered_user',
+  'course_participant',
+  'volunteer_applicant',
+  'volunteer_candidate',
+  'accepted_volunteer',
+  'active_volunteer',
+  'inactive_volunteer',
+  'volunteer_alumni',
+  'suspended',
+  'rejected',
+] as const;
+
+export type MembershipStatus = (typeof MEMBERSHIP_STATUSES)[number];
+
+/** Whether a value read out of a URL is one of the ten. Nothing else is. */
+export function isMembershipStatus(value: unknown): value is MembershipStatus {
+  return (
+    typeof value === 'string' && (MEMBERSHIP_STATUSES as readonly string[]).includes(value)
+  );
+}
 
 export type SessionUser = {
   id: string;

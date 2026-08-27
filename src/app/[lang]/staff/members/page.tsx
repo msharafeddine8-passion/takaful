@@ -6,7 +6,12 @@ import { isLocale } from '@/lib/i18n';
 import { getDictionary } from '@/lib/dictionaries';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section, Kicker } from '@/components/ui';
-import { currentUser } from '@/lib/auth';
+import {
+  currentUser,
+  isMembershipStatus,
+  MEMBERSHIP_STATUSES,
+  type MembershipStatus,
+} from '@/lib/auth';
 import { can } from '@/lib/authz';
 import { isDbConfigured } from '@/lib/db';
 import { members, memberCount } from '@/lib/admin';
@@ -21,6 +26,9 @@ import {
   type VolunteerRole,
 } from '@/lib/volunteer-roles';
 import { roleSearch } from '@/lib/dictionaries/role-search';
+import { needsAttention } from '@/lib/needs-attention';
+import { describeFinding } from '@/lib/needs-attention-view';
+import { needsAttentionStrings } from '@/lib/dictionaries/needs-attention';
 
 const PAGE_SIZE = 50;
 
@@ -73,6 +81,27 @@ const PAGE_SIZE = 50;
  * terms, so each carries the other's parameters as hidden inputs. Everything
  * stays in the URL: linkable, shareable, and back-button-safe, with no client
  * component anywhere on this route.
+ *
+ * ── AND WHY ONE PANEL NOW SITS ABOVE EVEN THAT ─────────────────────────────
+ *
+ * The records that do not add up come FIRST, before the role search and before
+ * the table, because of how the problem they answer was found: the director of
+ * the association had to say out loud, from memory, that five people "had not
+ * been added as volunteers". Every fact behind those five was already in this
+ * database and not one of them was on any screen. A panel a member of staff
+ * has to scroll to is a panel that is read on the day somebody already
+ * suspects something, which is exactly the day it is no longer needed.
+ *
+ * It costs the role search below it some scroll after a submit. That cost is
+ * paid mostly when the panel is EMPTY, where it collapses to a heading, a
+ * sentence and three short lines naming what was checked — and the day it is
+ * not empty is the day it should be the first thing on the screen.
+ *
+ * The panel is READ-ONLY and must stay so. It contains no <form>, no server
+ * action and no button that writes. Every one of its links goes to the guarded
+ * screens, which take a reason and record who decided — including the one that
+ * sets a membership status and a role TOGETHER, whose absence is what produces
+ * the first of the three findings in the first place.
  */
 
 /** How many matching roles one screen will show. Passed explicitly, never defaulted. */
@@ -96,11 +125,12 @@ export default async function StaffMembersPage(props: PageProps<'/[lang]/staff/m
   await connection();
   const { lang } = await props.params;
   if (!isLocale(lang)) notFound();
-  const { q, role, held } = await props.searchParams;
+  const { q, role, held, status } = await props.searchParams;
   const dict = getDictionary(lang);
   const t = dict.account.staff;
   const m = t.membersPage;
   const rs = roleSearch(lang);
+  const na = needsAttentionStrings(lang);
 
   if (!isDbConfigured()) {
     return (
@@ -136,6 +166,17 @@ export default async function StaffMembersPage(props: PageProps<'/[lang]/staff/m
     held === 'current' || held === 'past' ? held : 'any';
 
   /*
+   * The membership status to narrow the table to, or '' for all ten.
+   *
+   * Validated against lib/auth rather than passed through, for the same reason
+   * `held` is: a hand-edited or stale `status=` must widen the answer back to
+   * everybody rather than silently produce an empty table that reads as "there
+   * is nobody like that". '' and not null, because that is the no-filter idiom
+   * admin.ts already uses for the search term, and one sentinel is enough.
+   */
+  const statusFilter: MembershipStatus | '' = isMembershipStatus(status) ? status : '';
+
+  /*
    * The viewer, stated. peopleWithRole() has no default and must not gain one —
    * a search is not a way around a role's visibility, and staff reading this
    * screen see exactly what visibleTo({kind:'staff'}) allows and no more.
@@ -148,9 +189,11 @@ export default async function StaffMembersPage(props: PageProps<'/[lang]/staff/m
     ? peopleWithRole(rolePhrase, { viewer, held: heldFilter, limit: ROLE_MATCH_LIMIT })
     : Promise.resolve([]);
 
-  const [rows, total, roleMatches, suggestions] = await Promise.all([
-    members(search, PAGE_SIZE),
-    memberCount(search),
+  const [rows, total, roleMatches, suggestions, attention] = await Promise.all([
+    members(search, PAGE_SIZE, 0, statusFilter),
+    /* Counted with the same two filters the rows were selected with. A total
+     * that ignores the filter is a number that contradicts the table under it. */
+    memberCount(search, statusFilter),
     matchesPromise,
     /*
      * Read with an empty term rather than with `rolePhrase`, on purpose. Filtered
@@ -160,7 +203,22 @@ export default async function StaffMembersPage(props: PageProps<'/[lang]/staff/m
      * rendered: it orders this list and nothing else.
      */
     roleTitleSuggestions('', SUGGESTION_LIMIT),
+    /*
+     * Unfiltered, always, and deliberately not narrowed by anything above.
+     *
+     * A record that does not add up is not a search result. Letting `q` or
+     * `status` reach it would mean the panel answered "does this account you
+     * are already looking at have a problem" — which is the question somebody
+     * only asks once they suspect, and the whole failure here was that nobody
+     * suspected.
+     */
+    needsAttention(),
   ]);
+
+  /* A count of RECORDS, which is the length of these lists added together. It
+   * decides how the panel greets a reader and nothing else; no figure derived
+   * from it is ever printed against a name. */
+  const attentionTotal = attention.reduce((n, group) => n + group.findings.length, 0);
 
   /*
    * Suggestions group by (title_ar, title_en), so one Arabic title recorded
@@ -180,6 +238,7 @@ export default async function StaffMembersPage(props: PageProps<'/[lang]/staff/m
     if (search) params.set('q', search);
     if (nextRole) params.set('role', nextRole);
     if (heldFilter !== 'any') params.set('held', heldFilter);
+    if (statusFilter) params.set('status', statusFilter);
     const qs = params.toString();
     return `/${lang}/staff/members${qs ? `?${qs}` : ''}`;
   };
@@ -218,6 +277,130 @@ export default async function StaffMembersPage(props: PageProps<'/[lang]/staff/m
         </h1>
         <p className="mt-3 max-w-[62ch] text-[1.02rem] leading-relaxed text-ink-2">{m.lede}</p>
 
+        {/* ------------------------------------ records that do not add up
+          *
+          * One <section> per check, in the order lib/needs-attention.ts fixes,
+          * each explaining its own defect ONCE above its own lines. A check
+          * that found nothing still prints its heading and says so: that is
+          * how a reader learns what is being watched, and it is the state
+          * somebody wants to see after acting on one.
+          *
+          * No <form>, no action, no button. Every control here is a Link.
+          */}
+        <section
+          id="needs-attention"
+          className="mt-7 rounded-2xl border-2 border-warn/40 bg-warn/5 p-4 sm:p-6"
+        >
+          <h2 className="text-[1.15rem] font-extrabold">{na.sectionTitle}</h2>
+          <p className="mt-2 max-w-[62ch] text-[0.94rem] leading-relaxed text-ink-2">{na.lede}</p>
+          <p className="mt-2 max-w-[62ch] text-[0.85rem] leading-relaxed text-ink-3">
+            {na.readOnlyNote}
+          </p>
+          {/* Only where it is true. One finding cannot be a repeated name. */}
+          {attentionTotal > 1 && (
+            <p className="mt-1.5 max-w-[62ch] text-[0.85rem] leading-relaxed text-ink-3">
+              {na.repeatNote}
+            </p>
+          )}
+
+          {attentionTotal === 0 && (
+            <p className="mt-4 rounded-xl border border-line bg-surface px-4 py-3.5 text-[0.93rem] text-ink-2">
+              {na.allClear}
+            </p>
+          )}
+
+          <div className="mt-6 space-y-7">
+            {attention.map((group) => {
+              const cs = na.checks[group.check];
+              return (
+                <section key={group.check}>
+                  <h3 className="text-[1rem] font-extrabold">{cs.title}</h3>
+
+                  {group.findings.length === 0 ? (
+                    <p className="mt-1.5 text-[0.9rem] text-ink-3">{cs.empty}</p>
+                  ) : (
+                    <>
+                      {/* A count of RECORDS under this heading — the length of
+                          one list. It is never shown against a name, and there
+                          is no per-person figure anywhere on this panel. */}
+                      <p className="mt-1 text-[0.92rem] font-bold text-ink-2">
+                        {countPhrase(group.findings.length, na.recordCount)}
+                      </p>
+                      <p className="mt-2 max-w-[62ch] text-[0.9rem] leading-relaxed text-ink-2">
+                        {cs.body}
+                      </p>
+
+                      {/*
+                        * The sentence that keeps a name match a suggestion.
+                        *
+                        * Beside the lines rather than under them, and in the
+                        * caution colour, because this is the one heading whose
+                        * finding could be mistaken for an instruction — and
+                        * because a name plus a number was, until this morning,
+                        * enough to claim any of 426 volunteer identities in
+                        * the very table it reads.
+                        */}
+                      {group.check === 'account_matches_unclaimed_line' && (
+                        <p className="mt-3 max-w-[62ch] rounded-xl border border-warn/40 bg-surface px-4 py-3 text-[0.88rem] leading-relaxed font-bold text-warn-text">
+                          {na.suggestionOnly}
+                        </p>
+                      )}
+
+                      <ul className="mt-4 space-y-3">
+                        {group.findings.map((finding, i) => {
+                          const view = describeFinding(finding, lang, na, dict.account.statuses);
+                          return (
+                            <li
+                              /* One account can pair with two roster lines, so
+                                 the user id alone is not unique within a group. */
+                              key={`${finding.check}-${finding.userId}-${i}`}
+                              className="rounded-2xl border border-line bg-surface p-4"
+                            >
+                              <Link
+                                href={`/${lang}/staff/members/${finding.userId}`}
+                                title={na.openProfile}
+                                dir="auto"
+                                className="text-[1rem] font-extrabold break-words text-brand-blue hover:underline dark:text-brand-orange"
+                              >
+                                {finding.fullName.trim() || na.nameMissing}
+                              </Link>
+                              <p className="mt-0.5 text-[0.82rem] break-all text-ink-3" dir="ltr">
+                                {finding.email}
+                              </p>
+
+                              {/* The facts this check actually found, labelled.
+                                  Nothing is inferred and nothing is totalled. */}
+                              <dl className="mt-3 space-y-1.5 text-[0.9rem]">
+                                {view.facts.map((fact) => (
+                                  <div key={fact.label} className="flex flex-wrap gap-x-2">
+                                    <dt className="font-bold text-ink-2">{fact.label}</dt>
+                                    <dd className="break-words" dir={fact.dir}>
+                                      {fact.value}
+                                    </dd>
+                                  </div>
+                                ))}
+                              </dl>
+
+                              {/* The screen that fixes it. A link and never a
+                                  button: nothing on this page may write. */}
+                              <Link
+                                href={view.fixHref}
+                                className="mt-3.5 inline-flex min-h-11 max-w-full items-center rounded-full border border-line bg-surface-2 px-5 text-start text-[0.88rem] font-extrabold break-words text-brand-blue transition-colors hover:bg-surface dark:text-brand-orange"
+                              >
+                                {view.fixLabel}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </>
+                  )}
+                </section>
+              );
+            })}
+          </div>
+        </section>
+
         {/* ---------------------------------------------------- search by role */}
         <section
           id="role-search"
@@ -227,9 +410,10 @@ export default async function StaffMembersPage(props: PageProps<'/[lang]/staff/m
           <p className="mt-2 max-w-[62ch] text-[0.94rem] leading-relaxed text-ink-2">{rs.lede}</p>
 
           <form method="get" className="mt-5">
-            {/* The member table's own term, carried so the two boxes on this
-                screen do not wipe each other out on submit. */}
+            {/* The member table's own term and status, carried so the two
+                forms on this screen do not wipe each other out on submit. */}
             {search && <input type="hidden" name="q" value={search} />}
+            {statusFilter && <input type="hidden" name="status" value={statusFilter} />}
 
             <label htmlFor="role-phrase" className="mb-1.5 block text-[0.9rem] font-bold">
               {rs.searchLabel}
@@ -413,7 +597,7 @@ export default async function StaffMembersPage(props: PageProps<'/[lang]/staff/m
         </section>
 
         {/* ------------------------------------------------- the member roster */}
-        <form method="get" className="mt-8 flex flex-wrap gap-3">
+        <form method="get" className="mt-8 flex flex-wrap items-end gap-3">
           {/* The role search's state, carried for the same reason. */}
           {rolePhrase && <input type="hidden" name="role" value={rolePhrase} />}
           {heldFilter !== 'any' && <input type="hidden" name="held" value={heldFilter} />}
@@ -422,11 +606,47 @@ export default async function StaffMembersPage(props: PageProps<'/[lang]/staff/m
             type="search"
             defaultValue={search}
             placeholder={m.search}
-            className="min-w-[16rem] flex-1 rounded-xl border border-line bg-surface px-4 py-3 outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/25"
+            className="min-h-11 min-w-[16rem] flex-1 rounded-xl border border-line bg-surface px-4 py-3 outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/25"
           />
+
+          {/*
+            * Every membership status, read from lib/auth at render time.
+            *
+            * NOT a list written here. The table has printed `membership_status`
+            * on every row since it existed and offered no way to ask for one,
+            * so "everyone who is not a volunteer" meant reading forty-four
+            * rows by eye — which is precisely the reading a person did from
+            * memory and got right by luck. A hand-written list of <option>s
+            * would answer that today and quietly stop mentioning the eleventh
+            * status the day one is added; MEMBERSHIP_STATUSES is the same
+            * array the type itself is derived from, and dict.account.statuses
+            * is required by its type to hold a label for every member of it.
+            *
+            * A GET <select> with no submit of its own: the value lands in the
+            * URL beside `q`, so a filtered list is a link somebody can send.
+            */}
+          <div className="flex min-w-[13rem] flex-1 flex-col">
+            <label htmlFor="member-status" className="mb-1.5 text-[0.85rem] font-bold text-ink-2">
+              {na.filterLabel}
+            </label>
+            <select
+              id="member-status"
+              name="status"
+              defaultValue={statusFilter}
+              className="min-h-11 w-full rounded-xl border border-line bg-surface px-4 py-3 outline-none focus:border-brand-blue"
+            >
+              <option value="">{na.filterAny}</option>
+              {MEMBERSHIP_STATUSES.map((s) => (
+                <option key={s} value={s}>
+                  {dict.account.statuses[s]}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <button
             type="submit"
-            className="rounded-full bg-brand-blue px-6 py-3 text-[0.95rem] font-extrabold text-white hover:bg-brand-blue-dark"
+            className="min-h-11 rounded-full bg-brand-blue px-6 py-3 text-[0.95rem] font-extrabold text-white hover:bg-brand-blue-dark"
           >
             {m.searchGo}
           </button>

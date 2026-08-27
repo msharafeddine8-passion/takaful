@@ -1,5 +1,6 @@
 import 'server-only';
 import { query, queryOne } from './db';
+import type { MembershipStatus } from './auth';
 
 /**
  * Everything the staff dashboard reads.
@@ -86,15 +87,41 @@ export type MemberRow = {
 };
 
 /**
- * The member list. `search` matches name or address, case-insensitively.
+ * The one definition of "the membership status of this account".
+ *
+ * The latest row of the history and nothing else — there is no status column on
+ * `users`, and is_volunteer() in migration 006 reads exactly this. Written once
+ * and interpolated so that the column the list DISPLAYS and the column the
+ * filter MATCHES ON can never drift into being two different questions: a
+ * filter that answers with rows whose visible status is not the one asked for
+ * is worse than no filter, because it is believed.
+ *
+ * `changed_at DESC, id DESC` because two rows can share a timestamp — the
+ * identity column breaks the tie in insertion order, which is the order the
+ * decisions were actually taken.
+ */
+const LATEST_STATUS = `(SELECT h.new_status FROM membership_status_history h
+                         WHERE h.user_id = u.id
+                         ORDER BY h.changed_at DESC, h.id DESC LIMIT 1)`;
+
+/**
+ * The member list. `search` matches name or address, case-insensitively, and
+ * `status` narrows to one membership status — '' meaning every status, the
+ * same empty-string-is-no-filter idiom `search` already uses, so neither
+ * parameter needs to be nullable.
+ *
  * Sensitive fields are not selected: this is a roster, not a file on someone.
  */
-export async function members(search = '', limit = 50, offset = 0): Promise<MemberRow[]> {
+export async function members(
+  search = '',
+  limit = 50,
+  offset = 0,
+  status: MembershipStatus | '' = '',
+): Promise<MemberRow[]> {
   const term = search.trim();
   return query<MemberRow>(
     `SELECT u.id, p.full_name, u.email, u.status, u.created_at,
-            (SELECT h.new_status FROM membership_status_history h
-              WHERE h.user_id = u.id ORDER BY h.changed_at DESC, h.id DESC LIMIT 1) AS membership_status,
+            ${LATEST_STATUS} AS membership_status,
             COALESCE((SELECT array_agg(r.role ORDER BY r.role) FROM user_roles r
                        WHERE r.user_id = u.id
                          AND (r.valid_until IS NULL OR r.valid_until > now())), '{}') AS roles,
@@ -109,17 +136,26 @@ export async function members(search = '', limit = 50, offset = 0): Promise<Memb
        FROM users u
        JOIN profiles p ON p.user_id = u.id
       WHERE ($1 = '' OR p.full_name ILIKE '%' || $1 || '%' OR u.email ILIKE '%' || $1 || '%')
+        AND ($4 = '' OR ${LATEST_STATUS} = $4)
       ORDER BY u.created_at DESC
       LIMIT $2 OFFSET $3`,
-    [term, limit, offset],
+    [term, limit, offset, status],
   );
 }
 
-export async function memberCount(search = ''): Promise<number> {
+/**
+ * How many members the same two filters match.
+ *
+ * Takes `status` for the reason the list does: the figure under the search box
+ * is read as "how many there are", and a total counted without the filter that
+ * produced the rows is a number that contradicts the table beneath it.
+ */
+export async function memberCount(search = '', status: MembershipStatus | '' = ''): Promise<number> {
   const row = await queryOne<{ n: string }>(
     `SELECT count(*) AS n FROM users u JOIN profiles p ON p.user_id = u.id
-      WHERE ($1 = '' OR p.full_name ILIKE '%' || $1 || '%' OR u.email ILIKE '%' || $1 || '%')`,
-    [search.trim()],
+      WHERE ($1 = '' OR p.full_name ILIKE '%' || $1 || '%' OR u.email ILIKE '%' || $1 || '%')
+        AND ($2 = '' OR ${LATEST_STATUS} = $2)`,
+    [search.trim(), status],
   );
   return Number.parseInt(row?.n ?? '0', 10);
 }
