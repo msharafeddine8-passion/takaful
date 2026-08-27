@@ -19,6 +19,7 @@ import { practical } from '@/lib/dictionaries/practical';
 import { challengeLevels } from '@/lib/dictionaries/challenge-levels';
 import { projectsAdmin } from '@/lib/dictionaries/projects-admin';
 import { partners } from '@/lib/dictionaries/partners';
+import { stories } from '@/lib/dictionaries/stories';
 import { impactAdminDictionaries } from '@/lib/dictionaries/impact-admin';
 import { staffHub } from '@/lib/dictionaries/staff-hub';
 
@@ -230,12 +231,24 @@ export default async function StaffHomePage(props: PageProps<'/[lang]/staff'>) {
          the members' screens would hide the buttons with the widest reach in
          among the ones with the narrowest.
 
-         The two are gated differently on purpose and the difference is argued
-         where each action lives: partners on challenges.manage, the figures on
-         members.manage, because widening who may restate what the association
-         IS should not happen as a side effect of picking a capability name. */
+         Stories belong here for the same reason and one more: «قصص من الميدان»
+         is the association's own account of its work, and it is the only screen
+         under /staff that publishes PHOTOGRAPHS to strangers. Filing it among
+         the members' screens would put the widest-reaching button on this page
+         in among the narrowest.
+
+         They are gated differently on purpose and the difference is argued
+         where each action lives: partners and stories on challenges.manage, the
+         figures on members.manage, because widening who may restate what the
+         association IS should not happen as a side effect of picking a
+         capability name. */
       title: g.publicPages,
       items: [
+        {
+          href: at('/stories'),
+          label: stories(lang).staffTitle,
+          show: can(user, 'challenges.manage'),
+        },
         {
           href: at('/partners'),
           label: partners(lang).staffTitle,
