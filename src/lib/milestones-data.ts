@@ -263,6 +263,15 @@ const FACTS_SQL = `
                WHERE h.user_id = u.id AND h.status = 'verified'), 0)::INTEGER
                                                                            AS verified_minutes,
 
+    /* Of those minutes, the ones carried in from before the platform existed.
+     * A subset, not an addition - milestonesEarned hands it to
+     * activitiesCredited and never adds it to anything. It is what lets
+     * 'first-activity' reach a volunteer whose years of service the
+     * association wrote down as hours because that is all anybody had. */
+    COALESCE((SELECT sum(h.minutes) FROM hour_entries h
+               WHERE h.user_id = u.id AND h.status = 'verified'
+                 AND h.carried_over), 0)::INTEGER                          AS carried_minutes,
+
     /* The membership date the association holds, falling back to the account.
      * Converted to Beirut before it is cut to a date and handed over as text:
      * an account made at 01:00 Beirut on 1 January is 31 December in GMT, and
@@ -316,6 +325,7 @@ type FactsRow = {
   activities_attended: number;
   certificates: number;
   verified_minutes: number;
+  carried_minutes: number;
   joined_on: string | null;
   stages_reached: number[] | null;
   stages_total: number | null;
@@ -343,6 +353,7 @@ export async function runMilestones(
 
   const facts: MilestoneFacts = {
     activitiesAttended: Number(row.activities_attended ?? 0),
+    carriedMinutes: Number(row.carried_minutes ?? 0),
     certificates: Number(row.certificates ?? 0),
     verifiedMinutes: Number(row.verified_minutes ?? 0),
     joinedOn: row.joined_on,

@@ -159,12 +159,28 @@ export function activitiesFromCarriedMinutes(carriedMinutes: number): number {
  * «صنّاع الاستمرارية», the boards — calls this, so the figures cannot drift
  * apart into an argument the volunteer would be right to have.
  *
- * What deliberately does NOT call it is anything that GRANTS something:
- * lib/achievements.ts, lib/journey.ts, lib/milestones.ts and the impact-point
- * ledger all keep counting rows. An estimate may be printed; it may not mint a
- * badge, satisfy a stage requirement or fire a "your first activity" message.
- * Carried hours already earn their hours points in full, and paying them again
- * as attendance points would be counting one lump of service twice.
+ * ── IT NOW GRANTS, AND NOT ONLY PRINTS ───────────────────────────────────
+ *
+ * This function used to be for display only: lib/achievements.ts,
+ * lib/journey.ts and lib/milestones.ts kept counting rows, so a volunteer whose
+ * page said 151 activities did not hold the «أول نشاط» badge and sat blocked on
+ * a stage asking for one. That was the platform disbelieving its own register.
+ * The two-hours-per-activity rate is the association's rule about the
+ * association's records — an administrator entered those hours deliberately,
+ * noting «المشاركة في العديد من الأنشطة» — so the three now call this too.
+ *
+ * TWO THINGS STILL DO NOT, and both are deliberate:
+ *
+ *   The impact-point ledger. Carried minutes already earn their hours points in
+ *   full through pointsForMinutes, so crediting them again as activities would
+ *   pay twice for one lump of service. See lib/points-recompute.ts, which never
+ *   counted activities and still does not.
+ *
+ *   Anything scoped to a MONTH — the monthly recognition awards in
+ *   lib/awards.ts, and active_month and commitment here. A carry-over is years
+ *   of service filed against one date; letting it into a month would hand
+ *   somebody a volunteer-of-the-month for work done in 2019. presentMinutes
+ *   above is the same rule for the same reason.
  */
 export function activitiesCredited(recorded: number, carriedMinutes: number): number {
   const rows = Number.isFinite(recorded) && recorded > 0 ? Math.floor(recorded) : 0;

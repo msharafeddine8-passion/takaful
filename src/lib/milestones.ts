@@ -42,8 +42,12 @@
  * digit in the birthday half of it.
  *
  * PURE. No database, no 'server-only', no clock, no React —
- * scripts/probe-milestones exercises it directly.
+ * scripts/probe-milestones exercises it directly. The one import is
+ * lib/impact.ts, which is pure for the same reasons and owns the single
+ * definition of how prior service is credited as participation.
  */
+
+import { activitiesCredited } from './impact';
 
 /** A plain calendar date. A timestamp is refused rather than trimmed. */
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -183,8 +187,22 @@ export const RETURN_GAP_DAYS = 180;
  * Nothing here is a name, a date of birth or another person's anything.
  */
 export type MilestoneFacts = {
-  /** Confirmed attendance, all time. */
+  /** Confirmed attendance, all time. Rows, before any crediting. */
   activitiesAttended: number;
+  /**
+   * Verified minutes flagged `carried_over`: service the association recorded
+   * from before the platform existed.
+   *
+   * A SUBSET of verifiedMinutes below, never an addition to it. Present so that
+   * 'first-activity' can be decided from the same participation figure the
+   * volunteer's own dashboard prints — telling somebody with three hundred
+   * verified hours that they have yet to attend a first activity is the
+   * platform contradicting its own register.
+   *
+   * Optional, and absent means nought: a caller that has not gathered it gets
+   * the old row-count behaviour rather than a wrong figure.
+   */
+  carriedMinutes?: number | null;
   /** Certificates that still stand — a revoked one is not a first. */
   certificates: number;
   /** Verified minutes, all time. Minutes because that is what the ledger holds. */
@@ -256,7 +274,11 @@ export function hasCompletedAYear(joinedOn: string | null | undefined, today: st
 export function milestonesEarned(facts: MilestoneFacts): MilestoneCode[] {
   const earned = new Set<MilestoneCode>();
 
-  if (facts.activitiesAttended >= 1) earned.add('first-activity');
+  /* Attendance rows plus what the carried hours are credited for, at the
+   * association's own rate. activitiesCredited owns that rate; there is no
+   * second constant here and there must never be one. */
+  const activities = activitiesCredited(facts.activitiesAttended, facts.carriedMinutes ?? 0);
+  if (activities >= 1) earned.add('first-activity');
   if (facts.certificates >= 1) earned.add('first-certificate');
 
   for (const hours of HOURS_MILESTONES) {

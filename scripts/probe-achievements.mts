@@ -275,10 +275,31 @@ try {
     }
   }
   for (const id of made) {
+    /*
+     * BOTH HALVES OF THE SET LOCAL TRAP WERE HERE, AND THIS PROBE LEAKED A REAL
+     * ACCOUNT INTO PRODUCTION ON EVERY RUN BECAUSE OF IT.
+     *
+     * The hatch line sat inside the loop, so it went out as
+     * `c.query("SET LOCAL …", [id])` — one bind parameter for a statement with
+     * no placeholder, which Postgres refuses outright. And the loop ran on a
+     * bare client with no transaction, where SET LOCAL is a silent no-op even
+     * when it does parse. So the hatch never opened once, migration 044 refused
+     * `DELETE FROM achievements`, the foreign key then held the user, and the
+     * per-statement `.catch()` printed each failure into output nobody reads.
+     * Five `ach-*@example.test` accounts are sitting in production because of
+     * it.
+     *
+     * A real transaction now, the hatch set once inside it with no parameters,
+     * and a SAVEPOINT per statement so one refusal does not abandon the rest —
+     * the shape scripts/sweep.mts arrived at after the identical bug.
+     *
+     * audit_logs must be deleted under the same open hatch: migration 049 made
+     * that table append-only, and an unguarded DELETE there aborts the whole
+     * transaction rather than failing on its own.
+     */
+    await c.query('BEGIN');
+    await c.query("SET LOCAL takaful.allow_delete = 'on'");
     for (const sql of [
-      /* Migrations 044/045: achievements refuses a plain DELETE, and this asks
-       * for the exception by name. Transaction-scoped, so it ends here. */
-      "SET LOCAL takaful.allow_delete = 'on'",
       'DELETE FROM achievements WHERE user_id = $1',
       'DELETE FROM hour_allocations WHERE user_id = $1',
       'DELETE FROM hour_entries WHERE user_id = $1 OR verified_by = $1',
@@ -289,8 +310,16 @@ try {
       'DELETE FROM user_journey_assignments WHERE user_id = $1 OR assigned_by = $1',
       'DELETE FROM profiles WHERE user_id = $1',
     ]) {
-      await c.query(sql, [id]).catch((e) => console.error(`  ${sql.split(' ')[3]}: ${(e as Error).message}`));
+      try {
+        await c.query('SAVEPOINT one');
+        await c.query(sql, [id]);
+        await c.query('RELEASE SAVEPOINT one');
+      } catch (e) {
+        await c.query('ROLLBACK TO SAVEPOINT one').catch(() => {});
+        console.error(`  ${sql.split(' ')[3]}: ${(e as Error).message}`);
+      }
     }
+    await c.query('COMMIT');
   }
   if (activity) await c.query('DELETE FROM activities WHERE id = $1', [activity]).catch(() => {});
   for (const id of made) {

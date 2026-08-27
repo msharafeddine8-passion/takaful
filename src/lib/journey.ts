@@ -1,5 +1,6 @@
 import 'server-only';
 import { query, queryOne } from './db';
+import { activitiesCredited } from './impact';
 
 /**
  * The progression engine.
@@ -88,7 +89,12 @@ type Signals = {
   allocatedByRequirement: Map<string, number>;
   manualProgress: Set<string>;             // requirement ids satisfied by a recorded row
   completedStages: Map<number, Date>;      // stage number -> when
-  activitiesAttended: number;              // confirmed attendance, all time
+  /**
+   * Participation an activity requirement is measured against: confirmed
+   * attendance, plus what carried-over hours are credited for. Not a row count
+   * — see activitiesCredited in lib/impact.ts.
+   */
+  activitiesCredited: number;
 };
 
 export async function journeyFor(userId: string): Promise<JourneyView | null> {
@@ -198,7 +204,7 @@ export async function journeyFor(userId: string): Promise<JourneyView | null> {
 }
 
 async function gatherSignals(userId: string): Promise<Signals> {
-  const [courses, allocations, manual, completed, attended] = await Promise.all([
+  const [courses, allocations, manual, completed, attended, carried] = await Promise.all([
     query<{ course_slug: string; score: number | null }>(
       'SELECT course_slug, score FROM course_progress WHERE user_id = $1 AND passed',
       [userId],
@@ -230,6 +236,25 @@ async function gatherSignals(userId: string): Promise<Signals> {
       'SELECT count(*) AS n FROM activity_attendance WHERE user_id = $1 AND attended',
       [userId],
     ),
+    /*
+     * The hours the association carried in from before the platform existed.
+     *
+     * Read here for the same reason the attendance count above is: without it,
+     * a volunteer with three hundred verified hours of prior service sat
+     * blocked forever on a stage asking for one activity, because the platform
+     * held no attendance row for any of the years it did not witness. The
+     * association's own rule credits those hours as participation — one
+     * activity per two — and this is the second half of that figure.
+     *
+     * A subset of the verified total, never an addition to it. It is not added
+     * to anything here; it is handed to activitiesCredited, which owns the rate.
+     */
+    queryOne<{ n: string }>(
+      `SELECT COALESCE(SUM(minutes), 0)::BIGINT AS n
+         FROM hour_entries
+        WHERE user_id = $1 AND status = 'verified' AND carried_over`,
+      [userId],
+    ),
   ]);
 
   return {
@@ -239,7 +264,10 @@ async function gatherSignals(userId: string): Promise<Signals> {
     ),
     manualProgress: new Set(manual.map((m) => m.requirement_id)),
     completedStages: new Map(completed.map((s) => [s.stage, s.reached_at])),
-    activitiesAttended: Number.parseInt(attended?.n ?? '0', 10),
+    activitiesCredited: activitiesCredited(
+      Number.parseInt(attended?.n ?? '0', 10),
+      Number.parseInt(carried?.n ?? '0', 10),
+    ),
   };
 }
 
@@ -296,14 +324,19 @@ function evaluate(r: RequirementRow, signals: Signals): RequirementView {
     }
 
     /*
-     * How many activities they have actually turned up to, against how many
-     * the stage asks for. Counted from attendance a supervisor confirmed, so
-     * nobody can satisfy it by registering and staying home — and nobody has
-     * to remember to record it a second time by hand.
+     * How many activities they have taken part in, against how many the stage
+     * asks for.
+     *
+     * Attendance a supervisor confirmed, so nobody can satisfy it by
+     * registering and staying home — plus the participation credited from
+     * carried-over hours, so nobody is held at the first stage for years of
+     * service the association recorded but this platform never saw. Both halves
+     * are verified facts somebody in the association wrote down; the rate that
+     * joins them lives in lib/impact.ts and nowhere else.
      */
     case 'activity': {
       const target = Number.parseInt(r.config.count ?? '1', 10) || 1;
-      const current = signals.activitiesAttended;
+      const current = signals.activitiesCredited;
       return {
         ...base,
         satisfied: current >= target,

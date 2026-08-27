@@ -3,6 +3,7 @@ import { query, transaction } from './db';
 import type { Locale } from './i18n';
 import { LEVEL_BADGES } from './programme/level-badges';
 import { inCirculation, retiredCodesFrom } from './badge-circulation';
+import { activitiesCredited } from './impact';
 
 /**
  * Badges.
@@ -520,16 +521,41 @@ export type Standing = Record<AchievementKind, number>;
  * badge read from it would arrive late or never. A level with no courses in it
  * counts as incomplete, matching `LevelStanding.complete` in programme/standing.ts —
  * an empty level is not an achievement.
+ *
+ * `activities` is NOT a row count. It is `activitiesCredited` in lib/impact.ts:
+ * confirmed attendance plus what the carried-over hours are credited for, at
+ * the association's own rate of one activity per two hours. So the query hands
+ * back the two ingredients and the figure is assembled below, in the one place
+ * the rest of the platform already gets it from — a second rate written into
+ * this SQL is exactly how the badge wall and the dashboard would come to
+ * disagree about the same person.
  */
+type StandingRow = Omit<Standing, 'activities' | 'balanced'> & {
+  /** Rows on activity_attendance. The raw figure, before crediting. */
+  activities_recorded: number;
+  /** Verified minutes flagged carried_over. A subset of `hours`, not an addition. */
+  carried_minutes: number;
+};
+
 export async function standingFor(userId: string): Promise<Standing> {
-  const rows = await query<Standing>(
+  const rows = await query<StandingRow>(
     `SELECT
        COALESCE((SELECT SUM(minutes) FROM hour_entries
                   WHERE user_id = $1 AND status = 'verified'), 0)::INTEGER   AS hours,
        (SELECT count(DISTINCT course_slug) FROM course_attempts
          WHERE user_id = $1 AND passed)::INTEGER                             AS courses,
        (SELECT count(*) FROM activity_attendance
-         WHERE user_id = $1 AND attended)::INTEGER                           AS activities,
+         WHERE user_id = $1 AND attended)::INTEGER                           AS activities_recorded,
+
+       /* The carried half of the participation figure. Kept separate from the
+        * hours column on purpose: these minutes are already inside that total,
+        * and a reader who added the two would count one lump of service twice.
+        *
+        * (No backticks in this comment. It lives inside a template literal and
+        * one would end the string here - which it already did once.) */
+       COALESCE((SELECT SUM(minutes) FROM hour_entries
+                  WHERE user_id = $1 AND status = 'verified' AND carried_over), 0)::INTEGER
+                                                                             AS carried_minutes,
        COALESCE((SELECT MAX(stage) FROM stage_progress WHERE user_id = $1), 0)::INTEGER
                                                                              AS stages,
        COALESCE((
@@ -594,18 +620,6 @@ export async function standingFor(userId: string): Promise<Standing> {
              AND r.joined_on IS NOT NULL AND r.joined_on <= DATE '2023-12-31'
         ) THEN 1 ELSE 0 END)::INTEGER                                        AS continuity,
 
-       /* Fifty hours, five activities and five live certificates together.
-        * The point of it is the combination, so it is one figure and not a
-        * badge the engine could half-award. */
-       (CASE WHEN
-          COALESCE((SELECT sum(minutes) FROM hour_entries
-                     WHERE user_id = $1 AND status='verified'),0) >= 3000
-          AND (SELECT count(*) FROM activity_attendance
-                WHERE user_id = $1 AND attended) >= 5
-          AND (SELECT count(*) FROM certificates
-                WHERE user_id = $1 AND kind='course' AND revoked_at IS NULL) >= 5
-        THEN 1 ELSE 0 END)::INTEGER                                          AS balanced,
-
        /*
         * Turned up to at least nine in ten of what they signed up for, over at
         * least ten registrations.
@@ -634,13 +648,55 @@ export async function standingFor(userId: string): Promise<Standing> {
         ) >= 0.9 THEN 1 ELSE 0 END)::INTEGER                                 AS reliability`,
     [userId],
   );
-  return (
-    rows[0] ?? {
+  const row = rows[0];
+  if (!row) {
+    return {
       hours: 0, courses: 0, activities: 0, stages: 0, levels: 0,
       certificates: 0, membership: 0, accepted: 0,
       continuity: 0, balanced: 0, reliability: 0,
-    }
-  );
+    };
+  }
+
+  /*
+   * The one place the participation figure is assembled, and it is the same
+   * call every page that PRINTS a count already makes. A volunteer reading 151
+   * activities on their dashboard and being refused «أول نشاط» was the platform
+   * declining to believe a register its own administrator wrote.
+   */
+  const activities = activitiesCredited(row.activities_recorded, row.carried_minutes);
+
+  /*
+   * Fifty hours, five activities and five live certificates together. Moved out
+   * of the SQL when activities stopped being a row count: leaving it there
+   * would have been a second definition of "five activities", and the two would
+   * have parted company the first time either rate was touched.
+   *
+   * Still one figure rather than three, because the combination is the point —
+   * nothing here can half-award it.
+   */
+  const balanced =
+    row.hours >= 3000 && activities >= 5 && row.certificates >= 5 ? 1 : 0;
+
+  return {
+    hours: row.hours,
+    courses: row.courses,
+    activities,
+    stages: row.stages,
+    levels: row.levels,
+    certificates: row.certificates,
+    membership: row.membership,
+    accepted: row.accepted,
+    continuity: row.continuity,
+    balanced,
+    /*
+     * Reliability is deliberately left as it was: it is a RATIO of attendance
+     * to registration, and carried-over hours have no registrations behind
+     * them. Feeding credited activities into the numerator alone would put 151
+     * over a denominator of nine and hand the badge to somebody who has not
+     * turned up to anything the platform ever scheduled.
+     */
+    reliability: row.reliability,
+  };
 }
 
 export type Recomputed = { earned: string[]; revoked: string[] };
