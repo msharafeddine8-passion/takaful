@@ -1488,6 +1488,18 @@ export const en: Dictionary = {
           'Access returns, and the membership status is recorded as inactive volunteer — someone coming back after a suspension is returning, not carrying on.',
         reasonLabel: 'Reason',
         reasonPlaceholder: 'Recorded against your name.',
+        pause: 'Pause taking part',
+        pauseNote:
+          'The account stays open, no session is ended, and they go on reading their own record, '
+          + 'hours and badges exactly as they are — what stops is registering for activities. Use '
+          + 'it when a volunteer asks for a break, or while a question about them is being looked '
+          + 'at. It is not a suspension.',
+        pauseReasonPlaceholder: 'At their request, or while we look into…',
+        resume: 'Resume taking part',
+        resumeNote:
+          'Taking part resumes, and the standing is recorded as accepted volunteer rather than '
+          + 'whatever it was before: somebody paused while active months ago is not active today, '
+          + 'and what they do next is what makes them so again.',
         lastAdminNote: 'The last super administrator cannot be suspended — nobody would be left to undo it.',
         confirmSuspend:
           '{name} will be locked out immediately and signed out on every device. Continue?',
@@ -1570,6 +1582,7 @@ export const en: Dictionary = {
       accepted_volunteer: 'Accepted volunteer',
       active_volunteer: 'Active volunteer',
       inactive_volunteer: 'Inactive volunteer',
+      on_hold: 'Taking part is paused',
       volunteer_alumni: 'Volunteer alumnus',
       suspended: 'Suspended',
       rejected: 'Application not accepted',
@@ -1582,6 +1595,7 @@ export const en: Dictionary = {
       accepted_volunteer: 'Welcome. Wait to be assigned to your first activity.',
       active_volunteer: 'Follow your hours and activities, and complete the next level of courses.',
       inactive_volunteer: 'It has been a while. Get in touch whenever you would like to return.',
+      on_hold: 'Your taking part is paused, by agreement or for the time being. Your record, your hours and your badges stand exactly as they are.',
       volunteer_alumni: 'Thank you for what you gave. Your certificates remain available in your account.',
       suspended: 'Please contact the volunteering team for details.',
       rejected: 'You may apply again later. The courses remain open to you either way.',

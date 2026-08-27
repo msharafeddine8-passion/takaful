@@ -57,6 +57,21 @@ export const MEMBERSHIP_STATUSES = [
   'accepted_volunteer',
   'active_volunteer',
   'inactive_volunteer',
+  /*
+   * Paused by a decision, which is not the same as having gone quiet.
+   *
+   * inactive_volunteer describes an absence the platform noticed. `on_hold` is
+   * something somebody chose — at the volunteer's own request, or while a
+   * question is being looked at — and membership_status_history records who
+   * decided and why. Migration 061 argues it at length.
+   *
+   * is_volunteer() excludes it: a pause stops somebody taking part while they
+   * keep their number, their hours, their badges and their record. It is not
+   * suspension either, which shuts the account and ends every session. Being
+   * paused should not feel like being erased, least of all to somebody who
+   * asked for it.
+   */
+  'on_hold',
   'volunteer_alumni',
   'suspended',
   'rejected',

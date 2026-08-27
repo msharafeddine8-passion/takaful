@@ -136,6 +136,7 @@ export type StatusLabels = {
   accepted_volunteer: string;
   active_volunteer: string;
   inactive_volunteer: string;
+  on_hold: string;
   volunteer_alumni: string;
   suspended: string;
   rejected: string;
@@ -1329,6 +1330,12 @@ export type Account = {
       reactivateNote: string;
       reasonLabel: string;
       reasonPlaceholder: string;
+      /* Pausing — migration 061. Not suspension: the account stays open. */
+      pause: string;
+      pauseNote: string;
+      pauseReasonPlaceholder: string;
+      resume: string;
+      resumeNote: string;
       lastAdminNote: string;
       confirmSuspend: string;
       journeyTitle: string;

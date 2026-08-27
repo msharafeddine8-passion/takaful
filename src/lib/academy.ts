@@ -433,12 +433,30 @@ export async function passedCourseSlugs(userId: string): Promise<Set<string>> {
   return new Set(rows.map((r) => r.course_slug));
 }
 
+/*
+ * ── DATES ──────────────────────────────────────────────────────────────────
+ *
+ * The session runs GMT and the association is in Beirut. Every day this file
+ * hands upward is produced by Postgres as 'YYYY-MM-DD' text, already shifted
+ * to Asia/Beirut, and is rendered as text from there on. Nothing downstream
+ * rebuilds a Date from it: an attempt submitted at 01:00 Beirut on the 5th is
+ * 22:00 GMT on the 4th, and `new Date(...).toISOString()` would date somebody's
+ * sitting to the day before they sat it.
+ *
+ * That is not hypothetical — it is what the account page did with
+ * `last_attempt_at` until this column became text. See the same note and the
+ * same helper in lib/level-challenge-runs.ts.
+ */
+const beirutDay = (column: string) =>
+  `to_char(${column} AT TIME ZONE 'Asia/Beirut', 'YYYY-MM-DD')`;
+
 export type CourseStanding = {
   course_slug: string;
   attempts: number;
   best_score: number | null;
   passed: boolean;
-  last_attempt_at: Date | null;
+  /** 'YYYY-MM-DD' in Beirut, as text. Never reconstruct a Date from it. */
+  last_attempt_on: string | null;
   open_answered: number | null;
   modules_read: number;
   /*
@@ -475,7 +493,8 @@ export async function learningStanding(userId: string): Promise<Map<string, Cour
               MAX(score) FILTER (WHERE submitted_at IS NOT NULL)          AS best_score,
               COALESCE(bool_or(passed), false)                            AS passed,
               COALESCE(bool_or(source = 'recognised'), false)             AS recognised,
-              MAX(submitted_at) FILTER (WHERE source <> 'recognised')     AS last_attempt_at,
+              ${beirutDay("MAX(submitted_at) FILTER (WHERE source <> 'recognised')")}
+                                                                          AS last_attempt_on,
               -- Parenthesised so the cast applies to the aggregate and not to
               -- the FILTER clause, and because MAX over count(*) is a bigint,
               -- which the driver would otherwise hand back as a string.
@@ -491,7 +510,7 @@ export async function learningStanding(userId: string): Promise<Map<string, Cour
             a.best_score,
             COALESCE(a.passed, false)                AS passed,
             COALESCE(a.recognised, false)            AS recognised,
-            a.last_attempt_at,
+            a.last_attempt_on,
             a.open_answered,
             COALESCE(m.modules_read, 0)              AS modules_read
        FROM attempts a FULL OUTER JOIN modules m ON m.course_slug = a.course_slug`,
@@ -500,23 +519,170 @@ export async function learningStanding(userId: string): Promise<Map<string, Cour
   return new Map(rows.map((r) => [r.course_slug, r]));
 }
 
+// ---------------------------------------------------------- attempt history
+
+/**
+ * One sitting, as the learner is shown it.
+ *
+ * `source` rides along because three of these rows mean three different
+ * things and a page that renders them identically tells at least two lies:
+ *
+ *   web         somebody sat the paper here. Everything below is real.
+ *   recognised  the association credited the course from prior learning.
+ *               No paper, no score, and `answered` is zero because nothing
+ *               was answered — not because they gave up.
+ *   migrated    carried over from the single-row table migration 012
+ *               replaced, where the questions, the answers and the pass mark
+ *               were never recorded. The score is what that row held; the
+ *               blanks are blank because nobody wrote them down, and the
+ *               screen says so rather than showing a sitting with no detail.
+ */
 export type AttemptSummary = {
-  started_at: Date;
-  submitted_at: Date | null;
+  /** 'YYYY-MM-DD' in Beirut, as text. Never reconstruct a Date from it. */
+  started_on: string;
+  submitted_on: string | null;
   score: number | null;
   passed: boolean;
   pass_mark: number | null;
   answered: number;
+  asked: number;
+  source: string;
 };
 
-/** Every sitting, newest first — what the old single-row table could not say. */
+const HISTORY_COLUMNS = `${beirutDay('started_at')}   AS started_on,
+  ${beirutDay('submitted_at')} AS submitted_on,
+  score, passed, pass_mark, source,
+  (SELECT count(*) FROM jsonb_object_keys(answers))::INTEGER AS answered,
+  cardinality(question_ids)::INTEGER                         AS asked`;
+
+/*
+ * A row that is not a sitting.
+ *
+ * startOrResumeAttempt opens an attempt the moment somebody lands on any unit
+ * of a course, so simply looking at the material leaves a row here with no
+ * answers and no submission. Sixteen of the seventy-four rows in production
+ * are that — including several on courses the learner had already passed and
+ * came back to re-read.
+ *
+ * The standing already knows: learningStanding surfaces the open one as
+ * `open_answered`, and the account page has a banner for it. But in a list of
+ * sittings those rows would read as "attempt 4, not finished, 0 of 7
+ * answered" — telling somebody who reopened a course to check one paragraph
+ * that they abandoned a paper. Nobody sat anything, so nothing is listed.
+ *
+ * An open attempt WITH answers stays: that person is halfway through a paper,
+ * and saying so is the truth.
+ */
+const IS_A_SITTING = `(submitted_at IS NOT NULL OR answers <> '{}'::jsonb)`;
+
+/**
+ * Every sitting of one course, newest first — what the old single-row table
+ * could not say.
+ *
+ * Ordered by when it was sat and by nothing else. Ordering by score would
+ * turn a record of what somebody did into a table of their own attempts
+ * ranked against each other, which is the same instrument migrations 034 and
+ * 041 refused to build between people. It is no better pointed inward.
+ */
 export async function attemptHistory(userId: string, slug: string): Promise<AttemptSummary[]> {
   return query<AttemptSummary>(
-    `SELECT started_at, submitted_at, score, passed, pass_mark,
-            (SELECT count(*) FROM jsonb_object_keys(answers))::INTEGER AS answered
+    `SELECT ${HISTORY_COLUMNS}
        FROM course_attempts
-      WHERE user_id = $1 AND course_slug = $2
+      WHERE user_id = $1 AND course_slug = $2 AND ${IS_A_SITTING}
       ORDER BY started_at DESC`,
     [userId, slug],
   );
+}
+
+/**
+ * The same, for every course at once, keyed by slug.
+ *
+ * The account page lists the whole catalogue. Calling attemptHistory() per
+ * course there would be one round trip per course on every load, and the
+ * catalogue is the thing that grows.
+ */
+export async function attemptHistoryByCourse(
+  userId: string,
+): Promise<Map<string, AttemptSummary[]>> {
+  const rows = await query<AttemptSummary & { course_slug: string }>(
+    `SELECT course_slug, ${HISTORY_COLUMNS}
+       FROM course_attempts
+      WHERE user_id = $1 AND ${IS_A_SITTING}
+      ORDER BY course_slug, started_at DESC`,
+    [userId],
+  );
+
+  const byCourse = new Map<string, AttemptSummary[]>();
+  for (const { course_slug, ...attempt } of rows) {
+    const list = byCourse.get(course_slug);
+    if (list) list.push(attempt);
+    else byCourse.set(course_slug, [attempt]);
+  }
+  return byCourse;
+}
+
+/**
+ * The score of the most recent finished sitting, or null if there is none.
+ *
+ * Section 28 of the brief asks for a last score beside the best one, and this
+ * is all "last score" is allowed to be here: a fact about the most recent
+ * sitting. It is deliberately NOT returned alongside a comparison with the
+ * best, a difference, a direction or a trend. Two numbers on a page are two
+ * facts; the same two with an arrow between them is a verdict on somebody's
+ * last hour, and nobody asked for that.
+ *
+ * Expects the newest-first order both readers above produce, and skips the
+ * open attempt at the head of the list — an attempt in progress has no score
+ * yet, and treating its absence as one would report "last score: —" to
+ * somebody who is halfway through answering.
+ */
+export function lastScoreOf(history: readonly AttemptSummary[]): number | null {
+  for (const attempt of history) {
+    if (attempt.submitted_on === null) continue;
+    if (attempt.source === 'recognised') continue;
+    if (attempt.score !== null) return attempt.score;
+  }
+  return null;
+}
+
+/**
+ * The highest score across finished sittings, or null if there is none.
+ *
+ * Derived here rather than taken from learningStanding.best_score so that the
+ * panel showing the list and the number above the list are computed from the
+ * same rows. Two aggregates over the same table, written in two places, is
+ * how a page ends up claiming a best score that appears nowhere in the list
+ * underneath it.
+ */
+export function bestScoreOf(history: readonly AttemptSummary[]): number | null {
+  let best: number | null = null;
+  for (const attempt of history) {
+    if (attempt.submitted_on === null || attempt.score === null) continue;
+    if (best === null || attempt.score > best) best = attempt.score;
+  }
+  return best;
+}
+
+/**
+ * The sittings, oldest first, numbered from one — with the rows that were
+ * never sittings left out of the count.
+ *
+ * A recognised pass is a row in this table and is shown in the list, but it
+ * is not an attempt at anything and numbering it "attempt 2" would tell
+ * somebody they sat a paper they never saw.
+ */
+export function numberSittings(
+  history: readonly AttemptSummary[],
+): Map<AttemptSummary, number> {
+  const numbers = new Map<AttemptSummary, number>();
+  let n = 0;
+  // The callers hand this over newest first; numbering runs the other way, so
+  // that attempt 1 is the first one somebody sat rather than the last.
+  for (let i = history.length - 1; i >= 0; i -= 1) {
+    const attempt = history[i];
+    if (attempt.source === 'recognised') continue;
+    n += 1;
+    numbers.set(attempt, n);
+  }
+  return numbers;
 }

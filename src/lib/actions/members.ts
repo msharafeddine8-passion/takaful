@@ -307,3 +307,89 @@ export async function awardStageAction(formData: FormData): Promise<void> {
 
   revalidatePath(`/${lang}/staff/members/${userId}`);
 }
+
+// ------------------------------------------------------------------ pausing
+
+/**
+ * Pause somebody's taking part, or start it again.
+ *
+ * `on_hold` is a DECISION, not a description — see migration 061. It is what
+ * the association uses when a volunteer asks for a break, or while a question
+ * about them is being looked at, and it is deliberately not suspension: the
+ * account stays open, the sessions stay alive, and the person can still read
+ * their own record. Being paused should not feel like being erased, least of
+ * all to somebody who asked for it.
+ *
+ * `is_volunteer()` excludes on_hold, so registering for an activity stops on
+ * its own — nothing here has to remember to block anything, which is the point
+ * of keeping one function as the answer to "may this person take part".
+ *
+ * A reason is required and stored on the history row. This is a decision about
+ * a person that they can see, and «لماذا؟» is the first thing they will ask.
+ */
+export async function pauseMemberAction(formData: FormData): Promise<void> {
+  const lang = localeOf(formData);
+  const userId = text(formData, 'userId');
+  const reason = text(formData, 'reason');
+  const resume = text(formData, 'resume') === 'yes';
+  if (!isDbConfigured() || !userId || reason.length < 10) return;
+
+  const actor = await requireCapability('members.manage');
+  /* Pausing yourself locks you out of the thing you are using to unpause. */
+  if (actor.id === userId) return;
+
+  const target = await queryOne<{ status: string }>(
+    'SELECT status FROM users WHERE id = $1',
+    [userId],
+  );
+  if (!target || target.status !== 'active') return;
+
+  const current = await queryOne<{ new_status: string }>(
+    `SELECT new_status FROM membership_status_history
+      WHERE user_id = $1 ORDER BY changed_at DESC, id DESC LIMIT 1`,
+    [userId],
+  );
+  const standing = current?.new_status ?? null;
+
+  /*
+   * Resuming returns them to accepted_volunteer rather than to whatever they
+   * held before.
+   *
+   * Restoring the previous value looks kinder and is worse: somebody paused
+   * while they were `active_volunteer` months ago is not active today, and the
+   * platform would be asserting a level of participation nobody has checked.
+   * accepted_volunteer is the true and modest answer — they are a volunteer,
+   * and what they do next is what makes them active again.
+   */
+  if (resume) {
+    if (standing !== 'on_hold') return;
+    await setMembershipStatus({
+      userId,
+      next: 'accepted_volunteer',
+      changedBy: actor.id,
+      actorRole: 'members.manage',
+      reason,
+    });
+  } else {
+    if (standing === 'on_hold' || standing === 'suspended' || standing === 'rejected') return;
+    await setMembershipStatus({
+      userId,
+      next: 'on_hold',
+      changedBy: actor.id,
+      actorRole: 'members.manage',
+      reason,
+    });
+  }
+
+  await audit({
+    actorId: actor.id,
+    action: resume ? 'member.resumed' : 'member.paused',
+    targetType: 'user',
+    targetId: userId,
+    previousValue: { standing },
+    newValue: { standing: resume ? 'accepted_volunteer' : 'on_hold' },
+    reason,
+  });
+
+  revalidatePath(`/${lang}/staff/members/${userId}`);
+}

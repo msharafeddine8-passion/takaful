@@ -8,9 +8,16 @@ import { alternatesFor } from '@/lib/seo';
 import { Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { isDbConfigured, query } from '@/lib/db';
-import { learningStanding, type CourseStanding } from '@/lib/academy';
+import {
+  learningStanding,
+  attemptHistoryByCourse,
+  type AttemptSummary,
+  type CourseStanding,
+} from '@/lib/academy';
 import { COURSES } from '@/lib/courses';
 import { COURSE_CONTENT } from '@/lib/course-content';
+import { AttemptHistory } from '@/components/academy/AttemptHistory';
+import { attemptsDict } from '@/lib/dictionaries/attempts';
 
 export async function generateMetadata(
   props: PageProps<'/[lang]/account/learning'>,
@@ -47,13 +54,17 @@ export default async function LearningPage(props: PageProps<'/[lang]/account/lea
   const user = await currentUser();
   if (!user) redirect(`/${lang}/login`);
 
-  const [standing, certificates] = await Promise.all([
+  const [standing, certificates, history] = await Promise.all([
     learningStanding(user.id),
     query<{ course_slug: string; code: string }>(
       `SELECT course_slug, code FROM certificates
         WHERE user_id = $1 AND kind = 'course' AND revoked_at IS NULL AND course_slug IS NOT NULL`,
       [user.id],
     ),
+    /* Every sitting of every course, in one query. One per course would be
+     * forty round trips on a page that already renders the whole catalogue —
+     * and the catalogue is the thing that grows. */
+    attemptHistoryByCourse(user.id),
   ]);
   const certificateFor = new Map(certificates.map((c) => [c.course_slug, c.code]));
 
@@ -78,6 +89,11 @@ export default async function LearningPage(props: PageProps<'/[lang]/account/lea
               published={course.status === 'available'}
               standing={standing.get(course.slug) ?? null}
               certificateCode={certificateFor.get(course.slug) ?? null}
+              history={history.get(course.slug) ?? []}
+              /* A level's paper is revision now — the decision run closes the
+                 level. The attempt panel says something different about what
+                 an attempt means depending on which of the two this is. */
+              revision={course.kind === 'challenge'}
             />
           ))}
         </ul>
@@ -95,6 +111,8 @@ function CourseRow({
   published,
   standing,
   certificateCode,
+  history,
+  revision,
 }: {
   lang: Locale;
   dict: Dictionary;
@@ -104,6 +122,8 @@ function CourseRow({
   published: boolean;
   standing: CourseStanding | null;
   certificateCode: string | null;
+  history: readonly AttemptSummary[];
+  revision: boolean;
 }) {
   const t = dict.account.learning;
   const content = COURSE_CONTENT[slug];
@@ -118,8 +138,22 @@ function CourseRow({
     ? { label: t.draft, tone: 'bg-surface-2 text-ink-3' }
     : passed
       ? { label: t.passed, tone: 'bg-ok/15 text-ok' }
+      /*
+       * «لم تجتز بعد» is not a failure and stops being coloured like one.
+       *
+       * The label was already gentle; the tone was `danger` — the same red this
+       * codebase uses for a revoked certificate and a suspended account. On a
+       * page listing forty courses that painted a wall of red at somebody who
+       * has simply not reached them yet, hardest for the person furthest
+       * behind.
+       *
+       * It matters more since the level's paper became revision: a red chip on
+       * an unpassed paper says something stands between the learner and their
+       * certificate, and nothing does. Neutral, like the draft chip, and the
+       * words carry the meaning.
+       */
       : standing && standing.attempts > 0
-        ? { label: t.failed, tone: 'bg-danger/12 text-danger' }
+        ? { label: t.failed, tone: 'bg-surface-2 text-ink-2' }
         : touched
           ? { label: t.inProgress, tone: 'bg-brand-blue/12 text-brand-blue dark:text-sky-300' }
           : { label: t.notStarted, tone: 'bg-surface-2 text-ink-3' };
@@ -163,12 +197,18 @@ function CourseRow({
           {totalModules > 0 && (
             <Fact label={t.modulesRead} value={`${standing.modules_read} / ${totalModules}`} />
           )}
-          {standing.last_attempt_at && (
-            <Fact
-              label={t.lastAttempt}
-              value={new Date(standing.last_attempt_at).toISOString().slice(0, 10)}
-              ltr
-            />
+          {/*
+            * Already 'YYYY-MM-DD' in Beirut, straight out of Postgres.
+            *
+            * This line used to be `new Date(...).toISOString().slice(0, 10)`.
+            * The session runs GMT: an attempt submitted at 01:00 Beirut is
+            * 22:00 GMT the day before, so every sitting made after midnight
+            * Beirut was reported here as having happened the previous day.
+            * The column is text now — see the DATES note in lib/academy.ts —
+            * and nothing may rebuild a Date from it.
+            */}
+          {standing.last_attempt_on && (
+            <Fact label={t.lastAttempt} value={standing.last_attempt_on} ltr />
           )}
         </dl>
       )}
@@ -177,6 +217,35 @@ function CourseRow({
         <p className="mt-3 rounded-lg border border-brand-orange/40 bg-brand-orange/[0.09] px-4 py-2.5 text-[0.88rem] font-bold text-brand-orange-text dark:text-brand-orange">
           {t.ongoing} — {t.answeredOf.replace('{n}', String(standing!.open_answered))}
         </p>
+      )}
+
+      {/*
+        * Every sitting, behind a disclosure.
+        *
+        * Folded rather than open, and this is the deliberate part. The card
+        * above already answers the question somebody comes to this page with —
+        * where am I, what is my best, when did I last try. Unfolding forty
+        * courses' worth of scores by default would turn a page about progress
+        * into a wall of marks, and the row somebody sees first would be
+        * whichever attempt went worst.
+        *
+        * `<details>` and not a toggle: this page is a server component, the
+        * markup is already on the page, and the browser opens it with no
+        * JavaScript at all. It also means the rows are in the document for a
+        * screen reader and for Ctrl-F.
+        */}
+      {history.length > 0 && (
+        <details className="mt-4 rounded-xl border border-line bg-surface-2 px-4 py-1">
+          {/* The native marker is kept and `min-h-11` gives it a 44px target,
+              exactly as staff/challenges does. A disclosure that does not look
+              like one is a disclosure nobody opens. */}
+          <summary className="min-h-11 cursor-pointer py-2 text-[0.9rem] font-extrabold text-brand-blue dark:text-brand-orange">
+            {attemptsDict(lang).heading}
+          </summary>
+          <div className="mb-4 mt-2">
+            <AttemptHistory lang={lang} history={history} revision={revision} />
+          </div>
+        </details>
       )}
 
       <div className="mt-5 flex flex-wrap items-center gap-4">

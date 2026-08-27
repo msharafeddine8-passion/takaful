@@ -17,8 +17,12 @@ import {
   completedModules,
   eligibilityFor,
   passedCourseSlugs,
+  attemptHistory,
   type Attempt,
+  type AttemptSummary,
 } from '@/lib/academy';
+import { AttemptHistory } from '@/components/academy/AttemptHistory';
+import { attemptsDict } from '@/lib/dictionaries/attempts';
 import { decideAccess } from '@/lib/programme/access';
 import { CourseLocked } from '@/components/academy/CourseLocked';
 import { renderBlock, type QuizContext } from '@/components/academy/Blocks';
@@ -206,6 +210,10 @@ export default async function UnitPage(
   /* Empty for a signed-out reader and for the great majority of courses,
    * which set no written work at all. */
   let practicalHistory: PracticalAttempt[] = [];
+  /* Their own earlier sittings of this paper, and only on the screen that
+   * shows the result of one. Fetching it on every module screen would be a
+   * query per page turn to answer a question nobody is asking there. */
+  let sittings: AttemptSummary[] = [];
   if (user) {
     const [at, read, done, written] = await Promise.all([
       isApproved && questions.length > 0
@@ -219,6 +227,17 @@ export default async function UnitPage(
     readModules = read;
     passed = done.has(slug);
     practicalHistory = written;
+
+    /*
+     * After the attempt above, not beside it.
+     *
+     * startOrResumeAttempt may be inserting a row for this very sitting, and a
+     * history read racing that insert would list four attempts or five
+     * depending on which query the database finished first — on a page the
+     * same person may reload twice. One extra round trip, on one screen, buys
+     * a list that says the same thing every time.
+     */
+    if (unit.kind === 'assessment') sittings = await attemptHistory(user.id, slug);
   }
   const practicalNow = practicalState(practicalHistory);
 
@@ -375,6 +394,37 @@ export default async function UnitPage(
                 >
                   <CourseFinish lang={lang} slug={slug} passMark={course.passMark} />
                 </CourseProgressProvider>
+
+                {/*
+                 * Their own record of this paper, under the card that decides
+                 * today's result rather than above it.
+                 *
+                 * Order is the argument. Somebody arriving here is about to
+                 * sit the paper or has just sat it; what they need first is
+                 * the question in front of them, not a list of how the last
+                 * three went. Putting the history above the finish card would
+                 * open the screen on somebody's worst afternoon.
+                 *
+                 * Nothing renders for a reader with no attempts and nothing
+                 * renders signed out, because there is no record to show and
+                 * an empty panel headed "Your attempts" reads as a fault.
+                 */}
+                {sittings.length > 0 && (
+                  <section className="mt-10 rounded-2xl border border-line bg-surface p-6">
+                    <h2 className="text-[1.1rem] font-extrabold">
+                      {attemptsDict(lang).heading}
+                    </h2>
+                    <div className="mt-3">
+                      <AttemptHistory
+                        lang={lang}
+                        history={sittings}
+                        /* A level's paper closes nothing now — the decision
+                           run does. See gate.ts:levelClosed. */
+                        revision={meta.kind === 'challenge'}
+                      />
+                    </div>
+                  </section>
+                )}
               </>
             )}
 

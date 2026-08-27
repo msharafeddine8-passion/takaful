@@ -17,6 +17,7 @@ import {
   awardStageAction,
   suspendMemberAction,
   reactivateMemberAction,
+  pauseMemberAction,
 } from '@/lib/actions/members';
 import { issueHoursCertificateAction } from '@/lib/actions/certificates';
 import { ConfirmSubmit } from '@/components/staff/ConfirmSubmit';
@@ -102,6 +103,11 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
     email: string;
     created_at: Date;
     status: string;
+    /* The membership standing, which is a different fact from users.status:
+     * the first says whether somebody may take part, the second whether the
+     * account is open at all. Pausing moves the first and leaves the second
+     * alone, so this page needs both to know which control to offer. */
+    membership_status: string | null;
   }>(
     /* joined_on is the association's date and created_at is the account's.
      * They are the same only for somebody who signed up today; for the
@@ -109,7 +115,10 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
      * first is years old, and this is the page decisions get made on. */
     `SELECT p.full_name, u.email, u.created_at, u.status,
             (SELECT to_char(r.joined_on, 'YYYY-MM-DD') FROM volunteer_roster r
-              WHERE r.claimed_by = u.id AND r.approved_at IS NOT NULL LIMIT 1) AS joined_on
+              WHERE r.claimed_by = u.id AND r.approved_at IS NOT NULL LIMIT 1) AS joined_on,
+            (SELECT h.new_status FROM membership_status_history h
+              WHERE h.user_id = u.id
+              ORDER BY h.changed_at DESC, h.id DESC LIMIT 1) AS membership_status
        FROM users u JOIN profiles p ON p.user_id = u.id WHERE u.id = $1`,
     [id],
   );
@@ -368,6 +377,75 @@ export default async function MemberPage(props: PageProps<'/[lang]/staff/members
                 {mm.suspend}
               </ConfirmSubmit>
               <p className="mt-2.5 text-[0.82rem] text-ink-3">{mm.lastAdminNote}</p>
+            </form>
+          )}
+
+          {/*
+            * Pausing, which is neither suspension nor a description.
+            *
+            * `on_hold` is a decision — a volunteer asked for a break, or a
+            * question about them is being looked at. The account stays open
+            * and the sessions stay alive; is_volunteer() simply stops
+            * returning true, so taking part stops on its own and nothing here
+            * has to remember to block anything.
+            *
+            * Offered beside suspension rather than on a screen of its own,
+            * because the moment somebody is choosing between the two is the
+            * only moment the difference matters.
+            */}
+          {!isSelf && person.status === 'active' && person.membership_status !== 'on_hold' && (
+            <form action={pauseMemberAction} className="mt-6 border-t border-line pt-5">
+              <input type="hidden" name="lang" value={lang} />
+              <input type="hidden" name="userId" value={id} />
+              <p className="mb-3 max-w-[58ch] text-[0.9rem] leading-relaxed text-ink-2">
+                {mm.pauseNote}
+              </p>
+              <label htmlFor="pause-reason" className="mb-1.5 block text-[0.88rem] font-bold">
+                {mm.reasonLabel}
+              </label>
+              <input
+                id="pause-reason"
+                name="reason"
+                type="text"
+                required
+                minLength={10}
+                placeholder={mm.pauseReasonPlaceholder}
+                className="w-full max-w-[34rem] rounded-xl border border-line bg-ground px-4 py-2.5 text-[0.95rem] outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/25"
+              />
+              <button
+                type="submit"
+                className="mt-3 block min-h-11 rounded-full border-2 border-line px-6 py-2.5 text-[0.92rem] font-extrabold hover:bg-surface-2"
+              >
+                {mm.pause}
+              </button>
+            </form>
+          )}
+
+          {!isSelf && person.membership_status === 'on_hold' && (
+            <form action={pauseMemberAction} className="mt-6 border-t border-line pt-5">
+              <input type="hidden" name="lang" value={lang} />
+              <input type="hidden" name="userId" value={id} />
+              <input type="hidden" name="resume" value="yes" />
+              <p className="mb-3 max-w-[58ch] text-[0.9rem] leading-relaxed text-ink-2">
+                {mm.resumeNote}
+              </p>
+              <label htmlFor="resume-reason" className="mb-1.5 block text-[0.88rem] font-bold">
+                {mm.reasonLabel}
+              </label>
+              <input
+                id="resume-reason"
+                name="reason"
+                type="text"
+                required
+                minLength={10}
+                className="w-full max-w-[34rem] rounded-xl border border-line bg-ground px-4 py-2.5 text-[0.95rem] outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/25"
+              />
+              <button
+                type="submit"
+                className="mt-3 block min-h-11 rounded-full bg-brand-blue px-6 py-2.5 text-[0.92rem] font-extrabold text-white hover:opacity-90"
+              >
+                {mm.resume}
+              </button>
             </form>
           )}
 
