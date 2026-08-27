@@ -53,6 +53,9 @@ import {
   visibilityFrom,
   type PublicIdentity,
 } from './visibility';
+/* Pure, like everything else this module leans on. The one definition of what
+ * participation before the platform is credited at. */
+import { activitiesCredited } from './impact';
 
 /* --------------------------------------------------------------- calendar */
 
@@ -246,6 +249,13 @@ export type LeaderboardRow = {
   minutes: number | null;
   /** Activities attended in the window. */
   attended: number | null;
+  /**
+   * The carried-over part of `minutes` — a subset of it, never an addition to
+   * it. Read only by `secondaryFor`, to credit participation for service given
+   * before the platform existed. Optional: a caller that has not fetched it
+   * credits nothing, which is the honest reading of "we did not ask".
+   */
+  carriedMinutes?: number | null;
   /** Course certificates issued in the window and not since revoked. */
   certificates: number | null;
   /** Registrations in the window whose attendance was actually recorded. */
@@ -384,9 +394,17 @@ export function figureFor(board: BoardKind, row: LeaderboardRow, today: string):
   }
 }
 
-/** Context beside the figure. Never ranked on, never a second sort key. */
+/**
+ * Context beside the figure. Never ranked on, never a second sort key.
+ *
+ * Attendance rows plus what the window's carried hours are credited for, from
+ * the single definition in lib/impact.ts — so this reads the same number the
+ * volunteer's own dashboard and passport read. It is context and not the
+ * ranking: 'active' still ranks on minutes, and a derived count therefore
+ * cannot move anybody up a board.
+ */
 function secondaryFor(board: BoardKind, row: LeaderboardRow): number | null {
-  return board === 'active' ? int(row.attended) : null;
+  return board === 'active' ? activitiesCredited(int(row.attended), int(row.carriedMinutes)) : null;
 }
 
 /**

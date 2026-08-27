@@ -98,6 +98,79 @@ export function presentMinutes(totalMinutes: number, carriedMinutes: number): nu
   return Math.max(0, totalMinutes - carriedMinutes);
 }
 
+/* ------------------------------------------ activities credited from hours */
+
+/**
+ * How many hours the association counts as one activity, for service given
+ * before this platform existed. Two, by the director's instruction.
+ */
+export const MINUTES_PER_CREDITED_ACTIVITY = 120;
+
+/**
+ * Participation credited from carried-over hours.
+ *
+ * ── WHY `carried_over` AND NOT A DATE ──────────────────────────────────────
+ *
+ * The instruction was "before 20-08-2026", and a literal date cut would be
+ * wrong here — it would exclude precisely the case it was asked for. A
+ * carry-over's `worked_on` is the day the period is counted up to, or in
+ * practice the day an administrator typed the row in: the live example is 300
+ * hours noted «المشاركة في العديد من الأنشطة» carrying worked_on 2026-08-22,
+ * two days the wrong side of the line, for work done over years before it.
+ *
+ * `carried_over` is already the flag for "this predates the platform" — see
+ * addCarriedHoursAction in lib/actions/prior-credit.ts, which is the only
+ * thing that sets it, and only ever for exactly that. It says the right thing
+ * whenever the row was typed, so it does not need a cut-off date beside it and
+ * must not be given one. Hours recorded by the platform itself are not carried
+ * and are therefore never credited twice: they already have their own
+ * attendance rows.
+ *
+ * ── WHY THIS IS A DERIVED FIGURE AND NOT 150 ROWS ─────────────────────────
+ *
+ * An `activity_attendance` row says a named person was at a named activity on
+ * a named day, confirmed by a named supervisor. Writing a hundred and fifty of
+ * them from one lump of hours would invent all four of those facts, and every
+ * badge, report and register that reads that table would then be reading an
+ * invention it cannot tell from a record. So nothing is written. The count is
+ * computed where it is shown, from the hours themselves, by this function and
+ * only by this function.
+ *
+ * ── IT IS AN ESTIMATE, AND THE PAGES SAY SO ───────────────────────────────
+ *
+ * 300 hours becoming 151 activities is arithmetic, not a headcount. Every
+ * surface a volunteer reads about themselves — the dashboard tile, the
+ * passport, the staff file — states in one sentence that participation from
+ * before the platform is credited at one activity for every two hours.
+ *
+ * Floor, so a part is never rounded up into a whole activity nobody attended.
+ */
+export function activitiesFromCarriedMinutes(carriedMinutes: number): number {
+  if (!Number.isFinite(carriedMinutes) || carriedMinutes <= 0) return 0;
+  return Math.floor(carriedMinutes / MINUTES_PER_CREDITED_ACTIVITY);
+}
+
+/**
+ * The activities figure a page should print: what was recorded, plus what the
+ * carried hours are credited for.
+ *
+ * The single definition. Everywhere this platform states how many activities
+ * somebody took part in — portalSummary, the passport, the staff member file,
+ * «صنّاع الاستمرارية», the boards — calls this, so the figures cannot drift
+ * apart into an argument the volunteer would be right to have.
+ *
+ * What deliberately does NOT call it is anything that GRANTS something:
+ * lib/achievements.ts, lib/journey.ts, lib/milestones.ts and the impact-point
+ * ledger all keep counting rows. An estimate may be printed; it may not mint a
+ * badge, satisfy a stage requirement or fire a "your first activity" message.
+ * Carried hours already earn their hours points in full, and paying them again
+ * as attendance points would be counting one lump of service twice.
+ */
+export function activitiesCredited(recorded: number, carriedMinutes: number): number {
+  const rows = Number.isFinite(recorded) && recorded > 0 ? Math.floor(recorded) : 0;
+  return rows + activitiesFromCarriedMinutes(carriedMinutes);
+}
+
 export function isActiveMonth(f: MonthFacts): boolean {
   return f.minutes > 0 || f.attended > 0;
 }

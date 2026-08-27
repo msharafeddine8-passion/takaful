@@ -334,18 +334,21 @@ function remaining(
   lang: Locale,
   t: {
     remainingHours: string;
-    remainingCourses: string;
-    remainingActivities: string;
-    remainingCertificates: string;
-    remainingYears: string;
-    remainingStages: string;
-    /* Authored in dictionaries/lms.ts alongside the rest of the level-badge
-       copy, not in the achievements namespace — one home for those strings
-       means no three-file dictionary edit to add this branch.
-
-       Declined per number rather than held as one template: "1 levels to go"
+    /* Declined per number rather than held as one template: "1 levels to go"
        is what the last-level case used to render, and Arabic needs four more
-       forms than English does. See the plural() header in dictionaries/lms.ts. */
+       forms than English does. See the plural() header in dictionaries/lms.ts.
+
+       Every kind below is now declined the same way, and for the same reason:
+       these badges have thresholds of 1, 3, 5, 10 and 20, so the remainder is
+       as often one or two as it is many, and «باقي 1 دورات» was rendering at
+       the commonest value of all. `remainingLevels` is authored in
+       dictionaries/lms.ts alongside the rest of the level-badge copy; the
+       other five live in the achievements namespace with their siblings. */
+    remainingCourses: PluralForms;
+    remainingActivities: PluralForms;
+    remainingCertificates: PluralForms;
+    remainingYears: PluralForms;
+    remainingStages: PluralForms;
     remainingLevels: PluralForms;
   },
 ): string {
@@ -361,19 +364,19 @@ function remaining(
    * a missing one is asked about.
    */
   switch (kind) {
+    // The Arabic one/two forms spell the count as a word and carry no {n} at
+    // all; replace() on a template without the placeholder is a no-op.
     case 'courses':
-      return t.remainingCourses.replace('{n}', String(value));
+      return plural(t.remainingCourses, value, lang).replace('{n}', String(value));
     case 'activities':
-      return t.remainingActivities.replace('{n}', String(value));
+      return plural(t.remainingActivities, value, lang).replace('{n}', String(value));
     case 'certificates':
-      return t.remainingCertificates.replace('{n}', String(value));
+      return plural(t.remainingCertificates, value, lang).replace('{n}', String(value));
     case 'membership':
-      return t.remainingYears.replace('{n}', String(value));
+      return plural(t.remainingYears, value, lang).replace('{n}', String(value));
     case 'stages':
-      return t.remainingStages.replace('{n}', String(value));
+      return plural(t.remainingStages, value, lang).replace('{n}', String(value));
     case 'levels':
-      // The Arabic one/two forms spell the count as a word and carry no {n}
-      // at all; replace() on a template without the placeholder is a no-op.
       return plural(t.remainingLevels, value, lang).replace('{n}', String(value));
     default:
       /* The yes-or-no kinds. nextUp produces no hint for them — there is

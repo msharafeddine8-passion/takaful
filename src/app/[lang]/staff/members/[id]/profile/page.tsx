@@ -6,6 +6,7 @@ import { connection } from 'next/server';
 import { isLocale, type Locale } from '@/lib/i18n';
 import { getDictionary } from '@/lib/dictionaries';
 import { memberProfile, type MemberProfileStrings } from '@/lib/dictionaries/member-profile';
+import { priorActivities } from '@/lib/dictionaries/prior-activities';
 import { alternatesFor } from '@/lib/seo';
 import { Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
@@ -117,7 +118,7 @@ export default async function MemberProfilePage(
         <Joined t={t} lang={lang} file={file} />
         <Roster t={t} lang={lang} file={file} />
         <Hours t={t} lang={lang} file={file} />
-        <Activities t={t} file={file} />
+        <Activities t={t} lang={lang} file={file} />
         <Courses t={t} lang={lang} file={file} />
         <Certificates t={t} lang={lang} file={file} />
         <Badges t={t} lang={lang} file={file} />
@@ -365,20 +366,37 @@ function Hours({ t, lang, file }: LangProps) {
   );
 }
 
-function Activities({ t, file }: Props) {
+/**
+ * Signing up, turning up — and what the carried hours are credited for.
+ *
+ * Four figures rather than three, and the fourth is last and separately
+ * labelled. «حضر» counts registers a supervisor filled in; «المشاركة
+ * المحتسبة» is that plus one activity for every two hours of service given
+ * before the platform existed, which is the figure the volunteer sees on their
+ * own dashboard and passport. Both are shown, so a coordinator reading this
+ * file and a volunteer reading theirs are looking at the same two numbers
+ * rather than at one number each and disagreeing about it.
+ *
+ * The reliability sentence underneath still divides `attended` by `registered`
+ * and the credit does not enter it — see ActivityStanding in lib/member-profile.
+ */
+function Activities({ t, lang, file }: LangProps) {
   const a = file.activities;
+  const prior = priorActivities(lang);
   return (
     <Panel title={t.activitiesTitle}>
       <Grid>
         <Figure label={t.activitiesRegistered} value={countPhrase(a.registered, t.counts.activities)} />
         <Figure label={t.activitiesAttended} value={countPhrase(a.attended, t.counts.attended)} />
         <Figure label={t.activitiesMissed} value={countPhrase(a.missed, t.counts.attended)} />
+        <Figure label={prior.fileFigureLabel} value={countPhrase(a.credited, t.counts.attended)} />
       </Grid>
       <p className="mt-4 text-[0.95rem] font-bold">
         {a.rate === null
           ? t.activitiesRateNone
           : t.activitiesRate.replace('{n}', String(a.rate))}
       </p>
+      {a.creditedFromHours > 0 && <Note>{countPhrase(a.creditedFromHours, prior.file)}</Note>}
       <Note>{t.activitiesNote}</Note>
     </Panel>
   );

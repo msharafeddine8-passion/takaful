@@ -139,13 +139,38 @@ export type RosterRow = {
    *  apart before anyone's hours are credited to the wrong one. */
   member_number: number | null;
   email: string;
-  registration_status: string;
+  /**
+   * NULL for somebody who has an attendance row but never registered — see the
+   * header on `roster`. The sheet says so beside their name rather than
+   * leaving them looking like a registration that lost its status.
+   */
+  registration_status: string | null;
   attended: boolean | null;
   attended_minutes: number | null;
   note: string | null;
 };
 
-/** Everyone signed up for one activity, with whatever the supervisor recorded. */
+/**
+ * Everyone on the register for one activity, with whatever the supervisor
+ * recorded.
+ *
+ * SIGNED UP, OR ALREADY RECORDED. It used to be the first alone, and that was
+ * right while a registration was the only way onto the register. Staff can now
+ * add somebody who turned up without registering — the Mawlid, where people
+ * came and took part and were never marked present — and a query that read
+ * registrations only would take that person straight back off the sheet the
+ * moment the page reloaded: their hours would exist, their attendance row
+ * would exist, and the screen that created both would show no sign of either,
+ * with no way to correct a duration.
+ *
+ * So the register is the union of the two, and the attendance row is what
+ * makes somebody a member of it — a row that only ever exists because a member
+ * of staff deliberately put it there. Nobody arrives here by accident.
+ *
+ * `registration_status` is NULL for those people rather than a made-up status.
+ * They did not register, and inventing 'registered' for them would put a
+ * registration in the record that nobody ever made.
+ */
 export async function roster(activityId: string): Promise<RosterRow[]> {
   return query<RosterRow>(
     /*
@@ -153,18 +178,108 @@ export async function roster(activityId: string): Promise<RosterRow[]> {
      * can share a name, and a supervisor ticking the wrong «محمد علي» credits
      * the wrong person's hours. One of the two is always enough to tell them
      * apart on the sheet.
+     *
+     * FULL JOIN rather than two SELECTs unioned: one row per person either
+     * way, and a person who is both registered and recorded — which is
+     * everybody in the ordinary case — cannot come back twice.
      */
-    `SELECT r.user_id, pr.full_name, pr.member_number, u.email,
+    `SELECT COALESCE(r.user_id, att.user_id) AS user_id,
+            pr.full_name, pr.member_number, u.email,
             r.status AS registration_status,
             att.attended, att.minutes AS attended_minutes, att.note
-       FROM activity_registrations r
-       JOIN profiles pr ON pr.user_id = r.user_id
-       JOIN users u     ON u.id = r.user_id
-       LEFT JOIN activity_attendance att
-         ON att.activity_id = r.activity_id AND att.user_id = r.user_id
-      WHERE r.activity_id = $1 AND r.status <> 'cancelled'
-      ORDER BY r.status, pr.full_name`,
+       FROM (SELECT user_id, status
+               FROM activity_registrations
+              WHERE activity_id = $1 AND status <> 'cancelled') r
+       FULL JOIN (SELECT user_id, attended, minutes, note
+                    FROM activity_attendance
+                   WHERE activity_id = $1) att
+              ON att.user_id = r.user_id
+       JOIN profiles pr ON pr.user_id = COALESCE(r.user_id, att.user_id)
+       JOIN users u     ON u.id       = COALESCE(r.user_id, att.user_id)
+      ORDER BY r.status NULLS LAST, pr.full_name`,
     [activityId],
+  );
+}
+
+/* ------------------------------------------- finding somebody to add by hand */
+
+export type AddableVolunteer = {
+  user_id: string;
+  full_name: string;
+  member_number: number | null;
+  email: string;
+  /** They already have a registration for this activity: the sheet has them. */
+  registered: boolean;
+  /** They already have an attendance row: the sheet has them, and adding again
+   *  would amend what is there rather than record something new. */
+  on_register: boolean;
+};
+
+/** How many matches one search may return. Passed explicitly, never defaulted. */
+export const ADDABLE_LIMIT = 20;
+
+/**
+ * Volunteers matching a typed term, for the "somebody attended who never
+ * signed up" control on the staff activity screen.
+ *
+ * ── AN EMPTY TERM RETURNS NOTHING, AND THAT IS THE FEATURE ────────────────
+ *
+ * Refused here rather than by the page that calls it. This reads four hundred
+ * and thirty-nine real people — names, membership numbers, addresses — and a
+ * control that rendered the lot on first paint would be a directory of the
+ * association's membership sitting on a screen that exists to tick a register.
+ * Whoever is looked up has to be looked up on purpose, one search at a time,
+ * and the audit log has the term nowhere: what is recorded is the person
+ * actually added, not everybody a coordinator scrolled past.
+ *
+ * ── VOLUNTEERS ONLY ───────────────────────────────────────────────────────
+ *
+ * `is_volunteer` is the same test joinActivityAction applies to a volunteer
+ * signing themselves up, and it is applied here for the same reason: a field
+ * activity is for volunteers, and somebody who made an account to take courses
+ * has never been accepted, never agreed to the code of conduct and has no
+ * emergency contact on file. Adding them by hand must not be the way round
+ * that.
+ *
+ * The flags come back rather than the matches being filtered: somebody already
+ * on the register is exactly who a confused coordinator will search for, and
+ * "they are already on the sheet" is a more useful answer than an empty list.
+ */
+export async function searchAddableVolunteers(
+  activityId: string,
+  term: string,
+  limit = ADDABLE_LIMIT,
+): Promise<AddableVolunteer[]> {
+  const text = term.trim();
+  if (text === '') return [];
+
+  /*
+   * A membership number as typed. «T047», «t47» and «47» are the same person,
+   * and a coordinator reading it off a card types the first. Anything that is
+   * not a number after the prefix comes off simply becomes a name search.
+   */
+  const digits = text.replace(/^[Ttت]\s*/, '').trim();
+  const number = /^\d+$/.test(digits) ? Number.parseInt(digits, 10) : null;
+
+  return query<AddableVolunteer>(
+    `SELECT u.id::TEXT                    AS user_id,
+            pr.full_name,
+            pr.member_number,
+            u.email,
+            (reg.user_id IS NOT NULL)     AS registered,
+            (att.user_id IS NOT NULL)     AS on_register
+       FROM users u
+       JOIN profiles pr ON pr.user_id = u.id
+       LEFT JOIN activity_registrations reg
+              ON reg.activity_id = $1 AND reg.user_id = u.id AND reg.status <> 'cancelled'
+       LEFT JOIN activity_attendance att
+              ON att.activity_id = $1 AND att.user_id = u.id
+      WHERE is_volunteer(u.id)
+        AND (pr.full_name ILIKE '%' || $2 || '%'
+             OR ($3::INT IS NOT NULL AND pr.member_number = $3::INT))
+      ORDER BY pr.full_name
+      LIMIT $4`,
+    [activityId, text, number, limit],
   );
 }
 

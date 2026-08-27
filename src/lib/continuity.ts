@@ -32,6 +32,9 @@
 
 import type { Locale } from '@/lib/i18n';
 import { publicIdentity, treatAsMinor, visibilityFrom } from '@/lib/visibility';
+/* Pure, and the only definition of what an activity credited from prior hours
+ * is worth. Restating the division here would be the second definition. */
+import { activitiesCredited } from '@/lib/impact';
 
 /* ------------------------------------------------------------------ consent
  *
@@ -219,6 +222,13 @@ export type ContinuityRow = {
   stage_number: number | null;
   minutes: number | null;
   activities: number | null;
+  /**
+   * Verified minutes carried over from before the platform — a SUBSET of
+   * `minutes`, never an addition to it. Read only to credit participation for
+   * service the platform never saw; see `activitiesCredited` in lib/impact.ts.
+   * Optional so a caller that has not fetched it is simply crediting nothing.
+   */
+  carried_minutes?: number | null;
   certificates: number | null;
   photo_version: string | null;
   /** Every badge they hold, newest first, revoked ones already excluded. */
@@ -334,7 +344,21 @@ export function toPublicPerson(
       consent.figures && typeof row.minutes === 'number'
         ? Math.floor(row.minutes / 60)
         : null,
-    activities: consent.figures ? (row.activities ?? null) : null,
+    /*
+     * Attendance rows plus what the carried hours are credited for, from the
+     * one definition in lib/impact.ts — so a card here cannot say «١» about
+     * somebody whose own dashboard says «١٥١».
+     *
+     * The figure and nothing else. There is no sentence on this page saying
+     * how it was arrived at, and there should not be: a thank-you is not the
+     * place to explain the association's bookkeeping to strangers, and a
+     * footnote about how one person's number was reached, printed under their
+     * name in public, reads as a caveat about them. The volunteer gets that
+     * sentence on their own dashboard and on their passport.
+     */
+    activities: consent.figures
+      ? activitiesCredited(row.activities ?? 0, row.carried_minutes ?? 0)
+      : null,
     certificates: consent.certificates ? (row.certificates ?? null) : null,
     badges: consent.badges ? notableBadges(row.badges) : [],
     showPhoto: consent.photo && Boolean(row.photo_version),

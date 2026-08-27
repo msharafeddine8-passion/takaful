@@ -59,6 +59,27 @@ export async function verifiedMinutes(userId: string): Promise<number> {
   return row ? Number.parseInt(row.minutes, 10) : 0;
 }
 
+/**
+ * Verified minutes that were carried over from before the platform.
+ *
+ * A subset of `verifiedMinutes`, never an addition to it — the schema refuses
+ * a carry-over in any state but verified, so these minutes are already inside
+ * that total and adding the two would show one lump of service twice.
+ *
+ * Read by everything that credits participation for prior service. The rule
+ * itself is `activitiesCredited` in lib/impact.ts, which carries the argument
+ * for why this is the `carried_over` flag and not a cut-off date.
+ */
+export async function carriedMinutes(userId: string): Promise<number> {
+  const row = await queryOne<{ minutes: string }>(
+    `SELECT COALESCE(SUM(minutes), 0)::BIGINT AS minutes
+       FROM hour_entries
+      WHERE user_id = $1 AND status = 'verified' AND carried_over`,
+    [userId],
+  );
+  return row ? Number.parseInt(row.minutes, 10) : 0;
+}
+
 export async function pendingMinutes(userId: string): Promise<number> {
   const row = await queryOne<{ minutes: string }>(
     `SELECT COALESCE(SUM(minutes), 0)::BIGINT AS minutes

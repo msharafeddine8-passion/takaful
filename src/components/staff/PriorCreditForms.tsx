@@ -3,6 +3,7 @@
 import { useActionState } from 'react';
 import { addCarriedHoursAction, recogniseCourseAction, type PriorState } from '@/lib/actions/prior-credit';
 import type { Dictionary } from '@/lib/dictionaries';
+import { formatDuration } from '@/lib/format';
 import type { Locale } from '@/lib/i18n';
 
 /**
@@ -71,7 +72,11 @@ export function CarriedHoursForm({ lang, userId, t }: { lang: Locale; userId: st
       {state.error && <Problem code={state.error} t={t} />}
       {state.ok && (
         <p role="status" className="mt-3 text-[0.92rem] font-bold text-ok">
-          ✓ {t.hoursDone.replace('{minutes}', state.ok)}
+          {/* The action returns minutes; this reads them back as a duration.
+              The raw figure was printed against a bare «دقيقة», which is the
+              eleven-and-above form, and six minutes is «6 دقائق». It also
+              answered in a unit nobody typed: staff enter hours. */}
+          ✓ {t.hoursDone.replace('{minutes}', formatDuration(Number(state.ok), lang))}
         </p>
       )}
     </form>

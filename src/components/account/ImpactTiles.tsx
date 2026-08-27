@@ -3,6 +3,7 @@ import type { Locale } from '@/lib/i18n';
 import type { Dictionary } from '@/lib/dictionaries';
 import { countPhrase, formatDuration } from '@/lib/when';
 import { emptyStates } from '@/lib/dictionaries/empty-states';
+import { priorActivities } from '@/lib/dictionaries/prior-activities';
 
 /**
  * What this volunteer has actually done, as four things you can open.
@@ -28,23 +29,38 @@ type Tile = {
   sentence: string | null;
   icon: string;
   note?: string;
+  /**
+   * 'urgent' is the orange used for hours somebody is waiting on. 'quiet' is
+   * for a note that explains rather than asks — it must not compete with the
+   * figure above it, and colouring an explanation like a call to action is how
+   * a footnote turns into an alarm.
+   */
+  noteTone?: 'urgent' | 'quiet';
 };
 
 export function ImpactTiles({
   lang, dict, verifiedMinutes, pendingMinutes,
-  coursesPassed, activitiesAttended, certificates,
+  coursesPassed, activitiesAttended, activitiesFromCarriedHours, certificates,
 }: {
   lang: Locale;
   dict: Dictionary;
   verifiedMinutes: number;
   pendingMinutes: number;
   coursesPassed: number;
+  /**
+   * The credited figure — attendance rows plus what the carried hours are
+   * worth, as `activitiesCredited` in lib/impact.ts defines it. The tile shows
+   * one number, and it is this one.
+   */
   activitiesAttended: number;
+  /** How much of that number is derived, so the tile can say so. */
+  activitiesFromCarriedHours: number;
   certificates: number;
 }) {
   const p = dict.account.portal;
   const impact = dict.account.impact;
   const nothing = emptyStates(lang).tiles;
+  const prior = priorActivities(lang);
   const at = (path: string) => `/${lang}/account${path}`;
 
   /*
@@ -93,6 +109,7 @@ export function ImpactTiles({
       note: pendingMinutes > 0
         ? p.pendingNote.replace('{n}', formatDuration(pendingMinutes, lang))
         : undefined,
+      noteTone: 'urgent',
     },
     {
       href: at('/learning'),
@@ -110,6 +127,17 @@ export function ImpactTiles({
       figure: activitiesAttended > 0 ? String(activitiesAttended) : null,
       sentence: sentence(activitiesAttended, impact.activities, nothing.activities),
       icon: '🤝',
+      /*
+       * Where part of the figure came from, said quietly and only when there
+       * is a part to explain. A volunteer whose service is all on this
+       * platform never sees it; a volunteer who gave years before it existed
+       * sees one sentence rather than a number they cannot account for.
+       */
+      note:
+        activitiesFromCarriedHours > 0
+          ? countPhrase(activitiesFromCarriedHours, prior.mine)
+          : undefined,
+      noteTone: 'quiet',
     },
     {
       href: at('/certificates'),
@@ -148,7 +176,13 @@ export function ImpactTiles({
             </span>
           )}
           {tile.note && (
-            <span className="mt-1.5 text-[0.82rem] font-bold text-brand-orange-text dark:text-brand-orange">
+            <span
+              className={
+                tile.noteTone === 'quiet'
+                  ? 'mt-1.5 text-[0.8rem] leading-snug text-ink-3'
+                  : 'mt-1.5 text-[0.82rem] font-bold text-brand-orange-text dark:text-brand-orange'
+              }
+            >
               {tile.note}
             </span>
           )}

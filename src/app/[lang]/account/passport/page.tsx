@@ -13,6 +13,7 @@ import { isDbConfigured } from '@/lib/db';
 import { ORG } from '@/lib/org';
 import { passportFor } from '@/lib/passport';
 import { passportStrings } from '@/lib/dictionaries/passport';
+import { priorActivities } from '@/lib/dictionaries/prior-activities';
 import { volunteerRoleStrings, type VolunteerRoleStrings } from '@/lib/dictionaries/volunteer-roles';
 import { formatRoleDate, formatRolePeriod } from '@/lib/volunteer-role-view';
 import type { VolunteerRole } from '@/lib/volunteer-roles';
@@ -183,6 +184,9 @@ export default async function PassportPage(props: { params: Promise<{ lang: stri
      on the sheet as on /account/roles. A volunteer who has read their record on
      one screen must recognise it on the other. */
   const roleT = volunteerRoleStrings(lang);
+  /* The same sentence the dashboard tile prints, from the same module, so the
+     sheet and the screen explain the figure in identical words. */
+  const prior = priorActivities(lang);
 
   if (!isDbConfigured()) {
     return (
@@ -330,14 +334,25 @@ export default async function PassportPage(props: { params: Promise<{ lang: stri
                 }
                 empty={t.hoursEmpty}
               />
+              {/*
+                * The credited figure, and one line saying what part of it is
+                * credited rather than registered. The sheet is a document
+                * somebody else reads and acts on, so the estimate is labelled
+                * on the sheet itself and not only on the dashboard.
+                */}
               <Fact
                 label={t.activitiesLabel}
                 value={
-                  record.summary.activitiesAttended > 0
-                    ? countPhrase(record.summary.activitiesAttended, t.activityCount)
+                  record.summary.activitiesCredited > 0
+                    ? countPhrase(record.summary.activitiesCredited, t.activityCount)
                     : null
                 }
                 empty={t.activitiesEmpty}
+                note={
+                  record.summary.activitiesFromCarriedHours > 0
+                    ? countPhrase(record.summary.activitiesFromCarriedHours, prior.mine)
+                    : undefined
+                }
               />
               <div className="passport-block min-w-0 sm:col-span-2">
                 <dt className="text-[0.78rem] font-extrabold tracking-[0.12em] text-ink-3">
@@ -613,16 +628,34 @@ function Fact({
   label,
   value,
   empty,
+  note,
 }: {
   label: string;
   value: ReactNode | null;
   empty: string;
+  /**
+   * One line under the figure, saying where part of it came from.
+   *
+   * Rendered inside the same <dd> as the value rather than as a sibling, so it
+   * cannot be separated from the number it qualifies — this sheet is printed
+   * and handed to a university, and a caveat that lands on the next page is
+   * not a caveat. Shown only alongside a value: there is nothing to qualify
+   * about an empty state.
+   */
+  note?: string;
 }) {
   return (
     <div className="passport-block min-w-0">
       <dt className="text-[0.78rem] font-extrabold tracking-[0.12em] text-ink-3">{label}</dt>
       {value ? (
-        <dd className="mt-1 text-[1.15rem] font-extrabold break-words">{value}</dd>
+        <dd className="mt-1 break-words">
+          <span className="block text-[1.15rem] font-extrabold">{value}</span>
+          {note && (
+            <span className="mt-1 block text-[0.8rem] leading-snug font-normal text-ink-3">
+              {note}
+            </span>
+          )}
+        </dd>
       ) : (
         <dd className="mt-1 text-[0.9rem] leading-relaxed text-ink-2">{empty}</dd>
       )}

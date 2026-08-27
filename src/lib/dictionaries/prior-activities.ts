@@ -47,6 +47,13 @@ export type PriorActivitiesStrings = {
   mine: CountForms;
   /** To staff, about somebody else's. The member file. */
   file: CountForms;
+  /**
+   * The member file's label for the credited total, beside «حضر» which counts
+   * registers. Two labels because they are two different facts, and one word
+   * covering both is how a coordinator comes to believe an estimate was a
+   * headcount.
+   */
+  fileFigureLabel: string;
 };
 
 const ar: PriorActivitiesStrings = {
@@ -71,6 +78,7 @@ const ar: PriorActivitiesStrings = {
     few: 'منها {n} أنشطة محتسبة من الساعات المحمولة من قبل الموقع، بواقع نشاط لكلّ ساعتين.',
     many: 'منها {n} نشاطاً محتسباً من الساعات المحمولة من قبل الموقع، بواقع نشاط لكلّ ساعتين.',
   },
+  fileFigureLabel: 'المشاركة المحتسبة',
 };
 
 const en: PriorActivitiesStrings = {
@@ -88,6 +96,7 @@ const en: PriorActivitiesStrings = {
     few: '{n} of these are credited from hours carried over from before the site, at one activity for every two hours.',
     many: '{n} of these are credited from hours carried over from before the site, at one activity for every two hours.',
   },
+  fileFigureLabel: 'Credited participation',
 };
 
 export function priorActivities(lang: PriorActivitiesLocale): PriorActivitiesStrings {

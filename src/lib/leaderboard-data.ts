@@ -104,6 +104,31 @@ const SQL = `
              AND aa.attended
              AND ${IN_WINDOW(ACTIVITY_DAY)})::INTEGER AS attended,
 
+         /*
+          * The carried-over part of the minutes above, so the board's
+          * secondary figure can credit participation for service given before
+          * the platform existed — one activity per two hours, defined once in
+          * lib/impact.ts and applied in lib/leaderboard.ts.
+          *
+          * The SAME window over the SAME column as the minutes figure, and
+          * that is deliberate: a carry-over is one row on one worked_on, so
+          * the hours and the participation credited for them enter and leave a
+          * window together. Windowing one and not the other would put somebody
+          * on «هذا الشهر» for activities whose hours that month's total does
+          * not contain.
+          *
+          * QUOTED, and the quotes are the whole point — see the note on
+          * turnedUp below. Postgres folds an unquoted alias to lower case and
+          * nothing here camel-cases it back, so an unquoted carriedMinutes
+          * would be undefined on every row and read as zero, for ever, in
+          * silence.
+          */
+         COALESCE((SELECT SUM(h.minutes) FROM hour_entries h
+                    WHERE h.user_id = u.id
+                      AND h.status = 'verified'
+                      AND h.carried_over
+                      AND ${IN_WINDOW('h.worked_on')}), 0)::INTEGER AS "carriedMinutes",
+
          /* Certificates that still stand, not courses passed. Revoking one
           * leaves the passed attempt behind it, and a learning board is a
           * claim about the credential rather than about the exam. */

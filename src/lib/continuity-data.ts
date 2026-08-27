@@ -92,6 +92,23 @@ const SQL = `
          (SELECT count(*) FROM activity_attendance aa
            WHERE aa.user_id = u.id AND aa.attended)::INTEGER              AS activities,
 
+         /*
+          * The verified minutes carried over from before the platform, a
+          * SUBSET of the minutes above and never an addition to them.
+          *
+          * Selected only so that toPublicPerson can credit participation for
+          * service given before this platform existed — one activity per two
+          * hours, the rule and the argument for it both in lib/impact.ts. The
+          * arithmetic is deliberately not done here: every figure on this page
+          * passes a consent gate in lib/continuity.ts, and a column arriving
+          * already combined would be this file deciding to publish something.
+          */
+         COALESCE((SELECT SUM(h.minutes) FROM hour_entries h
+                    WHERE h.user_id = u.id
+                      AND h.status = 'verified'
+                      AND h.carried_over), 0)::INTEGER
+                                                                          AS carried_minutes,
+
          /* Certificates that still stand, not courses passed. Revoking one
           * leaves the passed attempt behind it, and «شهادات فعّالة» is a claim
           * about the credential rather than about the exam. */

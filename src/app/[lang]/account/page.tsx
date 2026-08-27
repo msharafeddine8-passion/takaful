@@ -327,7 +327,8 @@ export default async function AccountPage(props: PageProps<'/[lang]/account'>) {
             verifiedMinutes={summary.verifiedMinutes}
             pendingMinutes={summary.pendingMinutes}
             coursesPassed={summary.coursesPassed}
-            activitiesAttended={summary.activitiesAttended}
+            activitiesAttended={summary.activitiesCredited}
+            activitiesFromCarriedHours={summary.activitiesFromCarriedHours}
             certificates={summary.certificates}
           />
         </div>

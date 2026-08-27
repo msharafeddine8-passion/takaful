@@ -33,6 +33,9 @@
  */
 
 import { formatMemberNumber, type MatchStrength } from './roster-match';
+/* Both pure, and imported rather than restated: the credited-activities rule
+ * has exactly one definition and this file is not allowed to be a second. */
+import { activitiesCredited, activitiesFromCarriedMinutes } from './impact';
 import {
   isMinorOn,
   visibilityFrom,
@@ -300,16 +303,41 @@ export type ActivityStanding = {
   missed: number;
   /** 0–100, or null when there is nothing to be a fraction of. */
   rate: number | null;
+  /**
+   * Activities credited from hours carried over from before the platform, at
+   * one per two hours — `activitiesFromCarriedMinutes` in lib/impact.ts.
+   */
+  creditedFromHours: number;
+  /**
+   * The participation figure the file prints: `attended` plus
+   * `creditedFromHours`.
+   *
+   * DELIBERATELY NOT FOLDED INTO `attended`, and this is the whole care of it.
+   * `attended`, `missed` and `rate` are a claim about registrations this
+   * platform watched being kept — a derived count has no registration behind
+   * it, so adding it in would push `rate` past a hundred per cent and turn
+   * `missed` negative, and a coordinator would be reading reliability figures
+   * computed from an estimate. Those three stay a record; this one is the
+   * headline.
+   */
+  credited: number;
 };
 
-export function activityStanding(raw: { registered?: unknown; attended?: unknown }): ActivityStanding {
+export function activityStanding(raw: {
+  registered?: unknown;
+  attended?: unknown;
+  carriedMinutes?: unknown;
+}): ActivityStanding {
   const registered = whole(raw.registered);
   const attended = Math.min(whole(raw.attended), registered);
+  const creditedFromHours = activitiesFromCarriedMinutes(whole(raw.carriedMinutes));
   return {
     registered,
     attended,
     missed: registered - attended,
     rate: registered === 0 ? null : Math.round((attended / registered) * 100),
+    creditedFromHours,
+    credited: activitiesCredited(attended, whole(raw.carriedMinutes)),
   };
 }
 
@@ -540,7 +568,11 @@ export function memberFile(raw: RawMemberFile): MemberFile {
     safeguarding: safeguardingPresence(raw.safeguarding),
     visibility: visibilityState(raw.visibility.stored, raw.visibility.chosenAt),
     hours: hoursStanding(raw.hours),
-    activities: activityStanding(raw.activities),
+    /* The carried minutes come from the hours block rather than being fetched
+     * a second time for the activities block. One figure, one query, and no
+     * way for the two halves of this file to disagree about how many hours
+     * were carried over. */
+    activities: activityStanding({ ...raw.activities, carriedMinutes: raw.hours.carriedMinutes }),
     courses: { passed: raw.courses.passed ?? [], inProgress: raw.courses.inProgress ?? [] },
     certificates: {
       held: certificates.filter((c) => !c.revokedOn),

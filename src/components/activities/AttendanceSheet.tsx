@@ -26,7 +26,14 @@ export type SheetPerson = {
   full_name: string;
   member_number: number | null;
   email: string;
-  registration_status: string;
+  /**
+   * NULL for somebody a member of staff put on the register who never signed
+   * up — see the header on `roster` in lib/activities.ts. They are saved by
+   * this same submission as everybody else, so a duration recorded for them
+   * can be corrected here; the chip beside the name is the only thing about
+   * the row that differs.
+   */
+  registration_status: string | null;
   attended: boolean | null;
   attended_minutes: number | null;
   note: string | null;
@@ -43,6 +50,7 @@ export function AttendanceSheet({
   scheduledMinutes,
   t,
   att,
+  addedChip,
 }: {
   lang: Locale;
   activityId: string;
@@ -50,6 +58,10 @@ export function AttendanceSheet({
   scheduledMinutes: number | null;
   t: T;
   att: Att;
+  /** The one word for a row that has no registration behind it. Passed in
+   *  rather than imported, so the sheet keeps taking all its strings from
+   *  its caller. */
+  addedChip: string;
 }) {
   const [state, formAction, pending] = useActionState(saveAttendanceAction, empty);
 
@@ -83,7 +95,16 @@ export function AttendanceSheet({
       else if (m === 'absent') absent++;
       else unset++;
     }
-    return { attended, absent, unset, total: people.length };
+    /*
+     * `registered` counts REGISTRATIONS, not rows on this sheet, so the figure
+     * under «المسجّلون» stays true now that staff can add somebody who never
+     * signed up. The other three count every row, so the four deliberately do
+     * not add up — which is right: one of them answers "how many were
+     * expected?" and the rest answer "what has been decided about who came?".
+     * The summary below the sheet splits the same figures the same way.
+     */
+    const registered = people.filter((p) => p.registration_status !== null).length;
+    return { attended, absent, unset, total: registered };
   }, [people, marks]);
 
   /* Someone whose attendance is already recorded is being corrected, not
@@ -162,6 +183,14 @@ export function AttendanceSheet({
                 </span>
                 {p.registration_status === 'waitlisted' && (
                   <span className="text-[0.82rem] font-bold text-ink-3">{t.waitlist}</span>
+                )}
+                {/* Never registered, and put here on purpose. Said on the row
+                    rather than left as a blank status, which would read as a
+                    registration whose state the record had lost. */}
+                {p.registration_status === null && (
+                  <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-[0.78rem] font-bold text-ink-2">
+                    {addedChip}
+                  </span>
                 )}
                 {p.attended !== null && (
                   <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-[0.78rem] font-bold text-ink-2">

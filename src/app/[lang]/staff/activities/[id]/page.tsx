@@ -8,11 +8,19 @@ import { Container, Section, Kicker } from '@/components/ui';
 import { currentUser } from '@/lib/auth';
 import { can } from '@/lib/authz';
 import { isDbConfigured, queryOne } from '@/lib/db';
-import { roster, scheduledMinutes, interestedIn } from '@/lib/activities';
+import {
+  roster,
+  scheduledMinutes,
+  interestedIn,
+  searchAddableVolunteers,
+  ADDABLE_LIMIT,
+} from '@/lib/activities';
 import { formatMemberNumber } from '@/lib/roster';
 import { activityState, registrationState, seatsLeft } from '@/lib/activity-state';
 import { formatDate, formatTimeRange, formatDuration } from '@/lib/when';
 import { AttendanceSheet } from '@/components/activities/AttendanceSheet';
+import { AddAttendee } from '@/components/activities/AddAttendee';
+import { addAttendee } from '@/lib/dictionaries/add-attendee';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -20,10 +28,16 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
   await connection();
   const { lang, id } = await props.params;
   if (!isLocale(lang)) notFound();
+  const { attendee } = await props.searchParams;
   const dict = getDictionary(lang);
   const t = dict.account.staff;
   const a = dict.account.activities;
   const att = dict.account.attendance;
+  const addT = addAttendee(lang);
+  /* The typed search term, from the URL and nowhere else. Anything that is not
+   * a single string reads as no search at all — a hand-edited `?attendee=a&
+   * attendee=b` must widen nothing. */
+  const addTerm = typeof attendee === 'string' ? attendee : '';
 
   if (!isDbConfigured()) {
     return (
@@ -61,25 +75,47 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
   );
   if (!activity) notFound();
 
-  const [people, settings, waiting] = await Promise.all([
+  const [people, settings, waiting, addMatches] = await Promise.all([
     roster(id),
     queryOne<{ second: boolean }>(
       'SELECT hours_require_second_check AS second FROM org_settings LIMIT 1',
     ),
     interestedIn(id),
+    /* Nothing unless somebody typed something. The function refuses an empty
+     * term as well; short-circuiting here saves the round trip and makes the
+     * rule visible on the page that renders the results. */
+    addTerm.trim() ? searchAddableVolunteers(id, addTerm, ADDABLE_LIMIT) : Promise.resolve([]),
   ]);
+
+  /*
+   * The register now holds two kinds of person: those who signed up, and those
+   * a member of staff added because they turned up without signing up. Every
+   * figure below that is ABOUT REGISTRATION counts only the first.
+   *
+   * Seats taken, seats left and the registration state are the obvious ones —
+   * an added attendee never took a place, and counting them would show an
+   * activity as full because of people who were added after it happened. The
+   * attendance rate matters just as much: its denominator is who was expected,
+   * and putting somebody in it who was never expected would make turning up
+   * unannounced look like an improvement in the association's reliability.
+   */
+  const registered = people.filter((p) => p.registration_status !== null);
+  const takenSeats = people.filter((p) => p.registration_status === 'registered').length;
 
   const scheduled = scheduledMinutes(activity);
   const state = activityState(activity);
-  const reg = registrationState(activity, people.filter((p) => p.registration_status === 'registered').length);
-  const left = seatsLeft(activity.capacity, people.filter((p) => p.registration_status === 'registered').length);
+  const reg = registrationState(activity, takenSeats);
+  const left = seatsLeft(activity.capacity, takenSeats);
 
   // The figures the sheet has already produced, for the summary underneath it.
   const attended = people.filter((p) => p.attended === true);
   const absent = people.filter((p) => p.attended === false);
   const undecided = people.filter((p) => p.attended === null);
+  const addedWithoutRegistration = people.length - registered.length;
   const earnedMinutes = attended.reduce((sum, p) => sum + (p.attended_minutes ?? 0), 0);
-  const rate = people.length ? Math.round((attended.length / people.length) * 100) : 0;
+  const rate = registered.length
+    ? Math.round((registered.filter((p) => p.attended === true).length / registered.length) * 100)
+    : 0;
 
   const regLabel = {
     open: a.regState.open,
@@ -130,10 +166,12 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
           <div>
             <dt className="font-bold text-ink-2">{a.seatsHeading}</dt>
             <dd>
+              {/* Registrations, not the register. Somebody added by hand
+                  after the activity happened never took a seat. */}
               {activity.capacity === null
-                ? `${people.length} · ${a.noCapacity}`
+                ? `${registered.length} · ${a.noCapacity}`
                 : a.seatsTaken
-                    .replace('{taken}', String(people.length))
+                    .replace('{taken}', String(registered.length))
                     .replace('{capacity}', String(activity.capacity))}
             </dd>
           </div>
@@ -222,8 +260,32 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
               scheduledMinutes={scheduled}
               t={a}
               att={att}
+              addedChip={addT.chip}
             />
           </div>
+        )}
+
+        {/*
+          * Somebody who came and took part but was never signed up.
+          *
+          * Under the sheet rather than above it: the sheet is the ordinary
+          * work and this is the exception, and a search box for the whole
+          * membership placed above a register would be the first thing a
+          * coordinator's eye lands on every time they open this page.
+          *
+          * Not offered at all for a cancelled activity, which gains no more
+          * record — the same rule the sheet itself follows above, and the
+          * action refuses it again regardless of what is rendered here.
+          */}
+        {!activity.cancelled_at && (
+          <AddAttendee
+            lang={lang}
+            activityId={id}
+            term={addTerm}
+            results={addMatches}
+            limit={ADDABLE_LIMIT}
+            t={addT}
+          />
         )}
 
         {/* What the register adds up to, once any of it has been recorded. */}
@@ -231,12 +293,19 @@ export default async function ActivityRosterPage(props: PageProps<'/[lang]/staff
           <section className="mt-10 rounded-2xl border border-line bg-surface p-6">
             <h2 className="text-[1.05rem] font-extrabold">{a.summaryTitle}</h2>
             <dl className="mt-4 grid gap-x-6 gap-y-3 text-[0.95rem] sm:grid-cols-2 lg:grid-cols-3">
-              <Fact label={att.registered} value={String(people.length)} />
+              {/* Who signed up, not who is on the register — the rate beside
+                  it is a fraction of exactly this number. */}
+              <Fact label={att.registered} value={String(registered.length)} />
               <Fact label={att.attendedCount} value={String(attended.length)} />
               <Fact label={att.absentCount} value={String(absent.length)} />
               <Fact label={att.unsetCount} value={String(undecided.length)} />
               <Fact label={att.rate} value={`${rate}%`} />
               <Fact label={att.totalHours} value={formatDuration(earnedMinutes, lang)} />
+              {/* Shown only when there are any. A nought on every ordinary
+                  activity would make the exception look like a routine. */}
+              {addedWithoutRegistration > 0 && (
+                <Fact label={addT.summaryFact} value={String(addedWithoutRegistration)} />
+              )}
             </dl>
             <a
               href={`/api/export/attendance?activity=${id}&lang=${lang}`}

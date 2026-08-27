@@ -185,7 +185,9 @@ function ActivityCard({
               <>
                 {a.capacity === null
                   ? countPhrase(a.taken, nothing.registeredCount)
-                  : `${a.taken} / ${a.capacity} ${t.spots}`}
+                  : t.spots
+                      .replace('{taken}', String(a.taken))
+                      .replace('{capacity}', String(a.capacity))}
                 {full && <span className="ms-2 font-bold text-ink-3">({t.full})</span>}
                 {a.waiting > 0 && (
                   <span className="ms-2 text-ink-3">

@@ -346,6 +346,10 @@ export const memberProfileAr: MemberProfileStrings = {
     'hours.corrected': 'صحّح ساعات',
     'hours.carried_over': 'اعتمد ساعات سابقة',
     'course.recognised': 'اعتمد دورة سابقة',
+    /* السطران التاليان يذكران صراحةً أنّ الشخص لم يكن مسجَّلاً في النشاط وأُدرج
+       فيه بقرار من موظّف، وهذه هي الواقعة التي قد يُسأل عنها بعد حين. */
+    'attendance.added_unregistered': 'أدرجه حاضراً دون تسجيل مسبق',
+    'attendance.amended_unregistered': 'عدّل حضور من أُدرج دون تسجيل',
     'certificate.issued': 'أصدر شهادة',
     'certificate.revoked': 'سحب شهادة',
     'achievement.granted': 'منح شارة بقرار',
@@ -626,6 +630,8 @@ export const memberProfileEn: MemberProfileStrings = {
     'hours.corrected': 'Corrected hours',
     'hours.carried_over': 'Recognised prior hours',
     'course.recognised': 'Recognised a prior course',
+    'attendance.added_unregistered': 'Marked present without a registration',
+    'attendance.amended_unregistered': 'Corrected attendance added without a registration',
     'certificate.issued': 'Issued a certificate',
     'certificate.revoked': 'Revoked a certificate',
     'achievement.granted': 'Granted a badge by decision',

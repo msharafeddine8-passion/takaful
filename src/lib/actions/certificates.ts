@@ -8,6 +8,28 @@ import { requireCapability } from '@/lib/authz';
 import { generateCode, type CertificateSnapshot } from '@/lib/certificates';
 import { verifiedMinutes } from '@/lib/hours';
 import { isLocale, type Locale } from '@/lib/i18n';
+import { countPhrase } from '@/lib/when';
+
+/**
+ * The counted noun on an hours certificate, in the five shapes Arabic needs.
+ *
+ * This title is written into the snapshot and never recomputed, so a wrong
+ * form is wrong on that document for as long as it exists — «5 ساعة معتمدة»
+ * would be printed, verified and attached to a CV. Thresholds are not round:
+ * the figure comes from whatever a volunteer has actually accrued, so one,
+ * two and three-to-ten are all ordinary values here.
+ *
+ * The zero form is reachable. `verifiedMinutes` only has to be above zero for
+ * a certificate to be issued, so forty verified minutes floor to nought hours,
+ * and «0 ساعة معتمدة» on a certificate is a document that denies itself.
+ */
+const HOURS_FORMS = {
+  zero: 'أقلّ من ساعة معتمدة',
+  one: 'ساعة واحدة معتمدة',
+  two: 'ساعتان معتمدتان',
+  few: '{n} ساعات معتمدة',
+  many: '{n} ساعة معتمدة',
+};
 
 function localeOf(formData: FormData): Locale {
   const value = String(formData.get('lang') ?? 'ar');
@@ -48,8 +70,10 @@ export async function issueHoursCertificateAction(formData: FormData): Promise<v
   const hours = Math.floor(minutes / 60);
   const snapshot: CertificateSnapshot = {
     fullName: holder.full_name,
-    titleAr: `شهادة تطوّع — ${hours} ساعة معتمدة`,
-    titleEn: `Certificate of volunteering — ${hours} verified hours`,
+    titleAr: `شهادة تطوّع — ${countPhrase(hours, HOURS_FORMS)}`,
+    titleEn: `Certificate of volunteering — ${
+      hours === 0 ? 'under an hour verified' : hours === 1 ? '1 verified hour' : `${hours} verified hours`
+    }`,
     minutes,
   };
 

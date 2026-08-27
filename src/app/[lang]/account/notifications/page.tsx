@@ -10,6 +10,7 @@ import { currentUser } from '@/lib/auth';
 import { isDbConfigured } from '@/lib/db';
 import { notificationsFor, markAllRead, type Notification } from '@/lib/notify';
 import { emptyStates } from '@/lib/dictionaries/empty-states';
+import { countPhrase } from '@/lib/when';
 
 export async function generateMetadata(props: PageProps<'/[lang]/account/notifications'>): Promise<Metadata> {
   const { lang } = await props.params;
@@ -147,8 +148,8 @@ function ago(when: Date, dict: Dictionary): string {
   const t = dict.account.notifications;
   const minutes = Math.floor((Date.now() - new Date(when).getTime()) / 60_000);
   if (minutes < 2) return t.justNow;
-  if (minutes < 60) return t.minutesAgo.replace('{n}', String(minutes));
+  if (minutes < 60) return countPhrase(minutes, t.minutesAgo);
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return t.hoursAgo.replace('{n}', String(hours));
-  return t.daysAgo.replace('{n}', String(Math.floor(hours / 24)));
+  if (hours < 24) return countPhrase(hours, t.hoursAgo);
+  return countPhrase(Math.floor(hours / 24), t.daysAgo);
 }
