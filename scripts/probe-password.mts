@@ -11,6 +11,7 @@ import { Client } from 'pg';
 import { randomUUID, createHash } from 'node:crypto';
 import { hashPassword, verifyPassword } from '../src/lib/auth.ts';
 import { checkSignupAllowed, recordSignup, recentSignups, THROTTLE_LIMITS } from '../src/lib/throttle.ts';
+import { guardedCleanup } from './guarded-cleanup.mts';
 
 const c = new Client({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 15_000 });
 await c.connect();
@@ -112,19 +113,33 @@ try {
   check('and the machine is stored hashed, not in the clear', raw === '0');
 } finally {
   console.log('\n--- cleanup ---');
+  // The body opens a transaction of its own; anything thrown mid-way leaves it
+  // open, and the cleanup transaction below cannot begin inside it.
   await c.query('ROLLBACK').catch(() => {});
-  for (const sql of [
-    'DELETE FROM auth_attempts WHERE ip_hash IS NOT NULL',
-    'DELETE FROM sessions WHERE user_id = $1',
-    'DELETE FROM audit_logs WHERE actor_id = $1',
-    'DELETE FROM membership_status_history WHERE user_id = $1 OR changed_by = $1',
-    'DELETE FROM user_journey_assignments WHERE user_id = $1',
-    'DELETE FROM profiles WHERE user_id = $1',
-    'DELETE FROM users WHERE id = $1',
-  ]) {
-    await c.query(sql.includes('$1') ? sql : sql, sql.includes('$1') ? [user] : [])
-      .catch((e) => console.error(`  ${sql.split(' ')[3]}: ${(e as Error).message}`));
-  }
+  /*
+   * Under the delete hatch. `audit_logs` is append-only since migration 049,
+   * and `actor_id` is ON DELETE RESTRICT — a refused DELETE here means the
+   * `DELETE FROM users` two lines later is refused too and a real account is
+   * left in production, which is what happened to probe-achievements.
+   *
+   * The unfiltered `auth_attempts` statement is why the helper only applies
+   * the shared parameters to statements that carry a `$n`: sending `[user]`
+   * with a statement that has no placeholder is refused outright, and that is
+   * the second of the two traps documented in scripts/guarded-cleanup.mts.
+   */
+  await guardedCleanup(
+    c,
+    [
+      'DELETE FROM auth_attempts WHERE ip_hash IS NOT NULL',
+      'DELETE FROM sessions WHERE user_id = $1',
+      'DELETE FROM audit_logs WHERE actor_id = $1',
+      'DELETE FROM membership_status_history WHERE user_id = $1 OR changed_by = $1',
+      'DELETE FROM user_journey_assignments WHERE user_id = $1',
+      'DELETE FROM profiles WHERE user_id = $1',
+      'DELETE FROM users WHERE id = $1',
+    ],
+    { params: [user] },
+  );
   const n = (await c.query<{ n: string }>(
     'SELECT count(*)::TEXT AS n FROM users WHERE email LIKE $1', [`${MARK}%`])).rows[0].n;
   console.log(`  ${n} probe users remaining (expected 0)`);

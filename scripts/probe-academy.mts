@@ -21,6 +21,7 @@ import {
   unissuedCourseCertificates,
   learningStanding,
 } from '../src/lib/academy.ts';
+import { guardedCleanup } from './guarded-cleanup.mts';
 
 const c = new Client({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 15_000 });
 await c.connect();
@@ -260,14 +261,27 @@ try {
   );
 } finally {
   console.log('\n--- cleanup ---');
-  await c.query('DELETE FROM certificates WHERE user_id = $1', [learner]);
-  await c.query('DELETE FROM course_module_progress WHERE user_id = $1', [learner]);
-  await c.query('DELETE FROM course_attempts WHERE user_id = $1', [learner]);
-  await c.query('DELETE FROM audit_logs WHERE actor_id = $1', [learner]);
-  await c.query('DELETE FROM membership_status_history WHERE user_id = $1', [learner]);
-  await c.query('DELETE FROM user_journey_assignments WHERE user_id = $1', [learner]);
-  await c.query('DELETE FROM profiles WHERE user_id = $1', [learner]);
-  await c.query('DELETE FROM users WHERE id = $1', [learner]);
+  /*
+   * Through the shared hatch: `audit_logs` is append-only since migration 049
+   * and refuses this DELETE outside a transaction that has asked for the
+   * exception by name. A bare sequence also stopped at the first failure, so
+   * the refusal would have taken the profile, the user and the residue check
+   * with it. See scripts/guarded-cleanup.mts for both traps.
+   */
+  await guardedCleanup(
+    c,
+    [
+      'DELETE FROM certificates WHERE user_id = $1',
+      'DELETE FROM course_module_progress WHERE user_id = $1',
+      'DELETE FROM course_attempts WHERE user_id = $1',
+      'DELETE FROM audit_logs WHERE actor_id = $1',
+      'DELETE FROM membership_status_history WHERE user_id = $1',
+      'DELETE FROM user_journey_assignments WHERE user_id = $1',
+      'DELETE FROM profiles WHERE user_id = $1',
+      'DELETE FROM users WHERE id = $1',
+    ],
+    { params: [learner] },
+  );
   const left = (
     await c.query<{ n: string }>('SELECT count(*)::TEXT AS n FROM users WHERE email LIKE $1', [
       `${MARK}%`,

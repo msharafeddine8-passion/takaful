@@ -12,6 +12,7 @@ import {
   confirmEmail,
 } from '../src/lib/recovery.ts';
 import { checkLoginAllowed, recentFailures, THROTTLE_LIMITS } from '../src/lib/throttle.ts';
+import { guardedCleanup } from './guarded-cleanup.mts';
 
 const c = new Client({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 15_000 });
 await c.connect();
@@ -313,15 +314,34 @@ try {
   check('and the recent one survives', (await recentFailures(EMAIL)) === 1);
 } finally {
   console.log('\n--- cleanup ---');
-  await c.query('DELETE FROM auth_attempts WHERE email_hash = $1', [fingerprint(EMAIL)]);
-  await c.query('DELETE FROM auth_tokens WHERE user_id = $1', [user]);
-  await c.query('DELETE FROM sessions WHERE user_id = $1', [user]);
-  await c.query('DELETE FROM email_deliveries WHERE user_id = $1', [user]);
-  await c.query('DELETE FROM audit_logs WHERE actor_id = $1', [user]);
-  await c.query('DELETE FROM membership_status_history WHERE user_id = $1', [user]);
-  await c.query('DELETE FROM user_journey_assignments WHERE user_id = $1', [user]);
-  await c.query('DELETE FROM profiles WHERE user_id = $1', [user]);
-  await c.query('DELETE FROM users WHERE id = $1', [user]);
+  /*
+   * Under the delete hatch, in one transaction with a savepoint each.
+   *
+   * This probe resets a password, confirms an address and spends tokens, so it
+   * writes audit rows every time it runs — which makes it the one most exposed
+   * to migration 049. An unguarded `DELETE FROM audit_logs` is refused,
+   * `actor_id` is ON DELETE RESTRICT, and the bare sequence this used to be
+   * stopped dead at the first refusal: the account, its profile and the
+   * residue line below all went with it. See scripts/guarded-cleanup.mts.
+   *
+   * The auth_attempts row is keyed by the address fingerprint rather than the
+   * user id, so it carries its own parameters.
+   */
+  await guardedCleanup(
+    c,
+    [
+      ['DELETE FROM auth_attempts WHERE email_hash = $1', [fingerprint(EMAIL)]],
+      'DELETE FROM auth_tokens WHERE user_id = $1',
+      'DELETE FROM sessions WHERE user_id = $1',
+      'DELETE FROM email_deliveries WHERE user_id = $1',
+      'DELETE FROM audit_logs WHERE actor_id = $1',
+      'DELETE FROM membership_status_history WHERE user_id = $1',
+      'DELETE FROM user_journey_assignments WHERE user_id = $1',
+      'DELETE FROM profiles WHERE user_id = $1',
+      'DELETE FROM users WHERE id = $1',
+    ],
+    { params: [user] },
+  );
   const left = (
     await c.query<{ n: string }>('SELECT count(*)::TEXT AS n FROM users WHERE email LIKE $1', [
       `${MARK}%`,

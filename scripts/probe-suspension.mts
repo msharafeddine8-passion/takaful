@@ -13,6 +13,7 @@
  */
 import { Client } from 'pg';
 import { randomUUID } from 'node:crypto';
+import { guardedCleanup } from './guarded-cleanup.mts';
 
 const c = new Client({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 15_000 });
 await c.connect();
@@ -246,17 +247,28 @@ try {
   // Rows are removed in two passes. membership_status_history.changed_by
   // points at the person who acted, so deleting the member first leaves the
   // admin unremovable — every reference has to go before any user does.
+  //
+  // Both passes run under the delete hatch, in a transaction with a savepoint
+  // per statement. This probe grants a super_admin role and suspends an
+  // account, so it writes to two tables that refuse a plain DELETE:
+  // `user_roles` since migration 046 and `audit_logs` since 049. A refusal
+  // there is not a tidiness problem — audit_logs.actor_id is ON DELETE
+  // RESTRICT, so the second pass cannot remove the account and a probe admin
+  // with a live super_admin grant is left sitting in the production database.
+  // See scripts/guarded-cleanup.mts for the two SET LOCAL traps.
   for (const id of made) {
-    for (const sql of [
-      'DELETE FROM sessions WHERE user_id = $1',
-      'DELETE FROM user_roles WHERE user_id = $1 OR granted_by = $1',
-      'DELETE FROM audit_logs WHERE actor_id = $1',
-      'DELETE FROM membership_status_history WHERE user_id = $1 OR changed_by = $1',
-      'DELETE FROM user_journey_assignments WHERE user_id = $1 OR assigned_by = $1',
-      'DELETE FROM profiles WHERE user_id = $1',
-    ]) {
-      await c.query(sql, [id]).catch((e) => console.error(`  ${sql.split(' ')[3]}: ${e.message}`));
-    }
+    await guardedCleanup(
+      c,
+      [
+        'DELETE FROM sessions WHERE user_id = $1',
+        'DELETE FROM user_roles WHERE user_id = $1 OR granted_by = $1',
+        'DELETE FROM audit_logs WHERE actor_id = $1',
+        'DELETE FROM membership_status_history WHERE user_id = $1 OR changed_by = $1',
+        'DELETE FROM user_journey_assignments WHERE user_id = $1 OR assigned_by = $1',
+        'DELETE FROM profiles WHERE user_id = $1',
+      ],
+      { params: [id] },
+    );
   }
   for (const id of made) {
     await c.query('DELETE FROM users WHERE id = $1', [id]).catch((e) =>

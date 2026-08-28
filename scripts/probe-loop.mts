@@ -10,6 +10,7 @@ import { randomUUID } from 'node:crypto';
 import { journeyFor } from '../src/lib/journey.ts';
 import { reallocate } from '../src/lib/allocation.ts';
 import { roster, opportunities, scheduledMinutes } from '../src/lib/activities.ts';
+import { guardedCleanup } from './guarded-cleanup.mts';
 
 const c = new Client({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 15_000 });
 await c.connect();
@@ -154,7 +155,19 @@ try {
     link.started_at);
 
 } finally {
-  for (const sql of [
+  /*
+   * Under the delete hatch, in one transaction with a savepoint per statement.
+   * `audit_logs` is append-only since migration 049: an unguarded DELETE there
+   * is refused, `audit_logs.actor_id` is ON DELETE RESTRICT, and the account
+   * then survives the `DELETE FROM users` below — in the association's live
+   * database. The `.catch()` this loop carries would have reported that in a
+   * line nobody reads, which is exactly how probe-achievements leaked seven
+   * accounts. See scripts/guarded-cleanup.mts for the two SET LOCAL traps.
+   */
+  const report = (sql: string, e: Error) =>
+    console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${e.message}`);
+
+  await guardedCleanup(c, [
     `DELETE FROM hour_allocations WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM activity_attendance WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM hour_entries WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
@@ -166,9 +179,9 @@ try {
     `DELETE FROM audit_logs WHERE actor_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM profiles WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     // Every statement runs even if one fails, so a single broken DELETE
-    // cannot silently skip everything after it.
-  ]) await c.query(sql, [`${MARK}-%`]).catch((e) =>
-    console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${(e as Error).message}`));
+    // cannot silently skip everything after it. That is what the savepoint
+    // inside the helper preserves now the whole list shares one transaction.
+  ], { params: [`${MARK}-%`], onError: report });
 
   await c.query('DELETE FROM activities WHERE id = $1', [act]).catch(() => {});
   await c.query('DELETE FROM users WHERE email LIKE $1', [`${MARK}-%`]).catch(() => {});
@@ -177,17 +190,18 @@ try {
     // Postgres rejects a statement given more parameters than it uses, so
     // each one carries exactly its own. Getting this wrong is silent when the
     // errors are caught, which is how the leftover versions went unnoticed.
-    for (const [sql, params] of [
-      ['DELETE FROM hour_allocations WHERE requirement_id = $1', [req]],
-      ['DELETE FROM stage_requirement_progress WHERE requirement_id = $1', [req]],
-      ['DELETE FROM stage_requirements WHERE stage_id IN (SELECT id FROM journey_stages WHERE version_id = $1)', [version]],
-      ['DELETE FROM user_journey_assignments WHERE version_id = $1', [version]],
-      ['DELETE FROM journey_stages WHERE version_id = $1', [version]],
-      ['DELETE FROM journey_versions WHERE id = $1', [version]],
-    ] as [string, unknown[]][]) {
-      await c.query(sql, params).catch((e) =>
-        console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${(e as Error).message}`));
-    }
+    await guardedCleanup(
+      c,
+      [
+        ['DELETE FROM hour_allocations WHERE requirement_id = $1', [req]],
+        ['DELETE FROM stage_requirement_progress WHERE requirement_id = $1', [req]],
+        ['DELETE FROM stage_requirements WHERE stage_id IN (SELECT id FROM journey_stages WHERE version_id = $1)', [version]],
+        ['DELETE FROM user_journey_assignments WHERE version_id = $1', [version]],
+        ['DELETE FROM journey_stages WHERE version_id = $1', [version]],
+        ['DELETE FROM journey_versions WHERE id = $1', [version]],
+      ],
+      { onError: report },
+    );
   }
 
   const u = (await c.query<{ n: string }>(

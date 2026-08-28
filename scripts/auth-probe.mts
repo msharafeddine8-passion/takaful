@@ -8,6 +8,7 @@
 import { Client } from 'pg';
 import { hashPassword, verifyPassword, registerUser, authenticate, membershipStatus } from '../src/lib/auth.ts';
 import { generateCode } from '../src/lib/certificates.ts';
+import { guardedCleanup } from './guarded-cleanup.mts';
 
 let failures = 0;
 function check(name: string, ok: boolean, detail = '') {
@@ -97,14 +98,50 @@ check('issued certificate is findable by code', found.rows.length === 1, code);
 check('snapshot survived the round trip', found.rows[0]?.snapshot?.fullName === 'Probe Person');
 
 console.log('\n--- cleanup ---');
-await c.query('DELETE FROM certificates WHERE user_id = $1', [userId]);
-await c.query('DELETE FROM audit_logs WHERE target_id = $1', [userId]);
-await c.query('DELETE FROM user_roles WHERE user_id = $1', [userId]);
-await c.query('DELETE FROM membership_status_history WHERE user_id = $1', [userId]);
-await c.query('DELETE FROM profiles WHERE user_id = $1', [userId]);
-await c.query('DELETE FROM users WHERE id = $1', [userId]);
-const left = await c.query('SELECT count(*)::int n FROM users');
-check('database left empty', left.rows[0].n === 0, `${left.rows[0].n} users`);
+/*
+ * Under the delete hatch, in one transaction with a savepoint per statement.
+ *
+ * This is the probe that *proves* it wrote an audit row — "registration is in
+ * the audit log" a few lines up — so it is the clearest case of the leak:
+ * migration 049 made audit_logs append-only, an unguarded DELETE here is
+ * refused, and the bare sequence this used to be stopped at that refusal
+ * before it ever reached `DELETE FROM users`. probe-achievements left seven
+ * accounts in production exactly that way. See scripts/guarded-cleanup.mts for
+ * the two SET LOCAL traps.
+ *
+ * target_id, not actor_id, and deliberately: registerUser records
+ * `user.registered` against the new account with no actor at all.
+ */
+await guardedCleanup(
+  c,
+  [
+    'DELETE FROM certificates WHERE user_id = $1',
+    'DELETE FROM audit_logs WHERE target_id = $1',
+    'DELETE FROM user_roles WHERE user_id = $1',
+    'DELETE FROM membership_status_history WHERE user_id = $1',
+    'DELETE FROM profiles WHERE user_id = $1',
+    'DELETE FROM users WHERE id = $1',
+  ],
+  { params: [userId] },
+);
+/*
+ * ITS OWN ACCOUNT IS GONE — not "the database is empty".
+ *
+ * This counted every row in `users` and asserted zero. True when it was
+ * written against a scratch database, and impossible since: production holds
+ * forty real people, so the check has been red on every run regardless of
+ * what the cleanup did.
+ *
+ * A check that can never pass is not a strict check, it is noise — and noise
+ * is what somebody learns to scroll past. Which is how the cleanup bug this
+ * very probe would have caught went unnoticed until seven accounts had piled
+ * up in production.
+ *
+ * Scoped to the account this run made, which is the only thing it is in a
+ * position to claim anything about.
+ */
+const left = await c.query('SELECT count(*)::int n FROM users WHERE id = $1', [userId]);
+check('its own account is gone', left.rows[0].n === 0, `${left.rows[0].n} left`);
 await c.end();
 
 console.log(`\n${failures === 0 ? 'ALL PASS' : `${failures} FAILURE(S)`}`);

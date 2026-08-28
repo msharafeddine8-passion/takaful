@@ -16,6 +16,7 @@ import {
   attendanceStanding,
   stalledVolunteers,
 } from '../src/lib/analytics.ts';
+import { guardedCleanup } from './guarded-cleanup.mts';
 
 const c = new Client({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 15_000 });
 await c.connect();
@@ -312,23 +313,37 @@ try {
 } finally {
   console.log('\n--- cleanup ---');
   if (activity) {
-    await c.query('DELETE FROM activity_attendance WHERE activity_id = $1', [activity]);
-    await c.query('DELETE FROM activity_registrations WHERE activity_id = $1', [activity]);
+    await guardedCleanup(
+      c,
+      [
+        'DELETE FROM activity_attendance WHERE activity_id = $1',
+        'DELETE FROM activity_registrations WHERE activity_id = $1',
+      ],
+      { params: [activity] },
+    );
   }
   for (const id of made) {
-    for (const sql of [
-      'DELETE FROM hour_entries WHERE user_id = $1',
-      'DELETE FROM course_attempts WHERE user_id = $1',
-      'DELETE FROM volunteer_applications WHERE user_id = $1',
-      'DELETE FROM membership_status_history WHERE user_id = $1',
-      'DELETE FROM user_journey_assignments WHERE user_id = $1',
-      'DELETE FROM stage_progress WHERE user_id = $1',
-      'DELETE FROM notifications WHERE user_id = $1',
-      'DELETE FROM audit_logs WHERE actor_id = $1',
-      'DELETE FROM profiles WHERE user_id = $1',
-    ]) {
-      await c.query(sql, [id]).catch((e) => console.error(`  ${sql.split(' ')[3]}: ${e.message}`));
-    }
+    /*
+     * Through the shared hatch. `audit_logs` is append-only since migration
+     * 049, and the `.catch()` this loop used to carry would have swallowed the
+     * refusal into a line nobody reads while the foreign key held the account
+     * in the live database. See scripts/guarded-cleanup.mts.
+     */
+    await guardedCleanup(
+      c,
+      [
+        'DELETE FROM hour_entries WHERE user_id = $1',
+        'DELETE FROM course_attempts WHERE user_id = $1',
+        'DELETE FROM volunteer_applications WHERE user_id = $1',
+        'DELETE FROM membership_status_history WHERE user_id = $1',
+        'DELETE FROM user_journey_assignments WHERE user_id = $1',
+        'DELETE FROM stage_progress WHERE user_id = $1',
+        'DELETE FROM notifications WHERE user_id = $1',
+        'DELETE FROM audit_logs WHERE actor_id = $1',
+        'DELETE FROM profiles WHERE user_id = $1',
+      ],
+      { params: [id] },
+    );
   }
   if (activity) await c.query('DELETE FROM activities WHERE id = $1', [activity]).catch(() => {});
   for (const id of made) {

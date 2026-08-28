@@ -9,6 +9,7 @@ import { Client } from 'pg';
 import { randomUUID } from 'node:crypto';
 import { journeyFor } from '../src/lib/journey.ts';
 import { reallocate, rebuildAllocations } from '../src/lib/allocation.ts';
+import { guardedCleanup } from './guarded-cleanup.mts';
 
 const c = new Client({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 15_000 });
 await c.connect();
@@ -191,8 +192,19 @@ try {
    * started throwing - so the journey version this probe creates was never
    * removed, and two of them accumulated in the live database before anything
    * noticed.
+   *
+   * And every one of them under the delete hatch now, in one transaction with
+   * a savepoint each. `audit_logs` became append-only in migration 049 and
+   * `user_roles` was guarded in 046; both refuse a plain DELETE, and the
+   * per-statement `.catch()` this used to carry would have printed the refusal
+   * into that same unread output while the foreign key kept two probe accounts
+   * alive in the live database. See scripts/guarded-cleanup.mts for the two
+   * SET LOCAL traps this avoids.
    */
-  for (const sql of [
+  const report = (sql: string, e: Error) =>
+    console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${e.message}`);
+
+  await guardedCleanup(c, [
     `DELETE FROM hour_allocations WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM hour_entries WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM stage_progress WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
@@ -204,23 +216,20 @@ try {
     `DELETE FROM user_roles WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM profiles WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)`,
     `DELETE FROM users WHERE email LIKE $1`,
-  ]) {
-    await c
-      .query(sql, [`${MARK}-%`])
-      .catch((e) => console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${(e as Error).message}`));
-  }
-  for (const [sql, params] of [
-    ['DELETE FROM hour_allocations WHERE requirement_id IN (SELECT id FROM stage_requirements WHERE stage_id = ANY($1))', [stageIds]],
-    ['DELETE FROM stage_requirement_progress WHERE requirement_id IN (SELECT id FROM stage_requirements WHERE stage_id = ANY($1))', [stageIds]],
-    ['DELETE FROM stage_requirements WHERE stage_id = ANY($1)', [stageIds]],
-    ['DELETE FROM user_journey_assignments WHERE version_id = $1', [version]],
-    ['DELETE FROM journey_stages WHERE version_id = $1', [version]],
-    ['DELETE FROM journey_versions WHERE id = $1', [version]],
-  ] as [string, unknown[]][]) {
-    await c
-      .query(sql, params)
-      .catch((e) => console.error(`  cleanup failed: ${sql.split(' ')[3]} — ${(e as Error).message}`));
-  }
+  ], { params: [`${MARK}-%`], onError: report });
+
+  await guardedCleanup(
+    c,
+    [
+      ['DELETE FROM hour_allocations WHERE requirement_id IN (SELECT id FROM stage_requirements WHERE stage_id = ANY($1))', [stageIds]],
+      ['DELETE FROM stage_requirement_progress WHERE requirement_id IN (SELECT id FROM stage_requirements WHERE stage_id = ANY($1))', [stageIds]],
+      ['DELETE FROM stage_requirements WHERE stage_id = ANY($1)', [stageIds]],
+      ['DELETE FROM user_journey_assignments WHERE version_id = $1', [version]],
+      ['DELETE FROM journey_stages WHERE version_id = $1', [version]],
+      ['DELETE FROM journey_versions WHERE id = $1', [version]],
+    ],
+    { onError: report },
+  );
 
   const left = await c.query<{ n: string }>(
     'SELECT count(*)::TEXT AS n FROM users WHERE email LIKE $1', [`${MARK}-%`]);
