@@ -40,8 +40,14 @@ import { ImageResponse } from 'next/og';
  */
 
 export const runtime = 'nodejs';
-export const size = { width: 512, height: 512 };
-export const contentType = 'image/png';
+
+/*
+ * Not exported. This is a route handler, not an icon.tsx metadata file, so
+ * `size` and `contentType` are not exports Next accepts here: the webpack
+ * build's type check rejects them (Turbopack never looked). ImageResponse
+ * already answers image/png.
+ */
+const size = { width: 512, height: 512 };
 
 /*
  * White, not the brand blue.

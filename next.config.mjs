@@ -1,5 +1,3 @@
-import type { NextConfig } from 'next';
-
 /**
  * Deliberately minimal, apart from response headers.
  *
@@ -8,13 +6,20 @@ import type { NextConfig } from 'next';
  * is NOT compatible with that: it emits `.next/standalone/server.js`
  * and requires `.next/static` and `public/` to be copied in manually.
  * Setting it here started the server but left the app unreachable.
- * The site runs on Vercel now, but the note stays: it cost an outage once.
+ * The note stays: it cost an outage once.
+ *
+ * Plain .mjs, not .ts, and `next build --webpack` in package.json:
+ * Hostinger's build servers have a glibc older than 2.29, so Next falls
+ * back to its wasm SWC, which cannot compile a TypeScript config and
+ * cannot run Turbopack. Both choices work unchanged on Vercel.
  */
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   /*
-   * Headers the live responses were missing entirely. Vercel supplies HSTS;
-   * everything below had to be asked for, and none of it shows up in local
-   * development or in a build log — only in a response from the real site.
+   * Headers the live responses were missing entirely. Vercel supplied HSTS
+   * on its own; Hostinger is not assumed to, so it is asked for below too.
+   * None of it shows up in local development or in a build log — only in a
+   * response from the real site.
    */
   async headers() {
     return [
@@ -23,6 +28,12 @@ const nextConfig: NextConfig = {
         headers: [
           // A browser must not guess that an uploaded photo is really a script.
           { key: 'X-Content-Type-Options', value: 'nosniff' },
+
+          /*
+           * HTTPS only, remembered for a year. No includeSubDomains: a
+           * subdomain served over plain HTTP somewhere would be locked out.
+           */
+          { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
 
           /*
            * The site could be framed by any other page. On a site whose

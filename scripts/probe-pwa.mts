@@ -52,7 +52,7 @@ const read = (...parts: string[]) => {
 const sw = read('public', 'sw.js');
 const manifest = read('src', 'app', 'manifest.ts');
 const layout = read('src', 'app', '[lang]', 'layout.tsx');
-const config = read('next.config.ts');
+const config = read('next.config.mjs');
 
 /* ------------------------------------------------------------------ *
  * 1. The worker exists and its rule can be read
